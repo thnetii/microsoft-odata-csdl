@@ -12,8 +12,8 @@ defaults:
     shell: pwsh
 
 jobs:
-  bearer_challenge:
-    name: OAuth2 Bearer Challenge
+  odata_3:
+    name: SharePoint Online OData v3
     runs-on: ubuntu-latest
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
@@ -31,18 +31,6 @@ jobs:
           SHAREPOINT_AUTH_INSTANCE: ${{ steps.challenge.outputs.auth_instance }}
           SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
         run: './scripts/sharepoint-online-auth-metadata.ps1'
-    outputs:
-      realm: ${{ steps.challenge.outputs.realm }}
-      resource_id: ${{ steps.challenge.outputs.resource_id }}
-      auth_instance: ${{ steps.challenge.outputs.auth_instance }}
-      token_endpoint: ${{ steps.getMetadata.outputs.token_endpoint }}
-  odata_3:
-    name: SharePoint Online OData v3
-    runs-on: ubuntu-latest
-    needs: [bearer_challenge]
-    steps:
-      - name: Chekout ${{ github.repository }}@${{ github.ref }}
-        uses: actions/checkout@v2
       - id: tokenIssuance
         name: Get SharePoint Access Token
         shell: pwsh
@@ -50,9 +38,9 @@ jobs:
           SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
           SHAREPOINT_ONLINE_CLIENTID: ${{ secrets.SHAREPOINT_ONLINE_CLIENTID }}
           SHAREPOINT_ONLINE_CLIENTSECRET: ${{ secrets.SHAREPOINT_ONLINE_CLIENTSECRET }}
-          SHAREPOINT_ONLINE_REALM: ${{ needs.bearer_challenge.outputs.realm }}
-          SHAREPOINT_ONLINE_RESOURCEID: ${{ needs.bearer_challenge.outputs.resource_id }}
-          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ needs.bearer_challenge.outputs.token_endpoint }}
+          SHAREPOINT_ONLINE_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_ONLINE_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
       - name: Download CSDL in XML Format
@@ -68,10 +56,22 @@ jobs:
   odata_4:
     name: SharePoint Online OData v4
     runs-on: ubuntu-latest
-    needs: [bearer_challenge]
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v2
+      - id: challenge
+        name: Invoke OAuth2 Bearer challenge
+        shell: pwsh
+        env:
+          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
+        run: './scripts/sharepoint-online-bearer-challenge.ps1'
+      - id: getMetadata
+        name: Get Authorization Instance Metadata
+        shell: pwsh
+        env:
+          SHAREPOINT_AUTH_INSTANCE: ${{ steps.challenge.outputs.auth_instance }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+        run: './scripts/sharepoint-online-auth-metadata.ps1'
       - id: tokenIssuance
         name: Get SharePoint Access Token
         shell: pwsh
@@ -79,9 +79,9 @@ jobs:
           SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
           SHAREPOINT_ONLINE_CLIENTID: ${{ secrets.SHAREPOINT_ONLINE_CLIENTID }}
           SHAREPOINT_ONLINE_CLIENTSECRET: ${{ secrets.SHAREPOINT_ONLINE_CLIENTSECRET }}
-          SHAREPOINT_ONLINE_REALM: ${{ needs.bearer_challenge.outputs.realm }}
-          SHAREPOINT_ONLINE_RESOURCEID: ${{ needs.bearer_challenge.outputs.resource_id }}
-          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ needs.bearer_challenge.outputs.token_endpoint }}
+          SHAREPOINT_ONLINE_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_ONLINE_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
       - name: Download CSDL in XML Format
