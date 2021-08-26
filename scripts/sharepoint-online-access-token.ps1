@@ -27,5 +27,6 @@ $TokenRequest = @{
 [ValidateNotNull()][PSObject]$TokenResponse = Invoke-RestMethod `
     -Method Post -ContentType "application/x-www-form-urlencoded" `
     -Body $TokenRequest -Uri $TokenEndpoint
+Write-Host "::add-mask::$($TokenResponse.access_token)"
 Write-Host "::set-output name=access_token::$($TokenResponse.access_token)"
 ConvertTo-SecureString -String $TokenResponse.access_token -AsPlainText -Force

@@ -11,5 +11,6 @@ param (
     "/metadata/json/1?realm=$([uri]::EscapeDataString($SharePointRealm))"
 [ValidateNotNull()][PSObject]$AuthMetadataResponse = Invoke-RestMethod $AuthMetadataUri
 $AuthMetadataResponse.endpoints | Where-Object protocol -IEQ "OAuth2" | ForEach-Object {
+    Write-Host "::add-mask::$($_.location)"
     Write-Host "::set-output name=token_endpoint::$($_.location)"
 }

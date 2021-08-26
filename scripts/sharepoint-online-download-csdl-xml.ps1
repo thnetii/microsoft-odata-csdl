@@ -38,6 +38,7 @@ if ($ODataVersion) {
 
 [ValidateNotNull()][xml]$CsdlResponse = Invoke-RestMethod @Request
 $ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
+    Write-Host "::debug::SharePoint Teams Services version: v${_}"
     Write-Host "::set-output name=sharepoint_version::${_}"
 }
 

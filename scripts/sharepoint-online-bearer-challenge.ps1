@@ -32,15 +32,18 @@ $SharePointWwwAuthenticateMethodPrefix = "Bearer "
 
 if ($SharePointBearerParameters -match "realm=\`"([^\`"]*)\`"") {
     [string]$SharePointRealm = $Matches[1]
+    Write-Host "::add-mask::$SharePointRealm"
     Write-Host "::set-output name=realm::$SharePointRealm"
 }
 if ($SharePointBearerParameters -match "client_id=\`"([^\`"]*)\`"") {
     [string]$SharePointResourceId = $Matches[1]
+    Write-Host "::add-mask::$SharePointResourceId"
     Write-Host "::set-output name=resource_id::$SharePointResourceId"
 }
 [string]$SharePointAuthorizationInstance = $null
 if ($SharePointBearerParameters -match "authorization_uri=\`"([^\`"]*)\`"") {
     [uri]$SharePointAuthorizationUri = $Matches[1]
     $SharePointAuthorizationInstance = $SharePointAuthorizationUri.GetLeftPart([System.UriPartial]::Authority)
+    Write-Host "::add-mask::$SharePointAuthorizationInstance"
     Write-Host "::set-output name=auth_instance::$SharePointAuthorizationInstance"
 }
