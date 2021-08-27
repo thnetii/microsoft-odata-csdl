@@ -9,6 +9,7 @@
  * @param {InputState} param0
  */
 module.exports = async ({github, context, core}) => {
+  core.debug('requesting details about current run from GitHub API')
   const run_resp = await github.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -16,5 +17,6 @@ module.exports = async ({github, context, core}) => {
   })
   /** @type {{ workflow_id: Number}} */
   const { workflow_id } = run_resp
+  core.debug(`Determined ${workflow_id} as the wokflow id of the current run`)
   core.setOutput('workflow_id', workflow_id)
 }
