@@ -12,8 +12,7 @@ module.exports = async ({github, context, core}) => {
     repo: context.repo.repo,
     run_id: context.runId
   })
-  /** @type {{ workflow_id: Number}} */
-  const { workflow_id } = run_resp
+  const { workflow_id } = run_resp.data
   core.debug(`Determined ${workflow_id} as the wokflow id of the current run`)
   core.setOutput('workflow_id', workflow_id)
 }
