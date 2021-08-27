@@ -31,7 +31,7 @@ jobs:
             await script({github, context, core})
     outputs:
       workflow_id: ${{ steps.determineWorkflow.outputs.workflow_id }}
-      branch_name: refs/heads/workflow${{ steps.determineWorkflow.outputs.workflow_id }}
+      branch_name: workflows/w${{ steps.determineWorkflow.outputs.workflow_id }}
   odata_3:
     name: SharePoint Online OData v3
     runs-on: ubuntu-latest
@@ -39,6 +39,13 @@ jobs:
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v2
+      - id: checkoutPrBranch
+        name: Swich to new branch for possible PR
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/checkout-pr-branch')
+            await script({github, context, core, exec}, '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}')
       - id: challenge
         name: Invoke OAuth2 challenge
         shell: pwsh
@@ -81,6 +88,13 @@ jobs:
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v2
+      - id: checkoutPrBranch
+        name: Swich to new branch for possible PR
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/checkout-pr-branch')
+            await script({github, context, core, exec}, '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}')
       - id: challenge
         name: Invoke OAuth2 challenge
         shell: pwsh
