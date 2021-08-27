@@ -16,11 +16,22 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
     'HEAD'
   ])
   core.debug(`Asking GitHub API about ref named ${branch_name}`)
-  const branch_resp = await github.git.getRef({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    ref: `refs/heads/${branch_name}`,
-  })
+  try {
+    _ = await github.git.getRef({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      ref: `refs/heads/${branch_name}`,
+    })
+  } catch (err) {
+    /** @type { import('@octokit/request-error').RequestError } */
+    const reqError = err
+    const { name, status } = reqError
+    if (name !== 'HttpError' || status !== 404) {
+      throw err
+    }
+    core.debug('git ref not found, no merge necessary')
+    return
+  }
   core.debug('git ref found, staging merge')
   git_exitcode = await exec.exec('git', [
     'merge',
