@@ -1,16 +1,13 @@
 /**
- * @typedef {Object} InputState
- * @property { import("@octokit/rest").Octokit } github - A pre-authenticated octokit/rest.js client with pagination plugins
- * @property { import("@actions/github/lib/context").Context } context - An object containing the context of the workflow run
- * @property { import("@actions/core") } core - A reference to the @actions/core package
- */
-
-/**
- * @param {InputState} param0
+ * @param {{
+ *  github: import('@octokit/rest').Octokit,
+ *  context: import('@actions/github/lib/context').Context,
+ *  core: import('@actions/core')
+ * }} param0
  */
 module.exports = async ({github, context, core}) => {
   core.debug('requesting details about current run from GitHub API')
-  const run_resp = await github.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
+  const run_resp = await github.actions.getWorkflowRun({
     owner: context.repo.owner,
     repo: context.repo.repo,
     run_id: context.runId
