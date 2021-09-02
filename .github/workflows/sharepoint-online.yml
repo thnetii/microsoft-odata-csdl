@@ -83,6 +83,14 @@ jobs:
             -OutFile ./sharepoint-odata-v3_0.csdl.xml -ODataVersion "3.0" `
             -EdmNamespace  "http://schemas.microsoft.com/ado/2009/11/edm" `
             -EdmxNamespace "http://schemas.microsoft.com/ado/2007/06/edmx"
+      - name: Commit and create/update PR (if any changes)
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/commit-updatecreate-pr')
+            const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
+            const git_commit_message = '${{ github.job }}'
+            await script({github, context, core, exec}, git_commit_message, branch_name)
   odata_4:
     name: SharePoint Online OData v4
     runs-on: ubuntu-latest
@@ -132,3 +140,11 @@ jobs:
             -OutFile ./sharepoint-odata-v4_0.csdl.xml -ODataVersion "4.0" `
             -EdmNamespace  "http://docs.oasis-open.org/odata/ns/edm" `
             -EdmxNamespace "http://docs.oasis-open.org/odata/ns/edmx"
+      - name: Commit and create/update PR (if any changes)
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/commit-updatecreate-pr')
+            const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
+            const git_commit_message = '${{ github.job }}'
+            await script({github, context, core, exec}, git_commit_message, branch_name)
