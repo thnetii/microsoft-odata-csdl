@@ -2,48 +2,48 @@
 [CmdletBinding()]
 param (
     [ValidateNotNullOrEmpty()]
-    [string]$SharePointOnlineWebUrlString = $ENV:SHAREPOINT_ONLINE_WEBURL
+    [string]$WebUrl = $ENV:SHAREPOINT_WEBURL
 )
 
-[uri]$SharePointOnlineWebUri = $SharePointOnlineWebUrlString
-[uri]$SharePointOnlineClientSvcUrl = if ($SharePointOnlineWebUri.LocalPath.EndsWith("/")) {
-    New-Object uri $SharePointOnlineWebUri, "_vti_bin/client.svc"
+[uri]$WebUri = $WebUrl
+[uri]$ClientSvcUrl = if ($WebUri.LocalPath.EndsWith("/")) {
+    New-Object uri $WebUri, "_vti_bin/client.svc"
 }
 else {
-    $SharePointOnlineWebUri.GetLeftPart([System.UriPartial]::Path) + "/_vti_bin/client.svc"
+    $WebUri.GetLeftPart([System.UriPartial]::Path) + "/_vti_bin/client.svc"
 }
 
-$SharePointResponseHeaders = $null
-$SharePointBearerChallengeParameters = @{
+$ResponseHeaders = $null
+$BearerChallengeParameters = @{
     Method                  = "Head"
-    Uri                     = $SharePointOnlineClientSvcUrl
+    Uri                     = $ClientSvcUrl
     Headers                 = @{ Authorization = "Bearer" }
-    ResponseHeadersVariable = "SharePointResponseHeaders"
+    ResponseHeadersVariable = "ResponseHeaders"
     SkipHttpErrorCheck      = $true
 }
-[void](Invoke-RestMethod @SharePointBearerChallengeParameters)
-[string]$SharePointWwwAuthenticateHeader = $SharePointResponseHeaders["WWW-Authenticate"]
-$SharePointWwwAuthenticateMethodPrefix = "Bearer "
-[string]$SharePointBearerParameters = if (
-    $SharePointWwwAuthenticateHeader.StartsWith($SharePointWwwAuthenticateMethodPrefix)
+[void](Invoke-RestMethod @BearerChallengeParameters)
+[string]$WwwAuthenticateHeader = $ResponseHeaders["WWW-Authenticate"]
+$WwwAuthenticateMethodPrefix = "Bearer "
+[string]$BearerParameters = if (
+    $WwwAuthenticateHeader.StartsWith($WwwAuthenticateMethodPrefix)
 ) {
-    $SharePointWwwAuthenticateHeader.Substring($SharePointWwwAuthenticateMethodPrefix.Length).TrimStart()
+    $WwwAuthenticateHeader.Substring($WwwAuthenticateMethodPrefix.Length).TrimStart()
 }
 
-if ($SharePointBearerParameters -match "realm=\`"([^\`"]*)\`"") {
-    [string]$SharePointRealm = $Matches[1]
-    Write-Host "::add-mask::$SharePointRealm"
-    Write-Host "::set-output name=realm::$SharePointRealm"
+if ($BearerParameters -match "realm=\`"([^\`"]*)\`"") {
+    [string]$Realm = $Matches[1]
+    Write-Host "::add-mask::$Realm"
+    Write-Host "::set-output name=realm::$Realm"
 }
-if ($SharePointBearerParameters -match "client_id=\`"([^\`"]*)\`"") {
-    [string]$SharePointResourceId = $Matches[1]
-    Write-Host "::add-mask::$SharePointResourceId"
-    Write-Host "::set-output name=resource_id::$SharePointResourceId"
+if ($BearerParameters -match "client_id=\`"([^\`"]*)\`"") {
+    [string]$ResourceId = $Matches[1]
+    Write-Host "::add-mask::$ResourceId"
+    Write-Host "::set-output name=resource_id::$ResourceId"
 }
-[string]$SharePointAuthorizationInstance = $null
-if ($SharePointBearerParameters -match "authorization_uri=\`"([^\`"]*)\`"") {
-    [uri]$SharePointAuthorizationUri = $Matches[1]
-    $SharePointAuthorizationInstance = $SharePointAuthorizationUri.GetLeftPart([System.UriPartial]::Authority)
-    Write-Host "::add-mask::$SharePointAuthorizationInstance"
-    Write-Host "::set-output name=auth_instance::$SharePointAuthorizationInstance"
+[string]$AuthorizationInstance = $null
+if ($BearerParameters -match "authorization_uri=\`"([^\`"]*)\`"") {
+    [uri]$AuthorizationUri = $Matches[1]
+    $AuthorizationInstance = $AuthorizationUri.GetLeftPart([System.UriPartial]::Authority)
+    Write-Host "::add-mask::$AuthorizationInstance"
+    Write-Host "::set-output name=auth_instance::$AuthorizationInstance"
 }

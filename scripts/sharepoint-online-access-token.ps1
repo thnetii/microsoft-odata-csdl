@@ -2,15 +2,15 @@
 [CmdletBinding()]
 param (
     [ValidateNotNullOrEmpty()]
-    [string]$WebUrl = $ENV:SHAREPOINT_ONLINE_WEBURL,
+    [string]$WebUrl = $ENV:SHAREPOINT_WEBURL,
     [ValidateNotNull()]
-    [uri]$TokenEndpoint = $ENV:SHAREPOINT_ONLINE_TOKENENDPOINT,
+    [uri]$TokenEndpoint = $ENV:SHAREPOINT_TOKENENDPOINT,
     [ValidateNotNullOrEmpty()]
-    [string]$ClientId = $ENV:SHAREPOINT_ONLINE_CLIENTID,
-    [securestring]$ClientSecret = (ConvertTo-SecureString -String $ENV:SHAREPOINT_ONLINE_CLIENTSECRET -AsPlainText -Force),
+    [string]$ClientId = $ENV:SHAREPOINT_CLIENTID,
+    [securestring]$ClientSecret = (ConvertTo-SecureString -String $ENV:SHAREPOINT_CLIENTSECRET -AsPlainText -Force),
     [ValidateNotNullOrEmpty()]
-    [string]$Realm = $ENV:SHAREPOINT_ONLINE_REALM,
-    [string]$SharePointResourceId = $ENV:SHAREPOINT_ONLINE_RESOURCEID
+    [string]$Realm = $ENV:SHAREPOINT_REALM,
+    [string]$SharePointResourceId = $ENV:SHAREPOINT_RESOURCEID
 )
 
 if (-not $SharePointResourceId) {

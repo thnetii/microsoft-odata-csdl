@@ -2,8 +2,8 @@
 [CmdletBinding()]
 param (
     [ValidateNotNullOrEmpty()]
-    [string]$WebUrl = $ENV:SHAREPOINT_ONLINE_WEBURL,
-    [securestring]$AccessToken = (ConvertTo-SecureString -String $ENV:SHAREPOINT_ONLINE_ACCESSTOKEN -AsPlainText -Force),
+    [string]$WebUrl = $ENV:SHAREPOINT_WEBURL,
+    [securestring]$AccessToken = (ConvertTo-SecureString -String $ENV:SHAREPOINT_ACCESSTOKEN -AsPlainText -Force),
     [string]$ODataVersion,
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]$OutFile,

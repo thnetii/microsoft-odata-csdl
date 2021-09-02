@@ -33,7 +33,7 @@ jobs:
             await script({github, context, core})
     outputs:
       workflow_id: ${{ steps.determineWorkflow.outputs.workflow_id }}
-      branch_name: ${{ format('workflows/w{0}', steps.determineWorkflow.outputs.workflow_id) }}
+      branch_name: workflows/w${{ steps.determineWorkflow.outputs.workflow_id }}
   odata_3:
     name: SharePoint Online OData v3
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
         name: Invoke OAuth2 challenge
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
         run: './scripts/sharepoint-online-bearer-challenge.ps1'
       - id: getMetadata
         name: Get Authorization Instance Metadata
@@ -65,19 +65,19 @@ jobs:
         name: Get SharePoint Access Token
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
-          SHAREPOINT_ONLINE_CLIENTID: ${{ secrets.SHAREPOINT_ONLINE_CLIENTID }}
-          SHAREPOINT_ONLINE_CLIENTSECRET: ${{ secrets.SHAREPOINT_ONLINE_CLIENTSECRET }}
-          SHAREPOINT_ONLINE_REALM: ${{ steps.challenge.outputs.realm }}
-          SHAREPOINT_ONLINE_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
-          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_CLIENTID: ${{ secrets.SHAREPOINT_CLIENTID }}
+          SHAREPOINT_CLIENTSECRET: ${{ secrets.SHAREPOINT_CLIENTSECRET }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
       - name: Download CSDL in XML Format
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
-          SHAREPOINT_ONLINE_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
         run: |
           ./scripts/sharepoint-online-download-csdl-xml.ps1 `
             -OutFile ./sharepoint-odata-v3_0.csdl.xml -ODataVersion "3.0" `
@@ -101,7 +101,7 @@ jobs:
         name: Invoke OAuth2 challenge
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
         run: './scripts/sharepoint-online-bearer-challenge.ps1'
       - id: getMetadata
         name: Get Authorization Instance Metadata
@@ -114,19 +114,19 @@ jobs:
         name: Get SharePoint Access Token
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
-          SHAREPOINT_ONLINE_CLIENTID: ${{ secrets.SHAREPOINT_ONLINE_CLIENTID }}
-          SHAREPOINT_ONLINE_CLIENTSECRET: ${{ secrets.SHAREPOINT_ONLINE_CLIENTSECRET }}
-          SHAREPOINT_ONLINE_REALM: ${{ steps.challenge.outputs.realm }}
-          SHAREPOINT_ONLINE_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
-          SHAREPOINT_ONLINE_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_CLIENTID: ${{ secrets.SHAREPOINT_CLIENTID }}
+          SHAREPOINT_CLIENTSECRET: ${{ secrets.SHAREPOINT_CLIENTSECRET }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
       - name: Download CSDL in XML Format
         shell: pwsh
         env:
-          SHAREPOINT_ONLINE_WEBURL: ${{ secrets.SHAREPOINT_ONLINE_WEBURL }}
-          SHAREPOINT_ONLINE_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
         run: |
           ./scripts/sharepoint-online-download-csdl-xml.ps1 `
             -OutFile ./sharepoint-odata-v4_0.csdl.xml -ODataVersion "4.0" `
