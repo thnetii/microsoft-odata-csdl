@@ -73,7 +73,8 @@ jobs:
           SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
-      - name: Download CSDL in XML Format
+      - id: downloadCsdl
+        name: Download CSDL in XML Format
         shell: pwsh
         env:
           SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
@@ -89,8 +90,18 @@ jobs:
           script: |
             const script = require('./scripts/commit-updatecreate-pr')
             const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
-            const git_commit_message = '${{ github.job }}'
-            await script({github, context, core, exec}, git_commit_message, branch_name)
+            const git_commit_message = 'SharePoint OData API 3.0 CSDL, Microsoft SharePoint Team Service version ${{ steps.downloadCsdl.outputs.sharepoint_version }}'
+            const pr_title = 'Update SharePoint OData 3.0 CSDL'
+            const pr_body = `Automatic downlaod of SharePoint API OData CSDL for clients using OData 3.0.
+
+            Microsoft SharePoint Team Services: \`${{ steps.downloadCsdl.outputs.sharepoint_version }}\``
+            await script(
+              {github, context, core, exec},
+              branch_name,
+              git_commit_message,
+              pr_title,
+              pr_body
+            )
   odata_4:
     name: SharePoint Online OData v4
     runs-on: ubuntu-latest
@@ -130,7 +141,8 @@ jobs:
           SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
-      - name: Download CSDL in XML Format
+      - id: downloadCsdl
+        name: Download CSDL in XML Format
         shell: pwsh
         env:
           SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
@@ -146,5 +158,15 @@ jobs:
           script: |
             const script = require('./scripts/commit-updatecreate-pr')
             const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
-            const git_commit_message = '${{ github.job }}'
-            await script({github, context, core, exec}, git_commit_message, branch_name)
+            const git_commit_message = 'SharePoint OData API 4.0 CSDL, Microsoft SharePoint Team Service version ${{ steps.downloadCsdl.outputs.sharepoint_version }}'
+            const pr_title = 'Update SharePoint OData 4.0 CSDL'
+            const pr_body = `Automatic downlaod of SharePoint API OData CSDL for clients using OData 4.0.
+
+            Microsoft SharePoint Team Services: \`${{ steps.downloadCsdl.outputs.sharepoint_version }}\``
+            await script(
+              {github, context, core, exec},
+              branch_name,
+              git_commit_message,
+              pr_title,
+              pr_body
+            )

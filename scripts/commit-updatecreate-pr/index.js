@@ -5,22 +5,34 @@
  *  core: import('@actions/core'),
  *  exec: import('@actions/exec')
  * }} param0
- * @param {string} git_commit_message
  * @param {string} branch_name
+ * @param {string} git_commit_message
+ * @param {string} pr_title
+ * @param {string} pr_body
  */
-module.exports = async ({ github, context, core, exec }, git_commit_message, branch_name) => {
+module.exports = async (
+  { github, context, core, exec },
+  branch_name, git_commit_message, pr_title, pr_body
+) => {
   // git config user.name github-actions
   // git config user.email github-actions@github.com
-  _ = await exec.exec('git', [
+  let gitExitCode = 0
+  gitExitCode = await exec.exec('git', [
     'config',
     'user.name',
     'github-actions'
   ])
-  _ = await exec.exec('git', [
+  if (gitExitCode) {
+    throw new Error(`git process exited with error code ${gitExitCode}.`)
+  }
+  gitExitCode = await exec.exec('git', [
     'config',
     'user.email',
     'github-actions@github.com'
   ])
+  if (gitExitCode) {
+    throw new Error(`git process exited with error code ${gitExitCode}.`)
+  }
 
   _ = await exec.exec('git', [
     'add',
@@ -36,21 +48,49 @@ module.exports = async ({ github, context, core, exec }, git_commit_message, bra
     return
   }
 
-  _ = await exec.exec('git', [
+  gitExitCode = await exec.exec('git', [
     'commit',
     '-m',
     git_commit_message
   ])
+  if (gitExitCode) {
+    throw new Error(`git process exited with error code ${gitExitCode}.`)
+  }
+  gitExitCode = await exec.exec('git', [
+    'push',
+    'origin',
+    '--force',
+    `HEAD:${branch_name}`
+  ])
+  if (gitExitCode) {
+    throw new Error(`git process exited with error code ${gitExitCode}.`)
+  }
 
-  const pullsResp = await github.pulls.list({
+  const pullsQuery = {
     owner: context.repo.owner,
     repo: context.repo.repo,
     head: branch_name
-  })
-  const pullsData = pullsResp.data
-  if (pullsData) {
-    core.debug('Existing Pull Request detected.')
+  }
+  const pullsDefinition = {
+    title: pr_title,
+    body: pr_body,
+    ...pullsQuery
+  }
+  let pullNumber = undefined
+  let pullsResp = await github.pulls.list(pullsQuery)
+  if (pullsData && pullsData[0]) {
+    const pullObject = pullsResp.data[0]
+    pullNumber = pullObject.number
+    _ = await github.pulls.update({
+      pull_number: pullNumber,
+      ...pullsDefinition
+    })
   } else {
-    core.debug('No existing Pull Requrest detected.')
+    pullsResp = await github.pulls.create(pullsDefinition)
+    const pullObject = pullsResp.data[0]
+    pullNumber = pullObject.number
+  }
+  if (pullNumber > 0) {
+    core.setOutput('prNumber', pullNumber)
   }
 }
