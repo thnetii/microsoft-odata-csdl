@@ -78,17 +78,15 @@ module.exports = async (
   }
   let pullNumber = undefined
   let pullsResp = await github.pulls.list(pullsQuery)
-  if (pullsData && pullsData[0]) {
-    const pullObject = pullsResp.data[0]
-    pullNumber = pullObject.number
+  if (pullsResp && pullsResp.data && pullsResp.data[0]) {
+    pullNumber = pullsResp.data[0].number
     _ = await github.pulls.update({
       pull_number: pullNumber,
       ...pullsDefinition
     })
   } else {
     pullsResp = await github.pulls.create(pullsDefinition)
-    const pullObject = pullsResp.data[0]
-    pullNumber = pullObject.number
+    pullNumber = pullsResp.data[0].number
   }
   if (pullNumber > 0) {
     core.setOutput('prNumber', pullNumber)
