@@ -78,8 +78,11 @@ module.exports = async (
   }
   let pullNumber = undefined
   let pullsResp = await github.pulls.list(pullsQuery)
-  if (pullsResp && pullsResp.data && pullsResp.data[0]) {
-    pullNumber = pullsResp.data[0].number
+  const pullObject = pullsResp && pullsResp.data
+    ? pullsResp.data.find(pr => pr.head.ref.endsWith(branch_name))
+    : undefined
+  if (pullObject) {
+    pullNumber = pullObject.number
     _ = await github.pulls.update({
       pull_number: pullNumber,
       ...pullsDefinition
