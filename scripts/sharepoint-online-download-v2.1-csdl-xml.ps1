@@ -6,25 +6,23 @@ param (
     [securestring]$AccessToken = (ConvertTo-SecureString -String $ENV:SHAREPOINT_ACCESSTOKEN -AsPlainText -Force),
     [string]$ODataVersion,
     [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]$OutFile,
-    [string]$EdmNamespace = "http://docs.oasis-open.org/odata/ns/edm",
-    [string]$EdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx"
+    [ValidateNotNullOrEmpty()]$OutFile
 )
 
 [uri]$WebUri = $WebUrl
 [uri]$CsdlUri = if ($WebUri.LocalPath.EndsWith("/")) {
-    New-Object uri $WebUri, "_api/`$metadata"
+    New-Object uri $WebUri, "_api/v2.1/`$metadata"
 }
 else {
-    $WebUri.GetLeftPart([System.UriPartial]::Path) + "/_api/`$metadata"
+    $WebUri.GetLeftPart([System.UriPartial]::Path) + "/_api/v2.1/`$metadata"
 }
 $ResponseHeaders = $null
 $Request = @{
-    Method                  = "Get"
-    Uri                     = $CsdlUri
-    Authentication          = "OAuth"
-    Token                   = $AccessToken
-    Headers                 = @{
+    Method         = "Get"
+    Uri            = $CsdlUri
+    Authentication = "OAuth"
+    Token          = $AccessToken
+    Headers        = @{
         Accept = "application/xml"
     }
     ResponseHeadersVariable = "ResponseHeaders"
@@ -40,15 +38,6 @@ if ($ODataVersion) {
 $ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
     Write-Host "::debug::SharePoint Teams Services version: v${_}"
     Write-Host "::set-output name=sharepoint_version::${_}"
-}
-
-$SpDataNamespaceSelection = Select-Xml -Xml $CsdlResponse -Namespace @{
-    edm  = $EdmNamespace;
-    edmx = $EdmxNamespace;
-} -XPath "/edmx:Edmx/edmx:DataServices/edm:Schema[@Namespace=`"SP.Data`"]"
-[System.Xml.XmlNode]$SpDataNamespaceNode = $SpDataNamespaceSelection.Node
-if ($SpDataNamespaceNode) {
-    $SpDataNamespaceNode.ParentNode.RemoveChild($SpDataNamespaceNode) | Out-Null
 }
 
 $OutFileItem = New-Item -ItemType File $OutFile -Force

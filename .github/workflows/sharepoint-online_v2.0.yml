@@ -1,0 +1,168 @@
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '51 6 * * *'
+      # Trigger every day at 06:51
+permissions:
+  contents: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: pwsh
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  workflow_id:
+    name: Determine current workflow id
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v2
+      - id: determineWorkflow
+        name: Get current workflow id
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/determineWorkflow')
+            await script({github, context, core})
+    outputs:
+      workflow_id: ${{ steps.determineWorkflow.outputs.workflow_id }}
+      branch_name: workflows/w${{ steps.determineWorkflow.outputs.workflow_id }}
+  odata_3:
+    name: SharePoint Online v2.0 OData v3
+    runs-on: ubuntu-latest
+    needs: [workflow_id]
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v2
+      - id: checkoutPrBranch
+        name: Swich to new branch for possible PR
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/checkout-pr-branch')
+            await script({github, context, core, exec}, '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}')
+      - id: challenge
+        name: Invoke OAuth2 challenge
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+        run: './scripts/sharepoint-online-bearer-challenge.ps1'
+      - id: getMetadata
+        name: Get Authorization Instance Metadata
+        shell: pwsh
+        env:
+          SHAREPOINT_AUTH_INSTANCE: ${{ steps.challenge.outputs.auth_instance }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+        run: './scripts/sharepoint-online-auth-metadata.ps1'
+      - id: tokenIssuance
+        name: Get SharePoint Access Token
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_CLIENTID: ${{ secrets.SHAREPOINT_CLIENTID }}
+          SHAREPOINT_CLIENTSECRET: ${{ secrets.SHAREPOINT_CLIENTSECRET }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
+        run: |
+          [void](./scripts/sharepoint-online-access-token.ps1)
+      - id: downloadCsdl
+        name: Download CSDL in XML Format
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+        run: |
+          ./scripts/sharepoint-online-download-v2.0-csdl-xml.ps1 `
+            -OutFile ./sharepoint-v2.0-odata-v3_0.csdl.xml -ODataVersion "3.0"
+      - name: Commit and create/update PR (if any changes)
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/commit-updatecreate-pr')
+            const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
+            const git_commit_message = 'SharePoint v2.0 OData API 3.0 CSDL, Microsoft SharePoint Team Service version ${{ steps.downloadCsdl.outputs.sharepoint_version }}'
+            const pr_title = 'Update SharePoint v2.0 OData 3.0 CSDL'
+            const pr_body = `Automatic download of SharePoint v2.0 (OneDrive) API OData CSDL for clients using OData 3.0.
+
+            Microsoft SharePoint Team Services: \`${{ steps.downloadCsdl.outputs.sharepoint_version }}\``
+            await script(
+              {github, context, core, exec},
+              branch_name,
+              git_commit_message,
+              pr_title,
+              pr_body
+            )
+  odata_4:
+    name: SharePoint Online OData v4
+    runs-on: ubuntu-latest
+    needs: [workflow_id]
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v2
+      - id: checkoutPrBranch
+        name: Swich to new branch for possible PR
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/checkout-pr-branch')
+            await script({github, context, core, exec}, '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}')
+      - id: challenge
+        name: Invoke OAuth2 challenge
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+        run: './scripts/sharepoint-online-bearer-challenge.ps1'
+      - id: getMetadata
+        name: Get Authorization Instance Metadata
+        shell: pwsh
+        env:
+          SHAREPOINT_AUTH_INSTANCE: ${{ steps.challenge.outputs.auth_instance }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+        run: './scripts/sharepoint-online-auth-metadata.ps1'
+      - id: tokenIssuance
+        name: Get SharePoint Access Token
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_CLIENTID: ${{ secrets.SHAREPOINT_CLIENTID }}
+          SHAREPOINT_CLIENTSECRET: ${{ secrets.SHAREPOINT_CLIENTSECRET }}
+          SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
+          SHAREPOINT_RESOURCEID: ${{ steps.challenge.outputs.resource_id }}
+          SHAREPOINT_TOKENENDPOINT: ${{ steps.getMetadata.outputs.token_endpoint }}
+        run: |
+          [void](./scripts/sharepoint-online-access-token.ps1)
+      - id: downloadCsdl
+        name: Download CSDL in XML Format
+        shell: pwsh
+        env:
+          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
+          SHAREPOINT_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+        run: |
+          ./scripts/sharepoint-online-download-v2.0-csdl-xml.ps1 `
+            -OutFile ./sharepoint-v2.0-odata-v4_0.csdl.xml -ODataVersion "4.0"
+      - name: Commit and create/update PR (if any changes)
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/commit-updatecreate-pr')
+            const branch_name = '${{ needs.workflow_id.outputs.branch_name }}/${{ github.job }}'
+            const git_commit_message = 'SharePoint v2.0 OData API 4.0 CSDL, Microsoft SharePoint Team Service version ${{ steps.downloadCsdl.outputs.sharepoint_version }}'
+            const pr_title = 'Update SharePoint v2.0 OData 4.0 CSDL'
+            const pr_body = `Automatic download of SharePoint v2.0 (OneDrive) API OData CSDL for clients using OData 4.0.
+
+            Microsoft SharePoint Team Services: \`${{ steps.downloadCsdl.outputs.sharepoint_version }}\``
+            await script(
+              {github, context, core, exec},
+              branch_name,
+              git_commit_message,
+              pr_title,
+              pr_body
+            )
