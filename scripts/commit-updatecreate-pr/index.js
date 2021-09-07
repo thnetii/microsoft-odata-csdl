@@ -85,7 +85,10 @@ module.exports = async (
       ...pullsDefinition
     })
   } else {
-    pullsResp = await github.pulls.create(pullsDefinition)
+    pullsResp = await github.pulls.create({
+      base: context.sha,
+      ...pullsDefinition
+    })
     pullNumber = pullsResp.data[0].number
   }
   if (pullNumber > 0) {
