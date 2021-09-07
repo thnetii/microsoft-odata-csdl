@@ -76,8 +76,8 @@ module.exports = async (
     body: pr_body,
     ...pullsQuery
   }
-  let pullNumber = undefined
-  let pullsResp = await github.pulls.list(pullsQuery)
+  var pullNumber = undefined
+  const pullsResp = await github.pulls.list(pullsQuery)
   const pullObject = pullsResp && pullsResp.data
     ? pullsResp.data.find(pr => pr.head.ref.endsWith(branch_name))
     : undefined
