@@ -85,11 +85,11 @@ module.exports = async (
       ...pullsDefinition
     })
   } else {
-    pullsResp = await github.pulls.create({
+    const pullsResp = await github.pulls.create({
       base: context.ref,
       ...pullsDefinition
     })
-    pullNumber = pullsResp.data[0].number
+    pullNumber = pullsResp.data.number
   }
   if (pullNumber > 0) {
     core.setOutput('prNumber', pullNumber)
