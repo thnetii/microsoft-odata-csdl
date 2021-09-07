@@ -83,11 +83,13 @@ module.exports = async (
     : undefined
   if (pullObject) {
     pullNumber = pullObject.number
+    core.debug(`Found existing PR with PR number ${pullNumber}`)
     _ = await github.pulls.update({
       pull_number: pullNumber,
       ...pullsDefinition
     })
   } else {
+    core.debug('No existing PR found, creating new PR.')
     const pullsResp = await github.pulls.create({
       base: context.ref,
       ...pullsDefinition
