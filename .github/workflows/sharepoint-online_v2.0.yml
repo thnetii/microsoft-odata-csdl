@@ -82,7 +82,8 @@ jobs:
         run: |
           ./scripts/sharepoint-online-download-v2.0-csdl-xml.ps1 `
             -OutFile ./sharepoint-v2.0-odata-v4_0.csdl.xml -ODataVersion "4.0"
-      - name: Commit and create/update PR (if any changes)
+      - id: createPr
+        name: Commit and create/update PR (if any changes)
         uses: actions/github-script@v4
         with:
           script: |
@@ -99,6 +100,17 @@ jobs:
               git_commit_message,
               pr_title,
               pr_body
+            )
+      - name: Add Labels to Pull Request
+        if: ${{ steps.createPr.outputs.prNumber }} != ${{ null }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/add-labels-pr')
+            await script(
+              {github, context},
+              ${{ steps.createPr.outputs.prNumber }},
+              ['csdl-update', 'sharepoint', 'odata-v4.0']
             )
   odata_4_01:
     name: SharePoint Online v2.0 OData v4.01
@@ -148,7 +160,8 @@ jobs:
         run: |
           ./scripts/sharepoint-online-download-v2.0-csdl-xml.ps1 `
             -OutFile ./sharepoint-v2.0-odata-v4_01.csdl.xml -ODataVersion "4.01"
-      - name: Commit and create/update PR (if any changes)
+      - id: createPr
+        name: Commit and create/update PR (if any changes)
         uses: actions/github-script@v4
         with:
           script: |
@@ -165,4 +178,15 @@ jobs:
               git_commit_message,
               pr_title,
               pr_body
+            )
+      - name: Add Labels to Pull Request
+        if: ${{ steps.createPr.outputs.prNumber }} != ${{ null }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/add-labels-pr')
+            await script(
+              {github, context},
+              ${{ steps.createPr.outputs.prNumber }},
+              ['csdl-update', 'sharepoint', 'odata-v4.01']
             )

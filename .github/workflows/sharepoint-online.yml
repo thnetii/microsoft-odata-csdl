@@ -84,7 +84,8 @@ jobs:
             -OutFile ./sharepoint-odata-v3_0.csdl.xml -ODataVersion "3.0" `
             -EdmNamespace  "http://schemas.microsoft.com/ado/2009/11/edm" `
             -EdmxNamespace "http://schemas.microsoft.com/ado/2007/06/edmx"
-      - name: Commit and create/update PR (if any changes)
+      - id: createPr
+        name: Commit and create/update PR (if any changes)
         uses: actions/github-script@v4
         with:
           script: |
@@ -101,6 +102,17 @@ jobs:
               git_commit_message,
               pr_title,
               pr_body
+            )
+      - name: Add Labels to Pull Request
+        if: ${{ steps.createPr.outputs.prNumber }} != ${{ null }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/add-labels-pr')
+            await script(
+              {github, context},
+              ${{ steps.createPr.outputs.prNumber }},
+              ['csdl-update', 'sharepoint', 'odata-v3']
             )
   odata_4:
     name: SharePoint Online OData v4
@@ -152,7 +164,8 @@ jobs:
             -OutFile ./sharepoint-odata-v4_0.csdl.xml -ODataVersion "4.0" `
             -EdmNamespace  "http://docs.oasis-open.org/odata/ns/edm" `
             -EdmxNamespace "http://docs.oasis-open.org/odata/ns/edmx"
-      - name: Commit and create/update PR (if any changes)
+      - id: createPr
+        name: Commit and create/update PR (if any changes)
         uses: actions/github-script@v4
         with:
           script: |
@@ -169,4 +182,15 @@ jobs:
               git_commit_message,
               pr_title,
               pr_body
+            )
+      - name: Add Labels to Pull Request
+        if: ${{ steps.createPr.outputs.prNumber }} != ${{ null }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const script = require('./scripts/add-labels-pr')
+            await script(
+              {github, context},
+              ${{ steps.createPr.outputs.prNumber }},
+              ['csdl-update', 'sharepoint', 'odata-v4.0']
             )
