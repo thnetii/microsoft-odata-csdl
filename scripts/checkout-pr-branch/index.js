@@ -20,7 +20,7 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
     _ = await github.git.getRef({
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: `refs/heads/${branch_name}`,
+      ref: `heads/${branch_name}`,
     })
   } catch (err) {
     /** @type { import('@octokit/request-error').RequestError } */
