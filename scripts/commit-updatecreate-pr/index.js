@@ -14,25 +14,7 @@ module.exports = async (
   { github, context, core, exec },
   branch_name, git_commit_message, pr_title, pr_body
 ) => {
-  // git config user.name github-actions
-  // git config user.email github-actions@github.com
   let gitExitCode = 0
-  gitExitCode = await exec.exec('git', [
-    'config',
-    'user.name',
-    'github-actions'
-  ])
-  if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`)
-  }
-  gitExitCode = await exec.exec('git', [
-    'config',
-    'user.email',
-    'github-actions@github.com'
-  ])
-  if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`)
-  }
 
   _ = await exec.exec('git', [
     'add',
