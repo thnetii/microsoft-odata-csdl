@@ -40,6 +40,11 @@ if ($ODataVersion) {
 $ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
     Write-Host "::debug::SharePoint Teams Services version: v${_}"
     Write-Host "::set-output name=sharepoint_version::${_}"
+    [System.Xml.XmlDocument]$CsdlDocument = $CsdlResponse
+    $SpTeamServivcesComment = $CsdlDocument.CreateComment(
+        "Microsoft SharePoint Team Services v${_}"
+    )
+    [void]$CsdlDocument.InsertBefore($SpTeamServivcesComment, $CsdlDocument.DocumentElement.FirstChild)
 }
 
 $SpDataNamespaceSelection = Select-Xml -Xml $CsdlResponse -Namespace @{
