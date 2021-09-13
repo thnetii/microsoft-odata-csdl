@@ -44,7 +44,7 @@ $ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
     $SpTeamServivcesComment = $CsdlDocument.CreateComment(
         "Microsoft SharePoint Team Services v${_}"
     )
-    [void]$CsdlDocument.InsertBefore($SpTeamServivcesComment, $CsdlDocument.DocumentElement.FirstChild)
+    [void]$CsdlDocument.InsertBefore($SpTeamServivcesComment, $CsdlDocument.DocumentElement)
 }
 
 $SpDataNamespaceSelection = Select-Xml -Xml $CsdlResponse -Namespace @{
