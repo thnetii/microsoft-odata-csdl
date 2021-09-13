@@ -15,7 +15,7 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
     branch_name,
     'HEAD'
   ])
-  core.debug(`Asking GitHub API about ref named ${branch_name}`)
+  core.info(`Asking GitHub API about ref named ${branch_name}`)
   try {
     _ = await github.git.getRef({
       owner: context.repo.owner,
@@ -29,10 +29,10 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
     if (name !== 'HttpError' || status !== 404) {
       throw err
     }
-    core.debug('git ref not found, no merge necessary')
+    core.info('git ref not found, no merge necessary')
     return
   }
-  core.debug('git ref found, staging merge')
+  core.info('git ref found, staging merge')
   git_exitcode = await exec.exec('git', [
     'merge',
     '--no-commit',
