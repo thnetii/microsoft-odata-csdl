@@ -32,6 +32,10 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
     core.info('git ref not found, no merge necessary')
     return
   }
+  git_exitcode = await exec.exec('git', [
+    'fetch',
+    'origin'
+  ])
   core.info('git ref found, staging merge')
   git_exitcode = await exec.exec('git', [
     'merge',
