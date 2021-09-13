@@ -42,7 +42,9 @@ $ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
     $SpTeamServivcesComment = $CsdlDocument.CreateComment(
         " Microsoft SharePoint Team Services v${_} "
     )
-    [void]$CsdlDocument.InsertBefore($SpTeamServivcesComment, $CsdlDocument.DocumentElement)
+    $SpTeamServivcesComment = $CsdlDocument.InsertBefore($SpTeamServivcesComment, $CsdlDocument.DocumentElement)
+    $SpWhitespace = $CsdlDocument.CreateWhitespace([System.Environment]::NewLine)
+    [void]$CsdlDocument.InsertAfter($SpWhitespace, $SpTeamServivcesComment)
 }
 
 $OutFileItem = New-Item -ItemType File $OutFile -Force
