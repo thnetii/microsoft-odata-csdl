@@ -5,16 +5,17 @@ param (
     [string]$WebUrl = $ENV:SHAREPOINT_WEBURL,
     [securestring]$AccessToken = (ConvertTo-SecureString -String $ENV:SHAREPOINT_ACCESSTOKEN -AsPlainText -Force),
     [string]$ODataVersion,
+    [ValidateSet("v2.0", "v2.1")][string]$ApiVersion = "v2.1",
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]$OutFile
 )
 
 [uri]$WebUri = $WebUrl
 [uri]$CsdlUri = if ($WebUri.LocalPath.EndsWith("/")) {
-    New-Object uri $WebUri, "_api/v2.1/`$metadata"
+    New-Object uri $WebUri, "_api/$ApiVersion/`$metadata"
 }
 else {
-    $WebUri.GetLeftPart([System.UriPartial]::Path) + "/_api/v2.1/`$metadata"
+    $WebUri.GetLeftPart([System.UriPartial]::Path) + "/_api/$ApiVersion/`$metadata"
 }
 $ResponseHeaders = $null
 $Request = @{
