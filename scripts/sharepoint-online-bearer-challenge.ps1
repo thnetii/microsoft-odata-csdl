@@ -22,6 +22,10 @@ $BearerChallengeParameters = @{
     SkipHttpErrorCheck      = $true
 }
 [void](Invoke-RestMethod @BearerChallengeParameters)
+$ResponseHeaders["MicrosoftSharePointTeamServices"] | ForEach-Object {
+    Write-Host "::debug::SharePoint Teams Services version: v${_}"
+    Write-Host "::set-output name=sharepoint_version::${_}"
+}
 [string]$WwwAuthenticateHeader = $ResponseHeaders["WWW-Authenticate"]
 $WwwAuthenticateMethodPrefix = "Bearer "
 [string]$BearerParameters = if (

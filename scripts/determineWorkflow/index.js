@@ -13,6 +13,7 @@ module.exports = async ({github, context, core}) => {
     run_id: context.runId
   })
   const { workflow_id } = run_resp.data
-  core.debug(`Determined ${workflow_id} as the wokflow id of the current run`)
+  core.info(`Determined ${workflow_id} as the wokflow id of the current run`)
   core.setOutput('workflow_id', workflow_id)
+  core.setOutput('branch_name', `workflows/w${workflow_id}`)
 }
