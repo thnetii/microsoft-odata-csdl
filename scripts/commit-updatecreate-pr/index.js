@@ -1,6 +1,6 @@
 /**
  * @param {{
- *  github: import('@octokit/rest').Octokit,
+ *  github: InstanceType<typeof import('@actions/github/lib/utils').GitHub>,
  *  context: import('@actions/github/lib/context').Context,
  *  core: import('@actions/core'),
  *  exec: import('@actions/exec')
@@ -59,20 +59,20 @@ module.exports = async (
     ...pullsQuery
   }
   var pullNumber = undefined
-  const pullsResp = await github.pulls.list(pullsQuery)
+  const pullsResp = await github.rest.pulls.list(pullsQuery)
   const pullObject = pullsResp && pullsResp.data
     ? pullsResp.data.find(pr => pr.head.ref.endsWith(branch_name))
     : undefined
   if (pullObject) {
     pullNumber = pullObject.number
     core.debug(`Found existing PR with PR number ${pullNumber}`)
-    _ = await github.pulls.update({
+    _ = await github.rest.pulls.update({
       pull_number: pullNumber,
       ...pullsDefinition
     })
   } else {
     core.debug('No existing PR found, creating new PR.')
-    const pullsResp = await github.pulls.create({
+    const pullsResp = await github.rest.pulls.create({
       base: context.ref,
       ...pullsDefinition
     })

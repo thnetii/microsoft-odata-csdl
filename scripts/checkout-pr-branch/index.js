@@ -1,6 +1,6 @@
 /**
  * @param {{
- *  github: import('@octokit/rest').Octokit,
+ *  github: InstanceType<typeof import('@actions/github/lib/utils').GitHub>,
  *  context: import('@actions/github/lib/context').Context,
  *  core: import('@actions/core'),
  *  exec: import('@actions/exec')
@@ -17,7 +17,7 @@ module.exports = async ({ github, context, core, exec }, branch_name) => {
   ])
   core.info(`Asking GitHub API about ref named ${branch_name}`)
   try {
-    _ = await github.git.getRef({
+    _ = await github.rest.git.getRef({
       owner: context.repo.owner,
       repo: context.repo.repo,
       ref: `heads/${branch_name}`,
