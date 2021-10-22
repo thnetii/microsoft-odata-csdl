@@ -1,0 +1,111 @@
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '04 7 * * *'
+      # Trigger every day at 07:04
+permissions:
+  contents: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: pwsh
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  odata_csdl:
+    name: Download Microsoft Graph OData CSDL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v2
+      - id: determineWorkflow
+        name: Get current workflow id
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const script = require('./scripts/determineWorkflow')
+            await script({github, context, core})
+      - name: Git configure comitter identity
+        shell: bash
+        run: |
+          git config user.name  "github-actions"
+          git config user.email "github-actions@github.com"
+      - id: checkoutPrBranch
+        name: Swich to new branch for possible PR
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const script = require('./scripts/checkout-pr-branch')
+            await script({github, context, core, exec}, '${{ steps.determineWorkflow.outputs.branch_name }}')
+      - id: getAuthMetadata
+        name: Get Authorization Instance Metadata
+        shell: pwsh
+        env:
+          MSIDP_AUTH_INSTANCE: https://login.microsoftonline.com
+          MSIDP_TENANTID: ${{ secrets.MSIDP_TENANTID }}
+        run: './scripts/microsoft-idp-auth-metadata.ps1'
+      - id: tokenIssuance
+        name: Get Microsoft Graph Access Token
+        shell: pwsh
+        env:
+          MSIDP_CLIENTID: ${{ secrets.MSIDP_CLIENTID }}
+          MSIDP_CLIENTSECRET: ${{ secrets.MSIDP_CLIENTSECRET }}
+          MSIDP_RESOURCEID: https://graph.microsoft.com
+          MSIDP_TOKENENDPOINT: ${{ steps.getAuthMetadata.outputs.token_endpoint }}
+        run: |
+          [void](./scripts/microsoft-idp-access-token.ps1)
+      - id: downloadCsdl_v1_0_OData_v4_01
+        name: Download v1.0 CSDL in XML Format (OData 4.01)
+        shell: pwsh
+        env:
+          MSGRAPH_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+        run: |
+          ./scripts/microsoft-graph-download-csdl-xml.ps1 `
+            -OutFile ./microsoft-graph-v1.0.csdl.xml -ODataVersion "4.01"
+      - id: downloadCsdl_beta_OData_v4_01
+        name: Download beta CSDL in XML Format (OData 4.01)
+        shell: pwsh
+        env:
+          MSGRAPH_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
+        run: |
+          ./scripts/microsoft-graph-download-csdl-xml.ps1 `
+            -OutFile ./microsoft-graph-beta.csdl.xml -ODataVersion "4.01" `
+            -ApiVersion "beta"
+      - id: createPr
+        name: Commit and create/update PR (if any changes)
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const script = require('./scripts/commit-updatecreate-pr')
+            const branch_name = '${{ steps.determineWorkflow.outputs.branch_name }}'
+            const git_commit_message = 'Microsoft Graph OData CSDL'
+            const pr_title = 'Update Microsoft Graph OData CSDL'
+            const pr_body = `Automatic download of Microsoft Graph API OData CSDL.
+
+            Includes:
+            - Microsoft Graph v1.0 OData API for OData-Version 4.0 clients
+            - Microsoft Graph beta OData API for OData-Version 4.0 clients`
+            await script(
+              {github, context, core, exec},
+              branch_name,
+              git_commit_message,
+              pr_title,
+              pr_body
+            )
+      - name: Add Labels to Pull Request
+        if: ${{ format('{0}', steps.createPr.outputs.prNumber) != '' }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const script = require('./scripts/add-labels-pr')
+            await script(
+              {github, context},
+              ${{ steps.createPr.outputs.prNumber }},
+              ['csdl-update', 'microsoft-graph', 'odata-v4']
+            )
