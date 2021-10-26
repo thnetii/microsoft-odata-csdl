@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.21806 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.21813 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -903,6 +903,7 @@
         <NavigationProperty Name="photoStreamPost" Type="oneDrive.photoStreamPost" ContainsTarget="true" />
         <NavigationProperty Name="posts" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamPostReactionByCaller" Type="oneDrive.photoStreamReaction" ContainsTarget="true" />
+        <NavigationProperty Name="recommendedInvitees" Type="Collection(oneDrive.recommendedInvitee)" ContainsTarget="true" />
         <NavigationProperty Name="recommendations" Type="oneDrive.recommendations" ContainsTarget="true" />
         <NavigationProperty Name="recommendedActionSet" Type="oneDrive.recommendedActionSet" ContainsTarget="true" />
         <NavigationProperty Name="recommendedItems" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -1234,6 +1235,14 @@
         <Property Name="photoStreamName" Type="Edm.String" />
         <Property Name="memberCount" Type="Edm.Int32" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="recommendedInvitee" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="relationship" Type="oneDrive.Source" />
+        <Property Name="invitee" Type="oneDrive.identitySet" />
       </EntityType>
       <EntityType Name="recommendations" OpenType="true">
         <Key>
@@ -1854,7 +1863,7 @@
         <Property Name="isSitePagesEnabled" Type="Edm.Boolean" />
         <Property Name="isSyncButtonForOneDriveEnabled" Type="Edm.Boolean" />
         <Property Name="isUnmanagedSyncClientForTenantEnabled" Type="Edm.Boolean" />
-        <Property Name="oneDriveDefaultStorageQuota" Type="Edm.Int32" />
+        <Property Name="oneDriveDefaultStorageQuota" Type="Edm.Int64" />
         <Property Name="sharingAllowedDomainList" Type="Collection(Edm.String)" />
         <Property Name="sharingBlockedDomainList" Type="Collection(Edm.String)" />
         <Property Name="sharingCapability" Type="oneDrive.SharingCapabilities" />
@@ -2721,6 +2730,7 @@
         <Property Name="fileSystemInfo" Type="oneDrive.fileSystemInfo" />
         <Property Name="driveItemSource" Type="oneDrive.driveItemSource" />
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
+        <Property Name="media" Type="oneDrive.mediaUploadableProperties" />
       </ComplexType>
       <ComplexType Name="commentDisabledFacet" OpenType="true">
         <Property Name="isDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -2877,6 +2887,7 @@
         <Property Name="noiseSuppressionEnabledByDefault" Type="Edm.Boolean" />
         <Property Name="isNoiseSuppressionControlShown" Type="Edm.Boolean" />
         <Property Name="isTranscriptionShown" Type="Edm.Boolean" />
+        <Property Name="spokenLanguageTag" Type="Edm.String" />
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
         <Property Name="viewpoint" Type="oneDrive.mediaViewpoint" />
         <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.mediaThumbnailSet)" ContainsTarget="true" />
@@ -2885,6 +2896,9 @@
       </ComplexType>
       <ComplexType Name="mediaSource" OpenType="true">
         <Property Name="contentCategory" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="mediaUploadableProperties" OpenType="true">
+        <Property Name="spokenLanguageTag" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="mediaViewpoint" OpenType="true">
         <Property Name="isTranscriptionAllowed" Type="Edm.Boolean" />
@@ -3612,6 +3626,11 @@
         <Member Name="ExistingExternalUserSharingOnly" Value="3" />
         <Member Name="UnknownFutureValue" Value="4" />
       </EnumType>
+      <EnumType Name="Source">
+        <Member Name="None" Value="0" />
+        <Member Name="PhotoStream" Value="1" />
+        <Member Name="FamilyMember" Value="2" />
+      </EnumType>
       <EnumType Name="longRunningOperationStatus" />
       <EnumType Name="columnTypes">
         <Member Name="note" Value="0" />
@@ -4078,6 +4097,10 @@
         <Parameter Name="message" Type="Edm.String" />
         <ReturnType Type="oneDrive.photoStreamAccessRequest" />
       </Action>
+      <Function Name="recommendedInvitees" IsBound="true" EntitySetPath="bindingParameter/recommendedInvitees" IsComposable="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="Collection(oneDrive.recommendedInvitee)" />
+      </Function>
       <Action Name="proposeBlobWrites" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="datacenter" Type="Edm.String" Nullable="false" />
