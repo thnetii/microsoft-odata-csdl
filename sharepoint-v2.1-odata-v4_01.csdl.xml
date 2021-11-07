@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.21813 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.21827 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -129,6 +129,13 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="isExempt" Type="Edm.Boolean" />
+        <Property Name="mode" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="objectState" Type="Edm.String" />
+        <Property Name="policyApplyStatus" Type="Edm.String" />
+        <Property Name="policyAssociationConfigId" Type="Edm.Guid" />
+        <Property Name="policyRuleConfigId" Type="Edm.Guid" />
         <Property Name="scope" Type="Edm.String" />
         <Property Name="workload" Type="Edm.String" />
       </EntityType>
@@ -136,11 +143,16 @@
         <Key>
           <PropertyRef Name="id" />
         </Key>
+        <Property Name="comment" Type="Edm.String" />
+        <Property Name="defaultPolicyRuleConfigId" Type="Edm.Guid" />
+        <Property Name="description" Type="Edm.String" />
         <Property Name="enabled" Type="Edm.Boolean" />
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="mode" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="policyBlob" Type="Edm.String" />
+        <Property Name="policyFlags" Type="Edm.Int32" />
+        <Property Name="priority" Type="Edm.Int32" />
         <Property Name="scenario" Type="Edm.String" />
       </EntityType>
       <EntityType Name="diagnosticProfile" OpenType="true">
@@ -221,6 +233,7 @@
         <Property Name="shareByEmailEnabled" Type="Edm.Boolean" />
         <Property Name="shareByLinkEnabled" Type="Edm.Boolean" />
         <Property Name="sharepointIds" Type="oneDrive.sharepointIds" />
+        <Property Name="siteAdministratorsCount" Type="Edm.Int32" />
         <Property Name="siteCollection" Type="oneDrive.diagnosticSiteCollection" />
         <Property Name="template" Type="oneDrive.siteTemplate" />
         <Property Name="webUrl" Type="Edm.String" />
@@ -838,6 +851,7 @@
         <Property Name="deleted" Type="oneDrive.deleted" />
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="excelSurvey" Type="oneDrive.excelSurvey" />
+        <Property Name="expiration" Type="oneDrive.driveItemExpiration" />
         <Property Name="file" Type="oneDrive.file" />
         <Property Name="fileSystemInfo" Type="oneDrive.fileSystemInfo" />
         <Property Name="folder" Type="oneDrive.folder" />
@@ -1315,6 +1329,14 @@
         <Property Name="s640" Type="oneDrive.thumbnail" />
         <Property Name="source" Type="oneDrive.thumbnail" />
         <Property Name="type" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="mediaTimelineEvent" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="type" Type="Edm.String" />
+        <NavigationProperty Name="thumbnail" Type="oneDrive.mediaThumbnailSet" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="timelineeventstream" OpenType="true">
         <Property Name="cTag" Type="Edm.String" />
@@ -2038,6 +2060,7 @@
       <ComplexType Name="itemStreamProperties" OpenType="true" />
       <ComplexType Name="MeetingValidationResult" OpenType="true">
         <Property Name="isValid" Type="Edm.Boolean" />
+        <Property Name="relatedGroupId" Type="Edm.Guid" />
       </ComplexType>
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
@@ -2148,6 +2171,10 @@
         <Property Name="folderName" Type="Edm.String" />
         <Property Name="openWithApp" Type="oneDrive.openWithApp" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="driveItemExpiration" OpenType="true">
+        <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="isExpirationModifiable" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="driveWacBootstrapInfo" OpenType="true">
         <Property Name="wacComplianceRegion" Type="Edm.String" />
@@ -2609,6 +2636,7 @@
         <Property Name="supportAgentUnlocks" Type="Edm.Int32" />
         <Property Name="lockdownItemAccess" Type="Edm.String" />
         <Property Name="disabledOneDriveUrl" Type="Edm.String" />
+        <Property Name="paymentAccountStatus" Type="oneDrive.UnsuccessfulPaymentAccountStatus" />
         <NavigationProperty Name="pendingOperation" Type="oneDrive.operation" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="excelSurvey" OpenType="true" />
@@ -2731,6 +2759,7 @@
         <Property Name="driveItemSource" Type="oneDrive.driveItemSource" />
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
         <Property Name="media" Type="oneDrive.mediaUploadableProperties" />
+        <Property Name="expiration" Type="oneDrive.driveItemExpiration" />
       </ComplexType>
       <ComplexType Name="commentDisabledFacet" OpenType="true">
         <Property Name="isDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -2891,6 +2920,7 @@
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
         <Property Name="viewpoint" Type="oneDrive.mediaViewpoint" />
         <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.mediaThumbnailSet)" ContainsTarget="true" />
+        <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
       </ComplexType>
@@ -3097,6 +3127,12 @@
       </ComplexType>
       <ComplexType Name="quota" OpenType="true">
         <Property Name="deleted" Type="Edm.Int64" />
+        <Property Name="displayDeletedUsedQuota" Type="Edm.String" />
+        <Property Name="displayExceededQuota" Type="Edm.String" />
+        <Property Name="displayRemainingQuota" Type="Edm.String" />
+        <Property Name="displayTotalQuota" Type="Edm.String" />
+        <Property Name="displayUsedQuota" Type="Edm.String" />
+        <Property Name="exceeded" Type="Edm.Int64" />
         <Property Name="fileCount" Type="Edm.Int64" />
         <Property Name="remaining" Type="Edm.Int64" />
         <Property Name="state" Type="Edm.String" />
@@ -3104,12 +3140,6 @@
         <Property Name="total" Type="Edm.Int64" />
         <Property Name="used" Type="Edm.Int64" />
         <Property Name="vaultQuota" Type="oneDrive.vaultQuota" />
-        <Property Name="exceeded" Type="Edm.Int64" />
-        <Property Name="displayTotalQuota" Type="Edm.String" />
-        <Property Name="displayUsedQuota" Type="Edm.String" />
-        <Property Name="displayDeletedUsedQuota" Type="Edm.String" />
-        <Property Name="displayRemainingQuota" Type="Edm.String" />
-        <Property Name="displayExceededQuota" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="rating" OpenType="true">
         <Property Name="rating" Type="Edm.Int32" />
@@ -3600,6 +3630,10 @@
         <Member Name="Adult" Value="3" />
         <Member Name="NotAdult" Value="4" />
         <Member Name="MinorNoParentalConsentRequired" Value="5" />
+      </EnumType>
+      <EnumType Name="UnsuccessfulPaymentAccountStatus">
+        <Member Name="InGracePeriod" Value="0" />
+        <Member Name="AccountOnHold" Value="1" />
       </EnumType>
       <EnumType Name="EntitlementType">
         <Member Name="PaidPlan" Value="0" />
@@ -4376,6 +4410,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
         <ReturnType Type="oneDrive.termStoreAnalytics" />
       </Function>
+      <Function Name="imageTags" IsBound="true" IsComposable="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
+        <ReturnType Type="oneDrive.termStoreMediaTags" />
+      </Function>
       <Function Name="getOperationsByInterval" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
         <Parameter Name="startDateTime" Type="Edm.String" />
@@ -4391,7 +4429,9 @@
       </Function>
       <EntityContainer Name="oneDrive">
         <EntitySet Name="diagnostics" EntityType="oneDrive.Diagnostic" />
+        <EntitySet Name="consumerSiteAppConfigs" EntityType="oneDrive.consumerSiteAppConfigs" />
         <EntitySet Name="drives" EntityType="oneDrive.drive" />
+        <EntitySet Name="entitlements" EntityType="oneDrive.entitlement" />
         <EntitySet Name="shares" EntityType="oneDrive.share" />
         <EntitySet Name="subscriptions" EntityType="oneDrive.subscription" />
         <EntitySet Name="memberOf" EntityType="oneDrive.memberOf" />
