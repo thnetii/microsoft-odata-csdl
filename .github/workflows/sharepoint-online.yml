@@ -68,17 +68,6 @@ jobs:
           SHAREPOINT_TOKENENDPOINT: ${{ steps.getAuthMetadata.outputs.token_endpoint }}
         run: |
           [void](./scripts/sharepoint-online-access-token.ps1)
-      - id: downloadCsdl_OData_v3_0
-        name: Download CSDL in XML Format
-        shell: pwsh
-        env:
-          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
-          SHAREPOINT_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
-        run: |
-          ./scripts/sharepoint-online-download-csdl-xml.ps1 `
-            -OutFile ./sharepoint-odata-v3_0.csdl.xml -ODataVersion "3.0" `
-            -EdmNamespace  "http://schemas.microsoft.com/ado/2009/11/edm" `
-            -EdmxNamespace "http://schemas.microsoft.com/ado/2007/06/edmx"
       - id: downloadCsdl_OData_v4_0
         name: Download CSDL in XML Format
         shell: pwsh
@@ -124,7 +113,6 @@ jobs:
             Microsoft SharePoint Team Services: \`${{ steps.challenge.outputs.sharepoint_version }}\`
 
             Includes:
-            - SharePoint OData API for OData-Version 3.0 clients
             - SharePoint OData API for OData-Version 4.0 clients
             - SharePoint v2.0 OData API for OData-Version 4.01 clients
             - SharePoint v2.1 OData API for OData-Version 4.01 clients`
@@ -144,5 +132,5 @@ jobs:
             await script(
               {github, context},
               ${{ steps.createPr.outputs.prNumber }},
-              ['csdl-update', 'sharepoint', 'odata-v3', 'odata-v4']
+              ['csdl-update', 'sharepoint', 'odata-v4']
             )
