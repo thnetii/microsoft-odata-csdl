@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.21924 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22008 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -30,6 +30,14 @@
         <Property Name="Name" Type="Edm.String" />
         <Property Name="PropertyTypeFullName" Type="Edm.String" />
         <Property Name="ReadOnly" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="HomeSitesDetails">
+        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="PortalAndOrgNewsSiteReference">
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
@@ -308,6 +316,7 @@
       <ComplexType Name="AsyncReadOptions">
         <Property Name="IncludeDirectDescendantsOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IncludeExtendedMetadata" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IncludePermission" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IncludeSecurity" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IncludeVersions" Type="Edm.Boolean" Nullable="false" />
         <Property Name="StartChangeToken" Type="Edm.String" />
@@ -1065,6 +1074,12 @@
         <Property Name="LastModified" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="Path" Type="SP.ResourcePath" />
         <Property Name="Title" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="UpdateTemplateInfoV2">
+        <Property Name="NewName" Type="Edm.String" />
+        <Property Name="Operation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
+        <Property Name="Url" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="UpdateTemplateInfo">
         <Property Name="NewName" Type="Edm.String" />
@@ -3242,7 +3257,7 @@
       </Action>
       <Action Name="CopyTemplateAndGetMetadata" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
-        <Parameter Name="Name" Type="Edm.String" />
+        <Parameter Name="Id" Type="Edm.String" />
         <ReturnType Type="SP.TemplatizationMetaData" />
       </Action>
       <Action Name="CreateDocumentAndGetEditLink" IsBound="true">
@@ -3341,6 +3356,11 @@
         <Parameter Name="Name" Type="Edm.String" />
         <Parameter Name="Published" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.TemplateMetaData" />
+      </Function>
+      <Function Name="GetCAAETemplateMetadataV2" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="Id" Type="Edm.String" />
+        <ReturnType Type="Collection(SP.PlaceholderV2)" />
       </Function>
       <Action Name="GetChanges" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -3680,6 +3700,11 @@
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="Name" Type="Edm.String" />
         <Parameter Name="updateTemplateInfo" Type="SP.UpdateTemplateInfo" />
+      </Action>
+      <Action Name="UpdateCAAETemplateV2" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="Id" Type="Edm.String" />
+        <Parameter Name="updateTemplateInfo" Type="SP.UpdateTemplateInfoV2" />
       </Action>
       <Action Name="UpdateFormProcessingModelRetentionLabel" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -20373,9 +20398,12 @@
       <ComplexType Name="ListHomeItem">
         <Property Name="color" Type="Edm.String" />
         <Property Name="icon" Type="Edm.String" />
+        <Property Name="isDefaultDocumentLibrary" Type="Edm.Boolean" />
         <Property Name="isDocLib" Type="Edm.Boolean" />
         <Property Name="listId" Type="Edm.String" />
         <Property Name="listUrl" Type="Edm.String" />
+        <Property Name="siteAcronym" Type="Edm.String" />
+        <Property Name="siteColor" Type="Edm.String" />
         <Property Name="siteIconUrl" Type="Edm.String" />
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="siteTitle" Type="Edm.String" />
@@ -27179,6 +27207,11 @@
       <Function Name="GetSiteSubscriptionProperty" IsComposable="true">
         <Parameter Name="tenantId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="propertyName" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Function>
+      <Function Name="GetSubstrateAzureConnection" IsComposable="true">
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <Parameter Name="siteId" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Function>
       <Function Name="IsSiteDeletable" IsComposable="true">
