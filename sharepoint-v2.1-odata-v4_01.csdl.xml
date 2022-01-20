@@ -282,6 +282,7 @@
         <Property Name="odbQuotaBoostEnabled" Type="Edm.String" />
         <Property Name="overrideODBQuotaThresholdForBoost" Type="Edm.String" />
         <Property Name="portalUrl" Type="Edm.String" />
+        <Property Name="spoDsMode" Type="oneDrive.SpodsMode" />
         <Property Name="storeProperties" Type="oneDrive.diagnosticPropertyValueSet" />
         <Property Name="subscriptionLockedDueToOverUsage" Type="Edm.String" />
         <NavigationProperty Name="diagnosticLists" Type="Collection(oneDrive.diagnosticList)" ContainsTarget="true" />
@@ -3093,6 +3094,13 @@
         <Property Name="webPreview" Type="oneDrive.openWithApp" />
         <Property Name="wopi" Type="oneDrive.openWithApp" />
       </ComplexType>
+      <ComplexType Name="fluidClientCapabilities" OpenType="true">
+        <Property Name="canWrite" Type="Edm.Boolean" />
+        <Property Name="canPrint" Type="Edm.Boolean" />
+        <Property Name="canExtract" Type="Edm.Boolean" />
+        <Property Name="supportsCLP" Type="Edm.Boolean" />
+        <Property Name="irmPolicyDetails" Type="oneDrive.irmPolicyDetails" />
+      </ComplexType>
       <ComplexType Name="session" OpenType="true">
         <Property Name="accessLength" Type="Edm.Int64" />
         <Property Name="deltaStorageUrl" Type="Edm.String" />
@@ -3681,6 +3689,18 @@
       <ComplexType Name="preferencesContainer" OpenType="true">
         <Property Name="eTag" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="irmPolicyDetails">
+        <Property Name="irmPolicyTitle" Type="Edm.String" />
+        <Property Name="irmPolicyDescription" Type="Edm.String" />
+      </ComplexType>
+      <EnumType Name="SpodsMode">
+        <Member Name="ADOnly" Value="0" />
+        <Member Name="ADToSqlMigrationInProgress" Value="5" />
+        <Member Name="ADPrimaryDualWrite" Value="10" />
+        <Member Name="DualWrite" Value="15" />
+        <Member Name="SqlReadDualWrite" Value="18" />
+        <Member Name="SQLOnly" Value="20" />
+      </EnumType>
       <EnumType Name="AggregationWindow">
         <Member Name="None" Value="0" />
         <Member Name="Week" Value="7" />
@@ -3985,42 +4005,41 @@
         <Parameter Name="anomalyId" Type="Edm.String" />
         <ReturnType Type="oneDrive.operation" />
       </Action>
-      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.site)" />
-      </Action>
-      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
-        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.columnDefinition)" />
-      </Action>
-      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
-        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.columnDefinition)" />
-      </Action>
-      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.site)" />
-      </Action>
-      <Action Name="remove" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.site)" />
-      </Action>
-      <Action Name="remove" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
-        <ReturnType Type="Collection(oneDrive.site)" />
-      </Action>
       <Action Name="follow" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.item" />
       </Action>
       <Action Name="unfollow" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
+      </Action>
+      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.listItemDetails)" />
+        <Parameter Name="value" Type="oneDrive.listItemDetails" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.listItemDetails)" />
+      </Action>
+      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
+        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.columnDefinition)" />
+      </Action>
+      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
+        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.columnDefinition)" />
+      </Action>
+      <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
+        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.site)" />
+      </Action>
+      <Action Name="remove" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.listItemDetails)" />
+        <Parameter Name="value" Type="oneDrive.listItemDetails" Nullable="false" />
+      </Action>
+      <Action Name="remove" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
+        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.site)" />
       </Action>
       <Action Name="restore" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
