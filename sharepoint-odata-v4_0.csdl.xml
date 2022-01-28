@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22008 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22112 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -30,14 +30,6 @@
         <Property Name="Name" Type="Edm.String" />
         <Property Name="PropertyTypeFullName" Type="Edm.String" />
         <Property Name="ReadOnly" Type="Edm.Boolean" Nullable="false" />
-      </ComplexType>
-      <ComplexType Name="HomeSitesDetails">
-        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
-        <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
-        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="Title" Type="Edm.String" />
-        <Property Name="Url" Type="Edm.String" />
-        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="PortalAndOrgNewsSiteReference">
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
@@ -2154,6 +2146,14 @@
       <EntityType Name="SolutionExporter" />
       <EntityType Name="UserSolution" />
       <EntityType Name="SPHSite" />
+      <EntityType Name="HomeSitesDetails">
+        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
       <EntityType Name="OrganizationNews" />
       <EntityType Name="PinnedItems" Abstract="true" />
       <EntityType Name="FavoriteLists" Abstract="true" />
@@ -9231,6 +9231,27 @@
       <Annotations Target="Microsoft.SharePoint.SmartCache.SmartCacheItem">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.HomeSitesDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Audiences">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/MatchingAudiences">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/SiteId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Title">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Url">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/WebId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.MicroService.MicroServiceManager">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10446,6 +10467,9 @@
       <Annotations Target="SP.Publishing.GetByEntityId(Collection(SP.Publishing.TopicSitePage), Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.GetByEntityIdAndCulture(Collection(SP.Publishing.TopicSitePage), Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.IsContentTypeAvailable(Collection(SP.Publishing.TopicSitePage))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10981,6 +11005,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SPHSite.GetSPHSiteXGeo()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SPHSite.GetXgeoHomeSiteDetail(Edm.Guid, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SPHSite.IsCommSite(Edm.String)">
@@ -18984,6 +19011,12 @@
         <Parameter Name="entityId" Type="Edm.String" />
         <ReturnType Type="SP.Publishing.TopicSitePage" />
       </Function>
+      <Function Name="GetByEntityIdAndCulture" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Collection(SP.Publishing.TopicSitePage)" />
+        <Parameter Name="id" Type="Edm.String" />
+        <Parameter Name="culture" Type="Edm.String" />
+        <ReturnType Type="SP.Publishing.TopicSitePage" />
+      </Function>
       <Function Name="IsContentTypeAvailable" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(SP.Publishing.TopicSitePage)" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -22532,6 +22565,15 @@
       </Action>
     </Schema>
     <Schema Namespace="SP.Taxonomy.ContentTypeSync" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="ContentTypeInfo">
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="Group" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsSealed" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="ParentName" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ContentTypeSyndicationResult">
         <Property Name="FailedContentTypeErrors" Type="Collection(Edm.String)" />
         <Property Name="FailedContentTypeIDs" Type="Collection(Edm.String)" />
@@ -22871,6 +22913,7 @@
         <Property Name="Template" Type="Edm.String" />
         <Property Name="TimeZoneId" Type="Edm.Int32" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
+        <Property Name="TitleTranslations" Type="Collection(SP.SPResourceEntry)" />
         <Property Name="Url" Type="Edm.String" />
         <Property Name="UserCodeMaximumLevel" Type="Edm.Double" Nullable="false" />
         <Property Name="UserCodeWarningLevel" Type="Edm.Double" Nullable="false" />
@@ -23290,9 +23333,9 @@
         <Parameter Name="listName" Type="Edm.String" />
         <ReturnType Type="Collection(SP.ListItem)" />
       </Action>
-      <Function Name="GetHomeSiteDetails" IsBound="true" IsComposable="true">
+      <Function Name="GetHomeSitesDetails" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <ReturnType Type="SP.SPHSiteReference" />
+        <ReturnType Type="Collection(SP.HomeSitesDetails)" />
       </Function>
       <Action Name="GetIdleSessionSignOutForUnmanagedDevices" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -27955,6 +27998,11 @@
       </Action>
       <Action Name="GetSPHSiteXGeo">
         <ReturnType Type="SP.SPHSiteReference" />
+      </Action>
+      <Action Name="GetXgeoHomeSiteDetail">
+        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <ReturnType Type="SP.HomeSitesDetails" />
       </Action>
       <Action Name="IsCommSite">
         <Parameter Name="siteUrl" Type="Edm.String" />
