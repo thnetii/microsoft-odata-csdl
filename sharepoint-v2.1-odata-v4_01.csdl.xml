@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22119 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22202 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1243,6 +1243,7 @@
         <Property Name="photoStreamId" Type="Edm.String" Nullable="false" />
         <Property Name="photoStreamName" Type="Edm.String" />
         <Property Name="memberCount" Type="Edm.Int32" />
+        <Property Name="quota" Type="oneDrive.quota" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="recommendedInvitee" OpenType="true">
@@ -1429,6 +1430,7 @@
         <Property Name="owner" Type="oneDrive.identitySet" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="photoStream" Type="oneDrive.item" ContainsTarget="true" />
+        <NavigationProperty Name="photoStreamMemberships" Type="Collection(oneDrive.photoStreamMembership)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamLink" Type="oneDrive.photoStreamLink" ContainsTarget="true" />
         <NavigationProperty Name="permission" Type="oneDrive.permission" ContainsTarget="true" />
       </EntityType>
@@ -1730,7 +1732,7 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
       </EntityType>
-      <EntityType Name="insights" OpenType="true">
+      <EntityType Name="itemInsights" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
         </Key>
@@ -1744,6 +1746,7 @@
       <EntityType Name="listItem" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="contentType" Type="oneDrive.contentTypeReference" />
         <Property Name="deleted" Type="oneDrive.deleted" />
+        <Property Name="folder" Type="oneDrive.folder" />
         <Property Name="followed" Type="oneDrive.followed" />
         <Property Name="isRestricted" Type="Edm.Boolean" />
         <Property Name="shared" Type="oneDrive.shared" />
@@ -2860,6 +2863,7 @@
         <Property Name="errorType" Type="Edm.String" />
         <Property Name="innerError" Type="oneDrive.error" />
         <Property Name="message" Type="Edm.String" />
+        <Property Name="localizedMessage" Type="Edm.String" />
         <Property Name="stackTrace" Type="Edm.String" />
         <Property Name="throwSite" Type="Edm.String" />
       </ComplexType>
@@ -2928,11 +2932,6 @@
         <Property Name="resultsPending" Type="Edm.Boolean" />
         <Property Name="notSupported" Type="Edm.Boolean" />
         <Property Name="error" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="insight" OpenType="true">
-        <Property Name="type" Type="Edm.String" />
-        <Property Name="name" Type="Edm.String" />
-        <Property Name="rank" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="itemActionStat" OpenType="true">
         <Property Name="actionCount" Type="Edm.Int32" />
@@ -3108,15 +3107,14 @@
         <Property Name="irmPolicyDetails" Type="oneDrive.irmPolicyDetails" />
       </ComplexType>
       <ComplexType Name="session" OpenType="true">
-        <Property Name="accessLength" Type="Edm.Int64" />
         <Property Name="deltaStorageUrl" Type="Edm.String" />
         <Property Name="deltaStreamSocketUrl" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" />
+        <Property Name="refreshSessionDurationSeconds" Type="Edm.Int64" />
         <Property Name="runtimeTenantId" Type="Edm.String" />
         <Property Name="snapshotStorageUrl" Type="Edm.String" />
         <Property Name="socketToken" Type="Edm.String" />
         <Property Name="storageToken" Type="Edm.String" />
-        <Property Name="tokenExpiresAfter" Type="Edm.Int64" />
       </ComplexType>
       <ComplexType Name="organizationAssets" OpenType="true">
         <Property Name="thumbnailUrl" Type="Edm.String" />
@@ -3302,6 +3300,11 @@
         <Property Name="createOnly" Type="Edm.Boolean" />
         <Property Name="status" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+      </ComplexType>
+      <ComplexType Name="siteInsight" OpenType="true">
+        <Property Name="type" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="rank" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="snapshotPolicy" OpenType="true">
         <Property Name="createSnapshot" Type="Edm.Boolean" />
@@ -4432,7 +4435,7 @@
       </Function>
       <Function Name="getInsights" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <ReturnType Type="Collection(oneDrive.insight)" />
+        <ReturnType Type="Collection(oneDrive.siteInsight)" />
       </Function>
       <Function Name="getHubAnalytics" IsBound="true" EntitySetPath="bindingParameter/analytics">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
@@ -4558,7 +4561,7 @@
         <EntitySet Name="tenantStores" EntityType="oneDrive.tenantStore" />
         <EntitySet Name="termStores" EntityType="oneDrive.termStore" />
         <Singleton Name="favorites" Type="oneDrive.favorites" />
-        <Singleton Name="insights" Type="oneDrive.insights" />
+        <Singleton Name="insights" Type="oneDrive.itemInsights" />
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
