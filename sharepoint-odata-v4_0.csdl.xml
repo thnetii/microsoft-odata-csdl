@@ -31,6 +31,14 @@
         <Property Name="PropertyTypeFullName" Type="Edm.String" />
         <Property Name="ReadOnly" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="HomeSitesDetails">
+        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="PortalAndOrgNewsSiteReference">
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
@@ -76,6 +84,10 @@
         <Property Name="GlobalNavNotConfiguredWarning" Type="Edm.String" />
         <Property Name="NotHomeSiteUrlWarning" Type="Edm.String" />
         <Property Name="SearchUrl" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="UserIdInfo">
+        <Property Name="NameId" Type="Edm.String" />
+        <Property Name="NameIdIssuer" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ContentTypeId">
         <Property Name="StringValue" Type="Edm.String" />
@@ -134,6 +146,7 @@
       <ComplexType Name="DocumentGenerationInfo">
         <Property Name="ContentAssemblyFormAnswers" Type="Collection(SP.ContentAssemblyFormAnswer)" />
         <Property Name="FileName" Type="Edm.String" />
+        <Property Name="FolderUrl" Type="Edm.String" />
         <Property Name="IsTempFile" Type="Edm.Boolean" Nullable="false" />
         <Property Name="TempFileUrl" Type="Edm.String" />
       </ComplexType>
@@ -247,10 +260,6 @@
         <Property Name="SharingLinkStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="TrackLinkUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Url" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="UserIdInfo">
-        <Property Name="NameId" Type="Edm.String" />
-        <Property Name="NameIdIssuer" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SmartTemplateContentType">
         <Property Name="Id" Type="Edm.String" />
@@ -2146,14 +2155,6 @@
       <EntityType Name="SolutionExporter" />
       <EntityType Name="UserSolution" />
       <EntityType Name="SPHSite" />
-      <EntityType Name="HomeSitesDetails">
-        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
-        <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
-        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="Title" Type="Edm.String" />
-        <Property Name="Url" Type="Edm.String" />
-        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
-      </EntityType>
       <EntityType Name="OrganizationNews" />
       <EntityType Name="PinnedItems" Abstract="true" />
       <EntityType Name="FavoriteLists" Abstract="true" />
@@ -3100,6 +3101,17 @@
         <Parameter Name="this" Type="SP.SPHSite" />
         <ReturnType Type="SP.SPHSiteReference" />
       </Function>
+      <Action Name="SetSPHSite" IsBound="true">
+        <Parameter Name="this" Type="SP.SPHSite" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
+      <Action Name="SetSPHSiteWithAudience" IsBound="true">
+        <Parameter Name="this" Type="SP.SPHSite" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <Parameter Name="audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
       <Function Name="OrganizationNews">
         <ReturnType Type="SP.OrganizationNews" />
       </Function>
@@ -6941,6 +6953,27 @@
       <Annotations Target="Microsoft.SharePoint.QuickActionMessageCard.SPAccessRequestRefreshStatus">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.HomeSitesDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Audiences">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/MatchingAudiences">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/SiteId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Title">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/Url">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/WebId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.News.DataModel.SerializableType">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7032,6 +7065,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignEntity">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignUserInfo">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignSummary">
@@ -8237,6 +8273,9 @@
       <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/SourceInstanceId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/SourceMySiteHostUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/SourceSiteSubscriptionId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9266,27 +9305,6 @@
       <Annotations Target="Microsoft.SharePoint.SmartCache.SmartCacheItem">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.HomeSitesDetails">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/Audiences">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/MatchingAudiences">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/SiteId">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/Title">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/Url">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.HomeSitesDetails/WebId">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
       <Annotations Target="SP.MicroService.MicroServiceManager">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9678,6 +9696,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints/CdnDefaultEndpoint">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints/CFRMSGraphEndpoint">
@@ -10661,6 +10682,9 @@
       <Annotations Target="Microsoft.SharePoint.Portal.SyncGroupProperties(Microsoft.SharePoint.Portal.GroupService)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Portal.CacheCurrentUserJoinedTeamsResult(Microsoft.SharePoint.Portal.GroupSiteManager, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.CanUserCreateGroup(Microsoft.SharePoint.Portal.GroupSiteManager)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11096,7 +11120,10 @@
       <Annotations Target="SP.SPHSite.IsValidHomeSite(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.SPHSite.SetSPHSite(Edm.String)">
+      <Annotations Target="SP.SetSPHSite(SP.SPHSite, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SetSPHSiteWithAudience(SP.SPHSite, Edm.String, Collection(Edm.Guid))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.PinnedItems.AddItem(Microsoft.SharePoint.ListHome.FavoriteListHomeItem)">
@@ -13078,6 +13105,7 @@
       <EntityType Name="SiteMoveJobEntityData" BaseType="Microsoft.Online.SharePoint.MultiGeo.Service.MoveJobEntityData">
         <Property Name="SourceCompanyId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SourceInstanceId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="SourceMySiteHostUrl" Type="Edm.String" />
         <Property Name="SourceSiteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SourceSiteUrl" Type="Edm.String" />
         <Property Name="TargetCompanyId" Type="Edm.Guid" Nullable="false" />
@@ -20323,6 +20351,11 @@
       <Function Name="GroupSiteManager">
         <ReturnType Type="Microsoft.SharePoint.Portal.GroupSiteManager" />
       </Function>
+      <Action Name="CacheCurrentUserJoinedTeamsResult" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Portal.GroupSiteManager" />
+        <Parameter Name="joinedTeams" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Function Name="CanUserCreateGroup" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Portal.GroupSiteManager" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -21537,13 +21570,25 @@
       <ComplexType Name="CampaignEntity">
         <Property Name="campaignId" Type="Edm.String" />
         <Property Name="channels" Type="Collection(Edm.String)" />
-        <Property Name="contributorIds" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="contributors" Type="Collection(Microsoft.SharePoint.Campaigns.CampaignUserInfo)" />
         <Property Name="description" Type="Edm.String" />
         <Property Name="endDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ownerId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="objectives" Type="Collection(Edm.String)" />
+        <Property Name="owner" Type="Microsoft.SharePoint.Campaigns.CampaignUserInfo" />
         <Property Name="startDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="status" Type="Edm.String" />
+        <Property Name="tags" Type="Collection(Edm.String)" />
         <Property Name="title" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CampaignUserInfo">
+        <Property Name="email" Type="Edm.String" />
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="isExternal" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="loginName" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="principalType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="userId" Type="SP.UserIdInfo" />
+        <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CampaignSummary">
         <Property Name="campaignId" Type="Edm.String" />
@@ -23157,6 +23202,7 @@
         <Property Name="Items" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPOTenantWebTemplate)" />
       </EntityType>
       <EntityType Name="TenantAdminEndpoints">
+        <Property Name="CdnDefaultEndpoint" Type="Edm.String" />
         <Property Name="CFRMSGraphEndpoint" Type="Edm.String" />
         <Property Name="MiniMavenEndpoint" Type="Edm.String" />
         <Property Name="O365AdminCenterEndpoint" Type="Edm.String" />
@@ -23328,6 +23374,8 @@
         <Property Name="PublicCdnAllowedFileTypes" Type="Edm.String" />
         <Property Name="PublicCdnEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PublicCdnOrigins" Type="Collection(Edm.String)" />
+        <Property Name="ReduceTempTokenLifetimeEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ReduceTempTokenLifetimeValue" Type="Edm.Int32" Nullable="false" />
         <Property Name="RequireAcceptingAccountMatchInvitedAccount" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RequireAnonymousLinksExpireInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="ResourceQuota" Type="Edm.Double" Nullable="false" />
@@ -26877,6 +26925,8 @@
         <Property Name="PublicCdnAllowedFileTypes" Type="Edm.String" />
         <Property Name="PublicCdnEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PublicCdnOrigins" Type="Collection(Edm.String)" />
+        <Property Name="ReduceTempTokenLifetimeEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ReduceTempTokenLifetimeValue" Type="Edm.Int32" Nullable="false" />
         <Property Name="RequireAcceptingAccountMatchInvitedAccount" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RequireAnonymousLinksExpireInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="SearchResolveExactEmailOrUPN" Type="Edm.Boolean" Nullable="false" />
@@ -28325,10 +28375,6 @@
         <Parameter Name="siteUrl" Type="Edm.String" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
-      <Action Name="SetSPHSite">
-        <Parameter Name="siteUrl" Type="Edm.String" />
-        <ReturnType Type="Edm.Guid" Nullable="false" />
-      </Action>
     </Schema>
     <Schema Namespace="SP.OrganizationNews" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="GetSiteReference">
@@ -28481,7 +28527,7 @@
         <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
       </Action>
       <Action Name="UpdateCommunication">
-        <Parameter Name="campaignCommunication" Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
+        <Parameter Name="communication" Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
         <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
       </Action>
     </Schema>
