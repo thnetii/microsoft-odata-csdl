@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22209 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22216 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -159,6 +159,10 @@
         <Property Name="JobId" Type="Edm.String" />
         <Property Name="TaskId" Type="Edm.String" />
         <Property Name="TenantName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="LockFileData">
+        <Property Name="lockExpireTimeStamp" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="lockId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="MultiGeoCopyParameters">
         <Property Name="binaryPayload" Type="Edm.Binary" />
@@ -683,6 +687,7 @@
         <Property Name="MediaServiceAutoKeyPoints" Type="Edm.String" />
         <Property Name="MediaServiceAutoTags" Type="Edm.String" />
         <Property Name="MediaServiceDateTaken" Type="Edm.String" />
+        <Property Name="MediaServiceDocTags" Type="Edm.String" />
         <Property Name="MediaServiceEventHashCode" Type="Edm.String" />
         <Property Name="MediaServiceFastMetadata" Type="Edm.String" />
         <Property Name="MediaServiceGenerationTime" Type="Edm.String" />
@@ -1792,6 +1797,7 @@
       <EntityType Name="Web" BaseType="SP.SecurableObject">
         <Property Name="AccessRequestListUrl" Type="Edm.String" />
         <Property Name="AccessRequestSiteDescription" Type="Edm.String" />
+        <Property Name="Acronym" Type="Edm.String" />
         <Property Name="AllowAutomaticASPXPageIndexing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowCreateDeclarativeWorkflowForCurrentUser" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowDesignerForCurrentUser" Type="Edm.Boolean" Nullable="false" />
@@ -3465,6 +3471,11 @@
         <Parameter Name="sourceUrl" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="LockSmartTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="Id" Type="Edm.String" />
+        <ReturnType Type="SP.LockFileData" />
+      </Action>
       <Action Name="ParseDocumentTemplate" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="Name" Type="Edm.String" />
@@ -3479,6 +3490,12 @@
       <Action Name="Recycle" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
+      <Action Name="RefreshLockSmartTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="Id" Type="Edm.String" />
+        <Parameter Name="LockId" Type="Edm.String" />
+        <ReturnType Type="SP.LockFileData" />
       </Action>
       <Action Name="RenderExtendedListFormData" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -3712,6 +3729,11 @@
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="category" Type="Edm.String" />
         <ReturnType Type="SP.FlowSynchronizationResult" />
+      </Action>
+      <Action Name="UnlockSmartTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="Id" Type="Edm.String" />
+        <Parameter Name="LockId" Type="Edm.String" />
       </Action>
       <Action Name="UnpublishMappedView" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -7064,13 +7086,16 @@
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignEntity">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignUserInfo">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignEntity">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignSummary">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.CampaignAnalytics.DimensionsResponse">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.CampaignAnalytics.ReportResponse">
@@ -7080,6 +7105,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportTableRow">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsDimensionsRequest">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportRequest">
@@ -7386,6 +7414,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.MediaServiceUpdateParameters/MachineLearningSampleMeta">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.MediaServiceUpdateParameters/MediaServiceDocTags">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.MediaServiceUpdateParameters/MediaServiceImageTags">
@@ -8562,6 +8593,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Web/AccessRequestSiteDescription">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Web/Acronym">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Activities.SPActivityEntity">
@@ -11334,6 +11368,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Campaigns.UpdateCommunication(Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.CampainAnalytics.GetDimensions(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsDimensionsRequest)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.CampainAnalytics.GetReport(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportRequest)">
@@ -21563,9 +21600,24 @@
     <Schema Namespace="Microsoft.SharePoint.Campaigns" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="CampaignCommunicationEntity">
         <Property Name="campaignId" Type="Edm.String" />
+        <Property Name="channels" Type="Collection(Edm.String)" />
         <Property Name="communicationId" Type="Edm.String" />
+        <Property Name="createdBy" Type="Microsoft.SharePoint.Campaigns.CampaignUserInfo" />
+        <Property Name="lastEditedDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="page" Type="Edm.String" />
         <Property Name="publishingDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="state" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CampaignUserInfo">
+        <Property Name="email" Type="Edm.String" />
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="isExternal" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="loginName" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="principalType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="userId" Type="SP.UserIdInfo" />
+        <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CampaignEntity">
         <Property Name="campaignId" Type="Edm.String" />
@@ -21580,16 +21632,6 @@
         <Property Name="tags" Type="Collection(Edm.String)" />
         <Property Name="title" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="CampaignUserInfo">
-        <Property Name="email" Type="Edm.String" />
-        <Property Name="id" Type="Edm.Int32" Nullable="false" />
-        <Property Name="isExternal" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="loginName" Type="Edm.String" />
-        <Property Name="name" Type="Edm.String" />
-        <Property Name="principalType" Type="Edm.Int32" Nullable="false" />
-        <Property Name="userId" Type="SP.UserIdInfo" />
-        <Property Name="userPrincipalName" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="CampaignSummary">
         <Property Name="campaignId" Type="Edm.String" />
         <Property Name="status" Type="Edm.String" />
@@ -21597,6 +21639,9 @@
       </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.CampaignAnalytics" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="DimensionsResponse">
+        <Property Name="application" Type="Collection(Edm.String)" />
+      </ComplexType>
       <ComplexType Name="ReportResponse">
         <Property Name="dimensions" Type="Collection(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportTableElement)" />
         <Property Name="metrics" Type="Collection(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportTableElement)" />
@@ -21609,6 +21654,7 @@
         <Property Name="dimensionReport" Type="Edm.String" />
         <Property Name="metricReport" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="VinciAnalyticsDimensionsRequest" />
       <ComplexType Name="VinciAnalyticsReportRequest">
         <Property Name="dimensions" Type="Collection(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportTableElement)" />
         <Property Name="metrics" Type="Collection(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportTableElement)" />
@@ -28532,6 +28578,10 @@
       </Action>
     </Schema>
     <Schema Namespace="SP.CampainAnalytics" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="GetDimensions" IsComposable="true">
+        <Parameter Name="request" Type="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsDimensionsRequest" />
+        <ReturnType Type="Microsoft.SharePoint.CampaignAnalytics.DimensionsResponse" />
+      </Function>
       <Action Name="GetReport">
         <Parameter Name="request" Type="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportRequest" />
         <ReturnType Type="Microsoft.SharePoint.CampaignAnalytics.ReportResponse" />
