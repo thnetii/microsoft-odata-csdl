@@ -582,6 +582,7 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="opStreamSession" Type="oneDrive.session" />
+        <Property Name="query" Type="Edm.Stream" />
         <Property Name="ops" Type="Collection(oneDrive.bOp)" />
         <Property Name="fluidEnabled" Type="oneDrive.fluidEnabled" />
         <NavigationProperty Name="snapshots" Type="oneDrive.snapshots" ContainsTarget="true" />
@@ -765,6 +766,9 @@
         <Property Name="video" Type="oneDrive.video" />
         <Property Name="viewCount" Type="oneDrive.viewCount" />
         <Property Name="wacBootstrapInfo" Type="oneDrive.itemWacBootstrapInfo">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </Property>
+        <Property Name="currentUserRole" Type="oneDrive.currentUserRole">
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </Property>
         <Property Name="webDavUrl" Type="Edm.String" />
@@ -1178,6 +1182,7 @@
         <Property Name="q" Type="Edm.Decimal" />
         <Property Name="size" Type="Edm.Int64" />
         <Property Name="url" Type="Edm.String" />
+        <Property Name="content" Type="Edm.Stream" />
       </EntityType>
       <EntityType Name="lens" OpenType="true">
         <Key>
@@ -1456,6 +1461,16 @@
         <Property Name="eventTypes" Type="Collection(Edm.String)" />
         <Property Name="callerData" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="storageQuotaBreakdown" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="manageWebUrl" Type="Edm.String" />
+        <Property Name="used" Type="Edm.Int64" />
+      </EntityType>
+      <EntityType Name="serviceStorageQuotaBreakdown" BaseType="oneDrive.storageQuotaBreakdown" OpenType="true" />
       <EntityType Name="share" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="owner" Type="oneDrive.identitySet" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -1524,6 +1539,7 @@
         <Property Name="shouldShowInVersionHistory" Type="Edm.Boolean" />
         <Property Name="sortable" Type="Edm.Boolean" />
         <Property Name="sourceContentType" Type="oneDrive.contentTypeReference" />
+        <Property Name="staticName" Type="Edm.String" />
         <Property Name="taskOutcome" Type="oneDrive.taskOutcomeColumn" />
         <Property Name="term" Type="oneDrive.termColumn" />
         <Property Name="text" Type="oneDrive.textColumn" />
@@ -2164,6 +2180,15 @@
         <Property Name="termsTopicRequestStatus" Type="Collection(oneDrive.termTopicAssociationRequest)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="tagBatchOperationStatus" OpenType="true">
+        <Property Name="itemId" Type="Edm.String" />
+        <Property Name="error" Type="oneDrive.error" />
+      </ComplexType>
+      <ComplexType Name="tagUpdateInfo" OpenType="true">
+        <Property Name="itemIds" Type="Collection(Edm.String)" />
+        <NavigationProperty Name="tagsToAdd" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
+        <NavigationProperty Name="tagsToDelete" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
+      </ComplexType>
       <ComplexType Name="thumbnail" OpenType="true">
         <Property Name="content" Type="Edm.Stream" />
         <Property Name="height" Type="Edm.Int32" />
@@ -2260,8 +2285,7 @@
         <Property Name="targets" Type="Collection(oneDrive.throttleTarget)" />
       </ComplexType>
       <ComplexType Name="userPreferences" OpenType="true">
-        <Property Name="photoPreferences" Type="oneDrive.preferencesContainer" />
-        <Property Name="emailPreferences" Type="oneDrive.preferencesContainer" />
+        <Property Name="photoPreferences" Type="oneDrive.photoPreferences" />
       </ComplexType>
       <ComplexType Name="vault" OpenType="true">
         <Property Name="root" Type="oneDrive.root" />
@@ -2377,12 +2401,20 @@
       </ComplexType>
       <ComplexType Name="driveWacBootstrapInfo" OpenType="true">
         <Property Name="wacComplianceRegion" Type="Edm.String" />
+        <Property Name="wacBootstrapperUrls" Type="Collection(oneDrive.wacBootstrapperUrl)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="exchangeIds" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="id" Type="Edm.String" />
         <Property Name="documentId" Type="Edm.String" />
         <Property Name="exchangeSource" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="currentUserRole" OpenType="true">
+        <Property Name="readOnly" Type="Edm.Boolean" />
+        <Property Name="blocksDownload" Type="Edm.Boolean" />
+        <Property Name="allowSharing" Type="Edm.Boolean" />
+        <Property Name="allowEdit" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="itemWacBootstrapInfo" OpenType="true">
@@ -2397,6 +2429,19 @@
         <Property Name="userId" Type="Edm.String" />
         <Property Name="wopiSrc" Type="Edm.String" />
         <Property Name="complianceZone" Type="Edm.String" />
+        <Property Name="favIconUrl" Type="Edm.String" />
+        <Property Name="allowedOrigins" Type="Collection(Edm.String)" />
+        <Property Name="hostName" Type="Edm.String" />
+        <Property Name="hostGeo" Type="Edm.String" />
+        <Property Name="isWacViewMode" Type="Edm.Boolean" />
+        <Property Name="sessionId" Type="Edm.String" />
+        <Property Name="wacHostFlightStatus" Type="Collection(oneDrive.wacHostFlightStatus)" />
+        <Property Name="earlySessionStartEnabled" Type="Edm.Boolean" />
+        <Property Name="preseededSessionKey" Type="Edm.String" />
+        <Property Name="preseededWacSessionId" Type="Edm.String" />
+        <Property Name="wacSessionId" Type="Edm.String" />
+        <Property Name="isEduUser" Type="Edm.Boolean" />
+        <Property Name="parentFolderWebUrl" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="listInfo" OpenType="true">
@@ -3025,6 +3070,7 @@
         <Property Name="recordingEndDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
         <Property Name="viewpoint" Type="oneDrive.mediaViewpoint" />
+        <Property Name="areExtendedFeaturesEnabled" Type="Edm.Boolean" />
         <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.mediaThumbnailSet)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
@@ -3365,6 +3411,13 @@
         <Property Name="type" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="system" OpenType="true" />
+      <ComplexType Name="tagBatchOperationStatuses" OpenType="true">
+        <Property Name="errorItems" Type="Collection(oneDrive.tagBatchOperationStatus)" />
+      </ComplexType>
+      <ComplexType Name="unifiedStorageQuota" BaseType="oneDrive.quota" OpenType="true">
+        <Property Name="manageWebUrl" Type="Edm.String" />
+        <NavigationProperty Name="services" Type="Collection(oneDrive.serviceStorageQuotaBreakdown)" ContainsTarget="true" />
+      </ComplexType>
       <ComplexType Name="upgradeOptions" OpenType="true">
         <Property Name="storagePlans" Type="Collection(oneDrive.purchasablePlan)" />
         <Property Name="officePlans" Type="Collection(oneDrive.purchasablePlan)" />
@@ -3686,6 +3739,11 @@
       </ComplexType>
       <ComplexType Name="uploadRequest" />
       <ComplexType Name="samsungMotionPhoto" />
+      <ComplexType Name="wacHostFlightStatus">
+        <Property Name="key" Type="Edm.String" />
+        <Property Name="isEnabled" Type="Edm.Boolean" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="throttleTarget">
         <Property Name="key" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
@@ -3703,6 +3761,11 @@
         <Property Name="enforcer" Type="Edm.String" />
         <Property Name="retryAfter" Type="Edm.Duration" />
         <Property Name="amount" Type="Edm.Int64" />
+      </ComplexType>
+      <ComplexType Name="wacBootstrapperUrl">
+        <Property Name="app" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="quotaDetail">
         <Property Name="base" Type="Edm.Int64" />
@@ -3739,8 +3802,9 @@
         <Property Name="canAddPrincipalScope" Type="oneDrive.sharingPrincipalScope" />
         <Property Name="canRequestGrantAccess" Type="oneDrive.sharingAbilityStatus" />
       </ComplexType>
-      <ComplexType Name="preferencesContainer" OpenType="true">
+      <ComplexType Name="photoPreferences">
         <Property Name="eTag" Type="Edm.String" />
+        <Property Name="autoTagging" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="irmPolicyDetails">
         <Property Name="irmPolicyTitle" Type="Edm.String" />
@@ -3779,11 +3843,11 @@
         <Member Name="auto" Value="2" />
       </EnumType>
       <EnumType Name="SharingCapabilities">
-        <Member Name="Disabled" Value="0" />
-        <Member Name="ExternalUserSharingOnly" Value="1" />
-        <Member Name="ExternalUserAndGuestSharing" Value="2" />
-        <Member Name="ExistingExternalUserSharingOnly" Value="3" />
-        <Member Name="UnknownFutureValue" Value="4" />
+        <Member Name="disabled" Value="0" />
+        <Member Name="externalUserSharingOnly" Value="1" />
+        <Member Name="externalUserAndGuestSharing" Value="2" />
+        <Member Name="existingExternalUserSharingOnly" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
       <EnumType Name="SiteType">
         <Member Name="Group" Value="0" />
@@ -3887,16 +3951,16 @@
         <Member Name="reuse" Value="1" />
       </EnumType>
       <EnumType Name="ImageTaggingChoice">
-        <Member Name="Disabled" Value="0" />
-        <Member Name="Basic" Value="1" />
-        <Member Name="Enhanced" Value="2" />
-        <Member Name="UnknownFutureValue" Value="3" />
+        <Member Name="disabled" Value="0" />
+        <Member Name="basic" Value="1" />
+        <Member Name="enhanced" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
       </EnumType>
       <EnumType Name="SharingDomainRestrictionMode">
-        <Member Name="None" Value="0" />
-        <Member Name="AllowList" Value="1" />
-        <Member Name="BlockList" Value="2" />
-        <Member Name="UnknownFutureValue" Value="3" />
+        <Member Name="none" Value="0" />
+        <Member Name="allowList" Value="1" />
+        <Member Name="blockList" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
       </EnumType>
       <EnumType Name="TermGroupScope">
         <Member Name="global" Value="0" />
@@ -4365,10 +4429,16 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.memberOf)" />
         <ReturnType Type="Collection(oneDrive.siteInfo)" />
       </Function>
+      <Action Name="batchUpdateTags" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+      </Action>
       <Function Name="customSize" IsBound="true" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.thumbnailSet" />
         <Parameter Name="id" Type="Edm.String" Nullable="false" />
         <ReturnType Type="oneDrive.thumbnail" />
+      </Function>
+      <Function Name="unifiedStorageQuota" IsComposable="true">
+        <ReturnType Type="oneDrive.unifiedStorageQuota" />
       </Function>
       <Action Name="createUploadSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
@@ -4630,6 +4700,7 @@
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
+        <FunctionImport Name="unifiedStorageQuota" Function="oneDrive.unifiedStorageQuota" IncludeInServiceDocument="true" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
       </EntityContainer>
     </Schema>
