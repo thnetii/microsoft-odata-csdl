@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22323 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22330 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1794,6 +1794,27 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="listItemVersion" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="published" Type="oneDrive.publication">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </Property>
+        <NavigationProperty Name="fields" Type="oneDrive.fieldValueSet" ContainsTarget="true">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="documentSetVersion" BaseType="oneDrive.listItemVersion" OpenType="true">
+        <Property Name="comment" Type="Edm.String" />
+        <Property Name="items" Type="Collection(oneDrive.documentSetVersionItem)" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="shouldCaptureMinorVersion" Type="Edm.Boolean" />
+      </EntityType>
       <EntityType Name="itemInsights" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1815,6 +1836,7 @@
         <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="attachments" Type="Collection(oneDrive.attachment)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
+        <NavigationProperty Name="documentSetVersions" Type="Collection(oneDrive.documentSetVersion)" ContainsTarget="true" />
         <NavigationProperty Name="fields" Type="oneDrive.fieldValueSet" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="rtnSubscriptions" Type="Collection(oneDrive.rtnSubscription)" ContainsTarget="true" />
@@ -1854,20 +1876,6 @@
         <NavigationProperty Name="associatedContentType" Type="oneDrive.contentType" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
-      <EntityType Name="listItemVersion" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
-        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
-        <Property Name="published" Type="oneDrive.publication">
-          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-        </Property>
-        <NavigationProperty Name="fields" Type="oneDrive.fieldValueSet" ContainsTarget="true">
-          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-        </NavigationProperty>
       </EntityType>
       <EntityType Name="memberOf" OpenType="true">
         <Key>
@@ -2316,6 +2324,11 @@
       </ComplexType>
       <ComplexType Name="viewCount" OpenType="true">
         <Property Name="visitorViewCount" Type="Edm.Double" />
+      </ComplexType>
+      <ComplexType Name="documentSetVersionItem" OpenType="true">
+        <Property Name="itemId" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="versionId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="extractSensitivityLabelsResult" OpenType="true">
         <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
