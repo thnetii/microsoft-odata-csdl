@@ -28,14 +28,6 @@ jobs:
       - id: get-workflow-id
         name: Get current workflow id
         uses: thnetii/gh-actions/src/get-workflow-id@main
-      - id: determineWorkflow
-        name: Get current workflow id
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const workflow_id = '${{ steps.get-workflow-id.outputs.workflow-id }}';
-            core.setOutput('workflow_id', workflow_id);
-            core.setOutput('branch_name', `workflows/w${workflow_id}`);
       - name: Git configure comitter identity
         shell: bash
         run: |
@@ -47,7 +39,7 @@ jobs:
         with:
           script: |
             const script = require('./scripts/checkout-pr-branch')
-            await script({github, context, core, exec}, '${{ steps.determineWorkflow.outputs.branch_name }}')
+            await script({github, context, core, exec}, 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}')
       - id: challenge
         name: Invoke OAuth2 challenge
         shell: pwsh
@@ -110,7 +102,7 @@ jobs:
         with:
           script: |
             const script = require('./scripts/commit-updatecreate-pr')
-            const branch_name = '${{ steps.determineWorkflow.outputs.branch_name }}'
+            const branch_name = ''workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}''
             const git_commit_message = 'SharePoint OData CSDL, Microsoft SharePoint Team Service version ${{ steps.challenge.outputs.sharepoint_version }}'
             const pr_title = 'Update SharePoint OData CSDL'
             const pr_body = `Automatic download of SharePoint API OData CSDL.

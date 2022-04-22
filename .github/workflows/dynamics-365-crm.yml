@@ -24,13 +24,9 @@ jobs:
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
-      - id: determineWorkflow
+      - id: get-workflow-id
         name: Get current workflow id
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const script = require('./scripts/determineWorkflow')
-            await script({github, context, core})
+        uses: thnetii/gh-actions/src/get-workflow-id@main
       - name: Git configure comitter identity
         shell: bash
         run: |
@@ -42,7 +38,7 @@ jobs:
         with:
           script: |
             const script = require('./scripts/checkout-pr-branch')
-            await script({github, context, core, exec}, '${{ steps.determineWorkflow.outputs.branch_name }}')
+            await script({github, context, core, exec}, 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}')
       - id: getAuthMetadata
         name: Get Authorization Instance Metadata
         shell: pwsh
@@ -75,7 +71,7 @@ jobs:
         with:
           script: |
             const script = require('./scripts/commit-updatecreate-pr')
-            const branch_name = '${{ steps.determineWorkflow.outputs.branch_name }}'
+            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
             const git_commit_message = 'Microsoft Dynamics 365 CRM OData CSDL'
             const pr_title = 'Update Microsoft Dynamics 365 CRM OData CSDL'
             const pr_body = `Automatic download of Dynamics 365 CRM WebAPI OData CSDL.
