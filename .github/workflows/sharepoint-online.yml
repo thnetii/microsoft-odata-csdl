@@ -24,13 +24,18 @@ jobs:
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - id: get-workflow-id
+        name: Get current workflow id
+        uses: thnetii/gh-actions/src/get-workflow-id@main
       - id: determineWorkflow
         name: Get current workflow id
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/determineWorkflow')
-            await script({github, context, core})
+            const workflow_id = '${{ steps.get-workflow-id.outputs.workflow-id }}';
+            core.setOutput('workflow_id', workflow_id);
+            core.setOutput('branch_name', `workflows/w${workflow_id}`);
       - name: Git configure comitter identity
         shell: bash
         run: |
