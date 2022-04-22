@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22330 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22406 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -161,6 +161,7 @@
         <Property Name="ContentAssemblyFormAnswers" Type="Collection(SP.ContentAssemblyFormAnswer)" />
         <Property Name="FileName" Type="Edm.String" />
         <Property Name="FolderUrl" Type="Edm.String" />
+        <Property Name="Format" Type="Edm.Int32" Nullable="false" />
         <Property Name="IsTempFile" Type="Edm.Boolean" Nullable="false" />
         <Property Name="TempFileUrl" Type="Edm.String" />
       </ComplexType>
@@ -584,6 +585,13 @@
         <Property Name="BypassSharedLock" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DeleteIfEmpty" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ETagMatch" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="GetListsParameters">
+        <Property Name="ListCollectionPosition" Type="SP.ListCollectionPosition" />
+        <Property Name="RowLimit" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="ListCollectionPosition">
+        <Property Name="PagingInfo" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="GroupCreationInformation">
         <Property Name="Description" Type="Edm.String" />
@@ -2403,6 +2411,7 @@
       </EntityType>
       <EntityType Name="RelatedItemManager" />
       <EntityType Name="ServerSettings" Abstract="true" />
+      <EntityType Name="SharedWithMeItemCollection" Abstract="true" />
       <EntityType Name="SharingResult">
         <Key>
           <PropertyRef Name="Name" />
@@ -4213,6 +4222,11 @@
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="DecodedUrl" Type="Edm.String" />
         <ReturnType Type="SP.ListItem" />
+      </Function>
+      <Function Name="GetLists" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="getListsParams" Type="SP.GetListsParameters" />
+        <ReturnType Type="Collection(SP.List)" />
       </Function>
       <Function Name="GetListUsingPath" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -10866,7 +10880,7 @@
       <Annotations Target="Microsoft.SharePoint.Portal.PinToTeam(Microsoft.SharePoint.Portal.GroupSiteManager, Microsoft.SharePoint.Portal.PinToTeamParams)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Portal.RecentAndJoinedTeams(Microsoft.SharePoint.Portal.GroupSiteManager, Edm.Boolean, Edm.Boolean, Edm.Boolean)">
+      <Annotations Target="Microsoft.SharePoint.Portal.RecentAndJoinedTeams(Microsoft.SharePoint.Portal.GroupSiteManager, Edm.Boolean, Edm.Boolean, Edm.Boolean, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.SPHubSitesUtility()">
@@ -11707,6 +11721,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecentListProxy.GetRecentListsProxy(Edm.Int32)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SharedWithMeItemCollection.GetSubstrateSharedWithMeItems()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SmartCache.Update(Edm.String)">
@@ -20588,6 +20605,7 @@
         <Parameter Name="includeRecent" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="includeTeams" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="includePinned" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="existingJoinedTeamsData" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.Portal.RecentAndJoinedTeamsResponse" />
       </Function>
       <Function Name="SharePointHomeServiceContextBuilder">
@@ -21838,6 +21856,22 @@
       <ComplexType Name="TenantAdminListItemColumnValue">
         <Property Name="columnName" Type="Edm.String" />
         <Property Name="columnValue" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="TenantAdminPolicyAutomationExecutionHistory">
+        <Property Name="CorrelationId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="EndTime" Type="Edm.DateTimeOffset" />
+        <Property Name="ExecutionDetails" Type="Edm.String" />
+        <Property Name="ExpectedStartTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="FailureReason" Type="Edm.String" />
+        <Property Name="ImpactedDataFileURL" Type="Edm.String" />
+        <Property Name="ParentExecutionId" Type="Edm.Guid" />
+        <Property Name="PolicyId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="PolicyVersion" Type="Edm.Int32" Nullable="false" />
+        <Property Name="RetryCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="StartTime" Type="Edm.DateTimeOffset" />
+        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
+        <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="WorkItemType" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="TenantAdminRecentAction">
         <Property Name="adminActionId" Type="Edm.String" />
@@ -23285,6 +23319,13 @@
         <Property Name="WebsCount" Type="Edm.Int32" Nullable="false" />
       </EntityType>
       <EntityType Name="SPOGroup" />
+      <EntityType Name="SPOMalwareFile">
+        <Property Name="FilePath" Type="SP.ResourcePath" />
+        <Property Name="MalwareInfo" Type="Edm.String" />
+        <Property Name="MalwareStatus" Type="Edm.Byte" Nullable="false" />
+        <Property Name="SiteURL" Type="Edm.String" />
+        <NavigationProperty Name="File" Type="SP.File" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="SPOPortalLaunchValidator" />
       <EntityType Name="SPOTenantCdnPolicy">
         <Property Name="PolicyType" Type="Edm.Int32" Nullable="false" />
@@ -23429,6 +23470,7 @@
         <Property Name="IsCollabMeetingNotesFluidEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsFluidEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsHubSitesMultiGeoFlightEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsLoopEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMnAFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultiGeo" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
@@ -23484,6 +23526,7 @@
         <Property Name="ShowEveryoneClaim" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowEveryoneExceptExternalUsersClaim" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowNGSCDialogForSyncOnODB" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShowOpenInDesktopOptionForSyncedFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowPeoplePickerSuggestionsForGuestUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SignInAccelerationDomain" Type="Edm.String" />
         <Property Name="SocialBarOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -23669,6 +23712,10 @@
         <Parameter Name="groupId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="displayName" Type="Edm.String" />
+      </Action>
+      <Action Name="GetMalwareFileStream" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOMalwareFile" />
+        <ReturnType Type="Edm.Stream" />
       </Action>
       <Function Name="TenantAdminEndpoints">
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints" />
@@ -24042,6 +24089,12 @@
       <Function Name="RenderIBSegmentListFilterData" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListFilterDataParameters" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
+      <Function Name="RenderPolicyExecutionsHistory" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
+        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
         <ReturnType Type="Edm.Stream" />
       </Function>
       <Action Name="RenderRecentAdminActions" IsBound="true">
@@ -27034,6 +27087,7 @@
         <Property Name="ShowEveryoneClaim" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowEveryoneExceptExternalUsersClaim" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowNGSCDialogForSyncOnODB" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShowOpenInDesktopOptionForSyncedFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowPeoplePickerSuggestionsForGuestUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SignInAccelerationDomain" Type="Edm.String" />
         <Property Name="SocialBarOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -29169,6 +29223,11 @@
       <Action Name="IsSharePointOnline">
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
+    </Schema>
+    <Schema Namespace="SP.SharedWithMeItemCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="GetSubstrateSharedWithMeItems" IsComposable="true">
+        <ReturnType Type="Edm.String" />
+      </Function>
     </Schema>
     <Schema Namespace="SP.SmartCache" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="Update">
