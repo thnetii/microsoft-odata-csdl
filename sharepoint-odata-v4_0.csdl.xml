@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22504 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22511 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -4036,6 +4036,10 @@
         <Parameter Name="permissionMask" Type="SP.BasePermissions" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="EnsureEduClassSetup" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="EnsureTenantAppCatalog" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="callerId" Type="Edm.String" />
@@ -5186,6 +5190,11 @@
       <Action Name="CancelUpload" IsBound="true">
         <Parameter Name="this" Type="SP.File" />
         <Parameter Name="uploadId" Type="Edm.Guid" Nullable="false" />
+      </Action>
+      <Action Name="ChangeContentStorageSchema" IsBound="true">
+        <Parameter Name="this" Type="SP.File" />
+        <Parameter Name="desiredSchema" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="CheckAccessAndPostViewAuditEvent" IsBound="true">
         <Parameter Name="this" Type="SP.File" />
@@ -10007,7 +10016,19 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreLoopSharingCapability">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreRequestFilesLinkEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreRequestFilesLinkExpirationInDays">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreSharingCapability">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/GuestSharingGroupAllowListInTenantByPrincipalIdentity">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/IsMultipleHomeSitesFlightEnabled">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveLoopDefaultSharingLinkRole">
@@ -10017,6 +10038,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveLoopSharingCapability">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveRequestFilesLinkEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveRequestFilesLinkExpirationInDays">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/Sites">
@@ -11645,6 +11672,9 @@
       <Annotations Target="SP.Web.DefaultDocumentLibraryUrl(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.EnsureEduClassSetup(SP.Web)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.EnsureTenantAppCatalog(SP.Web, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -12342,6 +12372,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SetSiteUserGroups(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Microsoft.Online.SharePoint.TenantAdministration.SiteUserGroupsData)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.ValidateMultipleHomeSitesParameterExists(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Internal.Add(Collection(Microsoft.Online.SharePoint.TenantAdministration.Internal.SPO3rdPartyAADPermissionGrant), Edm.String, Edm.String, Edm.String)">
@@ -22221,17 +22254,21 @@
         <Property Name="canDeleteManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canDeleteReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canDeleteReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canDeleteSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetEditLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canGetSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canHaveExternalUsers" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageEditLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canManageSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="linkExpiration" Type="SP.Sharing.SharingLinkExpirationAbilityStatus" />
         <Property Name="passwordProtected" Type="SP.Sharing.SharingLinkPasswordAbilityStatus" />
+        <Property Name="submitOnlylinkExpiration" Type="SP.Sharing.SharingLinkExpirationAbilityStatus" />
         <Property Name="supportsRestrictedView" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="trackLinkUsers" Type="SP.Sharing.SharingAbilityStatus" />
       </ComplexType>
@@ -23441,6 +23478,8 @@
         <Property Name="ReadOnlyAccessPolicy" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ReadOnlyForUnmanagedDevices" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RelatedGroupId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="RequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="RequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="RestrictedToRegion" Type="Edm.Int32" Nullable="false" />
         <Property Name="SandboxedCodeActivationCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="SensitivityLabel" Type="Edm.Guid" Nullable="false" />
@@ -23565,6 +23604,9 @@
         <Property Name="CoreLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
@@ -23624,6 +23666,7 @@
         <Property Name="IsLoopEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMnAFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultiGeo" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsMultipleHomeSitesFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientRestrictionFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsWBFluidEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -23648,6 +23691,8 @@
         <Property Name="OneDriveLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveStorageQuota" Type="Edm.Int64" Nullable="false" />
         <Property Name="OptOutOfGrooveBlock" Type="Edm.Boolean" Nullable="false" />
         <Property Name="OptOutOfGrooveSoftBlock" Type="Edm.Boolean" Nullable="false" />
@@ -24376,6 +24421,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewId" Type="Edm.String" />
         <Parameter Name="viewXml" Type="Edm.String" />
+      </Action>
+      <Action Name="ValidateMultipleHomeSitesParameterExists" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="hasParameters" Type="Edm.Boolean" Nullable="false" />
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.Online.SharePoint.MigrationCenter.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -26487,8 +26536,11 @@
       </Action>
       <Action Name="ReportContentProcessingStatus" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Client.Search.Administration.SiteMeTAInfoProvider" />
+        <Parameter Name="webId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="listId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="uniqueId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="azureContainerSASToken" Type="Edm.String" />
+        <Parameter Name="azureContainerEncryptionKey" Type="Edm.Binary" />
         <Parameter Name="priority" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="errorCode" Type="Edm.Int64" Nullable="false" />
         <Parameter Name="errorDescription" Type="Edm.String" />
@@ -27211,6 +27263,9 @@
         <Property Name="CoreLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
@@ -27271,6 +27326,8 @@
         <Property Name="OneDriveLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="OwnerAnonymousNotification" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PreventExternalUsersFromResharing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ProvisionSharedWithEveryoneFolder" Type="Edm.Boolean" Nullable="false" />
