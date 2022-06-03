@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22504 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22518 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -104,9 +104,20 @@
         <Property Name="Email" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ApprovalRequest">
+        <Property Name="AwaitAll" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Details" Type="Edm.String" />
         <Property Name="Id" Type="Edm.String" />
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ApprovalsCreateRequestParameters">
+        <Property Name="approvers" Type="Edm.String" />
+        <Property Name="awaitAll" Type="Edm.Boolean" />
+        <Property Name="details" Type="Edm.String" />
+        <Property Name="etag" Type="Edm.String" />
+        <Property Name="itemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="listId" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ApprovalsProperties">
         <Property Name="ApproversAwaitAll" Type="Edm.Boolean" Nullable="false" />
@@ -114,8 +125,8 @@
         <Property Name="ApproversFixed" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ApproverSourceType" Type="Edm.Int32" Nullable="false" />
         <Property Name="ApproverSourceValue" Type="Edm.String" />
-        <Property Name="IsConfigured" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="IsProvisioned" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ProvisioningError" Type="Edm.String" />
+        <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ContentAssemblyFileInfo">
         <Property Name="FileUrl" Type="Edm.String" />
@@ -3107,6 +3118,8 @@
         <Parameter Name="allowInaccessible" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="allFilesOffset" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="isConsumerTenant" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="sharerId" Type="Edm.String" />
+        <Parameter Name="sharedGroupId" Type="Edm.String" />
         <ReturnType Type="Collection(Microsoft.SharePoint.Portal.UserProfiles.SharedWithMeDocument)" />
       </Function>
       <Function Name="GetSharedWithPersonDocs" IsBound="true" IsComposable="true">
@@ -4036,6 +4049,10 @@
         <Parameter Name="permissionMask" Type="SP.BasePermissions" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="EnsureEduClassSetup" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="EnsureTenantAppCatalog" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="callerId" Type="Edm.String" />
@@ -5186,6 +5203,11 @@
       <Action Name="CancelUpload" IsBound="true">
         <Parameter Name="this" Type="SP.File" />
         <Parameter Name="uploadId" Type="Edm.Guid" Nullable="false" />
+      </Action>
+      <Action Name="ChangeContentStorageSchema" IsBound="true">
+        <Parameter Name="this" Type="SP.File" />
+        <Parameter Name="desiredSchema" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="CheckAccessAndPostViewAuditEvent" IsBound="true">
         <Parameter Name="this" Type="SP.File" />
@@ -9995,6 +10017,9 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/AddressbarLinkPermission">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/AllowAnonymousMeetingParticipantsToAccessWhiteboards">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/AnyoneLinkTrackUsers">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10007,7 +10032,19 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreLoopSharingCapability">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreRequestFilesLinkEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreRequestFilesLinkExpirationInDays">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreSharingCapability">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/GuestSharingGroupAllowListInTenantByPrincipalIdentity">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/IsMultipleHomeSitesFlightEnabled">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveLoopDefaultSharingLinkRole">
@@ -10017,6 +10054,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveLoopSharingCapability">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveRequestFilesLinkEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/OneDriveRequestFilesLinkExpirationInDays">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/Sites">
@@ -11645,6 +11688,9 @@
       <Annotations Target="SP.Web.DefaultDocumentLibraryUrl(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.EnsureEduClassSetup(SP.Web)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.EnsureTenantAppCatalog(SP.Web, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11981,7 +12027,7 @@
       <Annotations Target="SP.Approvals.CancelItemRequest(Edm.String, Edm.Int32, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Approvals.CreateItemRequest(Edm.String, Edm.Int32, Edm.String, Edm.String, Edm.String)">
+      <Annotations Target="SP.Approvals.CreateItemRequest(SP.ApprovalsCreateRequestParameters)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Approvals.Disable(Edm.String)">
@@ -12342,6 +12388,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SetSiteUserGroups(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Microsoft.Online.SharePoint.TenantAdministration.SiteUserGroupsData)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.ValidateMultipleHomeSitesParameterExists(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Internal.Add(Collection(Microsoft.Online.SharePoint.TenantAdministration.Internal.SPO3rdPartyAADPermissionGrant), Edm.String, Edm.String, Edm.String)">
@@ -21994,7 +22043,22 @@
         <Property Name="StartTime" Type="Edm.DateTimeOffset" />
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
         <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="WorkItemType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PolicyWorkItemType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="TenantAdminPolicyDefinition">
+        <Property Name="createdBy" Type="Edm.String" />
+        <Property Name="lastUpdatedTime" Type="Edm.DateTimeOffset" />
+        <Property Name="policyCreatedTime" Type="Edm.DateTimeOffset" />
+        <Property Name="policyCustomName" Type="Edm.String" />
+        <Property Name="PolicyDefinition" Type="Edm.String" />
+        <Property Name="policyFrequencyUnit" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyFrequencyValue" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="policyState" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyTemplate" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyVersion" Type="Edm.Int32" Nullable="false" />
+        <Property Name="updatedBy" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="TenantAdminRecentActionPayload">
         <Property Name="adminActionId" Type="Edm.String" />
@@ -22221,17 +22285,21 @@
         <Property Name="canDeleteManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canDeleteReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canDeleteReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canDeleteSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetEditLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canGetReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canGetSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canHaveExternalUsers" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageEditLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageManageListLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageReadLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="canManageReviewLink" Type="SP.Sharing.SharingAbilityStatus" />
+        <Property Name="canManageSubmitOnlyLink" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="linkExpiration" Type="SP.Sharing.SharingLinkExpirationAbilityStatus" />
         <Property Name="passwordProtected" Type="SP.Sharing.SharingLinkPasswordAbilityStatus" />
+        <Property Name="submitOnlylinkExpiration" Type="SP.Sharing.SharingLinkExpirationAbilityStatus" />
         <Property Name="supportsRestrictedView" Type="SP.Sharing.SharingAbilityStatus" />
         <Property Name="trackLinkUsers" Type="SP.Sharing.SharingAbilityStatus" />
       </ComplexType>
@@ -23128,6 +23196,15 @@
         <Property Name="IsReadOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Value" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="CreatePolicyRequest">
+        <Property Name="policyCustomName" Type="Edm.String" />
+        <Property Name="policyDefinition" Type="Edm.String" />
+        <Property Name="policyFrequencyUnit" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyFrequencyValue" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="policyTemplate" Type="Edm.Int32" Nullable="false" />
+        <Property Name="policyType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="CustomFormUrl">
         <Property Name="IsReadOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Value" Type="Edm.String" />
@@ -23441,6 +23518,8 @@
         <Property Name="ReadOnlyAccessPolicy" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ReadOnlyForUnmanagedDevices" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RelatedGroupId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="RequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="RequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="RestrictedToRegion" Type="Edm.Int32" Nullable="false" />
         <Property Name="SandboxedCodeActivationCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="SensitivityLabel" Type="Edm.Guid" Nullable="false" />
@@ -23530,6 +23609,7 @@
         <Property Name="AIBuilderSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="AIBuilderSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="AIBuilderSiteListFileName" Type="Edm.String" />
+        <Property Name="AllowAnonymousMeetingParticipantsToAccessWhiteboards" Type="Edm.Int32" Nullable="false" />
         <Property Name="AllowCommentsTextOnEmailEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowDownloadingNonWebViewableFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowedDomainListForSyncClient" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -23565,6 +23645,9 @@
         <Property Name="CoreLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
@@ -23624,6 +23707,7 @@
         <Property Name="IsLoopEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMnAFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultiGeo" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsMultipleHomeSitesFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientRestrictionFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsWBFluidEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -23648,6 +23732,8 @@
         <Property Name="OneDriveLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveStorageQuota" Type="Edm.Int64" Nullable="false" />
         <Property Name="OptOutOfGrooveBlock" Type="Edm.Boolean" Nullable="false" />
         <Property Name="OptOutOfGrooveSoftBlock" Type="Edm.Boolean" Nullable="false" />
@@ -23922,10 +24008,19 @@
         <Parameter Name="siteUrl" Type="Edm.String" />
         <Parameter Name="hubSiteId" Type="Edm.Guid" Nullable="false" />
       </Action>
+      <Action Name="CreatePolicyDefinition" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="policyInputParameters" Type="Microsoft.Online.SharePoint.TenantAdministration.CreatePolicyRequest" />
+        <ReturnType Type="SP.ListItem" />
+      </Action>
       <Action Name="CreateSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="siteCreationProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteCreationProperties" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SpoOperation" />
+      </Action>
+      <Action Name="DeletePolicyDefinition" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="itemId" Type="Edm.Int32" Nullable="false" />
       </Action>
       <Action Name="ExportAdminListToCSV" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -24254,6 +24349,12 @@
         <Parameter Name="parameters" Type="SP.RenderListFilterDataParameters" />
         <ReturnType Type="Edm.Stream" />
       </Function>
+      <Action Name="RenderPolicyDefinitionList" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
+        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
+        <ReturnType Type="Edm.Stream" />
+      </Action>
       <Function Name="RenderPolicyExecutionsHistory" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
@@ -24265,6 +24366,11 @@
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
         <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
         <ReturnType Type="Edm.Stream" />
+      </Action>
+      <Action Name="ReorderHomeSites" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="homeSitesSiteIds" Type="Collection(Edm.Guid)" Nullable="false" />
+        <ReturnType Type="Collection(SP.HomeSitesDetails)" />
       </Action>
       <Action Name="RestoreDeletedSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -24366,6 +24472,11 @@
         <Parameter Name="audiences" Type="Collection(Edm.Guid)" Nullable="false" />
         <ReturnType Type="SP.HomeSitesDetails" />
       </Action>
+      <Action Name="UpdatePolicyDefinition" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="itemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="policyInputParameters" Type="Microsoft.Online.SharePoint.TenantAdministration.CreatePolicyRequest" />
+      </Action>
       <Action Name="UpdateTenantAdminListItem" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="listItemId" Type="Edm.Int32" Nullable="false" />
@@ -24376,6 +24487,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewId" Type="Edm.String" />
         <Parameter Name="viewXml" Type="Edm.String" />
+      </Action>
+      <Action Name="ValidateMultipleHomeSitesParameterExists" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="hasParameters" Type="Edm.Boolean" Nullable="false" />
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.Online.SharePoint.MigrationCenter.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -26487,8 +26602,11 @@
       </Action>
       <Action Name="ReportContentProcessingStatus" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Client.Search.Administration.SiteMeTAInfoProvider" />
+        <Parameter Name="webId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="listId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="uniqueId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="azureContainerSASToken" Type="Edm.String" />
+        <Parameter Name="azureContainerEncryptionKey" Type="Edm.Binary" />
         <Parameter Name="priority" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="errorCode" Type="Edm.Int64" Nullable="false" />
         <Parameter Name="errorDescription" Type="Edm.String" />
@@ -27178,6 +27296,7 @@
         <Property Name="AIBuilderSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="AIBuilderSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="AIBuilderSiteListFileName" Type="Edm.String" />
+        <Property Name="AllowAnonymousMeetingParticipantsToAccessWhiteboards" Type="Edm.Int32" Nullable="false" />
         <Property Name="AllowCommentsTextOnEmailEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowDownloadingNonWebViewableFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowedDomainListForSyncClient" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -27211,6 +27330,9 @@
         <Property Name="CoreLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
@@ -27271,6 +27393,8 @@
         <Property Name="OneDriveLoopDefaultSharingLinkRole" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopDefaultSharingLinkScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="OneDriveLoopSharingCapability" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="OneDriveRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="OwnerAnonymousNotification" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PreventExternalUsersFromResharing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ProvisionSharedWithEveryoneFolder" Type="Edm.Boolean" Nullable="false" />
@@ -29637,11 +29761,8 @@
         <Parameter Name="approvalId" Type="Edm.String" />
       </Action>
       <Action Name="CreateItemRequest">
-        <Parameter Name="listId" Type="Edm.String" />
-        <Parameter Name="itemId" Type="Edm.Int32" Nullable="false" />
-        <Parameter Name="etag" Type="Edm.String" />
-        <Parameter Name="approvers" Type="Edm.String" />
-        <Parameter Name="title" Type="Edm.String" />
+        <Parameter Name="creationInfo" Type="SP.ApprovalsCreateRequestParameters" />
+        <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="Disable">
         <Parameter Name="listId" Type="Edm.String" />
