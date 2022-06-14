@@ -36,9 +36,12 @@ jobs:
         name: Swich to new branch for possible PR
         uses: actions/github-script@v6
         with:
-          script: |
-            const script = require('./scripts/checkout-pr-branch')
-            await script({github, context, core, exec}, 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}')
+         script: |
+            const script = require('./.github/actions/checkout-pr-branch');
+            await script(
+              {github, context, core, exec},
+              'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
+            );
       - id: getAuthMetadata
         name: Get Authorization Instance Metadata
         shell: pwsh
@@ -79,29 +82,30 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/commit-updatecreate-pr')
-            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
-            const git_commit_message = 'Microsoft Graph OData CSDL'
-            const pr_title = 'Update Microsoft Graph OData CSDL'
+            const script = require('./.github/actions/commit-updatecreate-pr');
+            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}';
+            const git_commit_message = 'Microsoft Graph OData CSDL';
+            const pr_title = 'Update Microsoft Graph OData CSDL';
             const pr_body = `Automatic download of Microsoft Graph API OData CSDL.
 
             Includes:
-            - Microsoft Graph v1.0 OData API for OData-Version 4.0 clients`
+            - Microsoft Graph v1.0 OData API for OData-Version 4.0 clients
+            `;
             await script(
               {github, context, core, exec},
               branch_name,
               git_commit_message,
               pr_title,
               pr_body
-            )
+            );
       - name: Add Labels to Pull Request
         if: ${{ format('{0}', steps.createPr.outputs.prNumber) != '' }}
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/add-labels-pr')
+            const script = require('./.github/actions/add-labels-pr');
             await script(
               {github, context},
               ${{ steps.createPr.outputs.prNumber }},
               ['csdl-update', 'microsoft-graph', 'odata-v4']
-            )
+            );

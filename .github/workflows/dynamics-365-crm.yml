@@ -37,8 +37,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/checkout-pr-branch')
-            await script({github, context, core, exec}, 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}')
+            const script = require('./.github/actions/scripts/checkout-pr-branch');
+            await script(
+              {github, context, core, exec},
+              'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
+            );
       - id: getAuthMetadata
         name: Get Authorization Instance Metadata
         shell: pwsh
@@ -70,14 +73,15 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/commit-updatecreate-pr')
-            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
-            const git_commit_message = 'Microsoft Dynamics 365 CRM OData CSDL'
-            const pr_title = 'Update Microsoft Dynamics 365 CRM OData CSDL'
+            const script = require('./.github/actions/scripts/commit-updatecreate-pr');
+            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}';
+            const git_commit_message = 'Microsoft Dynamics 365 CRM OData CSDL';
+            const pr_title = 'Update Microsoft Dynamics 365 CRM OData CSDL';
             const pr_body = `Automatic download of Dynamics 365 CRM WebAPI OData CSDL.
 
             Includes:
-            - Dynamics 365 CRM v9.0 WebAPI for OData-Version 4.0 clients`
+            - Dynamics 365 CRM v9.0 WebAPI for OData-Version 4.0 clients
+            `;
             await script(
               {github, context, core, exec},
               branch_name,
@@ -90,9 +94,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/add-labels-pr')
+            const script = require('./.github/actions/scripts/add-labels-pr');
             await script(
               {github, context},
               ${{ steps.createPr.outputs.prNumber }},
               ['csdl-update', 'dynamics365-crm', 'odata-v4']
-            )
+            );

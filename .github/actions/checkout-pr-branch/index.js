@@ -19,14 +19,13 @@ module.exports = async ({
   ]);
   core.info(`Asking GitHub API about ref named ${branch_name}`);
   try {
-    _ = await github.rest.git.getRef({
+    await github.rest.git.getRef({
       owner: context.repo.owner,
       repo: context.repo.repo,
       ref: `heads/${branch_name}`,
     });
   } catch (err) {
-    /** @type { import('@octokit/request-error').RequestError } */
-    const reqError = err;
+    const reqError = /** @type {RequestError} */(err);
     const { name, status } = reqError;
     if (name !== 'HttpError' || status !== 404) {
       throw err;
@@ -48,3 +47,7 @@ module.exports = async ({
     `origin/${branch_name}`,
   ]);
 };
+
+/**
+ * @typedef {import('@octokit/request-error').RequestError} RequestError
+ */

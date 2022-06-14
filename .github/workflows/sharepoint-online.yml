@@ -4,7 +4,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '48 6 * * *'
+    - cron: "48 6 * * *"
       # Trigger every day at 06:48
 permissions:
   contents: write
@@ -38,21 +38,24 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/checkout-pr-branch')
-            await script({github, context, core, exec}, 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}')
+            const script = require('./.github/actions/checkout-pr-branch');
+            await script(
+              {github, context, core, exec},
+              'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}'
+            );
       - id: challenge
         name: Invoke OAuth2 challenge
         shell: pwsh
         env:
           SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
-        run: './scripts/sharepoint-online-bearer-challenge.ps1'
+        run: "./scripts/sharepoint-online-bearer-challenge.ps1"
       - id: getAuthMetadata
         name: Get Authorization Instance Metadata
         shell: pwsh
         env:
           SHAREPOINT_AUTH_INSTANCE: ${{ steps.challenge.outputs.auth_instance }}
           SHAREPOINT_REALM: ${{ steps.challenge.outputs.realm }}
-        run: './scripts/sharepoint-online-auth-metadata.ps1'
+        run: "./scripts/sharepoint-online-auth-metadata.ps1"
       - id: tokenIssuance
         name: Get SharePoint Access Token
         shell: pwsh
@@ -101,10 +104,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/commit-updatecreate-pr')
-            const branch_name = ''workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}''
-            const git_commit_message = 'SharePoint OData CSDL, Microsoft SharePoint Team Service version ${{ steps.challenge.outputs.sharepoint_version }}'
-            const pr_title = 'Update SharePoint OData CSDL'
+            const script = require('./.github/actions/commit-updatecreate-pr');
+            const branch_name = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}';
+            const git_commit_message = 'SharePoint OData CSDL, Microsoft SharePoint Team Service version ${{ steps.challenge.outputs.sharepoint_version }}';
+            const pr_title = 'Update SharePoint OData CSDL';
             const pr_body = `Automatic download of SharePoint API OData CSDL.
 
             Microsoft SharePoint Team Services: \`${{ steps.challenge.outputs.sharepoint_version }}\`
@@ -112,22 +115,23 @@ jobs:
             Includes:
             - SharePoint OData API for OData-Version 4.0 clients
             - SharePoint v2.0 OData API for OData-Version 4.01 clients
-            - SharePoint v2.1 OData API for OData-Version 4.01 clients`
+            - SharePoint v2.1 OData API for OData-Version 4.01 clients
+            `;
             await script(
               {github, context, core, exec},
               branch_name,
               git_commit_message,
               pr_title,
               pr_body
-            )
+            );
       - name: Add Labels to Pull Request
         if: ${{ format('{0}', steps.createPr.outputs.prNumber) != '' }}
         uses: actions/github-script@v6
         with:
           script: |
-            const script = require('./scripts/add-labels-pr')
+            const script = require('./.github/actions/add-labels-pr');
             await script(
               {github, context},
               ${{ steps.createPr.outputs.prNumber }},
               ['csdl-update', 'sharepoint', 'odata-v4']
-            )
+            );
