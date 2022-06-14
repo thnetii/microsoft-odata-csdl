@@ -11,74 +11,79 @@
  * @param {string} pr_body
  */
 module.exports = async (
-  { github, context, core, exec },
-  branch_name, git_commit_message, pr_title, pr_body
+  {
+    github, context, core, exec,
+  },
+  branch_name,
+  git_commit_message,
+  pr_title,
+  pr_body,
 ) => {
-  let gitExitCode = 0
+  let gitExitCode = 0;
 
   _ = await exec.exec('git', [
     'add',
-    '.'
-  ])
+    '.',
+  ]);
 
   const gitStatusOutput = await exec.getExecOutput('git', [
     'status',
-    '--porcelain'
-  ])
+    '--porcelain',
+  ]);
   if (!gitStatusOutput.stdout) {
-    core.info('No changes detected. Skipping Commit and PR Update/Create')
-    return
+    core.info('No changes detected. Skipping Commit and PR Update/Create');
+    return;
   }
 
   gitExitCode = await exec.exec('git', [
     'commit',
     '-m',
-    git_commit_message
-  ])
+    git_commit_message,
+  ]);
   if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`)
+    throw new Error(`git process exited with error code ${gitExitCode}.`);
   }
   gitExitCode = await exec.exec('git', [
     'push',
     'origin',
     '--force',
-    `HEAD:${branch_name}`
-  ])
+    `HEAD:${branch_name}`,
+  ]);
   if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`)
+    throw new Error(`git process exited with error code ${gitExitCode}.`);
   }
 
   const pullsQuery = {
     owner: context.repo.owner,
     repo: context.repo.repo,
-    head: branch_name
-  }
+    head: branch_name,
+  };
   const pullsDefinition = {
     title: pr_title,
     body: pr_body,
-    ...pullsQuery
-  }
-  var pullNumber = undefined
-  const pullsResp = await github.rest.pulls.list(pullsQuery)
+    ...pullsQuery,
+  };
+  let pullNumber;
+  const pullsResp = await github.rest.pulls.list(pullsQuery);
   const pullObject = pullsResp && pullsResp.data
-    ? pullsResp.data.find(pr => pr.head.ref.endsWith(branch_name))
-    : undefined
+    ? pullsResp.data.find((pr) => pr.head.ref.endsWith(branch_name))
+    : undefined;
   if (pullObject) {
-    pullNumber = pullObject.number
-    core.debug(`Found existing PR with PR number ${pullNumber}`)
+    pullNumber = pullObject.number;
+    core.debug(`Found existing PR with PR number ${pullNumber}`);
     _ = await github.rest.pulls.update({
       pull_number: pullNumber,
-      ...pullsDefinition
-    })
+      ...pullsDefinition,
+    });
   } else {
-    core.debug('No existing PR found, creating new PR.')
+    core.debug('No existing PR found, creating new PR.');
     const pullsResp = await github.rest.pulls.create({
       base: context.ref,
-      ...pullsDefinition
-    })
-    pullNumber = pullsResp.data.number
+      ...pullsDefinition,
+    });
+    pullNumber = pullsResp.data.number;
   }
   if (pullNumber > 0) {
-    core.setOutput('prNumber', pullNumber)
+    core.setOutput('prNumber', pullNumber);
   }
-}
+};

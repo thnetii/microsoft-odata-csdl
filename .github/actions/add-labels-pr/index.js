@@ -10,7 +10,7 @@ module.exports = async ({ github, context }, issue_number, labels) => {
   _ = await github.rest.issues.addLabels({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    issue_number: issue_number,
-    labels: labels
-  })
-}
+    issue_number,
+    labels,
+  });
+};
