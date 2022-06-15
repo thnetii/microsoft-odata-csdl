@@ -5,23 +5,23 @@
  *  core: import('@actions/core'),
  *  exec: import('@actions/exec')
  * }} param0
- * @param {string} branch_name
- * @param {string} git_commit_message
- * @param {string} pr_title
- * @param {string} pr_body
+ * @param {string} branchName
+ * @param {string} commitMessage
+ * @param {string} prTitle
+ * @param {string} prBody
  */
 module.exports = async (
   {
     github, context, core, exec,
   },
-  branch_name,
-  git_commit_message,
-  pr_title,
-  pr_body,
+  branchName,
+  commitMessage,
+  prTitle,
+  prBody,
 ) => {
   let gitExitCode = 0;
 
-  _ = await exec.exec('git', [
+  gitExitCode = await exec.exec('git', [
     'add',
     '.',
   ]);
@@ -38,7 +38,7 @@ module.exports = async (
   gitExitCode = await exec.exec('git', [
     'commit',
     '-m',
-    git_commit_message,
+    commitMessage,
   ]);
   if (gitExitCode) {
     throw new Error(`git process exited with error code ${gitExitCode}.`);
@@ -47,7 +47,7 @@ module.exports = async (
     'push',
     'origin',
     '--force',
-    `HEAD:${branch_name}`,
+    `HEAD:${branchName}`,
   ]);
   if (gitExitCode) {
     throw new Error(`git process exited with error code ${gitExitCode}.`);
@@ -56,32 +56,32 @@ module.exports = async (
   const pullsQuery = {
     owner: context.repo.owner,
     repo: context.repo.repo,
-    head: branch_name,
+    head: branchName,
   };
   const pullsDefinition = {
-    title: pr_title,
-    body: pr_body,
+    title: prTitle,
+    body: prBody,
     ...pullsQuery,
   };
   let pullNumber;
   const pullsResp = await github.rest.pulls.list(pullsQuery);
   const pullObject = pullsResp && pullsResp.data
-    ? pullsResp.data.find((pr) => pr.head.ref.endsWith(branch_name))
+    ? pullsResp.data.find((pr) => pr.head.ref.endsWith(branchName))
     : undefined;
   if (pullObject) {
     pullNumber = pullObject.number;
     core.debug(`Found existing PR with PR number ${pullNumber}`);
-    _ = await github.rest.pulls.update({
+    await github.rest.pulls.update({
       pull_number: pullNumber,
       ...pullsDefinition,
     });
   } else {
     core.debug('No existing PR found, creating new PR.');
-    const pullsResp = await github.rest.pulls.create({
+    const pullResp = await github.rest.pulls.create({
       base: context.ref,
       ...pullsDefinition,
     });
-    pullNumber = pullsResp.data.number;
+    pullNumber = pullResp.data.number;
   }
   if (pullNumber > 0) {
     core.setOutput('prNumber', pullNumber);

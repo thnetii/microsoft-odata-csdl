@@ -5,24 +5,24 @@
  *  core: import('@actions/core'),
  *  exec: import('@actions/exec')
  * }} param0
- * @param {string} branch_name
+ * @param {string} branchName
  */
 module.exports = async ({
   github, context, core, exec,
-}, branch_name) => {
-  let git_exitcode = 0;
-  git_exitcode = await exec.exec('git', [
+}, branchName) => {
+  let gitExitCode = 0;
+  gitExitCode = await exec.exec('git', [
     'checkout',
     '-B',
-    branch_name,
+    branchName,
     'HEAD',
   ]);
-  core.info(`Asking GitHub API about ref named ${branch_name}`);
+  core.info(`Asking GitHub API about ref named ${branchName}`);
   try {
     await github.rest.git.getRef({
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: `heads/${branch_name}`,
+      ref: `heads/${branchName}`,
     });
   } catch (err) {
     const reqError = /** @type {RequestError} */(err);
@@ -33,19 +33,20 @@ module.exports = async ({
     core.info('git ref not found, no merge necessary');
     return;
   }
-  git_exitcode = await exec.exec('git', [
+  gitExitCode = await exec.exec('git', [
     'fetch',
     'origin',
   ]);
   core.info('git ref found, staging merge');
-  git_exitcode = await exec.exec('git', [
+  gitExitCode = await exec.exec('git', [
     'merge',
     '--no-commit',
     '--allow-unrelated-histories',
     '-s',
     'ours',
-    `origin/${branch_name}`,
+    `origin/${branchName}`,
   ]);
+  core.setOutput('git-exit-code', gitExitCode);
 };
 
 /**
