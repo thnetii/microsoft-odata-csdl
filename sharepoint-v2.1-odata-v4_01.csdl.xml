@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22525 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22601 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -543,8 +543,8 @@
         <Property Name="productType" Type="oneDrive.ProductType" />
         <Property Name="lastModifiedAt" Type="Edm.DateTimeOffset" />
         <Property Name="restoreToTimestamp" Type="Edm.DateTimeOffset" />
-        <Property Name="destination" Type="oneDrive.recoveryDestination" />
-        <Property Name="restoreSessionArtifacts" Type="Collection(oneDrive.recoverySessionArtifactFacet)" />
+        <Property Name="destination" Type="oneDrive.restoreDestination" />
+        <Property Name="restoreSessionArtifacts" Type="Collection(oneDrive.restoreSessionArtifactFacet)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="actorAndActivity" OpenType="true">
@@ -629,6 +629,9 @@
         <Property Name="title" Type="Edm.String" />
         <Property Name="mainFileDocumentId" Type="Edm.String" />
         <Property Name="mainFileVersion" Type="Edm.String" />
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="opStream" OpenType="true">
@@ -830,6 +833,7 @@
         <Property Name="webDavUrl" Type="Edm.String" />
         <Property Name="directAccessUrl" Type="Edm.String" />
         <Property Name="hasInheritedSharingLinks" Type="Edm.Boolean" />
+        <Property Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
         <NavigationProperty Name="annotationLayers" Type="Collection(oneDrive.annotationLayer)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -865,7 +869,6 @@
         <NavigationProperty Name="subscriptions" Type="Collection(oneDrive.subscription)" ContainsTarget="true" />
         <NavigationProperty Name="tags" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
         <NavigationProperty Name="versions" Type="Collection(oneDrive.version)" ContainsTarget="true" />
-        <NavigationProperty Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="consumerSiteAppConfigs" OpenType="true">
         <Key>
@@ -1177,8 +1180,8 @@
         <Property Name="exchangeIds" Type="oneDrive.exchangeIds" />
         <Property Name="resourceVisualization" Type="oneDrive.resourceVisualization" />
         <Property Name="followed" Type="oneDrive.followed" />
-        <Property Name="outlookEndpointHostUrl" Type="Edm.String" />
         <Property Name="siteAdministrators" Type="Collection(oneDrive.identity)" />
+        <Property Name="siteServiceEndpoints" Type="oneDrive.siteServiceEndpoints" />
         <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
         <NavigationProperty Name="consumerSiteAppConfigs" Type="Collection(oneDrive.consumerSiteAppConfigs)" ContainsTarget="true" />
@@ -1196,7 +1199,6 @@
         <NavigationProperty Name="termStores" Type="Collection(oneDrive.termStore)" ContainsTarget="true" />
         <NavigationProperty Name="termStore" Type="oneDrive.termStore" ContainsTarget="true" />
         <NavigationProperty Name="activityItems" Type="Collection(oneDrive.listItemDetails)" ContainsTarget="true" />
-        <NavigationProperty Name="siteSharingSettings" Type="oneDrive.siteSharingSettings" ContainsTarget="true" />
         <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -1384,15 +1386,6 @@
         <Property Name="media" Type="oneDrive.media" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
         <NavigationProperty Name="streams" Type="Collection(oneDrive.stream)" ContainsTarget="true" />
-      </EntityType>
-      <EntityType Name="sharingViewpoint" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="effectivePermission" Type="Edm.String" />
-        <Property Name="sharingAbilities" Type="oneDrive.sharingAbilities" />
-        <Property Name="sharingPeoplePickerSettings" Type="oneDrive.sharingPeoplePickerSettings" />
       </EntityType>
       <EntityType Name="mediaThumbnailSet" OpenType="true">
         <Key>
@@ -1715,15 +1708,6 @@
         <NavigationProperty Name="parentSite" Type="oneDrive.site" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="siteSharingSettings" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="externalSharingRestrictedWebUrl" Type="Edm.String" />
-        <Property Name="addressBarLinkType" Type="Edm.String" />
-        <Property Name="shareWebComponentUrl" Type="Edm.String" />
-      </EntityType>
       <EntityType Name="snapshot" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1999,6 +1983,15 @@
         <NavigationProperty Name="relations" Type="Collection(oneDrive.relation)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="siteSharingSettings" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="externalSharingRestrictedWebUrl" Type="Edm.String" />
+        <Property Name="addressBarLinkType" Type="Edm.String" />
+        <Property Name="shareWebComponentUrl" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="tenant" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2048,6 +2041,9 @@
         <Property Name="siteCreationDefaultStorageLimitInMb" Type="Edm.Int32" />
         <Property Name="tenantDefaultTimezone" Type="Edm.String" />
         <Property Name="syntexBillingSubscriptionSettings" Type="oneDrive.syntexBillingSubscriptionSettings" />
+        <Property Name="isLegacyAuthProtocolsEnabled" Type="Edm.Boolean" />
+        <Property Name="requireAcceptingUserToMatchInvitedUser" Type="Edm.Boolean" />
+        <Property Name="idleSessionSignOut" Type="oneDrive.idleSessionSignOut" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -2169,11 +2165,11 @@
       <ComplexType Name="DiagnosticOneDriveFacet" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="socialListId" Type="Edm.Guid" />
       </ComplexType>
-      <ComplexType Name="recoveryDestination" OpenType="true">
+      <ComplexType Name="restoreDestination" OpenType="true">
         <Property Name="restorePathType" Type="oneDrive.RestorePathType" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
-      <ComplexType Name="recoverySessionArtifactFacet" OpenType="true">
+      <ComplexType Name="restoreSessionArtifactFacet" OpenType="true">
         <Property Name="artifactId" Type="Edm.String" />
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="artifactType" Type="oneDrive.ArtifactType" />
@@ -2181,6 +2177,7 @@
         <Property Name="artifactRestoreStatus" Type="oneDrive.ArtifactRestoreStatus" />
         <Property Name="restoreStartTime" Type="Edm.DateTimeOffset" />
         <Property Name="restoreEndTime" Type="Edm.DateTimeOffset" />
+        <Property Name="siteUrl" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="AccessRequest" OpenType="true">
@@ -3048,6 +3045,11 @@
         <Property Name="commentingDisabled" Type="oneDrive.commentDisabledFacet" />
       </ComplexType>
       <ComplexType Name="coverImage" OpenType="true" />
+      <ComplexType Name="defaultSharingLink" OpenType="true">
+        <Property Name="scope" Type="Edm.String" />
+        <Property Name="role" Type="Edm.String" />
+        <Property Name="defaultToExistingAccess" Type="Edm.Boolean" />
+      </ComplexType>
       <ComplexType Name="deleted" OpenType="true">
         <Property Name="state" Type="Edm.String" />
       </ComplexType>
@@ -3131,6 +3133,11 @@
         <Property Name="url" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="idleSessionSignOut" OpenType="true">
+        <Property Name="enabled" Type="Edm.Boolean" />
+        <Property Name="warnAfterInSeconds" Type="Edm.Int64" />
+        <Property Name="signOutAfterInSeconds" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="image" OpenType="true">
         <Property Name="height" Type="Edm.Int32" />
         <Property Name="width" Type="Edm.Int32" />
@@ -3156,6 +3163,25 @@
         <Property Name="itemManagerChainReadCount" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="json" OpenType="true" />
+      <ComplexType Name="linkRoleAbilities" OpenType="true">
+        <Property Name="createLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="updateLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="retrieveLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="deleteLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="applyVariants" Type="oneDrive.sharingLinkVariants" />
+        <Property Name="linkExpiration" Type="oneDrive.sharingLinkExpirationStatus" />
+        <Property Name="addNewExternalUsers" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="addExistingExternalUsers" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="linkAllowsExternalUsers" Type="oneDrive.sharingOperationStatus" />
+      </ComplexType>
+      <ComplexType Name="linkScopeAbilities" OpenType="true">
+        <Property Name="readLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+        <Property Name="editLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+        <Property Name="reviewLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+        <Property Name="manageListLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+        <Property Name="restrictedViewLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+        <Property Name="submitOnlyLinkAbilities" Type="oneDrive.linkRoleAbilities" />
+      </ComplexType>
       <ComplexType Name="livePhoto" OpenType="true" />
       <ComplexType Name="loadEstimateInfo" OpenType="true">
         <Property Name="uniqueId" Type="Edm.String" />
@@ -3501,10 +3527,21 @@
         <Property Name="scope" Type="Edm.String" />
         <Property Name="sharedDateTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="sharePointSharingAbilities" OpenType="true">
+        <Property Name="anyoneLinkAbilities" Type="oneDrive.linkScopeAbilities" />
+        <Property Name="organizationLinkAbilities" Type="oneDrive.linkScopeAbilities" />
+        <Property Name="specificPeopleLinkAbilities" Type="oneDrive.linkScopeAbilities" />
+        <Property Name="directSharingAbilities" Type="oneDrive.directSharingAbilities" />
+      </ComplexType>
       <ComplexType Name="sharingInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
         <Property Name="signInRequired" Type="Edm.Boolean" />
         <Property Name="invitedBy" Type="oneDrive.identitySet" />
+      </ComplexType>
+      <ComplexType Name="sharingLinkExpirationStatus" OpenType="true">
+        <Property Name="defaultExpirationInDays" Type="Edm.Int32" />
+        <Property Name="enabled" Type="Edm.Boolean" />
+        <Property Name="disabledReason" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SharingLink" OpenType="true">
         <Property Name="localizedDescription" Type="Edm.String" />
@@ -3520,10 +3557,31 @@
         <Property Name="status" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="sharingLinkVariants" OpenType="true">
+        <Property Name="passwordProtected" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="requiresAuthentication" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="addressBarLinkPermission" Type="Edm.String" />
+        <Property Name="allowEmbed" Type="oneDrive.sharingOperationStatus" />
+      </ComplexType>
+      <ComplexType Name="sharingOperationStatus" OpenType="true">
+        <Property Name="enabled" Type="Edm.Boolean" />
+        <Property Name="disabledReason" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="sharingViewpoint" OpenType="true">
+        <Property Name="effectivePermission" Type="Edm.String" />
+        <Property Name="sharingAbilities" Type="oneDrive.sharePointSharingAbilities" />
+        <Property Name="sharingPeoplePickerSettings" Type="oneDrive.sharingPeoplePickerSettings" />
+        <Property Name="defaultSharingLink" Type="oneDrive.defaultSharingLink" />
+      </ComplexType>
       <ComplexType Name="siteInsight" OpenType="true">
         <Property Name="type" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="rank" Type="Edm.Int32" />
+      </ComplexType>
+      <ComplexType Name="siteServiceEndpoints" OpenType="true">
+        <Property Name="outlookEndpointHostUrl" Type="Edm.String" />
+        <Property Name="externalSharingRestrictedWebUrl" Type="Edm.String" />
+        <Property Name="microserviceSharingUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="snapshotPolicy" OpenType="true">
         <Property Name="createSnapshot" Type="Edm.Boolean" />
@@ -3910,6 +3968,12 @@
         <Property Name="isEnabled" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="directSharingAbilities">
+        <Property Name="addNewExternalUsers" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="requestGrantAccess" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="addExistingExternalUsers" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="addInternalUsers" Type="oneDrive.sharingOperationStatus" />
+      </ComplexType>
       <ComplexType Name="throttleTarget">
         <Property Name="key" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
@@ -3955,13 +4019,6 @@
       <ComplexType Name="formatDetails">
         <Property Name="extensions" Type="Collection(Edm.String)" />
       </ComplexType>
-      <ComplexType Name="sharingLinkExpirationAbilityStatus">
-        <Property Name="defaultExpirationInDays" Type="Edm.Int32" />
-      </ComplexType>
-      <ComplexType Name="directSharingAbilities">
-        <Property Name="canAddPrincipalScope" Type="oneDrive.sharingPrincipalScope" />
-        <Property Name="canRequestGrantAccess" Type="oneDrive.sharingAbilityStatus" />
-      </ComplexType>
       <ComplexType Name="photoPreferences">
         <Property Name="eTag" Type="Edm.String" />
         <Property Name="autoTagging" Type="Edm.Boolean" />
@@ -3982,6 +4039,9 @@
       <ComplexType Name="documentPreferences">
         <Property Name="eTag" Type="Edm.String" />
         <Property Name="docFormat" Type="oneDrive.docFormatOption" />
+      </ComplexType>
+      <ComplexType Name="sharingLinkExpirationAbilityStatus">
+        <Property Name="defaultExpirationInDays" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="irmPolicyDetails">
         <Property Name="irmPolicyTitle" Type="Edm.String" />
@@ -4142,6 +4202,7 @@
       <EnumType Name="AnalyticsReportEntity">
         <Member Name="Label" Value="0" />
         <Member Name="SharingLink" Value="1" />
+        <Member Name="IBCompliance" Value="2" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
