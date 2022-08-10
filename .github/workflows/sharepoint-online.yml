@@ -35,12 +35,19 @@ jobs:
         uses: thnetii/.github/actions/create-rebase-pr-branch@main
         with:
           branch-name: workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}
+      - id: npm-clean-install-actions
+        name: Install NPM package dependencies for Github actions
+        uses: thnetii/.github/actions/gh-actions-npm@main
+        with:
+          working-directory: .github/actions
+          arguments: |
+            clean-install
+            --omit=dev
       - id: challenge
         name: Invoke OAuth2 challenge
-        shell: pwsh
-        env:
-          SHAREPOINT_WEBURL: ${{ secrets.SHAREPOINT_WEBURL }}
-        run: "./scripts/sharepoint-online-bearer-challenge.ps1"
+        uses: ./.github/actions/spo-bearer-challenge
+        with:
+          sharepoint-web-url: ${{ secrets.SHAREPOINT_WEBURL }}
       - id: getAuthMetadata
         name: Get Authorization Instance Metadata
         shell: pwsh
