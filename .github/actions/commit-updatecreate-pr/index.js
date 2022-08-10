@@ -11,20 +11,15 @@
  * @param {string} prBody
  */
 module.exports = async (
-  {
-    github, context, core, exec,
-  },
+  { github, context, core, exec },
   branchName,
   commitMessage,
   prTitle,
-  prBody,
+  prBody
 ) => {
   let gitExitCode = 0;
 
-  gitExitCode = await exec.exec('git', [
-    'add',
-    '.',
-  ]);
+  gitExitCode = await exec.exec('git', ['add', '.']);
 
   const gitStatusOutput = await exec.getExecOutput('git', [
     'status',
@@ -35,11 +30,7 @@ module.exports = async (
     return;
   }
 
-  gitExitCode = await exec.exec('git', [
-    'commit',
-    '-m',
-    commitMessage,
-  ]);
+  gitExitCode = await exec.exec('git', ['commit', '-m', commitMessage]);
   if (gitExitCode) {
     throw new Error(`git process exited with error code ${gitExitCode}.`);
   }
@@ -65,9 +56,10 @@ module.exports = async (
   };
   let pullNumber;
   const pullsResp = await github.rest.pulls.list(pullsQuery);
-  const pullObject = pullsResp && pullsResp.data
-    ? pullsResp.data.find((pr) => pr.head.ref.endsWith(branchName))
-    : undefined;
+  const pullObject =
+    pullsResp && pullsResp.data
+      ? pullsResp.data.find((pr) => pr.head.ref.endsWith(branchName))
+      : undefined;
   if (pullObject) {
     pullNumber = pullObject.number;
     core.debug(`Found existing PR with PR number ${pullNumber}`);
