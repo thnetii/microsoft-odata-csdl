@@ -1,0 +1,36 @@
+name: '@thnetii/microsoft-odata-csdl-github-actions-commit-updatecreate-pr'
+author: thnetii
+description: ''
+inputs:
+  branch-name:
+    required: true
+    description: ''
+  commit-message:
+    required: true
+    description: ''
+  pr-title:
+    required: true
+    description: ''
+  pr-body:
+    required: true
+    description: ''
+runs:
+  using: composite
+  steps:
+    - id: commit-updatecreate-pr
+      uses: actions/github-script@v6.1.0
+      with:
+        script: |
+          require(process.env['GITHUB_ACTION_PATH'])(
+            {
+              github, context, core, exec,
+              inputs: JSON.parse(process.env['ACTION_INPUTS_JSON']),
+            }
+          );
+      env:
+        ACTION_INPUTS_JSON: ${{ toJson(inputs) }}
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+outputs:
+  pr-number:
+    value: ${{ steps.commit-updatecreate-pr.outputs.pr-number }}
+    description: ''
