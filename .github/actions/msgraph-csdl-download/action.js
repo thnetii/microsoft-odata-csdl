@@ -4,6 +4,7 @@ const { ConfidentialClientApplication } = require('@azure/msal-node');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const xmlFormatter = require('xml-formatter');
+const assert = require('assert');
 
 const getMsalAuthority = () => {
   let authority = ghaCore.getInput('msidp-authority');
@@ -35,6 +36,7 @@ const httpClient = new HttpClient();
   const msalAuthResult = await msalClient.acquireTokenByClientCredential({
     scopes: ['https://graph.microsoft.com/.default'],
   });
+  assert(msalAuthResult);
 
   const csdlResp = await httpClient.get(csdlUrl, {
     authorization: `Bearer ${msalAuthResult.accessToken}`,
