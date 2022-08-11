@@ -1,5 +1,5 @@
 const { EOL } = require('os');
-const fs = require('fs/promises');
+const { promises: fs } = require('fs');
 const spAuth = require('node-sp-auth');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
@@ -24,14 +24,16 @@ const httpClient = new HttpClient();
   const filePath = ghaCore.getInput('file-path', { required: true });
 
   const { headers: requHdrs } = await spAuth.getAuth(spoWebUrl, credOpts);
-  requHdrs.accept = 'application/xml';
+  // eslint-disable-next-line dot-notation
+  requHdrs['accept'] = 'application/xml';
   requHdrs['OData-Version'] = '4.0';
   requHdrs['OData-MaxVersion'] = '4.0';
   const spoApiResp = await httpClient.get(spoApiUrl, requHdrs);
   const {
     message: { headers: respHdrs },
   } = spoApiResp;
-  let spoVersionHeader = respHdrs.microsoftsharepointteamservices;
+  // eslint-disable-next-line dot-notation
+  let spoVersionHeader = respHdrs['microsoftsharepointteamservices'];
   if (!spoVersionHeader) spoVersionHeader = [];
   else if (typeof spoVersionHeader === 'string')
     spoVersionHeader = [spoVersionHeader];
@@ -51,9 +53,9 @@ const httpClient = new HttpClient();
     '/edmx:Edmx/edmx:DataServices/edm:Schema[@Namespace="SP.Data"]';
   const spDataSelection = selector(xpathExpr, csdlDom);
   for (const csdlNsSelect of spDataSelection) {
-    const csdlNsNode = csdlNsSelect;
+    const csdlNsNode = /** @type {Node} */ (csdlNsSelect);
     const { parentNode } = csdlNsNode;
-    parentNode.removeChild(csdlNsNode);
+    parentNode?.removeChild(csdlNsNode);
   }
   const serializer = new XMLSerializer();
   csdlText = serializer.serializeToString(csdlDom);
