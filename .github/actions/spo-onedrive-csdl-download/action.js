@@ -3,6 +3,7 @@ const { promises: fs } = require('fs');
 const spAuth = require('node-sp-auth');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xmlFormatter = require('xml-formatter');
 
 /** @type {spAuth.IOnlineAddinCredentials} */
@@ -37,11 +38,25 @@ const httpClient = new HttpClient();
   if (!spoVersionHeader) spoVersionHeader = [];
   else if (typeof spoVersionHeader === 'string')
     spoVersionHeader = [spoVersionHeader];
-  for (const spoVersion of spoVersionHeader) {
+  let spoVersion;
+  for (spoVersion of spoVersionHeader) {
     ghaCore.debug(`SharePoint Teams Services version: v${spoVersion}`);
     ghaCore.setOutput('sharepoint-version', spoVersion);
   }
   let csdlText = await spoApiResp.readBody();
+  if (spoVersion) {
+    const csdlParser = new DOMParser();
+    const csdlDom = csdlParser.parseFromString(
+      csdlText,
+      respHdrs['content-type']
+    );
+    const spoVersionComment = csdlDom.createComment(
+      ` Microsoft SharePoint Team Services v${spoVersion} `
+    );
+    csdlDom.insertBefore(spoVersionComment, csdlDom.documentElement);
+    const csdlSerializer = new XMLSerializer();
+    csdlText = csdlSerializer.serializeToString(csdlDom);
+  }
   csdlText = xmlFormatter(csdlText, {
     indentation: '  ',
     stripComments: false,

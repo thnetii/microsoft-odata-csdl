@@ -37,7 +37,8 @@ const httpClient = new HttpClient();
   if (!spoVersionHeader) spoVersionHeader = [];
   else if (typeof spoVersionHeader === 'string')
     spoVersionHeader = [spoVersionHeader];
-  for (const spoVersion of spoVersionHeader) {
+  let spoVersion;
+  for (spoVersion of spoVersionHeader) {
     ghaCore.debug(`SharePoint Teams Services version: v${spoVersion}`);
     ghaCore.setOutput('sharepoint-version', spoVersion);
   }
@@ -56,6 +57,12 @@ const httpClient = new HttpClient();
     const csdlNsNode = /** @type {Node} */ (csdlNsSelect);
     const { parentNode } = csdlNsNode;
     parentNode?.removeChild(csdlNsNode);
+  }
+  if (spoVersion) {
+    const spoVersionComment = csdlDom.createComment(
+      ` Microsoft SharePoint Team Services v${spoVersion} `
+    );
+    csdlDom.insertBefore(spoVersionComment, csdlDom.documentElement);
   }
   const serializer = new XMLSerializer();
   csdlText = serializer.serializeToString(csdlDom);
