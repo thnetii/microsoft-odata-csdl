@@ -3,38 +3,43 @@
  *  github: InstanceType<typeof import('@actions/github/lib/utils').GitHub>,
  *  context: import('@actions/github/lib/context').Context,
  *  core: import('@actions/core'),
- *  exec: import('@actions/exec')
- * }} param0
- * @param {string} branchName
- * @param {string} commitMessage
- * @param {string} prTitle
- * @param {string} prBody
+ *  exec: import('@actions/exec'),
+ *  inputs: {
+ *    'branch-name': string,
+ *    'commit-message': string,
+ *    'pr-title': string,
+ *    'pr-body': string,
+ *  },
+ * }} args
  */
-module.exports = async (
-  { github, context, core, exec },
-  branchName,
-  commitMessage,
-  prTitle,
-  prBody
-) => {
+module.exports = async (args) => {
+  const {
+    github,
+    context,
+    core,
+    exec: { exec, getExecOutput },
+    inputs: {
+      'branch-name': branchName,
+      'commit-message': commitMessage,
+      'pr-title': prTitle,
+      'pr-body': prBody,
+    },
+  } = args;
   let gitExitCode = 0;
 
-  gitExitCode = await exec.exec('git', ['add', '.']);
+  gitExitCode = await exec('git', ['add', '.']);
 
-  const gitStatusOutput = await exec.getExecOutput('git', [
-    'status',
-    '--porcelain',
-  ]);
+  const gitStatusOutput = await getExecOutput('git', ['status', '--porcelain']);
   if (!gitStatusOutput.stdout) {
     core.info('No changes detected. Skipping Commit and PR Update/Create');
     return;
   }
 
-  gitExitCode = await exec.exec('git', ['commit', '-m', commitMessage]);
+  gitExitCode = await exec('git', ['commit', '-m', commitMessage]);
   if (gitExitCode) {
     throw new Error(`git process exited with error code ${gitExitCode}.`);
   }
-  gitExitCode = await exec.exec('git', [
+  gitExitCode = await exec('git', [
     'push',
     'origin',
     '--force',
@@ -76,6 +81,6 @@ module.exports = async (
     pullNumber = pullResp.data.number;
   }
   if (pullNumber > 0) {
-    core.setOutput('prNumber', pullNumber);
+    core.setOutput('pr-number', pullNumber);
   }
 };
