@@ -10,10 +10,6 @@ permissions:
   contents: write
   pull-requests: write
 
-defaults:
-  run:
-    shell: pwsh
-
 concurrency:
   group: ${{ github.workflow }}
 
@@ -24,83 +20,62 @@ jobs:
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
-      - id: get-workflow-id
-        name: Get current workflow id
-        uses: thnetii/.github/actions/get-workflow-id@main
+        with:
+          fetch-depth: 180
       - name: Git configure comitter identity
-        shell: bash
-        run: |
-          git config user.name  "github-actions"
-          git config user.email "github-actions@github.com"
+        uses: thnetii/.github/actions/git-user-config@main
       - id: checkout-pr-branch
         name: Swich to new branch for possible PR
         uses: thnetii/.github/actions/create-rebase-pr-branch@main
         with:
-          branch-name: workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}
-      - id: getAuthMetadata
-        name: Get Authorization Instance Metadata
-        shell: pwsh
-        env:
-          MSIDP_AUTH_INSTANCE: https://login.microsoftonline.com
-          MSIDP_TENANTID: ${{ secrets.MSIDP_TENANTID }}
-        run: './scripts/microsoft-idp-auth-metadata.ps1'
-      - id: tokenIssuance
-        name: Get Microsoft Graph Access Token
-        shell: pwsh
-        env:
-          MSIDP_CLIENTID: ${{ secrets.MSIDP_CLIENTID }}
-          MSIDP_CLIENTSECRET: ${{ secrets.MSIDP_CLIENTSECRET }}
-          MSIDP_RESOURCEID: https://graph.microsoft.com
-          MSIDP_TOKENENDPOINT: ${{ steps.getAuthMetadata.outputs.token_endpoint }}
-        run: |
-          [void](./scripts/microsoft-idp-access-token.ps1)
-      - id: downloadCsdl_v1_0_OData_v4_01
-        name: Download v1.0 CSDL in XML Format (OData 4.01)
-        shell: pwsh
-        env:
-          MSGRAPH_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
-        run: |
-          ./scripts/microsoft-graph-download-csdl-xml.ps1 `
-            -OutFile ./microsoft-graph-v1.0.csdl.xml -ODataVersion "4.01"
-      - id: downloadCsdl_beta_OData_v4_01
-        if: ${{ false }}
-        name: Download beta CSDL in XML Format (OData 4.01)
-        shell: pwsh
-        env:
-          MSGRAPH_ACCESSTOKEN: ${{ steps.tokenIssuance.outputs.access_token }}
-        run: |
-          ./scripts/microsoft-graph-download-csdl-xml.ps1 `
-            -OutFile ./microsoft-graph-beta.csdl.xml -ODataVersion "4.01" `
-            -ApiVersion "beta"
-      - id: createPr
-        name: Commit and create/update PR (if any changes)
-        uses: actions/github-script@v6
+          branch-name: csdl-fetcher/msgraph
+      - uses: actions/setup-node@v3
+      - id: npm-clean-install-actions
+        name: Install NPM package dependencies for Github actions
+        uses: thnetii/.github/actions/gh-actions-npm@main
         with:
-          script: |
-            const script = require('./.github/actions/commit-updatecreate-pr');
-            const branchName = 'workflows/w${{ steps.get-workflow-id.outputs.workflow-id }}';
-            const commitMessage = 'Microsoft Graph OData CSDL';
-            const prTitle = 'Update Microsoft Graph OData CSDL';
-            const prBody = `Automatic download of Microsoft Graph API OData CSDL.
+          working-directory: .github/actions
+          arguments: |
+            clean-install
+            --workspace=msgraph-csdl-download
+            --omit=dev
+      - id: download-v1_0-csdl
+        name: Download Microsoft Graph v1.0 CSDL in XML format
+        uses: ./.github/actions/msgraph-csdl-download
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          client-secret: ${{ secrets.MSIDP_CLIENTSECRET }}
+          api-version: v1.0
+          file-path: microsoft-graph-v1.0.csdl.xml
+      - id: download-beta-csdl
+        name: Download Microsoft Graph beta CSDL in XML format
+        uses: ./.github/actions/msgraph-csdl-download
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          client-secret: ${{ secrets.MSIDP_CLIENTSECRET }}
+          api-version: beta
+          file-path: microsoft-graph-beta.csdl.xml
+      - id: create-pr
+        name: Commit and create/update PR (if any changes)
+        uses: ./.github/actions/commit-updatecreate-pr
+        with:
+          branch-name: csdl-fetcher/msgraph
+          commit-message: Microsoft Graph OData CSDL
+          pr-title: Update Microsoft Graph OData CSDL
+          pr-body: |
+            Automatic download of Microsoft Graph API OData CSDL.
 
             Includes:
             - Microsoft Graph v1.0 OData API for OData-Version 4.0 clients
-            `;
-            await script(
-              { github, context, core, exec },
-              branchName,
-              commitMessage,
-              prTitle,
-              prBody
-            );
+            - Microsoft Graph beta OData API for OData-Version 4.0 clients
       - name: Add Labels to Pull Request
-        if: ${{ format('{0}', steps.createPr.outputs.prNumber) != '' }}
-        uses: actions/github-script@v6
+        if: steps.create-pr.outputs.pr-number
+        uses: ./.github/actions/add-labels-pr
         with:
-          script: |
-            const script = require('./.github/actions/add-labels-pr');
-            await script(
-              { github, context },
-              ${{ steps.createPr.outputs.prNumber }},
-              ['csdl-update', 'microsoft-graph', 'odata-v4']
-            );
+          pr-number: ${{ steps.create-pr.outputs.pr-number }}
+          labels: |
+            csdl-update
+            microsoft-graph
+            odata-v4
