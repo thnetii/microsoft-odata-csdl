@@ -816,6 +816,7 @@
         <Property Name="malware" Type="oneDrive.malware" />
         <Property Name="media" Type="oneDrive.media" />
         <Property Name="ocr" Type="oneDrive.ocr" />
+        <Property Name="officeBundle" Type="oneDrive.officeBundle" />
         <Property Name="openWith" Type="oneDrive.openWithSet" />
         <Property Name="package" Type="oneDrive.package" />
         <Property Name="panorama" Type="oneDrive.panorama" />
@@ -1410,6 +1411,25 @@
         <Property Name="media" Type="oneDrive.media" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
         <NavigationProperty Name="streams" Type="Collection(oneDrive.stream)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="audioTrack" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="size" Type="Edm.Int64" />
+        <Property Name="content" Type="Edm.Stream" />
+        <Property Name="languageTag" Type="Edm.String" />
+        <Property Name="isAudioDescription" Type="Edm.Boolean" />
+        <Property Name="temporaryDownloadUrl" Type="Edm.String" />
+        <Property Name="format" Type="Edm.String" />
+        <Property Name="frameSize" Type="Edm.Int32" />
+        <Property Name="sampleRate" Type="Edm.Int32" />
+        <Property Name="duration" Type="Edm.Int64" />
       </EntityType>
       <EntityType Name="mediaThumbnailSet" OpenType="true">
         <Key>
@@ -3034,6 +3054,12 @@
         <Property Name="trackCount" Type="Edm.Int32" />
         <Property Name="year" Type="Edm.Int32" />
       </ComplexType>
+      <ComplexType Name="audioTrackChunkedUploadSessionDescriptorFacet" OpenType="true">
+        <Property Name="languageTag" Type="Edm.String" />
+        <Property Name="isAudioDescription" Type="Edm.Boolean" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="size" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="autoTagged" OpenType="true" />
       <ComplexType Name="availableOn" OpenType="true">
         <Property Name="allowMultiSelect" Type="Edm.Boolean" />
@@ -3272,6 +3298,7 @@
         <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
+        <NavigationProperty Name="audioTracks" Type="Collection(oneDrive.audioTrack)" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="mediaSource" OpenType="true">
         <Property Name="contentCategory" Type="Edm.String" />
@@ -4090,6 +4117,14 @@
         <Property Name="upload" Type="oneDrive.uploadRequest" />
       </ComplexType>
       <ComplexType Name="uploadRequest" />
+      <ComplexType Name="officeBundle">
+        <Property Name="version" Type="Edm.String" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="generationTime" Type="Edm.DateTimeOffset" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="fatalError" Type="Edm.Boolean" />
+        <Property Name="errorInfo" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="samsungMotionPhoto" />
       <ComplexType Name="wacHostFlightStatus">
         <Property Name="key" Type="Edm.String" />
@@ -4674,6 +4709,20 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.MeetingValidationResult" />
       </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.audioTrack)" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.audioTrack" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
+        <Parameter Name="deferCommit" Type="Edm.Boolean" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
       <Function Name="mediaFeed" IsBound="true" EntitySetPath="bindingParameter/photoStreamPosts" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
         <ReturnType Type="Collection(oneDrive.item)" />
@@ -4907,12 +4956,6 @@
         <Parameter Name="id" Type="Edm.String" Nullable="false" />
         <ReturnType Type="oneDrive.thumbnail" />
       </Function>
-      <Action Name="createUploadSession" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
-        <Parameter Name="deferCommit" Type="Edm.Boolean" />
-        <ReturnType Type="oneDrive.uploadSession" />
-      </Action>
       <Action Name="createSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
