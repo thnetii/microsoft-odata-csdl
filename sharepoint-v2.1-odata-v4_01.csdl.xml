@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22727 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22803 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -816,6 +816,7 @@
         <Property Name="malware" Type="oneDrive.malware" />
         <Property Name="media" Type="oneDrive.media" />
         <Property Name="ocr" Type="oneDrive.ocr" />
+        <Property Name="officeBundle" Type="oneDrive.officeBundle" />
         <Property Name="openWith" Type="oneDrive.openWithSet" />
         <Property Name="package" Type="oneDrive.package" />
         <Property Name="panorama" Type="oneDrive.panorama" />
@@ -850,6 +851,7 @@
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </Property>
         <Property Name="webDavUrl" Type="Edm.String" />
+        <Property Name="pathFromRoot" Type="Edm.String" />
         <Property Name="directAccessUrl" Type="Edm.String" />
         <Property Name="hasInheritedSharingLinks" Type="Edm.Boolean" />
         <Property Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" />
@@ -1322,6 +1324,7 @@
         <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="text" Type="Edm.String" />
         <Property Name="restricted" Type="oneDrive.restricted" />
+        <NavigationProperty Name="photoStreamReactions" Type="Collection(oneDrive.photoStreamReaction)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="photoStreamReaction" OpenType="true">
         <Key>
@@ -1331,6 +1334,7 @@
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="photoStreamId" Type="Edm.String" />
         <Property Name="postId" Type="Edm.String" />
+        <Property Name="commentId" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="type" Type="Edm.String" />
@@ -1407,6 +1411,25 @@
         <Property Name="media" Type="oneDrive.media" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
         <NavigationProperty Name="streams" Type="Collection(oneDrive.stream)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="audioTrack" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="size" Type="Edm.Int64" />
+        <Property Name="content" Type="Edm.Stream" />
+        <Property Name="languageTag" Type="Edm.String" />
+        <Property Name="isAudioDescription" Type="Edm.Boolean" />
+        <Property Name="temporaryDownloadUrl" Type="Edm.String" />
+        <Property Name="format" Type="Edm.String" />
+        <Property Name="frameSize" Type="Edm.Int32" />
+        <Property Name="sampleRate" Type="Edm.Int32" />
+        <Property Name="duration" Type="Edm.Int64" />
       </EntityType>
       <EntityType Name="mediaThumbnailSet" OpenType="true">
         <Key>
@@ -2050,11 +2073,15 @@
         <Property Name="availableManagedPathsForSiteCreation" Type="Collection(Edm.String)" />
         <Property Name="deletedUserPersonalSiteRetentionPeriodInDays" Type="Edm.Int32" />
         <Property Name="excludedFileExtensionsForSyncApp" Type="Collection(Edm.String)" />
+        <Property Name="idleSessionSignOut" Type="oneDrive.idleSessionSignOut" />
         <Property Name="imageTaggingOption" Type="oneDrive.ImageTaggingChoice" />
         <Property Name="isCommentingOnSitePagesEnabled" Type="Edm.Boolean" />
         <Property Name="isFileActivityNotificationEnabled" Type="Edm.Boolean" />
+        <Property Name="isLegacyAuthProtocolsEnabled" Type="Edm.Boolean" />
         <Property Name="isLoopEnabled" Type="Edm.Boolean" />
         <Property Name="isMacSyncAppEnabled" Type="Edm.Boolean" />
+        <Property Name="isOpticalCharacterRecognitionForSitesAdminEnabled" Type="Edm.Boolean" />
+        <Property Name="isOpticalCharacterRecognitionForSitesComplianceEnabled" Type="Edm.Boolean" />
         <Property Name="isResharingByExternalUsersEnabled" Type="Edm.Boolean" />
         <Property Name="isSharePointMobileNotificationEnabled" Type="Edm.Boolean" />
         <Property Name="isSharePointNewsfeedEnabled" Type="Edm.Boolean" />
@@ -2064,18 +2091,18 @@
         <Property Name="isSitesStorageLimitAutomatic" Type="Edm.Boolean" />
         <Property Name="isSyncButtonHiddenOnPersonalSite" Type="Edm.Boolean" />
         <Property Name="isUnmanagedSyncAppForTenantRestricted" Type="Edm.Boolean" />
+        <Property Name="opticalCharacterRecognitionAdminSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="opticalCharacterRecognitionComplianceSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="personalSiteDefaultStorageLimitInMb" Type="Edm.Int64" />
+        <Property Name="requireAcceptingUserToMatchInvitedUser" Type="Edm.Boolean" />
         <Property Name="sharingAllowedDomainList" Type="Collection(Edm.String)" />
         <Property Name="sharingBlockedDomainList" Type="Collection(Edm.String)" />
         <Property Name="sharingCapability" Type="oneDrive.SharingCapabilities" />
         <Property Name="sharingDomainRestrictionMode" Type="oneDrive.SharingDomainRestrictionMode" />
         <Property Name="siteCreationDefaultManagedPath" Type="Edm.String" />
         <Property Name="siteCreationDefaultStorageLimitInMb" Type="Edm.Int32" />
-        <Property Name="tenantDefaultTimezone" Type="Edm.String" />
         <Property Name="syntexBillingSubscriptionSettings" Type="oneDrive.syntexBillingSubscriptionSettings" />
-        <Property Name="isLegacyAuthProtocolsEnabled" Type="Edm.Boolean" />
-        <Property Name="requireAcceptingUserToMatchInvitedUser" Type="Edm.Boolean" />
-        <Property Name="idleSessionSignOut" Type="oneDrive.idleSessionSignOut" />
+        <Property Name="tenantDefaultTimezone" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -3027,6 +3054,12 @@
         <Property Name="trackCount" Type="Edm.Int32" />
         <Property Name="year" Type="Edm.Int32" />
       </ComplexType>
+      <ComplexType Name="audioTrackChunkedUploadSessionDescriptorFacet" OpenType="true">
+        <Property Name="languageTag" Type="Edm.String" />
+        <Property Name="isAudioDescription" Type="Edm.Boolean" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="size" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="autoTagged" OpenType="true" />
       <ComplexType Name="availableOn" OpenType="true">
         <Property Name="allowMultiSelect" Type="Edm.Boolean" />
@@ -3118,6 +3151,7 @@
         <Property Name="fileExtension" Type="Edm.String" />
         <Property Name="irmEnabled" Type="Edm.Boolean" />
         <Property Name="irmEffectivelyEnabled" Type="Edm.Boolean" />
+        <Property Name="contentSensitivityLabelProtected" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="fileHandler" OpenType="true">
         <Property Name="actionMenuDisplayName" Type="Edm.String" />
@@ -3264,6 +3298,7 @@
         <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
+        <NavigationProperty Name="audioTracks" Type="Collection(oneDrive.audioTrack)" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="mediaSource" OpenType="true">
         <Property Name="contentCategory" Type="Edm.String" />
@@ -3915,8 +3950,14 @@
         <Property Name="dimensions" Type="Collection(oneDrive.dimensionInfo)" />
         <Property Name="metrics" Type="Collection(Edm.String)" />
       </ComplexType>
+      <ComplexType Name="report" OpenType="true">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="columnHeaders" Type="oneDrive.ColumnHeaders" />
+        <Property Name="data" Type="Collection(oneDrive.ReportDataRow)" />
+      </ComplexType>
       <ComplexType Name="userinfo" OpenType="true">
-        <Property Name="loginName" Type="Edm.String" />
+        <Property Name="objectId" Type="Edm.String" />
+        <Property Name="id" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
         <Property Name="email" Type="Edm.String" />
       </ComplexType>
@@ -4076,6 +4117,14 @@
         <Property Name="upload" Type="oneDrive.uploadRequest" />
       </ComplexType>
       <ComplexType Name="uploadRequest" />
+      <ComplexType Name="officeBundle">
+        <Property Name="version" Type="Edm.String" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="generationTime" Type="Edm.DateTimeOffset" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="fatalError" Type="Edm.Boolean" />
+        <Property Name="errorInfo" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="samsungMotionPhoto" />
       <ComplexType Name="wacHostFlightStatus">
         <Property Name="key" Type="Edm.String" />
@@ -4157,6 +4206,14 @@
       <ComplexType Name="irmPolicyDetails">
         <Property Name="irmPolicyTitle" Type="Edm.String" />
         <Property Name="irmPolicyDescription" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ColumnHeaders">
+        <Property Name="DimensionNames" Type="Collection(Edm.String)" />
+        <Property Name="MetricNames" Type="Collection(Edm.String)" />
+      </ComplexType>
+      <ComplexType Name="ReportDataRow">
+        <Property Name="Dimensions" Type="Collection(Edm.String)" />
+        <Property Name="Metrics" Type="Collection(Edm.String)" />
       </ComplexType>
       <EnumType Name="DigitShapes">
         <Member Name="Context" Value="0" />
@@ -4652,6 +4709,20 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.MeetingValidationResult" />
       </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.audioTrack)" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.audioTrack" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
+      <Action Name="createUploadSession" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
+        <Parameter Name="deferCommit" Type="Edm.Boolean" />
+        <ReturnType Type="oneDrive.uploadSession" />
+      </Action>
       <Function Name="mediaFeed" IsBound="true" EntitySetPath="bindingParameter/photoStreamPosts" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
         <ReturnType Type="Collection(oneDrive.item)" />
@@ -4853,6 +4924,11 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
         <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
       </Action>
+      <Action Name="delete" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <Parameter Name="reportIds" Type="Collection(oneDrive.analyticsReport)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.analyticsReport)" />
+      </Action>
       <Action Name="redeemToken" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="token" Type="Edm.String" Nullable="false" />
@@ -4880,12 +4956,6 @@
         <Parameter Name="id" Type="Edm.String" Nullable="false" />
         <ReturnType Type="oneDrive.thumbnail" />
       </Function>
-      <Action Name="createUploadSession" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
-        <Parameter Name="deferCommit" Type="Edm.Boolean" />
-        <ReturnType Type="oneDrive.uploadSession" />
-      </Action>
       <Action Name="createSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
@@ -5177,6 +5247,17 @@
       <Function Name="getAnalyticsParameters">
         <ReturnType Type="oneDrive.parameters" />
       </Function>
+      <Action Name="getPreaggregatedAnalyticsReport" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.campaign" />
+        <Parameter Name="names" Type="Collection(Edm.String)" />
+        <ReturnType Type="oneDrive.report" />
+      </Action>
+      <Action Name="getAnalyticsReport" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.campaign" />
+        <Parameter Name="dimensions" Type="Collection(Edm.String)" />
+        <Parameter Name="metrics" Type="Collection(Edm.String)" />
+        <ReturnType Type="oneDrive.report" />
+      </Action>
       <EntityContainer Name="oneDrive">
         <EntitySet Name="diagnostics" EntityType="oneDrive.Diagnostic" />
         <EntitySet Name="restoreSessions" EntityType="oneDrive.restoreSession" />
