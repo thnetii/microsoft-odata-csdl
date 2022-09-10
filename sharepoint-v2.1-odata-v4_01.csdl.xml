@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22817 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.22824 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -760,6 +760,7 @@
         </Property>
         <Property Name="webUrl" Type="Edm.String" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
+        <NavigationProperty Name="albums" Type="Collection(oneDrive.photoAlbum)" ContainsTarget="true" />
         <NavigationProperty Name="anomalies" Type="Collection(oneDrive.anomaly)" ContainsTarget="true" />
         <NavigationProperty Name="apps" Type="Collection(oneDrive.driveApp)" ContainsTarget="true" />
         <NavigationProperty Name="bundles" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -864,6 +865,9 @@
         <NavigationProperty Name="formats" Type="Collection(oneDrive.itemFormat)" ContainsTarget="true" />
         <NavigationProperty Name="insights" Type="oneDrive.contentInsights" ContainsTarget="true" />
         <NavigationProperty Name="lenses" Type="Collection(oneDrive.lens)" ContainsTarget="true" />
+        <NavigationProperty Name="listItem" Type="oneDrive.listItem" ContainsTarget="true">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </NavigationProperty>
         <NavigationProperty Name="myPhotoStreamInvitation" Type="oneDrive.photoStreamInvitation" ContainsTarget="true" />
         <NavigationProperty Name="myPhotoStreamMembership" Type="oneDrive.photoStreamMembership" ContainsTarget="true" />
         <NavigationProperty Name="notificationPreferences" Type="Collection(oneDrive.notificationPreference)" ContainsTarget="true" />
@@ -1027,6 +1031,13 @@
         <Property Name="taskReopened" Type="oneDrive.taskReopened" />
         <Property Name="addToOneDrive" Type="oneDrive.addToOneDriveAction" />
         <NavigationProperty Name="driveItem" Type="oneDrive.item" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="photoAlbum" BaseType="oneDrive.baseItem" OpenType="true">
+        <Property Name="commentCount" Type="Edm.Int32" />
+        <Property Name="childCount" Type="Edm.Int32" />
+        <Property Name="coverId" Type="Edm.String" />
+        <NavigationProperty Name="children" Type="Collection(oneDrive.item)" ContainsTarget="true" />
+        <NavigationProperty Name="tags" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="anomaly">
         <Key>
@@ -1255,6 +1266,23 @@
           <PropertyRef Name="name" />
         </Key>
         <Property Name="name" Type="Edm.String" Nullable="false" />
+      </EntityType>
+      <EntityType Name="listItem" BaseType="oneDrive.baseItem" OpenType="true">
+        <Property Name="contentType" Type="oneDrive.contentTypeReference" />
+        <Property Name="deleted" Type="oneDrive.deleted" />
+        <Property Name="folder" Type="oneDrive.folder" />
+        <Property Name="followed" Type="oneDrive.followed" />
+        <Property Name="isRestricted" Type="Edm.Boolean" />
+        <Property Name="shared" Type="oneDrive.shared" />
+        <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
+        <NavigationProperty Name="attachments" Type="Collection(oneDrive.attachment)" ContainsTarget="true" />
+        <NavigationProperty Name="children" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
+        <NavigationProperty Name="documentSetVersions" Type="Collection(oneDrive.documentSetVersion)" ContainsTarget="true" />
+        <NavigationProperty Name="fields" Type="oneDrive.fieldValueSet" ContainsTarget="true" />
+        <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
+        <NavigationProperty Name="rtnSubscriptions" Type="Collection(oneDrive.rtnSubscription)" ContainsTarget="true" />
+        <NavigationProperty Name="versions" Type="Collection(oneDrive.listItemVersion)" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="photoStreamMembership" OpenType="true">
         <Key>
@@ -1921,23 +1949,6 @@
         <NavigationProperty Name="activityItems" Type="Collection(oneDrive.listItemDetails)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="listItem" BaseType="oneDrive.baseItem" OpenType="true">
-        <Property Name="contentType" Type="oneDrive.contentTypeReference" />
-        <Property Name="deleted" Type="oneDrive.deleted" />
-        <Property Name="folder" Type="oneDrive.folder" />
-        <Property Name="followed" Type="oneDrive.followed" />
-        <Property Name="isRestricted" Type="Edm.Boolean" />
-        <Property Name="shared" Type="oneDrive.shared" />
-        <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
-        <NavigationProperty Name="attachments" Type="Collection(oneDrive.attachment)" ContainsTarget="true" />
-        <NavigationProperty Name="children" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
-        <NavigationProperty Name="documentSetVersions" Type="Collection(oneDrive.documentSetVersion)" ContainsTarget="true" />
-        <NavigationProperty Name="fields" Type="oneDrive.fieldValueSet" ContainsTarget="true" />
-        <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
-        <NavigationProperty Name="rtnSubscriptions" Type="Collection(oneDrive.rtnSubscription)" ContainsTarget="true" />
-        <NavigationProperty Name="versions" Type="Collection(oneDrive.listItemVersion)" ContainsTarget="true" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
       <EntityType Name="view" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2289,6 +2300,10 @@
         <Property Name="shortDisplayName" Type="Edm.String" />
         <Property Name="type" Type="Edm.String" />
         <Property Name="url" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="metaSettings" OpenType="true">
+        <Property Name="isAipIntegrationEnabled" Type="Edm.Boolean" />
+        <Property Name="runObjectDetectionOnImages" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="reactions" OpenType="true">
         <Property Name="likeCount" Type="Edm.Int32" />
@@ -3133,6 +3148,7 @@
         <Property Name="meetingOrganizerId" Type="Edm.String" />
         <Property Name="meetingOrganizerTenantId" Type="Edm.String" />
         <Property Name="iCalUid" Type="Edm.String" />
+        <Property Name="groupId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="error" OpenType="true">
         <Property Name="code" Type="Edm.String" />
@@ -3852,6 +3868,12 @@
         <Property Name="description" Type="Edm.String" />
         <Property Name="containerTypeId" Type="Edm.Guid" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="sWMSignalsRequest" OpenType="true">
+        <Property Name="shareeEmail" Type="Edm.String" />
+        <Property Name="itemUniqueId" Type="Edm.String" />
+        <Property Name="operation" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="avertReviewContentItem" OpenType="true">
@@ -4985,6 +5007,9 @@
       <Action Name="lockVault">
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="createVault">
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="restoreVersion" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.version" />
       </Action>
@@ -5107,6 +5132,10 @@
       <Action Name="extractSensitivityLabels" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.extractSensitivityLabelsResult" />
+      </Action>
+      <Action Name="getSites">
+        <Parameter Name="sites" Type="Collection(Edm.String)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.site)" />
       </Action>
       <Function Name="getApplicableContentTypesForList" IsBound="true" EntitySetPath="bindingParameter/contentTypes" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
@@ -5288,7 +5317,9 @@
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
         <ActionImport Name="unlockVault" Action="oneDrive.unlockVault" />
         <ActionImport Name="lockVault" Action="oneDrive.lockVault" />
+        <ActionImport Name="createVault" Action="oneDrive.createVault" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
+        <ActionImport Name="getSites" Action="oneDrive.getSites" />
         <FunctionImport Name="getAnalyticsParameters" Function="oneDrive.getAnalyticsParameters" IncludeInServiceDocument="true" />
       </EntityContainer>
     </Schema>
