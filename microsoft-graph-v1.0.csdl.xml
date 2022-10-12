@@ -4549,8 +4549,10 @@
         <Property Name="onlineMeetingInfo" Type="graph.teamworkOnlineMeetingInfo" />
         <Property Name="tenantId" Type="Edm.String" />
         <Property Name="topic" Type="Edm.String" />
+        <Property Name="viewpoint" Type="graph.chatViewpoint" />
         <Property Name="webUrl" Type="Edm.String" />
         <NavigationProperty Name="installedApps" Type="Collection(graph.teamsAppInstallation)" ContainsTarget="true" />
+        <NavigationProperty Name="lastMessagePreview" Type="graph.chatMessageInfo" ContainsTarget="true" />
         <NavigationProperty Name="members" Type="Collection(graph.conversationMember)" ContainsTarget="true" />
         <NavigationProperty Name="messages" Type="Collection(graph.chatMessage)" ContainsTarget="true" />
         <NavigationProperty Name="pinnedMessages" Type="Collection(graph.pinnedChatMessageInfo)" ContainsTarget="true" />
@@ -12303,6 +12305,10 @@
         <Property Name="chatId" Type="Edm.String" />
         <Property Name="initiator" Type="graph.identitySet" />
       </ComplexType>
+      <ComplexType Name="chatViewpoint">
+        <Property Name="isHidden" Type="Edm.Boolean" />
+        <Property Name="lastMessageReadDateTime" Type="Edm.DateTimeOffset" />
+      </ComplexType>
       <ComplexType Name="conversationMemberRoleUpdatedEventMessageDetail" BaseType="graph.eventMessageDetail">
         <Property Name="conversationMemberRoles" Type="Collection(Edm.String)" />
         <Property Name="conversationMemberUser" Type="graph.teamworkUserIdentity" />
@@ -12477,6 +12483,14 @@
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="webUrl" Type="Edm.String" />
         <NavigationProperty Name="teamsApp" Type="graph.teamsApp" />
+      </EntityType>
+      <EntityType Name="chatMessageInfo" BaseType="graph.entity">
+        <Property Name="body" Type="graph.itemBody" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="eventDetail" Type="graph.eventMessageDetail" />
+        <Property Name="from" Type="graph.chatMessageFromIdentitySet" />
+        <Property Name="isDeleted" Type="Edm.Boolean" />
+        <Property Name="messageType" Type="graph.chatMessageType" Nullable="false" />
       </EntityType>
       <EntityType Name="pinnedChatMessageInfo" BaseType="graph.entity">
         <NavigationProperty Name="message" Type="graph.chatMessage" />
@@ -17626,6 +17640,23 @@
         </Parameter>
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="hideForUser" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.chat" />
+        <Parameter Name="user" Type="graph.teamworkUserIdentity" />
+      </Action>
+      <Action Name="markChatReadForUser" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.chat" />
+        <Parameter Name="user" Type="graph.teamworkUserIdentity" />
+      </Action>
+      <Action Name="markChatUnreadForUser" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.chat" />
+        <Parameter Name="user" Type="graph.teamworkUserIdentity" />
+        <Parameter Name="lastMessageReadDateTime" Type="Edm.DateTimeOffset" />
+      </Action>
+      <Action Name="unhideForUser" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.chat" />
+        <Parameter Name="user" Type="graph.teamworkUserIdentity" />
+      </Action>
       <Action Name="sendActivityNotificationToRecipients" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.teamwork" />
         <Parameter Name="topic" Type="graph.teamworkActivityTopic" />
