@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.22928 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23005 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -839,6 +839,7 @@
         <Property Name="shared" Type="oneDrive.shared" />
         <Property Name="source" Type="oneDrive.driveItemSource" />
         <Property Name="specialFolder" Type="oneDrive.specialFolder" />
+        <Property Name="title" Type="Edm.String" />
         <Property Name="uploadSession" Type="oneDrive.uploadSession" />
         <Property Name="vault" Type="oneDrive.vault" />
         <Property Name="video" Type="oneDrive.video" />
@@ -857,6 +858,7 @@
         <Property Name="directAccessUrl" Type="Edm.String" />
         <Property Name="hasInheritedSharingLinks" Type="Edm.Boolean" />
         <Property Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" />
+        <Property Name="accessViewpoint" Type="oneDrive.accessViewpoint" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
         <NavigationProperty Name="annotationLayers" Type="Collection(oneDrive.annotationLayer)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -3054,6 +3056,7 @@
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="languageTag" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="accessViewpoint" OpenType="true" />
       <ComplexType Name="accountInfo" OpenType="true">
         <Property Name="manageStorageLink" Type="Edm.String" />
         <Property Name="referralLink" Type="Edm.String" />
@@ -3317,6 +3320,7 @@
         <Property Name="correctedByUser" Type="Edm.Boolean" />
         <Property Name="models" Type="Collection(oneDrive.machineLearningModelInfo)" />
         <Property Name="sampleExtractedText" Type="Edm.String" />
+        <Property Name="machineLearningFlags" Type="oneDrive.MachineLearningFlags" />
       </ComplexType>
       <ComplexType Name="malware" OpenType="true">
         <Property Name="description" Type="Edm.String" />
@@ -3324,6 +3328,8 @@
       <ComplexType Name="media" OpenType="true">
         <Property Name="aboutVisibility" Type="Edm.String" />
         <Property Name="analyticsVisibility" Type="Edm.String" />
+        <Property Name="notesVisibility" Type="Edm.String" />
+        <Property Name="chatVisibility" Type="Edm.String" />
         <Property Name="tableOfContentsVisibility" Type="Edm.String" />
         <Property Name="noiseSuppressionEnabledByDefault" Type="Edm.Boolean" />
         <Property Name="isNoiseSuppressionControlShown" Type="Edm.Boolean" />
@@ -3676,6 +3682,8 @@
         <Property Name="createOnly" Type="Edm.Boolean" />
         <Property Name="status" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="role" Type="Edm.String" />
+        <Property Name="variant" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="sharingLinkVariants" OpenType="true">
         <Property Name="passwordProtected" Type="oneDrive.sharingOperationStatus" />
@@ -4360,6 +4368,11 @@
         <Member Name="azureCognitive" Value="4" />
         <Member Name="unknownFutureValue" Value="1073741824" />
       </EnumType>
+      <EnumType Name="MachineLearningFlags">
+        <Member Name="unset" Value="0" />
+        <Member Name="skipClassificationOnFileUpdate" Value="1" />
+        <Member Name="unknownFutureValue" Value="1073741824" />
+      </EnumType>
       <EnumType Name="NewsType">
         <Member Name="News" Value="0" />
         <Member Name="NewsLink" Value="1" />
@@ -4846,6 +4859,9 @@
         <Parameter Name="password" Type="Edm.String" />
         <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="role" Type="Edm.String" />
+        <Parameter Name="variant" Type="Edm.String" />
+        <Parameter Name="nav" Type="Edm.String" />
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="createLink" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4856,6 +4872,9 @@
         <Parameter Name="password" Type="Edm.String" />
         <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="role" Type="Edm.String" />
+        <Parameter Name="variant" Type="Edm.String" />
+        <Parameter Name="nav" Type="Edm.String" />
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="createLink" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4866,6 +4885,9 @@
         <Parameter Name="password" Type="Edm.String" />
         <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="role" Type="Edm.String" />
+        <Parameter Name="variant" Type="Edm.String" />
+        <Parameter Name="nav" Type="Edm.String" />
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4878,6 +4900,7 @@
         <Parameter Name="roles" Type="Collection(Edm.String)" />
         <Parameter Name="sendInvitation" Type="Edm.Boolean" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="nav" Type="Edm.Boolean" />
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4890,6 +4913,7 @@
         <Parameter Name="roles" Type="Collection(Edm.String)" />
         <Parameter Name="sendInvitation" Type="Edm.Boolean" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="nav" Type="Edm.Boolean" />
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4902,6 +4926,7 @@
         <Parameter Name="roles" Type="Collection(Edm.String)" />
         <Parameter Name="sendInvitation" Type="Edm.Boolean" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="nav" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -4914,6 +4939,7 @@
         <Parameter Name="roles" Type="Collection(Edm.String)" />
         <Parameter Name="sendInvitation" Type="Edm.Boolean" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
+        <Parameter Name="nav" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
