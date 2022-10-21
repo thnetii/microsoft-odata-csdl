@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23005 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23012 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -4017,13 +4017,13 @@
         <Property Name="communicationId" Type="Edm.String" />
         <Property Name="reports" Type="Collection(oneDrive.report)" />
       </ComplexType>
-      <ComplexType Name="dimensionInfo" OpenType="true">
+      <ComplexType Name="dimension" OpenType="true">
         <Property Name="name" Type="Edm.String" />
         <Property Name="values" Type="Collection(Edm.String)" />
       </ComplexType>
-      <ComplexType Name="parameters" OpenType="true">
-        <Property Name="dimensions" Type="Collection(oneDrive.dimensionInfo)" />
-        <Property Name="metrics" Type="Collection(Edm.String)" />
+      <ComplexType Name="metricDimensions" OpenType="true">
+        <Property Name="metric" Type="Edm.String" />
+        <Property Name="dimensions" Type="Collection(oneDrive.dimension)" />
       </ComplexType>
       <ComplexType Name="report" OpenType="true">
         <Property Name="name" Type="Edm.String" />
@@ -5345,9 +5345,6 @@
         <Parameter Name="endDateTime" Type="Edm.String" Nullable="false" />
         <ReturnType Type="Collection(oneDrive.change)" />
       </Function>
-      <Function Name="getAnalyticsParameters">
-        <ReturnType Type="oneDrive.parameters" />
-      </Function>
       <Action Name="getPreaggregatedAnalyticsReport" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
         <Parameter Name="campaignIds" Type="Collection(Edm.String)" Nullable="false" />
@@ -5361,10 +5358,18 @@
         <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" Nullable="false" />
         <ReturnType Type="Collection(oneDrive.communicationReports)" />
       </Action>
+      <Action Name="getAnalyticsMetricDimensions" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.communication)" />
+        <Parameter Name="campaignId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="communicationId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="metrics" Type="Collection(Edm.String)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.metricDimensions)" />
+      </Action>
       <Action Name="getAnalyticsReport" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.campaign" />
-        <Parameter Name="dimensions" Type="Collection(Edm.String)" />
-        <Parameter Name="metrics" Type="Collection(Edm.String)" />
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.communication)" />
+        <Parameter Name="campaignId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="communicationId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="reportQuery" Type="oneDrive.reportQuery" Nullable="false" />
         <ReturnType Type="oneDrive.report" />
       </Action>
       <EntityContainer Name="oneDrive">
@@ -5398,7 +5403,6 @@
         <ActionImport Name="createVault" Action="oneDrive.createVault" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
-        <FunctionImport Name="getAnalyticsParameters" Function="oneDrive.getAnalyticsParameters" IncludeInServiceDocument="true" />
       </EntityContainer>
     </Schema>
   </edmx:DataServices>
