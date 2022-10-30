@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23012 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23019 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -2227,6 +2227,8 @@
         <Property Name="logo" Type="Edm.String" />
         <Property Name="color" Type="Edm.String" />
         <Property Name="language" Type="Edm.Int64" />
+        <Property Name="classification" Type="Edm.String" />
+        <Property Name="sensitivityLabelId" Type="Edm.String" />
       </EntityType>
       <ComplexType Name="subpoenaDetails" OpenType="true">
         <Property Name="jobName" Type="Edm.String" />
@@ -2360,6 +2362,8 @@
       </ComplexType>
       <ComplexType Name="itemReference" OpenType="true">
         <Property Name="parentHierarchy" Type="Collection(oneDrive.itemReferenceNode)" />
+        <Property Name="siteId" Type="Edm.String" />
+        <Property Name="listId" Type="Edm.String" />
         <Property Name="driveId" Type="Edm.String" />
         <Property Name="driveType" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" />
@@ -2378,10 +2382,6 @@
         <Property Name="siteTitle" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="itemStreamProperties" OpenType="true" />
-      <ComplexType Name="MeetingValidationResult" OpenType="true">
-        <Property Name="isValid" Type="Edm.Boolean" />
-        <Property Name="relatedGroupId" Type="Edm.Guid" />
-      </ComplexType>
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
         <Property Name="error" Type="oneDrive.error" />
@@ -2658,6 +2658,7 @@
         <Property Name="applicationUrl" Type="Edm.String" />
         <Property Name="bootstrapperUrl" Type="Edm.String" />
         <Property Name="clientThrottlingProtection" Type="Edm.String" />
+        <Property Name="customFontCatalogUrl" Type="Edm.String" />
         <Property Name="fileGetUrl" Type="Edm.String" />
         <Property Name="licenseCheckForEditIsEnabled" Type="Edm.Boolean" />
         <Property Name="requestedCallThrottling" Type="Edm.String" />
@@ -3444,6 +3445,7 @@
         <Property Name="applicationBootstrapperUrl" Type="Edm.String" />
         <Property Name="previewerBootstrapperUrl" Type="Edm.String" />
         <Property Name="customApplicationUrl" Type="Edm.String" />
+        <Property Name="customFontCatalogUrl" Type="Edm.String" />
         <Property Name="fileGetUrl" Type="Edm.String" />
         <Property Name="fileGetUrlExpiry" Type="Edm.String" />
         <Property Name="userId" Type="Edm.String" />
@@ -4786,10 +4788,6 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Collection(oneDrive.item)" />
       </Function>
-      <Action Name="validateMeeting" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <ReturnType Type="oneDrive.MeetingValidationResult" />
-      </Action>
       <Action Name="createUploadSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.audioTrack)" />
         <ReturnType Type="oneDrive.uploadSession" />
@@ -5155,6 +5153,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="getItems">
+        <Parameter Name="items" Type="Collection(oneDrive.itemReference)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.listItem)" />
+      </Action>
       <Action Name="processMsaEvent" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
       </Action>
@@ -5402,6 +5404,7 @@
         <ActionImport Name="lockVault" Action="oneDrive.lockVault" />
         <ActionImport Name="createVault" Action="oneDrive.createVault" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
+        <ActionImport Name="getItems" Action="oneDrive.getItems" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
       </EntityContainer>
     </Schema>
