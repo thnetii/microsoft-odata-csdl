@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23019 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23102 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -532,6 +532,7 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <NavigationProperty Name="restoreSessions" Type="Collection(oneDrive.restoreSession)" ContainsTarget="true" />
+        <NavigationProperty Name="restorePoints" Type="Collection(oneDrive.restorePoint)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="restoreSession" OpenType="true">
@@ -548,6 +549,15 @@
         <Property Name="restoreToTimestamp" Type="Edm.DateTimeOffset" />
         <Property Name="destination" Type="oneDrive.restoreDestination" />
         <Property Name="restoreSessionArtifacts" Type="Collection(oneDrive.restoreSessionArtifactFacet)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="restorePoint" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="protectedItem" Type="oneDrive.protectedItem" />
+        <Property Name="restorePointInTime" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="actorAndActivity" OpenType="true">
@@ -2294,6 +2304,12 @@
       </ComplexType>
       <ComplexType Name="DiagnosticOneDriveFacet" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="socialListId" Type="Edm.Guid" />
+      </ComplexType>
+      <ComplexType Name="protectedItem" OpenType="true">
+        <Property Name="artifactId" Type="Edm.Guid" />
+        <Property Name="siteId" Type="Edm.Guid" />
+        <Property Name="artifactType" Type="oneDrive.ArtifactType" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="restoreDestination" OpenType="true">
         <Property Name="restorePathType" Type="oneDrive.RestorePathType" />
@@ -5156,8 +5172,18 @@
       <Action Name="createVault">
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="disableVault">
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="restoreVersion" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.version" />
+      </Action>
+      <Action Name="lookupLatestInDateRange" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.restorePoint)" />
+        <Parameter Name="startDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Parameter Name="endDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Parameter Name="protectedItems" Type="Collection(oneDrive.protectedItem)" Nullable="false" />
+        <ReturnType Type="Collection(oneDrive.restorePoint)" />
       </Action>
       <Function Name="autoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
@@ -5387,6 +5413,11 @@
         <Parameter Name="targetTermId" Type="Edm.String" Nullable="false" />
         <ReturnType Type="oneDrive.term" />
       </Action>
+      <Action Name="updateSourceSet" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.term" />
+        <Parameter Name="targetSet" Type="oneDrive.termSet" Nullable="false" />
+        <ReturnType Type="oneDrive.term" />
+      </Action>
       <Action Name="fetchTermsWssIds" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.termSet" />
         <ReturnType Type="Collection(oneDrive.TermWssIdsFacet)" />
@@ -5431,13 +5462,14 @@
       <Action Name="getPreaggregatedAnalyticsReport" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.communication)" />
         <Parameter Name="campaignId" Type="Edm.String" Nullable="false" />
-        <Parameter Name="communicationIds" Type="Collection(Edm.String)" Nullable="false" />
+        <Parameter Name="communicationIds" Type="Collection(Edm.String)" />
         <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" Nullable="false" />
         <ReturnType Type="Collection(oneDrive.communicationReports)" />
       </Action>
       <EntityContainer Name="oneDrive">
         <EntitySet Name="diagnostics" EntityType="oneDrive.Diagnostic" />
         <EntitySet Name="restoreSessions" EntityType="oneDrive.restoreSession" />
+        <EntitySet Name="restorePoints" EntityType="oneDrive.restorePoint" />
         <EntitySet Name="consumerSiteAppConfigs" EntityType="oneDrive.consumerSiteAppConfigs" />
         <EntitySet Name="drives" EntityType="oneDrive.drive" />
         <EntitySet Name="entitlements" EntityType="oneDrive.entitlement" />
@@ -5464,6 +5496,7 @@
         <ActionImport Name="unlockVault" Action="oneDrive.unlockVault" />
         <ActionImport Name="lockVault" Action="oneDrive.lockVault" />
         <ActionImport Name="createVault" Action="oneDrive.createVault" />
+        <ActionImport Name="disableVault" Action="oneDrive.disableVault" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
         <ActionImport Name="getItems" Action="oneDrive.getItems" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
