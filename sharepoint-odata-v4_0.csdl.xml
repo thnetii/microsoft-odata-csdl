@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23109 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23123 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -128,9 +128,9 @@
         <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ColumnTypeInfo">
-        <Property Name="ColumnTypeAsText" Type="Edm.String" />
         <Property Name="IsTypeCompatible" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PlaceholderId" Type="Edm.String" />
+        <Property Name="TranslatedPlaceholderType" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ContentAssemblyFileInfo">
         <Property Name="FileUrl" Type="Edm.String" />
@@ -266,6 +266,7 @@
         <Property Name="RequiresPassword" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RestrictedShareMembership" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShareId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="TrackLinkUsers" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SharingLinkInfo">
         <Property Name="AllowsAnonymousAccess" Type="Edm.Boolean" Nullable="false" />
@@ -3946,12 +3947,17 @@
       <Action Name="ResetRoleInheritance" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
       </Action>
+      <Action Name="AddThumbnailFieldData" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+        <Parameter Name="imageStream" Type="Edm.Stream" />
+        <Parameter Name="imageName" Type="Edm.String" />
+        <Parameter Name="fieldInternalName" Type="Edm.String" />
+      </Action>
       <Action Name="AttachImage" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <Parameter Name="imageStream" Type="Edm.Stream" />
         <Parameter Name="imageName" Type="Edm.String" />
         <Parameter Name="fieldInternalName" Type="Edm.String" />
-        <Parameter Name="bNewItem" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.SPImageItem" />
       </Action>
       <Action Name="DeleteObject" IsBound="true">
@@ -6539,6 +6545,7 @@
         <Parameter Name="emailBody" Type="Edm.String" />
         <Parameter Name="useSimplifiedRoles" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="linkParameters" Type="SP.Sharing.LinkParameters" />
         <ReturnType Type="SP.SharingResult" />
       </Action>
       <Action Name="UnshareLink" IsBound="true">
@@ -6559,6 +6566,7 @@
         <Parameter Name="customMessage" Type="Edm.String" />
         <Parameter Name="includeAnonymousLinksInNotification" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="propagateAcl" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="linkParameters" Type="SP.Sharing.LinkParameters" />
         <ReturnType Type="Collection(SP.Sharing.UserSharingResult)" />
       </Action>
       <Function Name="GetRecentEditors" IsBound="true" IsComposable="true">
@@ -6771,6 +6779,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/Categories">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/CoAuthState">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/Description">
@@ -7446,6 +7457,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharingLinkData/ShareId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SharingLinkData/TrackLinkUsers">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharingLinkInfo/AllowsAnonymousAccess">
@@ -10799,6 +10813,9 @@
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.CampaignPublication, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.CampaignPublication, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10902,6 +10919,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.FeedVideoPage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.FeedVideoPage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.FeedVideoPage, SP.Publishing.SitePageFieldsData)">
@@ -11009,6 +11029,9 @@
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.RepostPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.RepostPage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.RepostPage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11091,6 +11114,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.SitePage3D)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.SitePage3D, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.SitePage3D, SP.Publishing.SitePageFieldsData)">
@@ -11205,6 +11231,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.SitePage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.SitePage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.SitePage, SP.Publishing.SitePageFieldsData)">
@@ -11330,6 +11359,9 @@
       <Annotations Target="SP.Publishing.SavePageAsTemplateOnMySite(SP.Publishing.TopicSitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.TopicSitePage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.TopicSitePage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11363,7 +11395,10 @@
       <Annotations Target="SP.Publishing.Navigation.WebState(SP.Publishing.Navigation.StructuralNavigationCacheWrapper)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Workflow.AttachImage(SP.Workflow.SPWorkflowTask, Edm.Stream, Edm.String, Edm.String, Edm.Boolean)">
+      <Annotations Target="SP.Workflow.AddThumbnailFieldData(SP.Workflow.SPWorkflowTask, Edm.Stream, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Workflow.AttachImage(SP.Workflow.SPWorkflowTask, Edm.Stream, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Workflow.DeleteWithParameters(SP.Workflow.SPWorkflowTask, SP.ListItemDeleteParameters)">
@@ -12155,7 +12190,10 @@
       <Annotations Target="SP.EnsureEventsList(Collection(SP.List))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.AttachImage(SP.ListItem, Edm.Stream, Edm.String, Edm.String, Edm.Boolean)">
+      <Annotations Target="SP.AddThumbnailFieldData(SP.ListItem, Edm.Stream, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.AttachImage(SP.ListItem, Edm.Stream, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.DeleteWithParameters(SP.ListItem, SP.ListItemDeleteParameters)">
@@ -12414,6 +12452,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharedWithMeItemCollection.GetSharedWithMeItems(Edm.Int32, Edm.String, Edm.Boolean)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SharedWithMeItemCollection.RemoveFromSharedWithMe(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SmartCache.Update(Edm.String)">
@@ -12809,7 +12850,7 @@
       <Annotations Target="SP.ShareLinkExpress(SP.ListItem, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.ShareObject(SP.SecurableObject, Edm.String, Edm.String, Edm.Int32, Edm.Boolean, Edm.Boolean, Edm.Boolean, Edm.String, Edm.String, Edm.Boolean, Edm.Boolean)">
+      <Annotations Target="SP.ShareObject(SP.SecurableObject, Edm.String, Edm.String, Edm.Int32, Edm.Boolean, Edm.Boolean, Edm.Boolean, Edm.String, Edm.String, Edm.Boolean, Edm.Boolean, SP.Sharing.LinkParameters)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.UnshareLink(SP.SecurableObject, Edm.Int32, Edm.Guid)">
@@ -12818,7 +12859,7 @@
       <Annotations Target="SP.UnshareObject(SP.ListItem)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.UpdateDocumentSharingInfo(SP.SecurableObject, Collection(SP.Sharing.UserRoleAssignment), Edm.Boolean, Edm.Boolean, Edm.Boolean, Edm.String, Edm.Boolean, Edm.Boolean)">
+      <Annotations Target="SP.UpdateDocumentSharingInfo(SP.SecurableObject, Collection(SP.Sharing.UserRoleAssignment), Edm.Boolean, Edm.Boolean, Edm.Boolean, Edm.String, Edm.Boolean, Edm.Boolean, SP.Sharing.LinkParameters)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SiteSharingReportHelper.CancelSharingReportJob()">
@@ -18711,12 +18752,17 @@
         <Property Name="CanvasContent1" Type="Edm.String" />
         <Property Name="CanvasJson1" Type="Edm.String" />
         <Property Name="Categories" Type="Edm.String" />
+        <Property Name="CoAuthState" Type="SP.Publishing.SitePageCoAuthState" />
         <Property Name="Description" Type="Edm.String" />
         <Property Name="LayoutWebpartsContent" Type="Edm.String" />
         <Property Name="Modified" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="PublishStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="TopicHeader" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SitePageCoAuthState">
+        <Property Name="Action" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SharedLockId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CampaignPublicationFieldsData" BaseType="SP.Publishing.SitePageFieldsData">
         <Property Name="EndpointEmail" Type="Edm.String" />
@@ -18729,17 +18775,17 @@
         <Property Name="DraftId" Type="Edm.String" />
         <Property Name="GroupUpn" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="SitePageCoAuthState">
-        <Property Name="SharedLockId" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="CopyToParams">
+        <Property Name="AsNews" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AsTemplate" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CanvasContentOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ComponentJSONString" Type="Edm.String" />
+        <Property Name="CreateCopyForEdit" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CreateIfMissing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DestinationPageUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="DestinationType" Type="Edm.Int32" Nullable="false" />
         <Property Name="DestinationWebUrl" Type="Edm.String" />
+        <Property Name="SitePageFlags" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ProfileDateTime">
         <Property Name="DateTimeType" Type="Edm.Int32" Nullable="false" />
@@ -19452,6 +19498,11 @@
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="SP.Publishing.SitePage" />
       </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -19593,6 +19644,11 @@
       <Action Name="SavePageAsTemplateOnMySite" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <ReturnType Type="SP.Publishing.SitePage" />
+      </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
@@ -19802,6 +19858,11 @@
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <ReturnType Type="SP.Publishing.SitePage" />
       </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.RepostPage" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -20006,6 +20067,11 @@
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <ReturnType Type="SP.Publishing.SitePage" />
       </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -20183,6 +20249,11 @@
       <Action Name="SavePageAsTemplateOnMySite" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <ReturnType Type="SP.Publishing.SitePage" />
+      </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
@@ -20368,6 +20439,11 @@
       <Action Name="SavePageAsTemplateOnMySite" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <ReturnType Type="SP.Publishing.SitePage" />
+      </Action>
+      <Action Name="SavePageCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
+        <Parameter Name="pageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
@@ -21977,6 +22053,7 @@
         <Property Name="SiteScriptIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="SupportedWebTemplates" Type="Collection(Edm.String)" />
         <Property Name="TargetPlatforms" Type="Collection(Edm.String)" />
+        <Property Name="TemplateAssets" Type="Collection(Edm.String)" />
         <Property Name="TemplateFeatures" Type="Collection(Edm.String)" />
         <Property Name="ThumbnailUrl" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
@@ -23123,7 +23200,7 @@
       </ComplexType>
       <ComplexType Name="TenantAdminPolicyReport">
         <Property Name="policyExecutionTime" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="policyExecutionId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="policyExecutionId" Type="Edm.Int32" Nullable="false" />
         <Property Name="policyId" Type="Edm.Guid" Nullable="false" />
         <Property Name="policyReportDetails" Type="Edm.String" />
         <Property Name="policyVersion" Type="Edm.Int32" Nullable="false" />
@@ -23531,6 +23608,7 @@
         <Property Name="hasUniquePermissions" Type="Edm.Boolean" Nullable="false" />
         <Property Name="isStubFile" Type="Edm.Boolean" Nullable="false" />
         <Property Name="itemUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="itemUrl" Type="Edm.String" />
         <Property Name="microserviceShareUiUrl" Type="Edm.String" />
         <Property Name="outlookEndpointHostUrl" Type="Edm.String" />
         <Property Name="permissionsInformation" Type="SP.Sharing.PermissionCollection" />
@@ -23619,12 +23697,17 @@
       <Action Name="ResetRoleInheritance" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
       </Action>
+      <Action Name="AddThumbnailFieldData" IsBound="true">
+        <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
+        <Parameter Name="imageStream" Type="Edm.Stream" />
+        <Parameter Name="imageName" Type="Edm.String" />
+        <Parameter Name="fieldInternalName" Type="Edm.String" />
+      </Action>
       <Action Name="AttachImage" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <Parameter Name="imageStream" Type="Edm.Stream" />
         <Parameter Name="imageName" Type="Edm.String" />
         <Parameter Name="fieldInternalName" Type="Edm.String" />
-        <Parameter Name="bNewItem" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.SPImageItem" />
       </Action>
       <Action Name="DeleteObject" IsBound="true">
@@ -24647,11 +24730,13 @@
         <Property Name="AllowSelfServiceUpgrade" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AnonymousLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="AuthContextStrength" Type="Edm.String" />
+        <Property Name="AuthenticationContextLimitedAccess" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AuthenticationContextName" Type="Edm.String" />
         <Property Name="AverageResourceUsage" Type="Edm.Double" Nullable="false" />
         <Property Name="BlockDownloadLinksFileType" Type="Edm.Int32" Nullable="false" />
         <Property Name="BlockDownloadMicrosoft365GroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="BlockDownloadPolicy" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ClearRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CompatibilityLevel" Type="Edm.Int32" Nullable="false" />
         <Property Name="ConditionalAccessPolicy" Type="Edm.Int32" Nullable="false" />
@@ -24707,6 +24792,9 @@
         <Property Name="RequestFilesLinkEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="RestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="RestrictedAccessControlGroups" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="RestrictedAccessControlGroupsToAdd" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="RestrictedAccessControlGroupsToRemove" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="RestrictedToRegion" Type="Edm.Int32" Nullable="false" />
         <Property Name="SandboxedCodeActivationCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="SensitivityLabel" Type="Edm.Guid" Nullable="false" />
@@ -24964,6 +25052,7 @@
         <Property Name="ResourceQuota" Type="Edm.Double" Nullable="false" />
         <Property Name="ResourceQuotaAllocated" Type="Edm.Double" Nullable="false" />
         <Property Name="RestrictedOneDriveLicense" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="RestrictedSharePointLicense" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RootSiteUrl" Type="Edm.String" />
         <Property Name="SearchResolveExactEmailOrUPN" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SharingAllowedDomainList" Type="Edm.String" />
@@ -25265,12 +25354,6 @@
       <Action Name="ExportToCSV" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewXml" Type="Edm.String" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="FetchSplistRecords" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
-        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Function Name="GetAdminListViews" IsBound="true" IsComposable="true">
@@ -25659,6 +25742,7 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
         <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
+        <Parameter Name="isAutoRefresh" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Edm.Stream" />
       </Action>
       <Action Name="ReorderHomeSites" IsBound="true">
@@ -28595,6 +28679,8 @@
         <Property Name="CompleteTimeInUtc" Type="Edm.DateTimeOffset" />
         <Property Name="Content" Type="Collection(Edm.String)" />
         <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="IncompatibleSegmentsPairsContent" Type="Collection(Edm.String)" />
+        <Property Name="InvalidSegmentsContent" Type="Collection(Edm.String)" />
         <Property Name="QueuedTimeInUtc" Type="Edm.DateTimeOffset" />
         <Property Name="StartTimeInUtc" Type="Edm.DateTimeOffset" />
         <Property Name="State" Type="Edm.String" />
@@ -28609,6 +28695,7 @@
       <Function Name="GetReportById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.SharePoint.AuthPolicy.SPTenantIBPolicyComplianceReport)" />
         <Parameter Name="ReportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="ShowIncompatibleSegmentsPairsAndInvalidSegmentsFilesContents" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.AuthPolicy.SPTenantIBPolicyComplianceReport" />
       </Function>
       <Action Name="RemoveFinalizedReport" IsBound="true">
@@ -31051,6 +31138,10 @@
         <Parameter Name="includeSharingHistory" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Edm.String" />
       </Function>
+      <Action Name="RemoveFromSharedWithMe">
+        <Parameter Name="spoIds" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
     </Schema>
     <Schema Namespace="SP.SmartCache" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="Update">
