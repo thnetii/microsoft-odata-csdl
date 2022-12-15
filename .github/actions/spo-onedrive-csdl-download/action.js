@@ -4,7 +4,7 @@ const spAuth = require('node-sp-auth');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
-const xmlFormatter = require('xml-formatter');
+const { default: xmlFormatter } = require('xml-formatter');
 
 /** @type {spAuth.IOnlineAddinCredentials} */
 const credOpts = {
