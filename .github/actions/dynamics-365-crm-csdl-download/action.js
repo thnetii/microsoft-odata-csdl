@@ -5,7 +5,7 @@ const { ConfidentialClientApplication } = require('@azure/msal-node');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
-const xmlFormatter = require('xml-formatter');
+const { default: xmlFormatter } = require('xml-formatter');
 const assert = require('assert');
 
 const getMsalAuthority = () => {
