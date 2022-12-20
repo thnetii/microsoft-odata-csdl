@@ -3,7 +3,7 @@ const { promises: fs } = require('fs');
 const { ConfidentialClientApplication } = require('@azure/msal-node');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
-const { default: xmlFormatter } = require('xml-formatter');
+const xmlFormatter = require('xml-formatter');
 const assert = require('assert');
 
 const getMsalAuthority = () => {
@@ -45,6 +45,7 @@ const httpClient = new HttpClient();
     accept: 'application/xml',
   });
   let csdlText = await csdlResp.readBody();
+  // @ts-ignore
   csdlText = xmlFormatter(csdlText, {
     indentation: '  ',
     stripComments: false,

@@ -4,7 +4,7 @@ const spAuth = require('node-sp-auth');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
-const { default: xmlFormatter } = require('xml-formatter');
+const xmlFormatter = require('xml-formatter');
 
 /** @type {spAuth.IOnlineAddinCredentials} */
 const credOpts = {
@@ -57,6 +57,7 @@ const httpClient = new HttpClient();
     const csdlSerializer = new XMLSerializer();
     csdlText = csdlSerializer.serializeToString(csdlDom);
   }
+  // @ts-ignore
   csdlText = xmlFormatter(csdlText, {
     indentation: '  ',
     stripComments: false,
