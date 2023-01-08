@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23130 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23207 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -41,6 +41,7 @@
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
+        <Property Name="VivaConnectionsDefaultStart" Type="Edm.Boolean" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="PortalAndOrgNewsSiteReference">
@@ -3832,6 +3833,10 @@
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="value" Type="Edm.Boolean" Nullable="false" />
       </Action>
+      <Action Name="StartRecycle" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
       <Action Name="SyncFlowCallbackUrl" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="flowId" Type="Edm.String" />
@@ -4021,10 +4026,6 @@
       <Action Name="Recycle" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
-      </Action>
-      <Action Name="RecycleImage" IsBound="true">
-        <Parameter Name="this" Type="SP.ListItem" />
-        <Parameter Name="imageName" Type="Edm.String" />
       </Action>
       <Action Name="RecycleWithParameters" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
@@ -4402,6 +4403,12 @@
         <Parameter Name="DecodedUrl" Type="Edm.String" />
         <ReturnType Type="SP.ListItem" />
       </Function>
+      <Action Name="GetListOperation" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="listId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="operationId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.LargeOperation.SPLargeOperation" />
+      </Action>
       <Function Name="GetLists" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="getListsParams" Type="SP.GetListsParameters" />
@@ -7298,6 +7305,9 @@
       <Annotations Target="SP.HomeSitesDetails/Url">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/VivaConnectionsDefaultStart">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.HomeSitesDetails/WebId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9599,6 +9609,9 @@
       <Annotations Target="SP.Publishing.CampaignPublication/PublicationMetadata">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.CampaignPublication/PublicationStatus">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.CampaignPublication/SharePointEndpoint">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10802,6 +10815,9 @@
       <Annotations Target="SP.Publishing.CreateNewsCopy(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.Delete(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.DemoteFromNews(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10815,6 +10831,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.CampaignPublication, SP.Publishing.SitePageFieldsData)">
@@ -10928,6 +10947,9 @@
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.FeedVideoPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.FeedVideoPage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.FeedVideoPage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11036,6 +11058,9 @@
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.RepostPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.RepostPage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.RepostPage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11121,6 +11146,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.SitePage3D)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.SitePage3D)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.SitePage3D, SP.Publishing.SitePageFieldsData)">
@@ -11238,6 +11266,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.SitePage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.SitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.SitePage, SP.Publishing.SitePageFieldsData)">
@@ -11366,6 +11397,9 @@
       <Annotations Target="SP.Publishing.Publish(SP.Publishing.TopicSitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.PublishCoAuth(SP.Publishing.TopicSitePage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SaveDraft(SP.Publishing.TopicSitePage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11427,9 +11461,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Workflow.GetComments(SP.Workflow.SPWorkflowTask)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Workflow.RecycleImage(SP.Workflow.SPWorkflowTask, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Workflow.RecycleWithParameters(SP.Workflow.SPWorkflowTask, SP.ListItemDeleteParameters)">
@@ -12222,9 +12253,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.GetComments(SP.ListItem)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.RecycleImage(SP.ListItem, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecycleWithParameters(SP.ListItem, SP.ListItemDeleteParameters)">
@@ -19187,6 +19215,7 @@
       <EntityType Name="CampaignPublication" BaseType="SP.Publishing.SitePage">
         <Property Name="EmailEndpoint" Type="Edm.String" />
         <Property Name="PublicationMetadata" Type="Edm.String" />
+        <Property Name="PublicationStatus" Type="Edm.Int32" />
         <Property Name="SharePointEndpoint" Type="Edm.String" />
         <Property Name="YammerEndpoint" Type="Edm.String" />
       </EntityType>
@@ -19493,6 +19522,9 @@
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="SP.Publishing.SitePage" />
       </Action>
+      <Action Name="Delete" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+      </Action>
       <Action Name="DemoteFromNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -19513,6 +19545,10 @@
       <Action Name="Publish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
@@ -19664,6 +19700,10 @@
       <Action Name="Publish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
@@ -19878,6 +19918,10 @@
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.RepostPage" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -20087,6 +20131,10 @@
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -20269,6 +20317,10 @@
       <Action Name="Publish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
@@ -20459,6 +20511,10 @@
       <Action Name="Publish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="PublishCoAuth" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
+        <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Action Name="SaveDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
@@ -23126,10 +23182,10 @@
         <Property Name="UserId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="EventData">
-        <Property Name="Group" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Group" Type="Edm.String" />
         <Property Name="HubSiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="Identity" Type="Edm.String" />
-        <Property Name="IsHubSite" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsHubSite" Type="Edm.String" />
         <Property Name="NewSiteUrl" Type="Edm.String" />
         <Property Name="PreviousHubSiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SourceSiteUrl" Type="Edm.String" />
@@ -23810,10 +23866,6 @@
       <Action Name="Recycle" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
-      </Action>
-      <Action Name="RecycleImage" IsBound="true">
-        <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
-        <Parameter Name="imageName" Type="Edm.String" />
       </Action>
       <Action Name="RecycleWithParameters" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
@@ -28707,6 +28759,9 @@
         <Parameter Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
       </Action>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.LargeOperation" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="SPLargeOperation" />
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Internal.ClientSideComponent" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ComponentContextInfo">
         <Property Name="SerializedData" Type="Edm.String" />
@@ -29173,6 +29228,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <Parameter Name="blockDownloadFileTypePolicy" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="fileTypeIds" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Parameter Name="excludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
+      </Action>
+      <Action Name="SetBlockDownloadFileTypePolicyExclusionList" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <Parameter Name="excludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
       </Action>
       <Action Name="SetHideDefaultThemes" IsBound="true">
