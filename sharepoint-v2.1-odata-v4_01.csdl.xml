@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23304 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23311 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -22,6 +22,7 @@
         <NavigationProperty Name="accessStatsByDay" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="accessStatsByHour" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="platformStatsByDay" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
+        <NavigationProperty Name="statsByMonth" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="appPivotStatsByDay" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="lastSevenDaysTopItemsByViewers" Type="oneDrive.topItems" ContainsTarget="true" />
         <NavigationProperty Name="lastSevenDaysTopItemsByViews" Type="oneDrive.topItems" ContainsTarget="true" />
@@ -48,6 +49,7 @@
         <Property Name="endDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="access" Type="oneDrive.itemActionStat" />
         <Property Name="create" Type="oneDrive.itemActionStat" />
+        <Property Name="retained" Type="oneDrive.itemActionStat" />
         <Property Name="delete" Type="oneDrive.itemActionStat" />
         <Property Name="edit" Type="oneDrive.itemActionStat" />
         <Property Name="move" Type="oneDrive.itemActionStat" />
@@ -64,6 +66,8 @@
         <NavigationProperty Name="pages" Type="Collection(oneDrive.baseItem)" ContainsTarget="true" />
         <NavigationProperty Name="documents" Type="Collection(oneDrive.baseItem)" ContainsTarget="true" />
         <NavigationProperty Name="news" Type="Collection(oneDrive.baseItem)" ContainsTarget="true" />
+        <NavigationProperty Name="cardInstances" Type="Collection(oneDrive.cardInstance)" ContainsTarget="true" />
+        <NavigationProperty Name="feedItems" Type="Collection(oneDrive.baseItem)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="aggregatedEditRecommendedAction" OpenType="true">
         <Key>
@@ -316,6 +320,7 @@
         <Property Name="hasInheritedSharingLinks" Type="Edm.Boolean" />
         <Property Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" />
         <Property Name="accessViewpoint" Type="oneDrive.accessViewpoint" />
+        <Property Name="autoTagging" Type="oneDrive.autoTagging" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
         <NavigationProperty Name="annotationLayers" Type="Collection(oneDrive.annotationLayer)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -1029,6 +1034,7 @@
         <Property Name="isDefault" Type="Edm.Boolean" />
         <Property Name="temporaryDownloadUrl" Type="Edm.String" />
         <Property Name="source" Type="Edm.String" />
+        <Property Name="generationDetails" Type="oneDrive.generationDetails" />
       </EntityType>
       <EntityType Name="nonAggregatedRecommendedAction" OpenType="true">
         <Key>
@@ -1494,6 +1500,16 @@
         <NavigationProperty Name="webparts" Type="Collection(oneDrive.webPart)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="cardInstance" BaseType="oneDrive.baseItem" OpenType="true">
+        <NavigationProperty Name="card" Type="oneDrive.card" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="card" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+      </EntityType>
       <EntityType Name="columnLink" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1777,12 +1793,6 @@
         <Property Name="innerHtml" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="card" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-      </EntityType>
       <EntityType Name="employeeExperience" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1846,6 +1856,7 @@
         <NavigationProperty Name="diagnosticTermStores" Type="Collection(oneDrive.diagnosticTermStore)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUsers" Type="Collection(oneDrive.diagnosticUser)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticViews" Type="Collection(oneDrive.diagnosticView)" ContainsTarget="true" />
+        <NavigationProperty Name="drives" Type="Collection(oneDrive.drive)" ContainsTarget="true" />
         <NavigationProperty Name="facts" Type="Collection(oneDrive.fact)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -2363,6 +2374,7 @@
         <Property Name="description" Type="Edm.String" />
         <Property Name="containerTypeId" Type="Edm.Guid" />
         <Property Name="externalGroupId" Type="Edm.Guid" />
+        <Property Name="status" Type="oneDrive.StorageContainerStatus" />
         <Property Name="customProperties" Type="microsoft.graph.fileStorageContainerCustomPropertyDictionary" />
         <Property Name="permissionViewpoint" Type="oneDrive.permissionViewpoint" />
         <Property Name="createdBy" Type="oneDrive.identitySet" />
@@ -3883,6 +3895,8 @@
         <Property Name="azureResourceId" Type="Edm.String" />
         <Property Name="location" Type="Edm.String" />
         <Property Name="azureSubscriptionState" Type="oneDrive.AzureSubscriptionState" />
+        <Property Name="activationStatus" Type="oneDrive.SyntexConsumptionBillingActivationStatus" />
+        <Property Name="enabledFeatures" Type="oneDrive.SyntexConsumptionBillingEnabledFeatures" />
       </ComplexType>
       <ComplexType Name="system" OpenType="true" />
       <ComplexType Name="tagBatchOperationStatuses" OpenType="true">
@@ -4474,6 +4488,12 @@
       <ComplexType Name="formatDetails">
         <Property Name="extensions" Type="Collection(Edm.String)" />
       </ComplexType>
+      <ComplexType Name="generationDetails">
+        <Property Name="status" Type="oneDrive.longRunningOperationStatus" />
+        <Property Name="requestedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="estimatedCompletionDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="error" Type="oneDrive.error" />
+      </ComplexType>
       <ComplexType Name="CultureInfo">
         <Property Name="numberFormat" Type="oneDrive.NumberFormatInfo" />
         <Property Name="dateTimeFormat" Type="oneDrive.DateTimeFormatInfo" />
@@ -4791,6 +4811,15 @@
         <Member Name="warned" Value="6" />
         <Member Name="unknownFutureValue" Value="7" />
       </EnumType>
+      <EnumType Name="SyntexConsumptionBillingActivationStatus">
+        <Member Name="unknown" Value="0" />
+        <Member Name="none" Value="1" />
+        <Member Name="active" Value="2" />
+      </EnumType>
+      <EnumType Name="SyntexConsumptionBillingEnabledFeatures" IsFlags="true">
+        <Member Name="none" Value="0" />
+        <Member Name="documentUnderstanding" Value="1" />
+      </EnumType>
       <EnumType Name="TermGroupScope">
         <Member Name="global" Value="0" />
         <Member Name="system" Value="1" />
@@ -4860,6 +4889,10 @@
         <Member Name="Success" Value="4" />
         <Member Name="Failed" Value="5" />
         <Member Name="Cancelled" Value="6" />
+      </EnumType>
+      <EnumType Name="StorageContainerStatus">
+        <Member Name="inactive" Value="0" />
+        <Member Name="active" Value="1" />
       </EnumType>
       <EnumType Name="CampaignStatus">
         <Member Name="Open" Value="0" />
@@ -5637,6 +5670,9 @@
         <Parameter Name="orderByAccess" Type="Edm.String" Nullable="false" />
         <ReturnType Type="Collection(oneDrive.baseItem)" />
       </Function>
+      <Action Name="activateStorageContainer" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
+      </Action>
       <Function Name="getPositionOfWebPart" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.webPart" />
         <ReturnType Type="oneDrive.position" />
