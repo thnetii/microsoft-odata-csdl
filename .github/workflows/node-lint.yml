@@ -7,27 +7,32 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  npm-clean-install:
-    name: npm clean-install
+  npm:
+    name: Npm Packages
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref_name || github.sha }}
+      - name: Checkout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
-      - id: npm-clean-install
-        name: npm clean-install
+      - name: Setup Github Actions for Node.js
+        uses: actions/setup-node@v3
+      - name: npm clean-install --workspaces --include-workspace-root
         uses: thnetii/.github/actions/gh-actions-npm@main
         with:
           working-directory: .github/actions
-          arguments: clean-install
+          arguments: |
+            clean-install
+            --workspaces
+            --include-workspace-root
 
   tsc:
-    name: TypeScript check
+    name: TypeScript type check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref_name || github.sha }}
+      - name: Checkout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
-      - name: npm clean-install
-        run: npm clean-install
+      - name: Setup Github Actions for Node.js
+        uses: actions/setup-node@v3
+      - run: npm clean-install --workspaces --include-workspace-root
         working-directory: .github/actions
       - name: tsc --noEmit -p ./jsconfig.json
         uses: thnetii/.github/actions/gh-actions-tsc@main
@@ -42,22 +47,28 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref_name || github.sha }}
+      - name: Checkout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
-      - name: npm clean-install
-        run: npm clean-install
+      - name: Setup Github Actions for Node.js
+        uses: actions/setup-node@v3
+      - run: npm clean-install --workspaces --include-workspace-root
         working-directory: .github/actions
-      - id: npm-install-eslint-formatter-gh-actions
-        name: npm install --no-save @thnetii/eslint-formatter-gh-actions
-        uses: thnetii/.github/actions/gh-actions-npm@main
+      - name: eslint .
+        uses: thnetii/.github/actions/gh-actions-eslint@main
         with:
           working-directory: .github/actions
-          arguments: |
-            install
-            --no-save
-            https://gitpkg.now.sh/thnetii/.github/actions/eslint-formatter-gh-actions?main
-      - name: eslint -c ./.eslintrc.yml .
-        run: >
-          npm exec -- eslint -f @thnetii/eslint-formatter-gh-actions
-          -c ./.eslintrc.yml .
+
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Setup Github Actions for Node.js
+        uses: actions/setup-node@v3
+      - run: npm clean-install --workspaces --include-workspace-root
         working-directory: .github/actions
+      - name: prettier --check .
+        uses: thnetii/.github/actions/gh-actions-prettier@main
+        with:
+          working-directory: .github/actions
