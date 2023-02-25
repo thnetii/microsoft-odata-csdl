@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23408 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23415 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1681,10 +1681,12 @@
         </Key>
         <Property Name="CheckInComment" Type="Edm.String" />
         <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ExpirationDate" Type="Edm.String" />
         <Property Name="ID" Type="Edm.Int32" Nullable="false" />
         <Property Name="IsCurrentVersion" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Length" Type="Edm.Int64" Nullable="false" />
         <Property Name="Size" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SnapshotDate" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
         <Property Name="VersionLabel" Type="Edm.String" />
         <NavigationProperty Name="CreatedBy" Type="SP.User" ContainsTarget="true" />
@@ -1823,6 +1825,7 @@
         <NavigationProperty Name="Subscriptions" Type="Collection(Microsoft.SharePoint.Webhooks.Subscription)" ContainsTarget="true" />
         <NavigationProperty Name="TitleResource" Type="SP.UserResource" ContainsTarget="true" />
         <NavigationProperty Name="UserCustomActions" Type="Collection(SP.UserCustomAction)" ContainsTarget="true" />
+        <NavigationProperty Name="VersionPolicies" Type="SP.VersionPolicyManager" ContainsTarget="true" />
         <NavigationProperty Name="Views" Type="Collection(SP.View)" ContainsTarget="true" />
         <NavigationProperty Name="WorkflowAssociations" Type="Collection(SP.Workflow.WorkflowAssociation)" ContainsTarget="true" />
       </EntityType>
@@ -2269,6 +2272,10 @@
         <Property Name="VersionOfUserCustomAction" Type="Edm.String" />
         <NavigationProperty Name="DescriptionResource" Type="SP.UserResource" ContainsTarget="true" />
         <NavigationProperty Name="TitleResource" Type="SP.UserResource" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="VersionPolicyManager">
+        <Property Name="DefaultExpireAfterDays" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DefaultTrimMode" Type="Edm.Int32" Nullable="false" />
       </EntityType>
       <EntityType Name="ListItemVersion" OpenType="true">
         <Key>
@@ -6878,6 +6885,12 @@
       <Annotations Target="SP.Publishing.SitePageFieldsData/Description">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/HiddenHighlightsMetadata">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/HideListEditorMetadata">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/LayoutWebpartsContent">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7218,6 +7231,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Utilities.WebTemplateExtensions.SiteDesignCreationInfo">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Utilities.WebTemplateExtensions.SiteDesignImage">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Utilities.WebTemplateExtensions.SiteDesignMetadata">
@@ -9134,6 +9150,12 @@
       <Annotations Target="SP.File/ServerRelativePath">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.FileVersion/ExpirationDate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FileVersion/SnapshotDate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.File/VroomDriveID">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9510,6 +9532,18 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.List/TemplateTypeId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.VersionPolicyManager">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.VersionPolicyManager/DefaultExpireAfterDays">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.VersionPolicyManager/DefaultTrimMode">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.List/VersionPolicies">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Site/HubSiteSynchronizableVisitorGroup">
@@ -19039,6 +19073,8 @@
         <Property Name="Categories" Type="Edm.String" />
         <Property Name="CoAuthState" Type="SP.Publishing.SitePageCoAuthState" />
         <Property Name="Description" Type="Edm.String" />
+        <Property Name="HiddenHighlightsMetadata" Type="Edm.String" />
+        <Property Name="HideListEditorMetadata" Type="Edm.String" />
         <Property Name="LayoutWebpartsContent" Type="Edm.String" />
         <Property Name="Modified" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="PublishStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
@@ -22380,6 +22416,7 @@
         <Property Name="Description" Type="Edm.String" />
         <Property Name="DesignPackageId" Type="Edm.Guid" />
         <Property Name="DesignType" Type="Edm.Int64" Nullable="false" />
+        <Property Name="ExpandedPreviewImages" Type="Collection(Microsoft.SharePoint.Utilities.WebTemplateExtensions.SiteDesignImage)" />
         <Property Name="InternalName" Type="Edm.String" />
         <Property Name="IsDefault" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsOutOfBoxTemplate" Type="Edm.Boolean" Nullable="false" />
@@ -22401,6 +22438,10 @@
         <Property Name="ThumbnailUrl" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="WebTemplate" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SiteDesignImage">
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="ImageUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SiteDesignMetadata" BaseType="Microsoft.SharePoint.Utilities.WebTemplateExtensions.SiteDesignCreationInfo">
         <Property Name="Id" Type="Edm.Guid" Nullable="false" />
@@ -23534,6 +23575,8 @@
       <ComplexType Name="OneDriveCollaborativeUsers">
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="oneDriveFilesSharedExternally" Type="Edm.Int32" Nullable="false" />
+        <Property Name="sensitivityLabel" Type="Edm.Guid" Nullable="false" />
+        <Property Name="totalFileCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="OneDriveSharePointCollaborativeUsers">
@@ -25409,6 +25452,7 @@
         <Property Name="IsWBFluidEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LabelMismatchEmailHelpLink" Type="Edm.String" />
         <Property Name="LegacyAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LegacyBrowserAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LimitedAccessFileType" Type="Edm.Int32" Nullable="false" />
         <Property Name="MachineLearningCaptureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MajorVersionLimit" Type="Edm.Int32" Nullable="false" />
@@ -29126,7 +29170,12 @@
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.LargeOperation" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <EntityType Name="SPLargeOperation" />
+      <EntityType Name="SPLargeOperation">
+        <Property Name="OperationType" Type="Edm.String" />
+        <Property Name="ProgressPercentage" Type="Edm.Double" Nullable="false" />
+        <Property Name="ResourceLocation" Type="Edm.String" />
+        <Property Name="Status" Type="Edm.String" />
+      </EntityType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Internal.ClientSideComponent" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ComponentContextInfo">
@@ -29379,6 +29428,7 @@
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientRestrictionFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LegacyAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LegacyBrowserAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LimitedAccessFileType" Type="Edm.Int32" Nullable="false" />
         <Property Name="MachineLearningCaptureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MajorVersionLimit" Type="Edm.Int32" Nullable="false" />
