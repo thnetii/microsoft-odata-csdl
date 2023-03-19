@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23501 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23508 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -2186,6 +2186,26 @@
         <Property Name="validationFormula" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="diagnosticComplianceHold" OpenType="true">
+        <Key>
+          <PropertyRef Name="holdId" />
+        </Key>
+        <Property Name="holdId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="holdAddedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="holdReleasedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="isExcluded" Type="Edm.Boolean" />
+        <Property Name="isOrphaned" Type="Edm.Boolean" />
+        <Property Name="serverRelativeUrl" Type="Edm.String" />
+        <Property Name="workLoad" Type="Edm.String" />
+        <Property Name="policyScenario" Type="Edm.String" />
+        <Property Name="policyName" Type="Edm.String" />
+        <Property Name="itemHoldPeriod" Type="Edm.Int32" />
+        <Property Name="holdLevel" Type="Edm.String" />
+        <Property Name="orphanedReason" Type="Edm.String" />
+        <Property Name="itemHoldPeriodSourceColumn" Type="Edm.String" />
+        <Property Name="holdPolicyType" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="diagnosticCrawlEntry" OpenType="true">
         <Key>
           <PropertyRef Name="objectId" />
@@ -2382,6 +2402,17 @@
         <Property Name="restorePointInTime" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="orglink" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="priority" Type="Edm.Double" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="mobileAppVisible" Type="Edm.Boolean" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="billingPolicy" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2398,17 +2429,6 @@
         <Property Name="resourcegroup" Type="Edm.String" />
         <Property Name="resourceprovider" Type="Edm.String" />
         <Property Name="azureregion" Type="Edm.String" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
-      <EntityType Name="orglink" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.Int32" Nullable="false" />
-        <Property Name="title" Type="Edm.String" />
-        <Property Name="priority" Type="Edm.Double" />
-        <Property Name="url" Type="Edm.String" />
-        <Property Name="mobileAppVisible" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="storageContainer" OpenType="true">
@@ -2429,20 +2449,24 @@
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="unifiedStorageQuotaTopEntity" OpenType="true">
+      <EntityType Name="odspUnifiedQuotaTopEntity" OpenType="true">
         <Key>
-          <PropertyRef Name="id" />
+          <PropertyRef Name="siteId" />
         </Key>
-        <Property Name="used" Type="Edm.Int64" />
+        <Property Name="storageUsed" Type="Edm.Int64" />
         <Property Name="url" Type="Edm.String" />
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="owner" Type="Edm.String" />
-        <Property Name="lastUpdated" Type="Edm.DateTimeOffset" />
-      </EntityType>
-      <EntityType Name="odspUnifiedQuotaTopEntity" BaseType="oneDrive.unifiedStorageQuotaTopEntity" OpenType="true">
+        <Property Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="ownerLogin" Type="Edm.String" />
+        <Property Name="lastContentChanged" Type="Edm.DateTimeOffset" />
         <Property Name="siteFlags" Type="Edm.Int32" />
       </EntityType>
-      <EntityType Name="exoUnifiedQuotaTopEntity" BaseType="oneDrive.unifiedStorageQuotaTopEntity" OpenType="true">
+      <EntityType Name="exoUnifiedQuotaTopEntity" OpenType="true">
+        <Key>
+          <PropertyRef Name="userPrincipalName" />
+        </Key>
+        <Property Name="storageUsed" Type="Edm.Int64" />
+        <Property Name="userPrincipalName" Type="Edm.String" Nullable="false" />
+        <Property Name="lastActivityDate" Type="Edm.DateTimeOffset" />
         <Property Name="hasArchive" Type="Edm.Boolean" />
       </EntityType>
       <EntityType Name="unifiedStorageQuotaTopEntities" OpenType="true">
@@ -3363,6 +3387,7 @@
       <ComplexType Name="commentSettingsFacet" OpenType="true">
         <Property Name="commentingDisabled" Type="oneDrive.commentDisabledFacet" />
       </ComplexType>
+      <ComplexType Name="containingDrivePolicyScenarioViewpoint" OpenType="true" />
       <ComplexType Name="coverImage" OpenType="true" />
       <ComplexType Name="customRoot" OpenType="true" />
       <ComplexType Name="defaultSharingLink" OpenType="true">
@@ -3867,6 +3892,7 @@
         <Property Name="video" Type="oneDrive.video" />
         <Property Name="webDavUrl" Type="Edm.String" />
         <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="containingDrivePolicyScenarioViewpoint" Type="oneDrive.containingDrivePolicyScenarioViewpoint" />
       </ComplexType>
       <ComplexType Name="removed" OpenType="true" />
       <ComplexType Name="retentionLabelSettings" OpenType="true">
@@ -4054,6 +4080,7 @@
         <Property Name="parentCommentId" Type="Edm.String" />
         <Property Name="contentId" Type="Edm.String" />
         <Property Name="navigationId" Type="Edm.String" />
+        <Property Name="commentActionType" Type="oneDrive.CommentActionType" />
       </ComplexType>
       <ComplexType Name="copyAction" OpenType="true" />
       <ComplexType Name="createAction" OpenType="true" />
@@ -4439,6 +4466,15 @@
         <Property Name="siteId" Type="Edm.Guid" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="diagnosticComplianceHoldResponseFacet" OpenType="true">
+        <Property Name="isSiteDeletable" Type="Edm.Boolean" />
+        <Property Name="diagnosticsInfo" Type="Edm.String" />
+        <NavigationProperty Name="tenantLevelOrphanHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
+        <NavigationProperty Name="validTenantLevelHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
+        <NavigationProperty Name="siteLevelOrphanHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
+        <NavigationProperty Name="validSiteLevelHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="DiagnosticIdentityFacet" OpenType="true">
         <Property Name="id" Type="Edm.Int32" Nullable="false" />
         <Property Name="systemUserKey" Type="Edm.String" />
@@ -4773,6 +4809,10 @@
         <Member Name="inviteSourceWeibo" Value="93" />
         <Member Name="inviteSourceLinkedin" Value="94" />
         <Member Name="inviteSourceEmail" Value="95" />
+      </EnumType>
+      <EnumType Name="CommentActionType" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="Annotation" Value="1" />
       </EnumType>
       <EnumType Name="FactApplicationType">
         <Member Name="lists" Value="0" />
@@ -5971,8 +6011,8 @@
         <EntitySet Name="restorableSites" EntityType="oneDrive.restorableSite" />
         <EntitySet Name="restoreSessions" EntityType="oneDrive.restoreSession" />
         <EntitySet Name="restorePoints" EntityType="oneDrive.restorePoint" />
-        <EntitySet Name="billingpolicies" EntityType="oneDrive.billingPolicy" />
         <EntitySet Name="orglinks" EntityType="oneDrive.orglink" />
+        <EntitySet Name="billingpolicies" EntityType="oneDrive.billingPolicy" />
         <EntitySet Name="storageContainers" EntityType="oneDrive.storageContainer" />
         <EntitySet Name="campaign" EntityType="oneDrive.campaign" />
         <Singleton Name="recycleBin" Type="oneDrive.recycleBin" />
