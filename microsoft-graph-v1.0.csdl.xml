@@ -121,6 +121,12 @@
         <Member Name="disabled" Value="2" />
         <Member Name="unknownFutureValue" Value="3" />
       </EnumType>
+      <EnumType Name="authenticationMethodsPolicyMigrationState">
+        <Member Name="preMigration" Value="0" />
+        <Member Name="migrationInProgress" Value="1" />
+        <Member Name="migrationComplete" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
       <EnumType Name="authenticationMethodState">
         <Member Name="enabled" Value="0" />
         <Member Name="disabled" Value="1" />
@@ -853,6 +859,11 @@
         <Member Name="unknownFutureValue" Value="6" />
         <Member Name="linux" Value="7" />
       </EnumType>
+      <EnumType Name="conditionalAccessExternalTenantsMembershipKind">
+        <Member Name="all" Value="0" />
+        <Member Name="enumerated" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
       <EnumType Name="conditionalAccessGrantControl">
         <Member Name="block" Value="0" />
         <Member Name="mfa" Value="1" />
@@ -862,6 +873,16 @@
         <Member Name="compliantApplication" Value="5" />
         <Member Name="passwordChange" Value="6" />
         <Member Name="unknownFutureValue" Value="7" />
+      </EnumType>
+      <EnumType Name="conditionalAccessGuestOrExternalUserTypes" IsFlags="true">
+        <Member Name="none" Value="0" />
+        <Member Name="internalGuest" Value="1" />
+        <Member Name="b2bCollaborationGuest" Value="2" />
+        <Member Name="b2bCollaborationMember" Value="4" />
+        <Member Name="b2bDirectConnectUser" Value="8" />
+        <Member Name="otherExternalUser" Value="16" />
+        <Member Name="serviceProvider" Value="32" />
+        <Member Name="unknownFutureValue" Value="64" />
       </EnumType>
       <EnumType Name="conditionalAccessPolicyState">
         <Member Name="enabled" Value="0" />
@@ -3915,6 +3936,12 @@
       <ComplexType Name="provisioningSystem" BaseType="graph.identity" OpenType="true">
         <Property Name="details" Type="graph.detailsInfo" />
       </ComplexType>
+      <ComplexType Name="signInActivity">
+        <Property Name="lastNonInteractiveSignInDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastNonInteractiveSignInRequestId" Type="Edm.String" />
+        <Property Name="lastSignInDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastSignInRequestId" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="signInLocation">
         <Property Name="city" Type="Edm.String" />
         <Property Name="countryOrRegion" Type="Edm.String" />
@@ -3995,34 +4022,11 @@
         <Property Name="userId" Type="Edm.String" Nullable="false" />
         <Property Name="userPrincipalName" Type="Edm.String" />
       </EntityType>
-      <ComplexType Name="emailAddress">
-        <Property Name="address" Type="Edm.String" />
-        <Property Name="name" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="invitedUserMessageInfo">
-        <Property Name="ccRecipients" Type="Collection(graph.recipient)" />
-        <Property Name="customizedMessageBody" Type="Edm.String" />
-        <Property Name="messageLanguage" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="recipient">
-        <Property Name="emailAddress" Type="graph.emailAddress" />
-      </ComplexType>
-      <EntityType Name="invitation" BaseType="graph.entity">
-        <Property Name="invitedUserDisplayName" Type="Edm.String" />
-        <Property Name="invitedUserEmailAddress" Type="Edm.String" Nullable="false" />
-        <Property Name="invitedUserMessageInfo" Type="graph.invitedUserMessageInfo" />
-        <Property Name="invitedUserType" Type="Edm.String" />
-        <Property Name="inviteRedeemUrl" Type="Edm.String" />
-        <Property Name="inviteRedirectUrl" Type="Edm.String" Nullable="false" />
-        <Property Name="resetRedemption" Type="Edm.Boolean" />
-        <Property Name="sendInvitationMessage" Type="Edm.Boolean" />
-        <Property Name="status" Type="Edm.String" />
-        <NavigationProperty Name="invitedUser" Type="graph.user" />
-      </EntityType>
       <EntityType Name="directoryObject" BaseType="graph.entity" OpenType="true">
         <Property Name="deletedDateTime" Type="Edm.DateTimeOffset" />
       </EntityType>
       <EntityType Name="user" BaseType="graph.directoryObject" OpenType="true">
+        <Property Name="signInActivity" Type="graph.signInActivity" />
         <Property Name="accountEnabled" Type="Edm.Boolean" />
         <Property Name="ageGroup" Type="Edm.String" />
         <Property Name="assignedLicenses" Type="Collection(graph.assignedLicense)" Nullable="false" />
@@ -4717,6 +4721,30 @@
       <EntityType Name="todo" BaseType="graph.entity">
         <NavigationProperty Name="lists" Type="Collection(graph.todoTaskList)" ContainsTarget="true" />
       </EntityType>
+      <ComplexType Name="emailAddress">
+        <Property Name="address" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="invitedUserMessageInfo">
+        <Property Name="ccRecipients" Type="Collection(graph.recipient)" />
+        <Property Name="customizedMessageBody" Type="Edm.String" />
+        <Property Name="messageLanguage" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="recipient">
+        <Property Name="emailAddress" Type="graph.emailAddress" />
+      </ComplexType>
+      <EntityType Name="invitation" BaseType="graph.entity">
+        <Property Name="invitedUserDisplayName" Type="Edm.String" />
+        <Property Name="invitedUserEmailAddress" Type="Edm.String" Nullable="false" />
+        <Property Name="invitedUserMessageInfo" Type="graph.invitedUserMessageInfo" />
+        <Property Name="invitedUserType" Type="Edm.String" />
+        <Property Name="inviteRedeemUrl" Type="Edm.String" />
+        <Property Name="inviteRedirectUrl" Type="Edm.String" Nullable="false" />
+        <Property Name="resetRedemption" Type="Edm.Boolean" />
+        <Property Name="sendInvitationMessage" Type="Edm.Boolean" />
+        <Property Name="status" Type="Edm.String" />
+        <NavigationProperty Name="invitedUser" Type="graph.user" />
+      </EntityType>
       <ComplexType Name="applicationServicePrincipal">
         <NavigationProperty Name="application" Type="graph.application" />
         <NavigationProperty Name="servicePrincipal" Type="graph.servicePrincipal" />
@@ -5060,12 +5088,14 @@
         <Property Name="x509CertificateField" Type="Edm.String" />
       </ComplexType>
       <EntityType Name="authenticationMethodConfiguration" BaseType="graph.entity" Abstract="true">
+        <Property Name="excludeTargets" Type="Collection(graph.excludeTarget)" />
         <Property Name="state" Type="graph.authenticationMethodState" />
       </EntityType>
       <EntityType Name="authenticationMethodsPolicy" BaseType="graph.entity">
         <Property Name="description" Type="Edm.String" />
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="policyMigrationState" Type="graph.authenticationMethodsPolicyMigrationState" />
         <Property Name="policyVersion" Type="Edm.String" />
         <Property Name="reconfirmationInDays" Type="Edm.Int32" />
         <Property Name="registrationEnforcement" Type="graph.registrationEnforcement" />
@@ -5087,6 +5117,7 @@
       </EntityType>
       <EntityType Name="microsoftAuthenticatorAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
         <Property Name="featureSettings" Type="graph.microsoftAuthenticatorFeatureSettings" />
+        <Property Name="isSoftwareOathEnabled" Type="Edm.Boolean" />
         <NavigationProperty Name="includeTargets" Type="Collection(graph.microsoftAuthenticatorAuthenticationMethodTarget)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="microsoftAuthenticatorAuthenticationMethodTarget" BaseType="graph.authenticationMethodTarget">
@@ -5123,6 +5154,7 @@
         <Property Name="allowedToUseSSPR" Type="Edm.Boolean" Nullable="false" />
         <Property Name="allowEmailVerifiedUsersToJoinOrganization" Type="Edm.Boolean" Nullable="false" />
         <Property Name="allowInvitesFrom" Type="graph.allowInvitesFrom" />
+        <Property Name="allowUserConsentForRiskyApps" Type="Edm.Boolean" />
         <Property Name="blockMsolPowerShell" Type="Edm.Boolean" />
         <Property Name="defaultUserRolePermissions" Type="graph.defaultUserRolePermissions" Nullable="false" />
         <Property Name="guestUserRoleId" Type="Edm.Guid" />
@@ -5188,12 +5220,25 @@
         <Property Name="scopeType" Type="Edm.String" Nullable="false" />
         <NavigationProperty Name="policy" Type="graph.unifiedRoleManagementPolicy" />
       </EntityType>
+      <EntityType Name="smsAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
+        <NavigationProperty Name="includeTargets" Type="Collection(graph.smsAuthenticationMethodTarget)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="smsAuthenticationMethodTarget" BaseType="graph.authenticationMethodTarget">
+        <Property Name="isUsableForSignIn" Type="Edm.Boolean" Nullable="false" />
+      </EntityType>
+      <EntityType Name="softwareOathAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
+        <NavigationProperty Name="includeTargets" Type="Collection(graph.authenticationMethodTarget)" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="temporaryAccessPassAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
         <Property Name="defaultLength" Type="Edm.Int32" />
         <Property Name="defaultLifetimeInMinutes" Type="Edm.Int32" />
         <Property Name="isUsableOnce" Type="Edm.Boolean" />
         <Property Name="maximumLifetimeInMinutes" Type="Edm.Int32" />
         <Property Name="minimumLifetimeInMinutes" Type="Edm.Int32" />
+        <NavigationProperty Name="includeTargets" Type="Collection(graph.authenticationMethodTarget)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="voiceAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
+        <Property Name="isOfficePhoneAllowed" Type="Edm.Boolean" />
         <NavigationProperty Name="includeTargets" Type="Collection(graph.authenticationMethodTarget)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="x509CertificateAuthenticationMethodConfiguration" BaseType="graph.authenticationMethodConfiguration">
@@ -8414,6 +8459,10 @@
       <ComplexType Name="cloudAppSecuritySessionControl" BaseType="graph.conditionalAccessSessionControl">
         <Property Name="cloudAppSecurityType" Type="graph.cloudAppSecuritySessionControlType" />
       </ComplexType>
+      <ComplexType Name="conditionalAccessExternalTenants" Abstract="true">
+        <Property Name="membershipKind" Type="graph.conditionalAccessExternalTenantsMembershipKind" />
+      </ComplexType>
+      <ComplexType Name="conditionalAccessAllExternalTenants" BaseType="graph.conditionalAccessExternalTenants" />
       <ComplexType Name="conditionalAccessApplications">
         <Property Name="excludeApplications" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="includeApplications" Type="Collection(Edm.String)" Nullable="false" />
@@ -8449,9 +8498,11 @@
       </ComplexType>
       <ComplexType Name="conditionalAccessUsers">
         <Property Name="excludeGroups" Type="Collection(Edm.String)" Nullable="false" />
+        <Property Name="excludeGuestsOrExternalUsers" Type="graph.conditionalAccessGuestsOrExternalUsers" />
         <Property Name="excludeRoles" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="excludeUsers" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="includeGroups" Type="Collection(Edm.String)" Nullable="false" />
+        <Property Name="includeGuestsOrExternalUsers" Type="graph.conditionalAccessGuestsOrExternalUsers" />
         <Property Name="includeRoles" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="includeUsers" Type="Collection(Edm.String)" Nullable="false" />
       </ComplexType>
@@ -8459,11 +8510,18 @@
         <Property Name="mode" Type="graph.filterMode" Nullable="false" />
         <Property Name="rule" Type="Edm.String" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="conditionalAccessEnumeratedExternalTenants" BaseType="graph.conditionalAccessExternalTenants">
+        <Property Name="members" Type="Collection(Edm.String)" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="conditionalAccessGrantControls">
         <Property Name="builtInControls" Type="Collection(graph.conditionalAccessGrantControl)" Nullable="false" />
         <Property Name="customAuthenticationFactors" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="operator" Type="Edm.String" />
         <Property Name="termsOfUse" Type="Collection(Edm.String)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="conditionalAccessGuestsOrExternalUsers">
+        <Property Name="externalTenants" Type="graph.conditionalAccessExternalTenants" />
+        <Property Name="guestOrExternalUserTypes" Type="graph.conditionalAccessGuestOrExternalUserTypes" Nullable="false" />
       </ComplexType>
       <ComplexType Name="conditionalAccessPolicyDetail">
         <Property Name="conditions" Type="graph.conditionalAccessConditionSet" Nullable="false" />
@@ -13285,6 +13343,52 @@
         <NavigationProperty Name="checklistItems" Type="Collection(graph.checklistItem)" ContainsTarget="true" />
         <NavigationProperty Name="extensions" Type="Collection(graph.extension)" ContainsTarget="true" />
         <NavigationProperty Name="linkedResources" Type="Collection(graph.linkedResource)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="employeeExperience">
+        <NavigationProperty Name="learningProviders" Type="Collection(graph.learningProvider)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="learningProvider" BaseType="graph.entity">
+        <Property Name="displayName" Type="Edm.String" Nullable="false" />
+        <Property Name="loginWebUrl" Type="Edm.String" />
+        <Property Name="longLogoWebUrlForDarkTheme" Type="Edm.String" Nullable="false" />
+        <Property Name="longLogoWebUrlForLightTheme" Type="Edm.String" Nullable="false" />
+        <Property Name="squareLogoWebUrlForDarkTheme" Type="Edm.String" Nullable="false" />
+        <Property Name="squareLogoWebUrlForLightTheme" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="learningContents" Type="Collection(graph.learningContent)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="learningContent" BaseType="graph.entity">
+        <Property Name="additionalTags" Type="Collection(Edm.String)" />
+        <Property Name="contentWebUrl" Type="Edm.String" Nullable="false" />
+        <Property Name="contributors" Type="Collection(Edm.String)" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="duration" Type="Edm.Duration" />
+        <Property Name="externalId" Type="Edm.String" Nullable="false" />
+        <Property Name="format" Type="Edm.String" />
+        <Property Name="isActive" Type="Edm.Boolean" />
+        <Property Name="isPremium" Type="Edm.Boolean" />
+        <Property Name="isSearchable" Type="Edm.Boolean" />
+        <Property Name="languageTag" Type="Edm.String" Nullable="false" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="numberOfPages" Type="Edm.Int32" />
+        <Property Name="skillTags" Type="Collection(Edm.String)" />
+        <Property Name="sourceName" Type="Edm.String" />
+        <Property Name="thumbnailWebUrl" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" Nullable="false" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="externalId" />
+                    <PropertyValue Property="Name" PropertyPath="externalId" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
       </EntityType>
       <Term Name="downloadUrl" Type="Edm.String" AppliesTo="microsoft.graph.driveItem" />
       <Term Name="sourceUrl" Type="Edm.String" AppliesTo="microsoft.graph.driveItem" />
@@ -18494,6 +18598,7 @@
         <Singleton Name="appCatalogs" Type="microsoft.graph.appCatalogs" />
         <Singleton Name="teamwork" Type="microsoft.graph.teamwork" />
         <Singleton Name="informationProtection" Type="microsoft.graph.informationProtection" />
+        <Singleton Name="employeeExperience" Type="microsoft.graph.employeeExperience" />
       </EntityContainer>
       <Annotations Target="microsoft.graph.bookingPriceType">
         <Annotation Term="Org.OData.Core.V1.Description" String="Represents the type of pricing of a booking service." />
