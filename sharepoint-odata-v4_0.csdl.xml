@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23501 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23508 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -42,6 +42,8 @@
       <ComplexType Name="HomeSitesDetails">
         <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="IsInDraftMode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsTargetedForFrontlineWorker" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsTargetedForInformationWorker" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaBackendSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MatchingAudiences" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
@@ -203,6 +205,7 @@
         <Property Name="webpartId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="DocumentGenerationInfo">
+        <Property Name="ConditionalFieldsToBeDeleted" Type="Collection(Edm.String)" />
         <Property Name="ContentAssemblyFormAnswers" Type="Collection(SP.ContentAssemblyFormAnswer)" />
         <Property Name="FileName" Type="Edm.String" />
         <Property Name="FolderUrl" Type="Edm.String" />
@@ -212,6 +215,10 @@
       </ComplexType>
       <ComplexType Name="EncryptionOption">
         <Property Name="AES256CBCKey" Type="Edm.Binary" />
+      </ComplexType>
+      <ComplexType Name="HTMLFieldSecuritySetting">
+        <Property Name="allowedDomains" Type="Collection(Edm.String)" />
+        <Property Name="allowEmbedding" Type="Edm.Int16" Nullable="false" />
       </ComplexType>
       <ComplexType Name="IngestionTaskKey">
         <Property Name="IngestionTableAccountKey" Type="Edm.String" />
@@ -1251,6 +1258,7 @@
         </Key>
         <Property Name="AllowCreateDeclarativeWorkflow" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowDesigner" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AllowedExternalDomains" Type="SP.HTMLFieldSecuritySetting" />
         <Property Name="AllowExternalEmbeddingWrapper" Type="Edm.Int32" Nullable="false" />
         <Property Name="AllowMasterPageEditing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowRevertFromTemplate" Type="Edm.Boolean" Nullable="false" />
@@ -2310,7 +2318,6 @@
         <NavigationProperty Name="AppConfiguration" Type="SP.AppConfiguration" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="EmployeeExperienceController" />
-      <EntityType Name="Campaigns" Abstract="true" />
       <EntityType Name="CampainAnalytics" Abstract="true" />
       <EntityType Name="AppCatalog" Abstract="true" />
       <EntityType Name="AppInstanceErrorDetails">
@@ -4166,6 +4173,16 @@
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.ListItemUpdateResults" />
       </Action>
+      <Action Name="ValidateUpdateFetchListItemInFolder" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+        <Parameter Name="formValues" Type="Collection(SP.ListItemFormUpdateValue)" />
+        <Parameter Name="bNewDocumentUpdate" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="checkInComment" Type="Edm.String" />
+        <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="rootFolder" Type="Edm.String" />
+        <ReturnType Type="SP.ListItemUpdateResults" />
+      </Action>
       <Action Name="ValidateUpdateListItem" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <Parameter Name="formValues" Type="Collection(SP.ListItemFormUpdateValue)" />
@@ -4173,6 +4190,7 @@
         <Parameter Name="checkInComment" Type="Edm.String" />
         <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="sharedLockId" Type="Edm.String" />
         <ReturnType Type="Collection(SP.ListItemFormUpdateValue)" />
       </Action>
       <Action Name="BreakRoleInheritance" IsBound="true">
@@ -6086,10 +6104,6 @@
       <Action Name="ResetRoleInheritance" IsBound="true">
         <Parameter Name="this" Type="SP.SecurableObject" />
       </Action>
-      <Action Name="CertifySite" IsBound="true">
-        <Parameter Name="this" Type="SP.Site" />
-        <ReturnType Type="Edm.Boolean" Nullable="false" />
-      </Action>
       <Action Name="CreateCopyJob" IsBound="true">
         <Parameter Name="this" Type="SP.Site" />
         <Parameter Name="exportObjectUris" Type="Collection(Edm.String)" />
@@ -6338,6 +6352,10 @@
       <Action Name="UpdateClientObjectModelUseRemoteAPIsPermissionSetting" IsBound="true">
         <Parameter Name="this" Type="SP.Site" />
         <Parameter Name="requireUseRemoteAPIs" Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="UpdateInactiveSiteProperties" IsBound="true">
+        <Parameter Name="this" Type="SP.Site" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Function Name="ValidateHubSiteJoinApprovalToken" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Site" />
@@ -6891,6 +6909,9 @@
       <Annotations Target="SP.Publishing.SitePageFieldsData/Description">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/EmailTranspileContent">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/HiddenHighlightsMetadata">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -6904,6 +6925,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/PublishStartDate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/TeamsTranspileContent">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/Title">
@@ -7014,6 +7038,9 @@
       <Annotations Target="SP.Publishing.SendTestEmailResponse">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SendTestTeamsMessageResponse">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SharePagePreviewByEmailFieldsData">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7063,6 +7090,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.TopicPageFieldsData/EntityType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.TopicPageFieldsData/VerifiedTopicAllowedEditors">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.ChannelInfoCollection">
@@ -7422,6 +7452,12 @@
       <Annotations Target="SP.HomeSitesDetails/IsInDraftMode">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/IsTargetedForFrontlineWorker">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.HomeSitesDetails/IsTargetedForInformationWorker">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.HomeSitesDetails/IsVivaBackendSite">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7516,6 +7552,18 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Internal.AppRenderInfo">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Internal.GptRequestOptions">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Internal.GptResponseChoice">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Internal.GptResponseUsage">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Internal.GptResponse">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.ConfigurationData">
@@ -8892,6 +8940,9 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SyntexModelsLandingInfo/FormProcessingModelLandingUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.ComplianceFoundation.ComplianceRetentionWorkItemSubmitter">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8953,6 +9004,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.UserProfiles.PersonalCache">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Site/AllowedExternalDomains">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Site/AllowExternalEmbeddingWrapper">
@@ -9870,6 +9924,9 @@
       <Annotations Target="SP.Publishing.FeedVideoPage/VideoDuration">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.HighlightsInfo">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.PersonMagazine">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9946,6 +10003,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.TopicSitePage/EntityType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.TopicSitePage/VerifiedTopicAllowedEditors">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.TopicPageMetadata">
@@ -10980,6 +11040,9 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.GetByIdentifier(Collection(Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem), Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter.AddUnifiedDlpWorkItem()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.ComplianceFoundation.ComplianceRetentionWorkItemSubmitter.AddHighPriorityRetentionWorkItem()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11070,7 +11133,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.CampaignPublication, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.CampaignPublication, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.CampaignPublication, Edm.Int32)">
@@ -11115,6 +11181,9 @@
       <Annotations Target="SP.Publishing.Update(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.DeletePublication(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.GetPrePublishValidationStatus(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11131,6 +11200,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SendTestEmail(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SendTestTeamsMessage(SP.Publishing.CampaignPublication, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.CommunicationSite()">
@@ -11193,7 +11265,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.FeedVideoPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.FeedVideoPage, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.FeedVideoPage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.FeedVideoPage, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.FeedVideoPage, Edm.Int32)">
@@ -11310,7 +11385,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.RepostPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.RepostPage, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.RepostPage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.RepostPage, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.RepostPage, Edm.Int32)">
@@ -11406,7 +11484,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.SitePage3D)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.SitePage3D, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.SitePage3D)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.SitePage3D, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.SitePage3D, Edm.Int32)">
@@ -11532,7 +11613,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.SitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.SitePage, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.SitePage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.SitePage, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.SitePage, Edm.Int32)">
@@ -11667,7 +11751,10 @@
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.TopicSitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.GetLastestVersionsInDescendingOrder(SP.Publishing.TopicSitePage, Edm.Int64)">
+      <Annotations Target="SP.Publishing.GetHighlightsInfo(SP.Publishing.TopicSitePage)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.GetLatestVersionsInDescendingOrder(SP.Publishing.TopicSitePage, Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetVersion(SP.Publishing.TopicSitePage, Edm.Int32)">
@@ -12243,6 +12330,9 @@
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.AddStoreApp(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor, Edm.Binary, Edm.Boolean, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CheckUpgradableStoreAppsInAppCatalog(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.DownloadTeamsSolution(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -12385,30 +12475,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.ClientSideComponent.AddEx(Microsoft.SharePoint.ClientSideComponent.HostedAppsManager, Edm.String, Edm.String)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.CreateCampaign(Microsoft.SharePoint.Campaigns.CampaignEntity)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.CreateCommunication(Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.GetCampaign(Edm.String)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.GetCampaignsSummary()">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.GetCommunication(Edm.String)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.GetCommunications(Edm.String)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.UpdateCampaign(Microsoft.SharePoint.Campaigns.CampaignEntity)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Campaigns.UpdateCommunication(Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.CampainAnalytics.GetDimensions(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsDimensionsRequest)">
@@ -12747,7 +12813,7 @@
       <Annotations Target="SP.Internal.ApprovalsManager.OnRequestUpdated()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Broker.AcquireOBOToken(Edm.String, Edm.String)">
+      <Annotations Target="SP.Broker.AcquireOBOToken(Edm.String, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.eSignInternal.AddAuditTrailEntry(Edm.Guid, Microsoft.SharePoint.ESign.Models.Requests.AddAuditTrailEntryModel)">
@@ -19185,11 +19251,13 @@
         <Property Name="Categories" Type="Edm.String" />
         <Property Name="CoAuthState" Type="SP.Publishing.SitePageCoAuthState" />
         <Property Name="Description" Type="Edm.String" />
+        <Property Name="EmailTranspileContent" Type="Edm.String" />
         <Property Name="HiddenHighlightsMetadata" Type="Edm.String" />
         <Property Name="HideListEditorMetadata" Type="Edm.String" />
         <Property Name="LayoutWebpartsContent" Type="Edm.String" />
         <Property Name="Modified" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="PublishStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="TeamsTranspileContent" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="TopicHeader" Type="Edm.String" />
       </ComplexType>
@@ -19460,6 +19528,10 @@
         <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
         <Property Name="Response" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="SendTestTeamsMessageResponse">
+        <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Response" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="SharePagePreviewByEmailFieldsData">
         <Property Name="message" Type="Edm.String" />
         <Property Name="recipientEmails" Type="Collection(Edm.String)" />
@@ -19503,7 +19575,9 @@
         <Property Name="termSetList" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="TeamsPublishingStatus">
+        <Property Name="AudienceId" Type="Edm.String" />
         <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
+        <Property Name="HttpStatusCode" Type="Edm.Int32" Nullable="false" />
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="TextValueWithLanguage">
@@ -19515,6 +19589,7 @@
         <Property Name="EntityId" Type="Edm.String" />
         <Property Name="EntityRelations" Type="Edm.String" />
         <Property Name="EntityType" Type="Edm.String" />
+        <Property Name="VerifiedTopicAllowedEditors" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ViewProgressAnalyticsData" BaseType="SP.Publishing.ViewData">
         <Property Name="PercentageViewed" Type="Edm.Int32" Nullable="false" />
@@ -19523,7 +19598,9 @@
         <Property Name="IsPreview" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="CampaignPublicationResetEndpointParam">
+        <Property Name="EmailTranspileContent" Type="Edm.String" />
         <Property Name="ResetEndpoint" Type="Collection(Edm.String)" />
+        <Property Name="TeamsTranspileContent" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CommunicationSiteCreationResponse">
         <Property Name="SiteStatus" Type="Edm.Int32" Nullable="false" />
@@ -19690,6 +19767,10 @@
         <Property Name="ModernAudienceTargetUserField" Type="Edm.String" />
         <Property Name="VideoDuration" Type="Edm.Int64" Nullable="false" />
       </EntityType>
+      <EntityType Name="HighlightsInfo">
+        <Property Name="HiddenHighlights" Type="Edm.String" />
+        <Property Name="HideListEditor" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="PageDiagnosticsController" />
       <EntityType Name="PersonMagazine" Abstract="true" />
       <EntityType Name="PointPublishingDocProps">
@@ -19852,6 +19933,7 @@
         <Property Name="EntityId" Type="Edm.String" />
         <Property Name="EntityRelations" Type="Edm.String" />
         <Property Name="EntityType" Type="Edm.String" />
+        <Property Name="VerifiedTopicAllowedEditors" Type="Edm.String" />
       </EntityType>
       <EntityType Name="TopicPageMetadata" BaseType="SP.Publishing.SitePageMetadata">
         <Property Name="EntityId" Type="Edm.String" />
@@ -19949,7 +20031,11 @@
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -20016,6 +20102,10 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
       </Action>
+      <Action Name="DeletePublication" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
       <Function Name="GetPrePublishValidationStatus" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="SP.Publishing.PrePublishValidationsResponse" />
@@ -20041,6 +20131,11 @@
       <Action Name="SendTestEmail" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="SP.Publishing.SendTestEmailResponse" />
+      </Action>
+      <Action Name="SendTestTeamsMessage" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="audienceId" Type="Edm.String" />
+        <ReturnType Type="SP.Publishing.SendTestTeamsMessageResponse" />
       </Action>
       <Function Name="CommunicationSite">
         <ReturnType Type="SP.Publishing.CommunicationSite" />
@@ -20118,7 +20213,11 @@
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -20345,7 +20444,11 @@
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.RepostPage" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -20568,7 +20671,11 @@
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -20765,7 +20872,11 @@
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -20969,7 +21080,11 @@
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <ReturnType Type="Collection(SP.Publishing.SitePageDependencyMetadata)" />
       </Function>
-      <Function Name="GetLastestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
+      <Function Name="GetHighlightsInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
+        <ReturnType Type="SP.Publishing.HighlightsInfo" />
+      </Function>
+      <Function Name="GetLatestVersionsInDescendingOrder" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <Parameter Name="numVersions" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Collection(SP.Publishing.SitePageVersionInfoCollection)" />
@@ -22572,6 +22687,7 @@
         <Property Name="notificationUrl" Type="Edm.String" />
         <Property Name="resource" Type="Edm.String" />
         <Property Name="resourceData" Type="Edm.String" />
+        <Property Name="scenarios" Type="Collection(Edm.String)" />
       </ComplexType>
       <EntityType Name="Subscription">
         <Property Name="clientState" Type="Edm.String" />
@@ -22580,6 +22696,7 @@
         <Property Name="notificationUrl" Type="Edm.String" />
         <Property Name="resource" Type="Edm.String" />
         <Property Name="resourceData" Type="Edm.String" />
+        <Property Name="scenarios" Type="Collection(Edm.String)" />
       </EntityType>
       <Action Name="Add" IsBound="true">
         <Parameter Name="this" Type="Collection(Microsoft.SharePoint.Webhooks.Subscription)" />
@@ -23054,10 +23171,12 @@
         <Property Name="title" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPAppAddAndDeployResponseInfomation">
+        <Property Name="FolderId" Type="Edm.String" />
         <Property Name="IsFirstTimeDeployed" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ListId" Type="Edm.String" />
         <Property Name="ListItemId" Type="Edm.String" />
         <Property Name="ListItemUniqueId" Type="Edm.String" />
+        <Property Name="ListUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPAvailableAddinsResponse">
         <Property Name="addins" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SPAddinInstanceInfo)" />
@@ -23130,6 +23249,16 @@
       <ComplexType Name="SPUninstallAddinResponse">
         <Property Name="executing" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SPTriggeredUninstallAddinJobResponse)" />
         <Property Name="failed" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SPFailToTriggerUninstallAddinJobResponse)" />
+      </ComplexType>
+      <ComplexType Name="UpgradableStoreApp">
+        <Property Name="AppCatalogVersion" Type="Edm.String" />
+        <Property Name="AssetId" Type="Edm.String" />
+        <Property Name="Publisher" Type="Edm.String" />
+        <Property Name="ReleasedDate" Type="Edm.String" />
+        <Property Name="SupportedHosts" Type="Collection(Edm.String)" />
+        <Property Name="ThumbnailUrl" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Version" Type="Edm.String" />
       </ComplexType>
       <EntityType Name="SiteCollectionCorporateCatalogAccessor">
         <NavigationProperty Name="AvailableApps" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CorporateCatalogAppMetadata)" ContainsTarget="true" />
@@ -23263,6 +23392,12 @@
         <Parameter Name="AppRequestInfo" Type="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SPStoreAppRequestInformation" />
         <ReturnType Type="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SPStoreAppResponseInformation" />
       </Action>
+      <Action Name="CheckUpgradableStoreAppsInAppCatalog" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor" />
+        <Parameter Name="bm" Type="Edm.String" />
+        <Parameter Name="cm" Type="Edm.String" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.UpgradableStoreApp)" />
+      </Action>
       <Function Name="DownloadTeamsSolution" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor" />
         <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
@@ -23326,6 +23461,33 @@
       <EntityType Name="ApprovalsManager" Abstract="true" />
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Internal" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="GptRequestOptions">
+        <Property Name="BestOf" Type="Edm.Int32" Nullable="false" />
+        <Property Name="FrequencyPenalty" Type="Edm.Double" Nullable="false" />
+        <Property Name="MaxTokens" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PresencePenalty" Type="Edm.Double" Nullable="false" />
+        <Property Name="Prompt" Type="Edm.String" />
+        <Property Name="Temperature" Type="Edm.Double" Nullable="false" />
+        <Property Name="TopP" Type="Edm.Double" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="GptResponseChoice">
+        <Property Name="FinishReason" Type="Edm.String" />
+        <Property Name="Index" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Text" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="GptResponseUsage">
+        <Property Name="CompletionTokens" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PromptTokens" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TotalTokens" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="GptResponse">
+        <Property Name="Choices" Type="Collection(Microsoft.SharePoint.Internal.GptResponseChoice)" />
+        <Property Name="Created" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="Model" Type="Edm.String" />
+        <Property Name="ObjectType" Type="Edm.String" />
+        <Property Name="Usage" Type="Microsoft.SharePoint.Internal.GptResponseUsage" />
+      </ComplexType>
       <ComplexType Name="TrackedItemUpdatesRequest">
         <Property Name="TimeStamp" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="TrackedItemsAsJson" Type="Edm.String" />
@@ -23434,6 +23596,7 @@
         <Property Name="likeCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="listId" Type="Edm.Guid" Nullable="false" />
         <Property Name="mentions" Type="Collection(Microsoft.SharePoint.Comments.Client.Identity)" />
+        <Property Name="modifiedDate" Type="Edm.DateTimeOffset" />
         <Property Name="parentId" Type="Edm.String" />
         <Property Name="relativeCreatedDate" Type="Edm.String" />
         <Property Name="replyCount" Type="Edm.Int32" Nullable="false" />
@@ -23782,34 +23945,35 @@
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
         <Property Name="TotalItemCount" Type="Edm.Int64" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="CollaborationInsightsCounts">
+      <ComplexType Name="CollaborationInsightsData">
+        <Property Name="collaborativeOneDriveUsers" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CollaborativeOneDriveUser)" />
+        <Property Name="collaborativeUsers" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CollaborativeUser)" />
+        <Property Name="lastReportDate" Type="Edm.DateTimeOffset" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="CollaborativeOneDriveUser">
+        <Property Name="fileCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="filesSharedExternally" Type="Edm.Int32" Nullable="false" />
+        <Property Name="filesSharedInternally" Type="Edm.Int32" Nullable="false" />
+        <Property Name="sensitivityLabel" Type="Edm.Guid" Nullable="false" />
+        <Property Name="totalFilesShared" Type="Edm.Int32" Nullable="false" />
+        <Property Name="userDisplayName" Type="Edm.String" />
+        <Property Name="userPrincipalName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CollaborativeUser">
+        <Property Name="totalFileInteraction" Type="Edm.Int32" Nullable="false" />
+        <Property Name="totalFilesSharedExternally" Type="Edm.Int32" Nullable="false" />
+        <Property Name="totalFilesSharedInternally" Type="Edm.Int32" Nullable="false" />
+        <Property Name="totalFilesViewedOrEdited" Type="Edm.Int32" Nullable="false" />
+        <Property Name="userDisplayName" Type="Edm.String" />
+        <Property Name="userPrincipalName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CollaborationInsightsOverview">
+        <Property Name="lastReportDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="totalGuests" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalInternalUsers" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalOneDrives" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalSites" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalUsers" Type="Edm.Int32" Nullable="false" />
-      </ComplexType>
-      <ComplexType Name="CollaborationInsightsData">
-        <Property Name="collaborativeUsers" Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborativeUsers" />
-        <Property Name="lastReportDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="tenantInsights" Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborationInsightsCounts" />
-      </ComplexType>
-      <ComplexType Name="CollaborativeUsers">
-        <Property Name="oneDrive" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.OneDriveCollaborativeUsers)" />
-        <Property Name="oneDriveSharePoint" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.OneDriveSharePointCollaborativeUsers)" />
-      </ComplexType>
-      <ComplexType Name="OneDriveCollaborativeUsers">
-        <Property Name="displayName" Type="Edm.String" />
-        <Property Name="oneDriveFilesSharedExternally" Type="Edm.Int32" Nullable="false" />
-        <Property Name="sensitivityLabel" Type="Edm.Guid" Nullable="false" />
-        <Property Name="totalFileCount" Type="Edm.Int32" Nullable="false" />
-        <Property Name="userPrincipalName" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="OneDriveSharePointCollaborativeUsers">
-        <Property Name="displayName" Type="Edm.String" />
-        <Property Name="totalFilesSharedExternally" Type="Edm.Int32" Nullable="false" />
-        <Property Name="totalFilesSharedInternally" Type="Edm.Int32" Nullable="false" />
-        <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="GroupSitesActivityDetail">
         <Property Name="GroupId" Type="Edm.Guid" Nullable="false" />
@@ -24503,6 +24667,16 @@
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.ListItemUpdateResults" />
       </Action>
+      <Action Name="ValidateUpdateFetchListItemInFolder" IsBound="true">
+        <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
+        <Parameter Name="formValues" Type="Collection(SP.ListItemFormUpdateValue)" />
+        <Parameter Name="bNewDocumentUpdate" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="checkInComment" Type="Edm.String" />
+        <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="rootFolder" Type="Edm.String" />
+        <ReturnType Type="SP.ListItemUpdateResults" />
+      </Action>
       <Action Name="ValidateUpdateListItem" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <Parameter Name="formValues" Type="Collection(SP.ListItemFormUpdateValue)" />
@@ -24510,6 +24684,7 @@
         <Parameter Name="checkInComment" Type="Edm.String" />
         <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="sharedLockId" Type="Edm.String" />
         <ReturnType Type="Collection(SP.ListItemFormUpdateValue)" />
       </Action>
       <Action Name="Add" IsBound="true">
@@ -25297,13 +25472,6 @@
       <ComplexType Name="SmtpServer">
         <Property Name="IsReadOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Value" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="SPContainerTypeProperties">
-        <Property Name="AzureSubscriptionId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="DisplayName" Type="Edm.String" />
-        <Property Name="OwningAppId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="OwningTenantId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SPListModernUXOff">
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
@@ -26094,6 +26262,10 @@
       <Function Name="GetCollaborationInsightsData" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborationInsightsData" />
+      </Function>
+      <Function Name="GetCollaborationInsightsOverview" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborationInsightsOverview" />
       </Function>
       <Action Name="GetFilteredSPListItems" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -28194,6 +28366,7 @@
       </Function>
     </Schema>
     <Schema Namespace="SP.ComplianceFoundation" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="ComplianceDlpWorkItemSubmitter" />
       <EntityType Name="ComplianceRetentionWorkItemSubmitter" />
       <EntityType Name="PreserveDocumentSubmitter" />
     </Schema>
@@ -29450,10 +29623,15 @@
       </EntityType>
       <EntityType Name="SPTenantIBInsightsReport" BaseType="Microsoft.SharePoint.Insights.SPTenantIBInsightsReportMetadata">
         <Property Name="Explicit" Type="Collection(Edm.String)" />
-        <Property Name="Implicit" Type="Collection(Edm.String)" />
         <Property Name="ModeDistribution" Type="Collection(Edm.String)" />
         <Property Name="Open" Type="Collection(Edm.String)" />
         <Property Name="OwnerModerated" Type="Collection(Edm.String)" />
+      </EntityType>
+      <EntityType Name="SPTenantIBInsightsReportOneDrive" BaseType="Microsoft.SharePoint.Insights.SPTenantIBInsightsReport">
+        <Property Name="Mixed" Type="Collection(Edm.String)" />
+      </EntityType>
+      <EntityType Name="SPTenantIBInsightsReportSharePoint" BaseType="Microsoft.SharePoint.Insights.SPTenantIBInsightsReport">
+        <Property Name="Implicit" Type="Collection(Edm.String)" />
       </EntityType>
       <Function Name="SPTenantIBInsightsReportManager">
         <ReturnType Type="Microsoft.SharePoint.Insights.SPTenantIBInsightsReportManager" />
@@ -29469,11 +29647,13 @@
       <Function Name="GetReport" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Insights.SPTenantIBInsightsReportManager" />
         <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteType" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.Insights.SPTenantIBInsightsReport" />
       </Function>
       <Function Name="GetReportData" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Insights.SPTenantIBInsightsReportManager" />
         <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteType" Type="Edm.String" />
         <Parameter Name="section" Type="Edm.String" />
         <ReturnType Type="Collection(Edm.String)" />
       </Function>
@@ -29886,17 +30066,6 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantManagement.ImportProfilePropertiesJobInfo)" />
       </Action>
-      <Action Name="GetSPOContainerTypeById" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
-        <Parameter Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="containerTenantType" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties" />
-      </Action>
-      <Action Name="GetSPOContainerTypes" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
-        <Parameter Name="containerTenantType" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties)" />
-      </Action>
       <Action Name="GetTenantCdnEnabled" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <Parameter Name="cdnType" Type="Edm.Int32" Nullable="false" />
@@ -29931,10 +30100,6 @@
         <Parameter Name="numCatalogs" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="numFonts" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="totalExpectedFiles" Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="NewSPOContainerType" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
-        <Parameter Name="containerTypeProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties" />
       </Action>
       <Action Name="QueueImportProfileProperties" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
@@ -30607,6 +30772,11 @@
         <Parameter Name="holdId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="durationInDays" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="holdPeriodSource" Type="Edm.String" />
+      </Action>
+    </Schema>
+    <Schema Namespace="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="AddUnifiedDlpWorkItem">
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
     </Schema>
     <Schema Namespace="SP.ComplianceFoundation.ComplianceRetentionWorkItemSubmitter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -31406,39 +31576,6 @@
         <ReturnType Type="Edm.String" />
       </Function>
     </Schema>
-    <Schema Namespace="SP.Campaigns" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <Action Name="CreateCampaign">
-        <Parameter Name="campaign" Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
-      </Action>
-      <Action Name="CreateCommunication">
-        <Parameter Name="communication" Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
-      </Action>
-      <Function Name="GetCampaign" IsComposable="true">
-        <Parameter Name="campaignId" Type="Edm.String" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
-      </Function>
-      <Function Name="GetCampaignsSummary" IsComposable="true">
-        <ReturnType Type="Collection(Microsoft.SharePoint.Campaigns.CampaignSummary)" />
-      </Function>
-      <Function Name="GetCommunication" IsComposable="true">
-        <Parameter Name="communicationId" Type="Edm.String" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
-      </Function>
-      <Function Name="GetCommunications" IsComposable="true">
-        <Parameter Name="campaignId" Type="Edm.String" />
-        <ReturnType Type="Collection(Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity)" />
-      </Function>
-      <Action Name="UpdateCampaign">
-        <Parameter Name="campaign" Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignEntity" />
-      </Action>
-      <Action Name="UpdateCommunication">
-        <Parameter Name="communication" Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
-        <ReturnType Type="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity" />
-      </Action>
-    </Schema>
     <Schema Namespace="SP.CampainAnalytics" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="GetDimensions" IsComposable="true">
         <Parameter Name="request" Type="Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsDimensionsRequest" />
@@ -31860,6 +31997,7 @@
       <Function Name="AcquireOBOToken" IsComposable="true">
         <Parameter Name="resource" Type="Edm.String" />
         <Parameter Name="incomingToken" Type="Edm.String" />
+        <Parameter Name="tenantId" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Function>
     </Schema>
