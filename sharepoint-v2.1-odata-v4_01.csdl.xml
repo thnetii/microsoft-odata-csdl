@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23522 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23529 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1692,9 +1692,29 @@
         <NavigationProperty Name="relations" Type="Collection(oneDrive.relation)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="siteReview" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="siteId" Type="Edm.String" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="completedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="frequency" Type="oneDrive.ReviewFrequency" />
+        <Property Name="type" Type="oneDrive.ReviewType" />
+        <Property Name="subType" Type="oneDrive.ReviewSubType" />
+        <Property Name="status" Type="oneDrive.ReviewStatus" />
+        <Property Name="adminComment" Type="Edm.String" />
+        <Property Name="ownerComment" Type="Edm.String" />
+        <Property Name="ownerEmails" Type="Collection(Edm.String)" />
+        <Property Name="metadata" Type="Edm.String" />
+        <Property Name="error" Type="oneDrive.error" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="standardWebPart" BaseType="oneDrive.webPart" OpenType="true">
         <Property Name="webPartType" Type="Edm.String" />
         <Property Name="data" Type="oneDrive.webPartData" />
+        <Property Name="containerTextWebPartId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenant" OpenType="true">
@@ -1712,6 +1732,7 @@
         <NavigationProperty Name="settings" Type="oneDrive.tenantSettings" ContainsTarget="true" />
         <NavigationProperty Name="analyticsReports" Type="Collection(oneDrive.analyticsReport)" ContainsTarget="true" />
         <NavigationProperty Name="analyticsReportsConfig" Type="oneDrive.analyticsReportsConfig" ContainsTarget="true" />
+        <NavigationProperty Name="siteReviews" Type="Collection(oneDrive.siteReview)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantSettings" OpenType="true">
@@ -1851,9 +1872,11 @@
         <Property Name="firstUniqueAncestorWebUrl" Type="Edm.String" />
         <Property Name="flags2" Type="Edm.String" />
         <Property Name="group" Type="oneDrive.DiagnosticGroupFacet" />
+        <Property Name="geography" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="isRootWeb" Type="Edm.Boolean" />
         <Property Name="isMSFilesHost" Type="Edm.Boolean" />
+        <Property Name="isSuspended" Type="Edm.Boolean" />
         <Property Name="hasUniqueRoleAssignments" Type="Edm.Boolean" />
         <Property Name="language" Type="Edm.Int64" />
         <Property Name="languageCulture" Type="oneDrive.CultureInfo" />
@@ -1870,6 +1893,7 @@
         <Property Name="siteAdministratorsCount" Type="Edm.Int32" />
         <Property Name="siteCollection" Type="oneDrive.diagnosticSiteCollection" />
         <Property Name="template" Type="oneDrive.siteTemplate" />
+        <Property Name="userProducts" Type="Edm.String" />
         <Property Name="webUrl" Type="Edm.String" />
         <Property Name="welcomePage" Type="Edm.String" />
         <NavigationProperty Name="diagnosticCrawlEntries" Type="Collection(oneDrive.diagnosticCrawlEntry)" ContainsTarget="true" />
@@ -2553,7 +2577,7 @@
         <Property Name="self" Type="oneDrive.self" />
         <Property Name="userType" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
-        <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.thumbnailSet)" ContainsTarget="true" />
+        <NavigationProperty Name="thumbnails" Type="oneDrive.thumbnailSet" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="identitySet" OpenType="true">
         <Property Name="application" Type="oneDrive.identity" />
@@ -3178,6 +3202,7 @@
       </ComplexType>
       <ComplexType Name="autoTagging" OpenType="true">
         <Property Name="autoTaggingEnabled" Type="Edm.Boolean" />
+        <Property Name="enhancedImageTaggingEnabled" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="booleanColumn" OpenType="true" />
       <ComplexType Name="calculatedColumn" OpenType="true">
@@ -3376,7 +3401,11 @@
       <ComplexType Name="commentSettingsFacet" OpenType="true">
         <Property Name="commentingDisabled" Type="oneDrive.commentDisabledFacet" />
       </ComplexType>
-      <ComplexType Name="containingDrivePolicyScenarioViewpoint" OpenType="true" />
+      <ComplexType Name="containingDrivePolicyScenarioViewpoint" OpenType="true">
+        <Property Name="policyScenarioId" Type="Edm.String" />
+        <Property Name="isPolicyMet" Type="Edm.Boolean" />
+        <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+      </ComplexType>
       <ComplexType Name="coverImage" OpenType="true" />
       <ComplexType Name="customRoot" OpenType="true" />
       <ComplexType Name="defaultSharingLink" OpenType="true">
@@ -4935,6 +4964,24 @@
       <EnumType Name="Relationship">
         <Member Name="pin" Value="0" />
         <Member Name="reuse" Value="1" />
+      </EnumType>
+      <EnumType Name="ReviewFrequency">
+        <Member Name="OnDemand" Value="0" />
+      </EnumType>
+      <EnumType Name="ReviewType">
+        <Member Name="EEEUSharing" Value="0" />
+        <Member Name="SharingLink" Value="1" />
+      </EnumType>
+      <EnumType Name="ReviewSubType">
+        <Member Name="FilesandFolders" Value="0" />
+        <Member Name="SPGroup" Value="1" />
+      </EnumType>
+      <EnumType Name="ReviewStatus">
+        <Member Name="NotStarted" Value="0" />
+        <Member Name="InQueue" Value="1" />
+        <Member Name="UserNotified" Value="2" />
+        <Member Name="Completed" Value="3" />
+        <Member Name="Failed" Value="4" />
       </EnumType>
       <EnumType Name="ImageTaggingChoice">
         <Member Name="disabled" Value="0" />
