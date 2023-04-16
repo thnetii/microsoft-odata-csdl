@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23529 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23605 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -64,11 +64,13 @@
       </ComplexType>
       <ComplexType Name="TargetedSiteDetails">
         <Property Name="Audiences" Type="Collection(SP.Audience)" />
+        <Property Name="IsInDraftMode" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaBackendSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="TargetedLicenseType" Type="Edm.Int32" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
+        <Property Name="VivaConnectionsDefaultStart" Type="Edm.Boolean" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="FileCreationInformation">
@@ -7058,6 +7060,12 @@
       <Annotations Target="SP.Publishing.SitePage3DFieldsData/SpaceContent">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SitePageDependencyMetadata">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.WebPartDetailsWrapper">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SitePageVersionInfoCollection/Created">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7493,6 +7501,9 @@
       <Annotations Target="SP.TargetedSiteDetails/Audiences">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.TargetedSiteDetails/IsInDraftMode">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.TargetedSiteDetails/IsVivaBackendSite">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7506,6 +7517,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.TargetedSiteDetails/Url">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.TargetedSiteDetails/VivaConnectionsDefaultStart">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.TargetedSiteDetails/WebId">
@@ -9960,9 +9974,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePage3D/SpaceContent">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Publishing.SitePageDependencyMetadata">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageService">
@@ -14991,6 +15002,8 @@
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJob)" />
         <Parameter Name="SourceSiteUrl" Type="Edm.String" />
         <Parameter Name="SubscriptionId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="SourceDataLocation" Type="Edm.String" />
+        <Parameter Name="EnableSiteToMoveDatastore" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJob" />
       </Function>
       <Function Name="GetMoveReport" IsBound="true" IsComposable="true">
@@ -19557,6 +19570,22 @@
       <ComplexType Name="SitePage3DFieldsData" BaseType="SP.Publishing.SitePageFieldsData">
         <Property Name="SpaceContent" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SitePageDependencyMetadata">
+        <Property Name="DependencyItemPath" Type="Edm.String" />
+        <Property Name="IsInPageSiteAssetsFolder" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ListId" Type="Edm.Guid" />
+        <Property Name="RelatedWebParts" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="RelatedWebPartsDetails" Type="Collection(SP.Publishing.WebPartDetailsWrapper)" />
+        <Property Name="SiteId" Type="Edm.Guid" />
+        <Property Name="Type" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="WebId" Type="Edm.Guid" />
+      </ComplexType>
+      <ComplexType Name="WebPartDetailsWrapper">
+        <Property Name="InstanceId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="IsInternal" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ManifestId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="SitePageVersionInfoCollection">
         <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="CreatedBy" Type="Edm.String" />
@@ -19889,16 +19918,6 @@
       <EntityType Name="SharePointHomeServiceManager" />
       <EntityType Name="SitePage3D" BaseType="SP.Publishing.SitePage">
         <Property Name="SpaceContent" Type="Edm.String" />
-      </EntityType>
-      <EntityType Name="SitePageDependencyMetadata">
-        <Property Name="DependencyItemPath" Type="Edm.String" />
-        <Property Name="IsInPageSiteAssetsFolder" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="ListId" Type="Edm.Guid" />
-        <Property Name="RelatedWebParts" Type="Collection(Edm.Guid)" Nullable="false" />
-        <Property Name="SiteId" Type="Edm.Guid" />
-        <Property Name="Type" Type="Edm.String" />
-        <Property Name="UniqueId" Type="Edm.Guid" />
-        <Property Name="WebId" Type="Edm.Guid" />
       </EntityType>
       <EntityType Name="SitePageService">
         <Property Name="CustomContentApprovalEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -22994,9 +23013,17 @@
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.PortalAndOrgNews" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="HomeSiteConfigurationParam">
+        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="IsAudiencesPresent" Type="Edm.Boolean" Nullable="false" />
         <Property Name="isInDraftMode" Type="Edm.Boolean" />
         <Property Name="IsInDraftModePresent" Type="Edm.Boolean" />
+        <Property Name="IsOrderPresent" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsTargetedLicenseTypePresent" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsVivaBackendSite" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsVivaBackendSitePresent" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaConnectionsDefaultStartPresent" Type="Edm.Boolean" />
+        <Property Name="Order" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TargetedLicenseType" Type="Edm.Int32" Nullable="false" />
         <Property Name="vivaConnectionsDefaultStart" Type="Edm.Boolean" />
       </ComplexType>
     </Schema>
@@ -25840,6 +25867,13 @@
         <Property Name="EnableMipSiteLabel" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnablePromotedFileHandlers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
+        <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="ESignatureSiteListFileName" Type="Edm.String" />
+        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Edm.String)" />
+        <Property Name="ESignatureThirdPartyProviderList" Type="Collection(Edm.String)" />
+        <Property Name="ESignatureThirdPartyProviderListFileName" Type="Edm.String" />
         <Property Name="ExcludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="ExcludedFileExtensionsForSyncClient" Type="Collection(Edm.String)" />
         <Property Name="ExpireVersionsAfterDays" Type="Edm.Int32" Nullable="false" />
@@ -25887,7 +25921,9 @@
         <Property Name="MajorVersionLimit" Type="Edm.Int32" Nullable="false" />
         <Property Name="ManagedPathsForSiteCreation" Type="Collection(Edm.String)" />
         <Property Name="MarkNewFilesSensitiveByDefault" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MassDeleteNotificationDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MediaTranscription" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MediaTranscriptionAutomaticFeatures" Type="Edm.Int32" Nullable="false" />
         <Property Name="MobileFriendlyUrlEnabledInTenant" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NoAccessRedirectUrl" Type="Edm.String" />
         <Property Name="NotificationsInOneDriveForBusinessEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -26267,6 +26303,12 @@
       <Action Name="DeleteRecentAdminActionReport" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="reportId" Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="DisableCollaborationInsightsDataCollection" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+      </Action>
+      <Action Name="EnableCollaborationInsightsDataCollection" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
       <Action Name="ExportAdminListToCSV" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -26797,18 +26839,17 @@
         <Parameter Name="parameters" Type="Microsoft.Online.SharePoint.TenantAdministration.UpdateGroupSitePropertiesParameters" />
         <ReturnType Type="Edm.String" />
       </Action>
-      <Action Name="UpdateHomeSite" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="homeSiteUrl" Type="Edm.String" />
-        <Parameter Name="order" Type="Edm.Int32" />
-        <Parameter Name="audiences" Type="Collection(Edm.Guid)" Nullable="false" />
-        <ReturnType Type="SP.HomeSitesDetails" />
-      </Action>
       <Action Name="UpdatePolicyDefinition" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="itemId" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="policyInputParameters" Type="Microsoft.Online.SharePoint.TenantAdministration.CreatePolicyRequest" />
         <Parameter Name="policyOperation" Type="Edm.String" />
+      </Action>
+      <Action Name="UpdateTargetedSite" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <Parameter Name="configurationParam" Type="Microsoft.SharePoint.PortalAndOrgNews.HomeSiteConfigurationParam" />
+        <ReturnType Type="SP.TargetedSiteDetails" />
       </Action>
       <Action Name="UpdateTenantAdminListItem" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -29849,6 +29890,13 @@
         <Property Name="EnableGuestSignInAcceleration" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnablePromotedFileHandlers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
+        <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="ESignatureSiteListFileName" Type="Edm.String" />
+        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Edm.String)" />
+        <Property Name="ESignatureThirdPartyProviderList" Type="Collection(Edm.String)" />
+        <Property Name="ESignatureThirdPartyProviderListFileName" Type="Edm.String" />
         <Property Name="ExcludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="ExcludedFileExtensionsForSyncClient" Type="Collection(Edm.String)" />
         <Property Name="ExpireVersionsAfterDays" Type="Edm.Int32" Nullable="false" />
@@ -29878,7 +29926,9 @@
         <Property Name="LimitedAccessFileType" Type="Edm.Int32" Nullable="false" />
         <Property Name="MachineLearningCaptureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MajorVersionLimit" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MassDeleteNotificationDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MediaTranscription" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MediaTranscriptionAutomaticFeatures" Type="Edm.Int32" Nullable="false" />
         <Property Name="MobileFriendlyUrlEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MySitesPublicEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NotificationsInOneDriveForBusinessEnabled" Type="Edm.Boolean" Nullable="false" />
