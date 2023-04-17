@@ -50,13 +50,13 @@ const httpClient = new HttpClient();
   });
   assert(msalAuthResult);
 
-  /** @type {import('@actions/http-client/interfaces').IHeaders} */
+  /** @type {import('http').OutgoingHttpHeaders} */
   const odataRequHdrs = {
     authorization: `Bearer ${msalAuthResult.accessToken}`,
     'OData-Version': '4.0',
     'OData-MaxVersion': '4.0',
   };
-  /** @type {import('@actions/http-client/interfaces').ITypedResponse<{Version: string}>} */
+  /** @type {import('@actions/http-client/lib/interfaces').TypedResponse<{Version: string}>} */
   const d365VersionResp = await httpClient.getJson(
     d365VersionUrl.toString(),
     odataRequHdrs
