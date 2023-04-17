@@ -1,74 +1,34 @@
 name: Node.js lint
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch: {}
 
 jobs:
-  npm:
-    name: Npm Packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Setup Github Actions for Node.js
-        uses: actions/setup-node@v3
-      - name: npm clean-install --workspaces --include-workspace-root
-        uses: thnetii/.github/actions/gh-actions-npm@main
-        with:
-          working-directory: .github/actions
-          arguments: |
-            clean-install
-            --workspaces
-            --include-workspace-root
-
-  tsc:
-    name: TypeScript type check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Setup Github Actions for Node.js
-        uses: actions/setup-node@v3
-      - run: npm clean-install --workspaces --include-workspace-root
-        working-directory: .github/actions
-      - name: tsc --noEmit -p ./jsconfig.json
-        uses: thnetii/.github/actions/gh-actions-tsc@main
-        with:
-          working-directory: .github/actions
-          arguments: |
-            --noEmit
-            -p
-            ./jsconfig.json
-
-  eslint:
-    name: ESLint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Setup Github Actions for Node.js
-        uses: actions/setup-node@v3
-      - run: npm clean-install --workspaces --include-workspace-root
-        working-directory: .github/actions
-      - name: eslint .
-        uses: thnetii/.github/actions/gh-actions-eslint@main
-        with:
-          working-directory: .github/actions
-
-  prettier:
-    name: Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout ${{ github.repository }}@${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Setup Github Actions for Node.js
-        uses: actions/setup-node@v3
-      - run: npm clean-install --workspaces --include-workspace-root
-        working-directory: .github/actions
-      - name: prettier --check .
-        uses: thnetii/.github/actions/gh-actions-prettier@main
-        with:
-          working-directory: .github/actions
+  nodejs:
+    name: Node.js
+    uses: thnetii/.github/.github/workflows/nodejs-code-validation.yml@main
+    with:
+      checkout-parameters: >
+        {
+          "submodules": true
+        }
+      npm-install-check-enable: true
+      npm-install-working-directory: .github/actions
+      npm-install-arguments: >
+        [
+          "--workspaces",
+          "--include-workspace-root"
+        ]
+      tsc-check-enable: true
+      tsc-parameters: >
+        {
+          "arguments": "--noEmit\n-p\n./jsconfig.json"
+        }
+      eslint-check-enable: true
+      prettier-check-enable: true
