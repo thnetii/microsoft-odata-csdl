@@ -1,7 +1,7 @@
 const { EOL } = require('os');
 const { promises: fs } = require('fs');
 const ghaCore = require('@actions/core');
-const { HttpClient } = require('@actions/http-client');
+const { HttpClient, HttpClientError } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xpath = require('xpath');
 const xmlFormatter = require('xml-formatter');
@@ -31,8 +31,16 @@ const httpClient = new HttpClient();
   requHdrs['OData-MaxVersion'] = '4.0';
   const spoApiResp = await httpClient.get(spoApiUrl, requHdrs);
   const {
-    message: { headers: respHdrs },
+    message: { headers: respHdrs, statusCode },
   } = spoApiResp;
+  if (!statusCode || statusCode < 200 || statusCode >= 300) {
+    const httpError = new HttpClientError(
+      'HTTP Status Code does not indicate succes',
+      statusCode || 500
+    );
+    ghaCore.error(httpError);
+    throw httpError;
+  }
   // eslint-disable-next-line dot-notation
   let spoVersionHeader = respHdrs['microsoftsharepointteamservices'];
   if (!spoVersionHeader) spoVersionHeader = [];
