@@ -7,6 +7,7 @@ on:
     - cron: '27 7 * * *'
       # Trigger every day at 07:27
 permissions:
+  id-token: write
   contents: write
   pull-requests: write
 
@@ -42,13 +43,18 @@ jobs:
             clean-install
             --workspace=dynamics-365-crm-csdl-download
             --omit=dev
+      - id: msidp-workflow-auth
+        name: Authenticate GitHub Actions Workflow
+        uses: thnetii/.github/actions/ms-idp-workflow-run-auth@main
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          resource: ${{ secrets.DYNAMICS365CRM_INSTANCEURL }}
       - id: download-csdl
         name: Download Microsoft Dynamics 365 CRM CSDL in XML format
         uses: ./.github/actions/dynamics-365-crm-csdl-download
         with:
-          tenant-id: ${{ secrets.MSIDP_TENANTID }}
-          client-id: ${{ secrets.MSIDP_CLIENTID }}
-          client-secret: ${{ secrets.MSIDP_CLIENTSECRET }}
+          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           d365-instance-url: ${{ secrets.DYNAMICS365CRM_INSTANCEURL }}
           d365-api-url: ${{ secrets.DYNAMICS365CRM_INSTANCEAPIURL }}
           api-version: ${{ env.d365-api-version }}

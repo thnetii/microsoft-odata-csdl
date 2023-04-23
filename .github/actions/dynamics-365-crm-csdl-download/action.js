@@ -1,31 +1,10 @@
 const { URL } = require('url');
 const { EOL } = require('os');
 const { promises: fs } = require('fs');
-const { ConfidentialClientApplication } = require('@azure/msal-node');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xmlFormatter = require('xml-formatter');
-const assert = require('assert');
-
-const getMsalAuthority = () => {
-  let authority = ghaCore.getInput('msidp-authority');
-  if (!authority) {
-    const instance =
-      ghaCore.getInput('msidp-instance') || 'https://login.microsoftonline.com';
-    const tenant = ghaCore.getInput('tenant-id') || 'common';
-    authority = `${instance}/${tenant}`;
-  }
-  return authority;
-};
-
-const msalClient = new ConfidentialClientApplication({
-  auth: {
-    clientId: ghaCore.getInput('client-id', { required: true }),
-    clientSecret: ghaCore.getInput('client-secret', { required: true }),
-    authority: getMsalAuthority(),
-  },
-});
 
 const httpClient = new HttpClient();
 
@@ -34,7 +13,6 @@ const httpClient = new HttpClient();
     required: true,
   });
   const d365InstanceUrl = new URL(d365InstanceUrlInput);
-  const d365ResourceScope = new URL('/.default', d365InstanceUrl);
   const d365ApiUrlInput = ghaCore.getInput('d365-api-url');
   const apiVersion = ghaCore.getInput('api-version') || 'v8.2';
   const csdlUrl = new URL(
@@ -45,14 +23,14 @@ const httpClient = new HttpClient();
 
   const filePath = ghaCore.getInput('file-path', { required: true });
 
-  const msalAuthResult = await msalClient.acquireTokenByClientCredential({
-    scopes: [d365ResourceScope.toString()],
+  const accessToken = ghaCore.getInput('access-token', {
+    required: true,
+    trimWhitespace: true,
   });
-  assert(msalAuthResult);
 
   /** @type {import('http').OutgoingHttpHeaders} */
   const odataRequHdrs = {
-    authorization: `Bearer ${msalAuthResult.accessToken}`,
+    authorization: `Bearer ${accessToken}`,
     'OData-Version': '4.0',
     'OData-MaxVersion': '4.0',
   };

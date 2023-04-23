@@ -1,16 +1,9 @@
 const { EOL } = require('os');
 const { promises: fs } = require('fs');
-const spAuth = require('node-sp-auth');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xmlFormatter = require('xml-formatter');
-
-/** @type {spAuth.IOnlineAddinCredentials} */
-const credOpts = {
-  clientId: ghaCore.getInput('client-id', { required: true }),
-  clientSecret: ghaCore.getInput('client-secret', { required: true }),
-};
 
 const httpClient = new HttpClient();
 
@@ -24,7 +17,15 @@ const httpClient = new HttpClient();
 
   const filePath = ghaCore.getInput('file-path', { required: true });
 
-  const { headers: requHdrs } = await spAuth.getAuth(spoWebUrl, credOpts);
+  const accessToken = ghaCore.getInput('access-token', {
+    required: true,
+    trimWhitespace: true,
+  });
+
+  /** @type {import('http').OutgoingHttpHeaders} */
+  const requHdrs = {};
+  // eslint-disable-next-line dot-notation
+  requHdrs['authorization'] = `Bearer ${accessToken}`;
   // eslint-disable-next-line dot-notation
   requHdrs['accept'] = 'application/xml';
   requHdrs['OData-Version'] = '4.01';

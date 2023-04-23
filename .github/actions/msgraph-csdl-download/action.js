@@ -1,29 +1,8 @@
 const { EOL } = require('os');
 const { promises: fs } = require('fs');
-const { ConfidentialClientApplication } = require('@azure/msal-node');
 const ghaCore = require('@actions/core');
 const { HttpClient } = require('@actions/http-client');
 const xmlFormatter = require('xml-formatter');
-const assert = require('assert');
-
-const getMsalAuthority = () => {
-  let authority = ghaCore.getInput('msidp-authority');
-  if (!authority) {
-    const instance =
-      ghaCore.getInput('msidp-instance') || 'https://login.microsoftonline.com';
-    const tenant = ghaCore.getInput('tenant-id') || 'common';
-    authority = `${instance}/${tenant}`;
-  }
-  return authority;
-};
-
-const msalClient = new ConfidentialClientApplication({
-  auth: {
-    clientId: ghaCore.getInput('client-id', { required: true }),
-    clientSecret: ghaCore.getInput('client-secret', { required: true }),
-    authority: getMsalAuthority(),
-  },
-});
 
 const httpClient = new HttpClient();
 
@@ -33,13 +12,13 @@ const httpClient = new HttpClient();
 
   const csdlUrl = `https://graph.microsoft.com/${apiVersion}/$metadata`;
 
-  const msalAuthResult = await msalClient.acquireTokenByClientCredential({
-    scopes: ['https://graph.microsoft.com/.default'],
+  const accessToken = ghaCore.getInput('access-token', {
+    required: true,
+    trimWhitespace: true,
   });
-  assert(msalAuthResult);
 
   const csdlResp = await httpClient.get(csdlUrl, {
-    authorization: `Bearer ${msalAuthResult.accessToken}`,
+    authorization: `Bearer ${accessToken}`,
     'OData-Version': '4.0',
     'OData-MaxVersion': '4.0',
     accept: 'application/xml',

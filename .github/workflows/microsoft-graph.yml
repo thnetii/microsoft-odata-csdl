@@ -7,6 +7,7 @@ on:
     - cron: '04 7 * * *'
       # Trigger every day at 07:04
 permissions:
+  id-token: write
   contents: write
   pull-requests: write
 
@@ -39,22 +40,25 @@ jobs:
             clean-install
             --workspace=msgraph-csdl-download
             --omit=dev
+      - id: msidp-workflow-auth
+        name: Authenticate GitHub Actions Workflow
+        uses: thnetii/.github/actions/ms-idp-workflow-run-auth@main
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          resource: https://graph.microsoft.com
       - id: download-v1_0-csdl
         name: Download Microsoft Graph v1.0 CSDL in XML format
         uses: ./.github/actions/msgraph-csdl-download
         with:
-          tenant-id: ${{ secrets.MSIDP_TENANTID }}
-          client-id: ${{ secrets.MSIDP_CLIENTID }}
-          client-secret: ${{ secrets.MSIDP_CLIENTSECRET }}
+          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-version: v1.0
           file-path: microsoft-graph-v1.0.csdl.xml
       - id: download-beta-csdl
         name: Download Microsoft Graph beta CSDL in XML format
         uses: ./.github/actions/msgraph-csdl-download
         with:
-          tenant-id: ${{ secrets.MSIDP_TENANTID }}
-          client-id: ${{ secrets.MSIDP_CLIENTID }}
-          client-secret: ${{ secrets.MSIDP_CLIENTSECRET }}
+          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-version: beta
           file-path: microsoft-graph-beta.csdl.xml
       - id: create-pr
