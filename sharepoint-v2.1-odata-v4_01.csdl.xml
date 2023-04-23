@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23605 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23612 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -23,8 +23,10 @@
         <NavigationProperty Name="accessStatsByDay" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="accessStatsByHour" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="platformStatsByDay" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
+        <NavigationProperty Name="platformStats" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="statsByMonth" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="appPivotStatsByDay" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
+        <NavigationProperty Name="appPivotStats" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="lastSevenDaysTopItemsByViewers" Type="oneDrive.topItems" ContainsTarget="true" />
         <NavigationProperty Name="lastSevenDaysTopItemsByViews" Type="oneDrive.topItems" ContainsTarget="true" />
         <NavigationProperty Name="lastSevenDaysTopItemsByTimeSpent" Type="oneDrive.topItems" ContainsTarget="true" />
@@ -322,6 +324,7 @@
         <Property Name="hasInheritedSharingLinks" Type="Edm.Boolean" />
         <Property Name="sharingViewpoint" Type="oneDrive.sharingViewpoint" />
         <Property Name="accessViewpoint" Type="oneDrive.accessViewpoint" />
+        <Property Name="viewpoint" Type="oneDrive.driveItemViewpoint" />
         <Property Name="autoTagging" Type="oneDrive.autoTagging" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
         <NavigationProperty Name="annotationLayers" Type="Collection(oneDrive.annotationLayer)" ContainsTarget="true" />
@@ -1823,12 +1826,16 @@
         <Property Name="innerHtml" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="employeeExperienceDashboard" OpenType="true">
+        <NavigationProperty Name="cards" Type="Collection(oneDrive.card)" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="employeeExperience" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <NavigationProperty Name="cards" Type="Collection(oneDrive.card)" ContainsTarget="true" />
+        <NavigationProperty Name="dashboard" Type="oneDrive.employeeExperienceDashboard" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="diagnosticSubpoenaStatus" OpenType="true">
         <Key>
@@ -2215,20 +2222,18 @@
         <Key>
           <PropertyRef Name="holdId" />
         </Key>
-        <Property Name="holdId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="caseId" Type="Edm.Guid" />
         <Property Name="holdAddedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="holdId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="holdLevel" Type="Edm.String" />
         <Property Name="holdReleasedDate" Type="Edm.DateTimeOffset" />
         <Property Name="isExcluded" Type="Edm.Boolean" />
         <Property Name="isOrphaned" Type="Edm.Boolean" />
+        <Property Name="orphanedReason" Type="Edm.String" />
+        <Property Name="policyName" Type="Edm.String" />
+        <Property Name="policyScenario" Type="Edm.String" />
         <Property Name="serverRelativeUrl" Type="Edm.String" />
         <Property Name="workLoad" Type="Edm.String" />
-        <Property Name="policyScenario" Type="Edm.String" />
-        <Property Name="policyName" Type="Edm.String" />
-        <Property Name="itemHoldPeriod" Type="Edm.Int32" />
-        <Property Name="holdLevel" Type="Edm.String" />
-        <Property Name="orphanedReason" Type="Edm.String" />
-        <Property Name="itemHoldPeriodSourceColumn" Type="Edm.String" />
-        <Property Name="holdPolicyType" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="diagnosticCrawlEntry" OpenType="true">
@@ -3432,6 +3437,7 @@
         <Property Name="iCalUid" Type="Edm.String" />
         <Property Name="groupId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="driveItemViewpoint" OpenType="true" />
       <ComplexType Name="error" OpenType="true">
         <Property Name="code" Type="Edm.String" />
         <Property Name="details" Type="Collection(oneDrive.error)" />
@@ -3626,6 +3632,7 @@
       </ComplexType>
       <ComplexType Name="mediaViewpoint" OpenType="true">
         <Property Name="isTranscriptionAllowed" Type="Edm.Boolean" />
+        <Property Name="isAutomaticTranscriptionAllowed" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="metaSettings" OpenType="true">
         <Property Name="isAipIntegrationEnabled" Type="Edm.Boolean" />
@@ -3914,6 +3921,7 @@
         <Property Name="video" Type="oneDrive.video" />
         <Property Name="webDavUrl" Type="Edm.String" />
         <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="viewpoint" Type="oneDrive.driveItemViewpoint" />
         <Property Name="containingDrivePolicyScenarioViewpoint" Type="oneDrive.containingDrivePolicyScenarioViewpoint" />
       </ComplexType>
       <ComplexType Name="removed" OpenType="true" />
@@ -4716,8 +4724,8 @@
       <ComplexType Name="EXOUnifiedQuotaTopEntity">
         <Property Name="DisplayName" Type="Edm.String" />
         <Property Name="StorageQuota" Type="Edm.Int64" Nullable="false" />
-        <Property Name="LastActivityDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="LastActivityDate" Type="Edm.DateTimeOffset" />
+        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" />
         <Property Name="UserPrincipalName" Type="Edm.String" />
         <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
       </ComplexType>
