@@ -39,6 +39,9 @@ const httpClient = new HttpClient();
       statusCode || 500
     );
     ghaCore.error(httpError);
+    for (const [headerName, headerValue] of Object.entries(respHdrs)) {
+      ghaCore.info(`${headerName}: ${headerValue}`);
+    }
     throw httpError;
   }
   // eslint-disable-next-line dot-notation
