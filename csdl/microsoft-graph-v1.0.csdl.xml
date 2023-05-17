@@ -2243,6 +2243,8 @@
         <Member Name="listItem" Value="7" />
         <Member Name="drive" Value="8" />
         <Member Name="unknownFutureValue" Value="9" />
+        <Member Name="acronym" Value="12" />
+        <Member Name="bookmark" Value="13" />
         <Member Name="chatMessage" Value="10" />
         <Member Name="person" Value="11" />
       </EnumType>
@@ -3609,12 +3611,20 @@
         <Member Name="data" Value="4" />
         <Member Name="unknownFutureValue" Value="5" />
       </EnumType>
+      <EnumType Name="onlineMeetingContentSharingDisabledReason" IsFlags="true">
+        <Member Name="watermarkProtection" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
       <EnumType Name="onlineMeetingRole">
         <Member Name="attendee" Value="0" />
         <Member Name="presenter" Value="1" />
         <Member Name="unknownFutureValue" Value="2" />
         <Member Name="producer" Value="3" />
         <Member Name="coorganizer" Value="4" />
+      </EnumType>
+      <EnumType Name="onlineMeetingVideoDisabledReason" IsFlags="true">
+        <Member Name="watermarkProtection" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
       </EnumType>
       <EnumType Name="recordingStatus">
         <Member Name="unknown" Value="0" />
@@ -6307,6 +6317,7 @@
       <ComplexType Name="defaultUserRolePermissions">
         <Property Name="allowedToCreateApps" Type="Edm.Boolean" Nullable="false" />
         <Property Name="allowedToCreateSecurityGroups" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="allowedToCreateTenants" Type="Edm.Boolean" />
         <Property Name="allowedToReadBitlockerKeysForOwnedDevice" Type="Edm.Boolean" />
         <Property Name="allowedToReadOtherUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="permissionGrantPoliciesAssigned" Type="Collection(Edm.String)" />
@@ -11796,6 +11807,10 @@
         <Property Name="from" Type="Edm.String" Nullable="false" />
         <Property Name="to" Type="Edm.String" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="collapseProperty">
+        <Property Name="fields" Type="Collection(Edm.String)" Nullable="false" />
+        <Property Name="limit" Type="Edm.Int16" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="resultTemplate">
         <Property Name="body" Type="graph.Json" />
         <Property Name="displayName" Type="Edm.String" />
@@ -11821,6 +11836,7 @@
       <ComplexType Name="searchHit">
         <Property Name="contentSource" Type="Edm.String" />
         <Property Name="hitId" Type="Edm.String" />
+        <Property Name="isCollapsed" Type="Edm.Boolean" />
         <Property Name="rank" Type="Edm.Int32" />
         <Property Name="resultTemplateId" Type="Edm.String" />
         <Property Name="summary" Type="Edm.String" />
@@ -11839,6 +11855,7 @@
       <ComplexType Name="searchRequest">
         <Property Name="aggregationFilters" Type="Collection(Edm.String)" />
         <Property Name="aggregations" Type="Collection(graph.aggregationOption)" />
+        <Property Name="collapseProperties" Type="Collection(graph.collapseProperty)" />
         <Property Name="contentSources" Type="Collection(Edm.String)" />
         <Property Name="enableTopResults" Type="Edm.Boolean" />
         <Property Name="entityTypes" Type="Collection(graph.entityType)" />
@@ -12945,6 +12962,10 @@
         <Property Name="role" Type="graph.onlineMeetingRole" />
         <Property Name="upn" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="onlineMeetingRestricted">
+        <Property Name="contentSharingDisabled" Type="graph.onlineMeetingContentSharingDisabledReason" />
+        <Property Name="videoDisabled" Type="graph.onlineMeetingVideoDisabledReason" />
+      </ComplexType>
       <ComplexType Name="organizerMeetingInfo" BaseType="graph.meetingInfo" OpenType="true">
         <Property Name="organizer" Type="graph.identitySet" Nullable="false" />
       </ComplexType>
@@ -13043,6 +13064,7 @@
         <Property Name="mediaStreams" Type="Collection(graph.mediaStream)" />
         <Property Name="metadata" Type="Edm.String" />
         <Property Name="recordingInfo" Type="graph.recordingInfo" />
+        <Property Name="restrictedExperience" Type="graph.onlineMeetingRestricted" />
       </EntityType>
       <EntityType Name="cancelMediaProcessingOperation" BaseType="graph.commsOperation" OpenType="true" />
       <EntityType Name="inviteParticipantsOperation" BaseType="graph.commsOperation" OpenType="true">
