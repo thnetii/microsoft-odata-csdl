@@ -17,11 +17,11 @@ function getActionInputs() {
     required: true,
     trimWhitespace: true,
   });
-  const filePath = ghaCore.getInput('file-path', {
+  const filePath = getInput('file-path', {
     required: true,
     trimWhitespace: true,
   });
-  const accessToken = ghaCore.getInput('access-token', {
+  const accessToken = getInput('access-token', {
     required: true,
     trimWhitespace: true,
   });
@@ -103,9 +103,10 @@ async function run() {
     const spoVersion = getSpoVersionFromHeader(csdlResp.message.headers);
     await transformAndSaveCsdl(csdlResp, filePath, spoVersion);
   } catch (error) {
-    if (error instanceof HttpClientError || error instanceof Error)
+    if (error instanceof HttpClientError || error instanceof Error) {
       ghaCore.error(error);
-    else throw error;
+      ghaCore.setFailed(error);
+    } else throw error;
   } finally {
     client.dispose();
   }

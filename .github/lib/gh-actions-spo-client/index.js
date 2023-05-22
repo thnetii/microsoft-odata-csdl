@@ -75,7 +75,8 @@ class SharePointClient {
 
     ghaCore.info(`Validating connection to: ${this.webUrl}`);
     let error;
-    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+    let attempt;
+    for (attempt = 0; attempt < maxRetries; attempt += 1) {
       try {
         if (attempt > 0) {
           ghaCore.info(
@@ -101,6 +102,9 @@ class SharePointClient {
       }
     }
 
+    ghaCore.info(
+      `Attempt ${attempt} failed. Maximum number of retries reached.`
+    );
     throw error;
   }
 
