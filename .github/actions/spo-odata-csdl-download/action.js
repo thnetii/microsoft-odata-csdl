@@ -104,7 +104,6 @@ async function run() {
     await transformAndSaveCsdl(csdlResp, filePath, spoVersion);
   } catch (error) {
     if (error instanceof HttpClientError || error instanceof Error) {
-      ghaCore.error(error);
       ghaCore.setFailed(error);
     } else throw error;
   } finally {
