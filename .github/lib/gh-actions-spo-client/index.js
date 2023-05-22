@@ -40,6 +40,9 @@ class SharePointClient {
     });
   }
 
+  /**
+   * @param {string | null | undefined} [level]
+   */
   requestMetadataLevel(level) {
     if (typeof level === 'string' && level)
       Object.assign(this[headersSym], {
@@ -113,10 +116,13 @@ class SharePointClient {
     return resp;
   }
 
+  /**
+   * @param {string} url
+   */
   async [downloadSym](url) {
     const httpClient = this[httpClientSym];
     const headers = { ...this[headersSym] };
-    delete headers.accept;
+    delete headers['accept'];
     const resp = await httpClient.get(url, headers);
     const {
       message: { statusCode, statusMessage },
@@ -124,7 +130,7 @@ class SharePointClient {
     if (statusCode !== HttpCodes.OK)
       throw new HttpClientError(
         `${url}: ${statusCode} ${statusMessage || ''}`,
-        statusCode
+        statusCode || 500
       );
     return resp;
   }
