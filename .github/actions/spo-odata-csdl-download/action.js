@@ -25,6 +25,19 @@ function getActionInputs() {
     required: true,
     trimWhitespace: true,
   });
+  if (ghaCore.isDebug()) {
+    const [header, body] = accessToken.split('.', 3);
+    ghaCore.debug(
+      `access-token-header: ${Buffer.from(header || '', 'base64url').toString(
+        'utf-8'
+      )}`
+    );
+    ghaCore.debug(
+      `access-token-body: ${Buffer.from(body || '', 'base64url').toString(
+        'utf-8'
+      )}`
+    );
+  }
   return {
     spoWebUrl,
     filePath,
