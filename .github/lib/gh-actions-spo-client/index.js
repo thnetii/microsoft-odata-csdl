@@ -58,54 +58,7 @@ class SharePointClient {
   [apiUrlSym]() {
     const webUrl = this.webUrl.toString();
     const apiSep = webUrl.endsWith('/') ? '' : '/';
-    return `${webUrl}${apiSep}_api/`;
-  }
-
-  /**
-   * @param {number | undefined} [maxRetries=60]
-   * @param {number | undefined} [intervalMs=5000]
-   */
-  async validateConnection(maxRetries, intervalMs) {
-    // eslint-disable-next-line no-param-reassign
-    if (typeof maxRetries !== 'number') maxRetries = 60;
-    // eslint-disable-next-line no-param-reassign
-    else if (maxRetries < 1) maxRetries = 1;
-    // eslint-disable-next-line no-param-reassign
-    if (typeof intervalMs !== 'number') intervalMs = 5000;
-
-    ghaCore.info(`Validating connection to: ${this.webUrl}`);
-    let error;
-    let attempt;
-    for (attempt = 0; attempt < maxRetries; attempt += 1) {
-      try {
-        if (attempt > 0) {
-          ghaCore.info(
-            `Attempt ${attempt} failed. Waiting for ${
-              intervalMs / 1000
-            } second(s) before retrying.`
-          );
-          // eslint-disable-next-line no-await-in-loop
-          await new Promise((resolve) => {
-            setTimeout(resolve, intervalMs);
-          });
-        }
-        // eslint-disable-next-line no-await-in-loop
-        const resp = await this.meUser();
-        if (resp.statusCode === HttpCodes.OK) {
-          ghaCore.info(`Connected to: ${this.webUrl}`);
-          return resp;
-        }
-      } catch (except) {
-        if (except instanceof HttpClientError) {
-          error = except;
-        } else throw except;
-      }
-    }
-
-    ghaCore.info(
-      `Attempt ${attempt} failed. Maximum number of retries reached.`
-    );
-    throw error;
+    return `${webUrl}${apiSep}_api`;
   }
 
   async meUser() {
@@ -114,7 +67,8 @@ class SharePointClient {
     /** @type {TypedResponse<import('./sp-odata-types').SP.User>}  */
     const resp = await httpClient.getJson(requUrl);
     const { result, statusCode } = resp;
-    if (!result) throw new HttpClientError(`No from '${requUrl}'`, statusCode);
+    if (!result)
+      throw new HttpClientError(`No response from '${requUrl}'`, statusCode);
     const { LoginName } = result;
     ghaCore.info(`[SharePoint] Current User LoginName: ${LoginName}`);
     return resp;

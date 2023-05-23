@@ -98,7 +98,7 @@ async function run() {
   const client = new SharePointClient(spoWebUrl, accessToken);
   try {
     client.useODataVersion('4.0');
-    await client.validateConnection();
+    await client.meUser();
     const csdlResp = await client.downloadCsdl();
     const spoVersion = getSpoVersionFromHeader(csdlResp.message.headers);
     await transformAndSaveCsdl(csdlResp, filePath, spoVersion);
