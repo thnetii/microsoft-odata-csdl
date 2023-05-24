@@ -25,12 +25,12 @@ function getActionInputs() {
     required: false,
     trimWhitespace: true,
   });
-  const apiVersion =
+  let apiVersion =
     getInput('api-version', {
       required: false,
       trimWhitespace: true,
     }) || '8.2';
-  const accessToken =
+  while (/^v/iu.test(apiVersion)) apiVersion = apiVersion.substring(1);
     getInput('access-token', {
       required: false,
       trimWhitespace: true,
@@ -48,7 +48,10 @@ function getActionInputs() {
  * @param {string} initialApiVersion
  */
 async function retrieveVersion(httpClient, baseUrl, initialApiVersion) {
-  const url = new URL(`/api/data/v${initialApiVersion}/$metadata`, baseUrl);
+  const url = new URL(
+    `/api/data/v${initialApiVersion}/RetrieveVersion()`,
+    baseUrl
+  );
   /**
    * @type {import('@actions/http-client/lib/interfaces').TypedResponse<
    *  { Version: string; }
