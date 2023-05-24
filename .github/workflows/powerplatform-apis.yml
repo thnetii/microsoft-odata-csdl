@@ -1,0 +1,135 @@
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '18 5 * * *'
+      # Trigger every day at 05:18
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  all-apis:
+    name: Get List of all Power Platform API Connectors
+    runs-on: ubuntu-latest
+    env:
+      api-version: '2023-05-01'
+      environment: '~default'
+    outputs:
+      access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
+      api-version: ${{ env.api-version }}
+      api-endpoint: ${{ steps.get-api-connectors.outputs.api-endpoint }}
+      environment: ${{ steps.get-api-connectors.outputs.environment }}
+      api-connector-names: ${{ steps.get-api-connectors.outputs.api-connector-names }}
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 180
+          submodules: true
+      - uses: actions/setup-node@v3
+      - id: npm-clean-install-actions
+        name: Install NPM package dependencies for Github actions
+        uses: thnetii/.github/actions/gh-actions-npm@main
+        with:
+          arguments: |
+            clean-install
+            --workspace=@thnetii/microsoft-odata-csdl-github-actions-powerplatform-apis-collection-download
+            --omit=dev
+            --install-links
+            --no-audit
+            --no-fund
+      - id: msidp-workflow-auth
+        name: Authenticate GitHub Actions Workflow
+        uses: thnetii/.github/actions/ms-idp-workflow-run-auth@main
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          resource: https://service.flow.microsoft.com/
+      - id: get-api-connectors
+        name: Get All Power Platform API Connectors
+        uses: ./.github/actions/powerplatform-apis-collection-download
+        with:
+          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
+          api-version: ${{ env.api-version }}
+          environment: ${{ env.environment }}
+  per-api-connector:
+    needs: all-apis
+    strategy:
+      matrix:
+        api-connector: ${{ fromJSON(needs.all-apis.outputs.api-connector-names) }}
+    runs-on: ubuntu-latest
+    name: 'Download Power Platform API Connector: ${{ matrix.api-connector }}'
+    env:
+      branch-name: swagger-fetcher/powerplatform/${{ matrix.api-connector }}
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 180
+          submodules: true
+      - name: Git configure comitter identity
+        uses: thnetii/.github/actions/git-user-config@main
+      - id: checkout-pr-branch
+        name: Swich to new branch for possible PR
+        uses: thnetii/.github/actions/create-rebase-pr-branch@main
+        with:
+          branch-name: ${{ env.branch-name }}
+      - uses: actions/setup-node@v3
+      - id: npm-clean-install-actions
+        name: Install NPM package dependencies for Github actions
+        uses: thnetii/.github/actions/gh-actions-npm@main
+        with:
+          arguments: |
+            clean-install
+            --workspace=@thnetii/microsoft-odata-csdl-github-actions-powerplatform-api-connector-download
+            --omit=dev
+            --install-links
+            --no-audit
+            --no-fund
+      - id: download-connector
+        name: Download Power Platform API Connector
+        uses: ./.github/actions/powerplatform-api-connector-download
+        with:
+          access-token: ${{ needs.all-apis.outputs.access-token }}
+          api-endpoint: ${{ needs.all-apis.outputs.api-endpoint }}
+          environment: ${{ needs.all-apis.outputs.environment }}
+          api-connector: ${{ matrix.api-connector }}
+          api-version: ${{ needs.all-apis.outputs.api-version }}
+      - id: create-pr
+        name: Commit and create/update PR (if any changes)
+        uses: ./.github/actions/commit-updatecreate-pr
+        with:
+          branch-name: ${{ env.branch-name }}
+          commit-message: Power Platform API Connector ${{ matrix.api-connector }}, version ${{ fromJSON(steps.download-connector.outputs.properties).metadata.version.current }}
+          pr-title: 'Update Power Platform API Connector: ${{ fromJSON(steps.download-connector.outputs.properties).displayName }}'
+          pr-body: |
+            Automatic download of Power Platform API Connector
+
+            API Name: `${{ matrix.api-connector }}`
+            Display Name: **${{ fromJSON(steps.download-connector.outputs.properties).displayName }}**
+            Tier: ${{ fromJSON(steps.download-connector.outputs.properties).tier }}
+            Version: `${{ fromJSON(steps.download-connector.outputs.properties).metadata.version.current }}`
+            Publisher: *${{ fromJSON(steps.download-connector.outputs.properties).publisher }}*
+            Created: ${{ fromJSON(steps.download-connector.outputs.properties).createdTime }}
+            Modified: ${{ fromJSON(steps.download-connector.outputs.properties).changedTime }}
+            Description:
+            > ${{ fromJSON(steps.download-connector.outputs.properties).description }}
+
+            Includes:
+            - Swagger document
+            - API Connector resource information
+      - name: Add Labels to Pull Request
+        if: steps.create-pr.outputs.pr-number
+        uses: ./.github/actions/add-labels-pr
+        with:
+          pr-number: ${{ steps.create-pr.outputs.pr-number }}
+          labels: |
+            swagger-update
+            powerplatform
