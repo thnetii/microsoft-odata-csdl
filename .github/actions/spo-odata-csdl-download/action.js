@@ -9,6 +9,7 @@ const xmlFormatter = require('xml-formatter');
 
 const { getInput } = require('@thnetii/gh-actions-core-helpers');
 const {
+  getSpoVersionFromHeader,
   SharePointClient,
 } = require('@thnetii/microsoft-odata-csdl-github-actions-spo-client');
 
@@ -46,21 +47,6 @@ function getActionInputs() {
 }
 
 /**
- * @param {import('node:http').IncomingHttpHeaders} headers
- */
-function getSpoVersionFromHeader(headers) {
-  let { microsoftsharepointteamservices: versionHeader } = headers;
-  if (!versionHeader) versionHeader = [];
-  if (!Array.isArray(versionHeader)) versionHeader = [versionHeader];
-  let version;
-  for (version of versionHeader) {
-    ghaCore.debug(`SharePoint Teams Services version: v${version}`);
-    ghaCore.setOutput('sharepoint-version', version);
-  }
-  return version;
-}
-
-/**
  * @param {import('@actions/http-client').HttpClientResponse} csdlResp
  * @param {string} filePath
  * @param {string | undefined} [spoVersion]
@@ -88,6 +74,7 @@ async function transformAndSaveCsdl(csdlResp, filePath, spoVersion) {
     parentNode?.removeChild(csdlNsNode);
   }
   if (spoVersion) {
+    ghaCore.setOutput('sharepoint-version', spoVersion);
     const spoVersionComment = csdlDom.createComment(
       ` Microsoft SharePoint Team Services v${spoVersion} `
     );

@@ -1,61 +1,102 @@
-const { URL } = require('url');
-const { EOL } = require('os');
-const { promises: fs } = require('fs');
+const { EOL } = require('node:os');
+const fs = require('node:fs/promises');
+const { URL } = require('node:url');
+
 const ghaCore = require('@actions/core');
-const { HttpClient } = require('@actions/http-client');
+const { HttpClientError, HttpCodes } = require('@actions/http-client');
+const { BearerCredentialHandler } = require('@actions/http-client/lib/auth');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xmlFormatter = require('xml-formatter');
 
-const httpClient = new HttpClient();
+const { getInput } = require('@thnetii/gh-actions-core-helpers');
+const { GhaHttpClient } = require('@thnetii/gh-actions-http-client');
 
-(async () => {
-  const d365InstanceUrlInput = ghaCore.getInput('d365-instance-url', {
-    required: true,
-  });
-  const d365InstanceUrl = new URL(d365InstanceUrlInput);
-  const d365ApiUrlInput = ghaCore.getInput('d365-api-url');
-  const apiVersion = ghaCore.getInput('api-version') || 'v8.2';
-  const csdlUrl = new URL(
-    `/api/data/${apiVersion}/$metadata`,
-    d365ApiUrlInput ? new URL(d365ApiUrlInput) : d365InstanceUrl
-  );
-  const d365VersionUrl = new URL('RetrieveVersion()', csdlUrl);
+const odataHeaders = {
+  'OData-Version': '4.0',
+  'OData-MaxVersion': '4.01',
+};
 
-  const filePath = ghaCore.getInput('file-path', { required: true });
-
-  const accessToken = ghaCore.getInput('access-token', {
+function getActionInputs() {
+  const instanceUrl = getInput('d365-instance-url', {
     required: true,
     trimWhitespace: true,
   });
+  const apiUrl = getInput('d365-api-url', {
+    required: false,
+    trimWhitespace: true,
+  });
+  const apiVersion =
+    getInput('api-version', {
+      required: false,
+      trimWhitespace: true,
+    }) || '8.2';
+  const accessToken =
+    getInput('access-token', {
+      required: false,
+      trimWhitespace: true,
+    }) || 'v1.0';
+  const filePath = getInput('file-path', {
+    required: true,
+    trimWhitespace: true,
+  });
+  return { instanceUrl, apiUrl, apiVersion, accessToken, filePath };
+}
 
-  /** @type {import('http').OutgoingHttpHeaders} */
-  const odataRequHdrs = {
-    authorization: `Bearer ${accessToken}`,
-    'OData-Version': '4.0',
-    'OData-MaxVersion': '4.0',
-  };
-  /** @type {import('@actions/http-client/lib/interfaces').TypedResponse<{Version: string}>} */
-  const d365VersionResp = await httpClient.getJson(
-    d365VersionUrl.toString(),
-    odataRequHdrs
-  );
-  const d365Version = d365VersionResp.result?.Version;
-  const csdlResp = await httpClient.get(csdlUrl.toString(), {
-    ...odataRequHdrs,
-    accept: 'application/xml',
+/**
+ * @param {import('@actions/http-client').HttpClient} httpClient
+ * @param {string | URL | undefined} baseUrl
+ * @param {string} initialApiVersion
+ */
+async function retrieveVersion(httpClient, baseUrl, initialApiVersion) {
+  const url = new URL(`/api/data/v${initialApiVersion}/$metadata`, baseUrl);
+  /**
+   * @type {import('@actions/http-client/lib/interfaces').TypedResponse<
+   *  { Version: string; }
+   * >}
+   */
+  const response = await httpClient.getJson(url.toString(), odataHeaders);
+  return response.result?.Version;
+}
+
+/**
+ * @param {import('@actions/http-client').HttpClient} httpClient
+ * @param {string | URL | undefined} baseUrl
+ * @param {string} apiVersion
+ */
+async function downloadCsdl(httpClient, baseUrl, apiVersion) {
+  const url = new URL(`/api/data/v${apiVersion}/$metadata`, baseUrl);
+  const resp = await httpClient.get(url.toString(), {
+    ...odataHeaders,
+    Accept: 'application/xml',
   });
   const {
+    message: { statusCode, statusMessage },
+  } = resp;
+  if (statusCode !== HttpCodes.OK)
+    throw new HttpClientError(
+      `${url}: ${statusCode} ${statusMessage || ''}`,
+      statusCode || 500
+    );
+  return resp;
+}
+
+/**
+ * @param {import('@actions/http-client').HttpClientResponse} csdlResp
+ * @param {string} filePath
+ * @param {string | undefined} [apiVersion]
+ */
+async function transformAndSaveCsdl(csdlResp, filePath, apiVersion) {
+  const {
     message: {
-      headers: { 'content-type': csdlMimeType },
+      headers: { 'content-type': contentType },
     },
   } = csdlResp;
   let csdlText = await csdlResp.readBody();
-  if (d365Version) {
-    ghaCore.setOutput('d365-version', d365Version);
+  if (apiVersion) {
     const csdlParser = new DOMParser();
-    const csdlDom = csdlParser.parseFromString(csdlText, csdlMimeType);
+    const csdlDom = csdlParser.parseFromString(csdlText, contentType);
     const d365VersionComment = csdlDom.createComment(
-      `Microsoft Dynamics 365 CRM v${d365Version}`
+      `Microsoft Dynamics 365 CRM v${apiVersion}`
     );
     csdlDom.insertBefore(d365VersionComment, csdlDom.documentElement);
     const csdlSerializer = new XMLSerializer();
@@ -69,4 +110,41 @@ const httpClient = new HttpClient();
     whiteSpaceAtEndOfSelfclosingTag: true,
   });
   await fs.writeFile(filePath, csdlText, 'utf8');
-})();
+}
+
+async function run() {
+  const {
+    instanceUrl,
+    apiUrl,
+    accessToken,
+    filePath,
+    apiVersion: initialApiVersion,
+  } = getActionInputs();
+  const handler = new BearerCredentialHandler(accessToken);
+  const client = new GhaHttpClient(undefined, [handler]);
+  try {
+    const baseUrl = apiUrl ? new URL(apiUrl) : new URL(instanceUrl);
+    const apiVersion = await retrieveVersion(
+      client,
+      baseUrl,
+      initialApiVersion
+    );
+    if (apiVersion) {
+      ghaCore.setOutput('d365-version', apiVersion);
+    }
+    const csdlResp = await downloadCsdl(
+      client,
+      baseUrl,
+      apiVersion || initialApiVersion
+    );
+    await transformAndSaveCsdl(csdlResp, filePath, apiVersion);
+  } catch (error) {
+    if (error instanceof HttpClientError || error instanceof Error) {
+      ghaCore.setFailed(error);
+    } else throw error;
+  } finally {
+    client.dispose();
+  }
+}
+
+run();

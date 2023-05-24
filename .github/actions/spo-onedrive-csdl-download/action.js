@@ -1,74 +1,79 @@
-const { EOL } = require('os');
-const { promises: fs } = require('fs');
+const { EOL } = require('node:os');
+const fs = require('node:fs/promises');
+
 const ghaCore = require('@actions/core');
-const { HttpClient, HttpClientError } = require('@actions/http-client');
+const { HttpClientError } = require('@actions/http-client');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const xmlFormatter = require('xml-formatter');
 
-const httpClient = new HttpClient();
+const { getInput } = require('@thnetii/gh-actions-core-helpers');
+const {
+  getSpoVersionFromHeader,
+  SharePointClient,
+} = require('@thnetii/microsoft-odata-csdl-github-actions-spo-client');
 
-(async () => {
-  const apiVersion = ghaCore.getInput('api-version') || 'v2.1';
-
-  const spoWebUrl = ghaCore.getInput('sharepoint-web-url', { required: true });
-  const spoApiSubPath = `_api/${apiVersion}/$metadata`;
-  const spoApiSep = spoWebUrl.endsWith('/') ? '' : '/';
-  const spoApiUrl = `${spoWebUrl}${spoApiSep}${spoApiSubPath}`;
-
-  const filePath = ghaCore.getInput('file-path', { required: true });
-
-  const accessToken = ghaCore.getInput('access-token', {
+function getActionInputs() {
+  const spoWebUrl = getInput('sharepoint-web-url', {
     required: true,
     trimWhitespace: true,
   });
+  const filePath = getInput('file-path', {
+    required: true,
+    trimWhitespace: true,
+  });
+  const accessToken = getInput('access-token', {
+    required: true,
+    trimWhitespace: true,
+  });
+  const apiVersion =
+    /** @type {Parameters<import('@thnetii/microsoft-odata-csdl-github-actions-spo-client').SharePointClient['downloadOneDriveCsdl']>[0]} */
+    (getInput('api-version', { required: false, trimWhitespace: true })) ||
+    'v2.1';
+  if (ghaCore.isDebug()) {
+    const [header, body] = accessToken.split('.', 3);
+    ghaCore.debug(
+      `access-token-header: ${Buffer.from(header || '', 'base64url').toString(
+        'utf-8'
+      )}`
+    );
+    ghaCore.debug(
+      `access-token-body: ${Buffer.from(body || '', 'base64url').toString(
+        'utf-8'
+      )}`
+    );
+  }
+  return {
+    spoWebUrl,
+    filePath,
+    accessToken,
+    apiVersion,
+  };
+}
 
-  /** @type {import('http').OutgoingHttpHeaders} */
-  const requHdrs = {};
-  // eslint-disable-next-line dot-notation
-  requHdrs['authorization'] = `Bearer ${accessToken}`;
-  // eslint-disable-next-line dot-notation
-  requHdrs['accept'] = 'application/xml';
-  requHdrs['OData-Version'] = '4.01';
-  requHdrs['OData-MaxVersion'] = '4.01';
-  const spoApiResp = await httpClient.get(spoApiUrl, requHdrs);
+/**
+ * @param {import('@actions/http-client').HttpClientResponse} csdlResp
+ * @param {string} filePath
+ * @param {string | undefined} [spoVersion]
+ */
+async function transformAndSaveCsdl(csdlResp, filePath, spoVersion) {
   const {
-    message: { headers: respHdrs, statusCode },
-  } = spoApiResp;
-  if (!statusCode || statusCode < 200 || statusCode >= 300) {
-    const httpError = new HttpClientError(
-      'HTTP Status Code does not indicate succes',
-      statusCode || 500
-    );
-    ghaCore.error(httpError);
-    for (const [headerName, headerValue] of Object.entries(respHdrs)) {
-      ghaCore.info(`${headerName}: ${headerValue}`);
-    }
-    throw httpError;
-  }
-  // eslint-disable-next-line dot-notation
-  let spoVersionHeader = respHdrs['microsoftsharepointteamservices'];
-  if (!spoVersionHeader) spoVersionHeader = [];
-  else if (typeof spoVersionHeader === 'string')
-    spoVersionHeader = [spoVersionHeader];
-  let spoVersion;
-  for (spoVersion of spoVersionHeader) {
-    ghaCore.debug(`SharePoint Teams Services version: v${spoVersion}`);
-    ghaCore.setOutput('sharepoint-version', spoVersion);
-  }
-  let csdlText = await spoApiResp.readBody();
+    message: {
+      headers: { 'content-type': contentType },
+    },
+  } = csdlResp;
+  let csdlText = await csdlResp.readBody();
+
+  const parser = new DOMParser();
+  const csdlDom = parser.parseFromString(csdlText, contentType);
   if (spoVersion) {
-    const csdlParser = new DOMParser();
-    const csdlDom = csdlParser.parseFromString(
-      csdlText,
-      respHdrs['content-type']
-    );
+    ghaCore.setOutput('sharepoint-version', spoVersion);
     const spoVersionComment = csdlDom.createComment(
       ` Microsoft SharePoint Team Services v${spoVersion} `
     );
     csdlDom.insertBefore(spoVersionComment, csdlDom.documentElement);
-    const csdlSerializer = new XMLSerializer();
-    csdlText = csdlSerializer.serializeToString(csdlDom);
   }
+  const serializer = new XMLSerializer();
+  csdlText = serializer.serializeToString(csdlDom);
   // @ts-ignore
   csdlText = xmlFormatter(csdlText, {
     indentation: '  ',
@@ -77,4 +82,24 @@ const httpClient = new HttpClient();
     whiteSpaceAtEndOfSelfclosingTag: true,
   });
   await fs.writeFile(filePath, csdlText, 'utf8');
-})();
+}
+
+async function run() {
+  const { spoWebUrl, accessToken, apiVersion, filePath } = getActionInputs();
+  const client = new SharePointClient(spoWebUrl, accessToken);
+  try {
+    client.useODataVersion('4.01');
+    await client.meUser();
+    const csdlResp = await client.downloadOneDriveCsdl(apiVersion);
+    const spoVersion = getSpoVersionFromHeader(csdlResp.message.headers);
+    await transformAndSaveCsdl(csdlResp, filePath, spoVersion);
+  } catch (error) {
+    if (error instanceof HttpClientError || error instanceof Error) {
+      ghaCore.setFailed(error);
+    } else throw error;
+  } finally {
+    client.dispose();
+  }
+}
+
+run();

@@ -114,6 +114,20 @@ class SharePointClient {
 }
 
 module.exports = {
+  /**
+   * @param {import('node:http').IncomingHttpHeaders} headers
+   */
+  getSpoVersionFromHeader(headers) {
+    let { microsoftsharepointteamservices: versionHeader } = headers;
+    if (!versionHeader) versionHeader = [];
+    if (!Array.isArray(versionHeader)) versionHeader = [versionHeader];
+    let version;
+    for (version of versionHeader) {
+      ghaCore.debug(`SharePoint Teams Services version: v${version}`);
+    }
+    return version;
+  },
+
   SharePointClient,
 };
 
