@@ -30,7 +30,7 @@ async function getEnvironmentInfo(client) {
     await client.getEnvironmentInfo();
     const { environmentPath: environment, apiEndpoint } = client;
     ghaCore.setOutput('environment', environment);
-    ghaCore.setOutput('api-endpoint', apiEndpoint);
+    ghaCore.setOutput('api-endpoint', apiEndpoint.toString());
   } catch (error) {
     /** @type {Parameters<ghaCore['warning']>[1]} */
     const warnProps = { title: getEnvironmentInfo.name };
