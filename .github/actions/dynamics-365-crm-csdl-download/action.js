@@ -31,10 +31,10 @@ function getActionInputs() {
       trimWhitespace: true,
     }) || '8.2';
   while (/^v/iu.test(apiVersion)) apiVersion = apiVersion.substring(1);
-    getInput('access-token', {
-      required: false,
-      trimWhitespace: true,
-    }) || 'v1.0';
+  const accessToken = getInput('access-token', {
+    required: true,
+    trimWhitespace: true,
+  });
   const filePath = getInput('file-path', {
     required: true,
     trimWhitespace: true,
