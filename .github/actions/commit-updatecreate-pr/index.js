@@ -11,8 +11,9 @@
  *    'pr-body': string,
  *  },
  * }} args
+ * @param {(prNumber: number) => void} [resolve]
  */
-module.exports = async (args) => {
+module.exports = async (args, resolve) => {
   const {
     github,
     context,
@@ -82,5 +83,8 @@ module.exports = async (args) => {
   }
   if (pullNumber > 0) {
     core.setOutput('pr-number', pullNumber);
+  }
+  if (typeof resolve === 'function') {
+    resolve(pullNumber);
   }
 };
