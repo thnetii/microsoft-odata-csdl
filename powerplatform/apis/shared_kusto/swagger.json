@@ -1,0 +1,706 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Azure Data Explorer",
+    "description": "Azure Data Explorer a.k.a Kusto is a log analytics cloud platform optimized for ad-hoc big data queries. Read more about it here: http://aka.ms/kdocs",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/kusto",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/ListKustoResults/false": {
+      "post": {
+        "summary": "Run KQL query",
+        "description": "Runs the KQL query and returns the result as a set of rows which can be iterated over in the following connectors e.g TableName | take 10.",
+        "operationId": "listKustoResultsPost",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QueryAndListSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Table"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#run-kql-query"
+        }
+      }
+    },
+    "/{connectionId}/ListKustoShowCommandResults": {
+      "post": {
+        "summary": "Run show control command",
+        "description": "Runs the show control command and returns the result as a set of rows which can be iterated over in the following connectors e.g .show table TableName policy caching.",
+        "operationId": "listKustoShowCommandResultsPost",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ControlCommandAndListSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Table"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#run-show-control-command"
+        }
+      }
+    },
+    "/{connectionId}/ListKustoResultsSchema": {
+      "post": {
+        "summary": "Query schema",
+        "description": "Gets the schema for a query",
+        "operationId": "listKustoResultsSchemaPost",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QueryAndListSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#query-schema"
+        }
+      }
+    },
+    "/{connectionId}/RunKustoAndVisualizeResults/false": {
+      "post": {
+        "summary": "Run KQL query and render a chart",
+        "description": "Runs the KQL query and returns result as a chart of your choice e.g TableName | where Timestamp > ago(1h) | project timestamp, value.",
+        "operationId": "runKustoQueryAndVisualizeResultsPost",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QueryAndVisualizeSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VisualizeResults"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#run-kql-query-and-render-a-chart"
+        }
+      }
+    },
+    "/{connectionId}/RunKustoAndVisualizeResults/true": {
+      "post": {
+        "summary": "Run control command and render a chart",
+        "description": "Runs the control command and returns the result as a chart of your choice e.g .clear table TableName data.",
+        "operationId": "runKustoCommandAndVisualizeResultsPost",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommandAndVisualizeSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VisualizeResults"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#run-control-command-and-render-a-chart"
+        }
+      }
+    },
+    "/{connectionId}/RunAsyncControlCommandAndWait": {
+      "post": {
+        "summary": "Run async control command",
+        "description": "Runs control command in async mode and returns its ID, state and status on completion. Command can run for maximum 1 hour. The 'async' keyword is mandatory e.g .set-or-append async TargetTable <| SourceTable.",
+        "operationId": "runAsyncControlCommandAndWait",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ControlCommandAndListSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AsyncCommandResult"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#run-async-control-command"
+        }
+      }
+    },
+    "/{connectionId}/RetrieveKustoAsyncResult": {
+      "get": {
+        "summary": "Retrieve Kusto async result",
+        "description": "Retrieve status and result of Kusto async operation",
+        "operationId": "retrieveKustoAsyncResult",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "operationId",
+            "x-ms-summary": "Operation ID",
+            "description": "Unique identifier of the async operation",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "Timestamp",
+            "x-ms-summary": "Query beginning timestamp",
+            "description": "The timestamp in which the query begin",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#retrieve-kusto-async-result"
+        }
+      }
+    },
+    "/{connectionId}/RetrieveKustoAsyncControlCommandResult": {
+      "get": {
+        "summary": "Retrieve Kusto async control command result",
+        "description": "Retrieve status and result of Kusto async operation",
+        "operationId": "retrieveKustoAsyncControlCommandResult",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "operationId",
+            "x-ms-summary": "Operation ID",
+            "description": "Unique identifier of the async operation",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "Timestamp",
+            "x-ms-summary": "Query beginning timestamp",
+            "description": "The timestamp in which the query begin",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "clusterUrl",
+            "x-ms-summary": "Cluster URL",
+            "description": "The cluster's URL",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "databaseName",
+            "x-ms-summary": "Database Name",
+            "description": "The database name",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "location": {
+                "x-ms-summary": "Location",
+                "type": "string"
+              },
+              "retry-after": {
+                "x-ms-summary": "Retry After",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/kusto/#retrieve-kusto-async-control-command-result"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Object": {
+      "type": "object",
+      "properties": {}
+    },
+    "Table": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Row"
+          }
+        }
+      }
+    },
+    "Row": {
+      "type": "object",
+      "properties": {},
+      "x-ms-dynamic-schema": {
+        "operationId": "listKustoResultsSchemaPost",
+        "parameters": {
+          "cluster": {
+            "parameter": "cluster"
+          },
+          "db": {
+            "parameter": "db"
+          },
+          "csl": {
+            "parameter": "csl"
+          }
+        },
+        "value-path": "Schema/Items"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "listKustoResultsSchemaPost",
+        "parameters": {
+          "body/cluster": {
+            "parameterReference": "body/cluster"
+          },
+          "body/db": {
+            "parameterReference": "body/db"
+          },
+          "body/csl": {
+            "parameterReference": "body/csl"
+          }
+        },
+        "itemValuePath": "Schema/Items"
+      }
+    },
+    "QueryAndVisualizeSchema": {
+      "type": "object",
+      "required": [
+        "cluster",
+        "db",
+        "csl",
+        "chartType"
+      ],
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/ClusterName"
+        },
+        "db": {
+          "$ref": "#/definitions/DatabaseName"
+        },
+        "csl": {
+          "$ref": "#/definitions/Query"
+        },
+        "chartType": {
+          "$ref": "#/definitions/ChartType"
+        }
+      }
+    },
+    "CommandAndVisualizeSchema": {
+      "type": "object",
+      "required": [
+        "cluster",
+        "db",
+        "csl",
+        "chartType"
+      ],
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/ClusterName"
+        },
+        "db": {
+          "$ref": "#/definitions/DatabaseName"
+        },
+        "csl": {
+          "x-ms-summary": "Control Command",
+          "description": "Specify the control command you would like to run",
+          "type": "string",
+          "x-ms-test-value": ".show version"
+        },
+        "chartType": {
+          "$ref": "#/definitions/ChartType"
+        }
+      }
+    },
+    "QueryAndListSchema": {
+      "type": "object",
+      "required": [
+        "cluster",
+        "db",
+        "csl"
+      ],
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/ClusterName"
+        },
+        "db": {
+          "$ref": "#/definitions/DatabaseName"
+        },
+        "csl": {
+          "$ref": "#/definitions/Query"
+        }
+      }
+    },
+    "ControlCommandAndListSchema": {
+      "type": "object",
+      "required": [
+        "cluster",
+        "db",
+        "csl"
+      ],
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/ClusterName"
+        },
+        "db": {
+          "$ref": "#/definitions/DatabaseName"
+        },
+        "csl": {
+          "x-ms-summary": "Control Command",
+          "description": "Specify the show control command you would like to run",
+          "type": "string",
+          "x-ms-test-value": ".show version"
+        }
+      }
+    },
+    "ClusterName": {
+      "x-ms-summary": "Cluster URL",
+      "description": "Specify the cluster url e.g. https://<yourCluster>.<yourLocation>.kusto.windows.net",
+      "type": "string",
+      "x-ms-test-value": "Process"
+    },
+    "DatabaseName": {
+      "x-ms-summary": "Database Name",
+      "description": "Specify the database name",
+      "type": "string",
+      "x-ms-test-value": "process"
+    },
+    "Query": {
+      "x-ms-summary": "Query",
+      "description": "Specify the query you would like to run",
+      "type": "string",
+      "x-ms-test-value": "print 1"
+    },
+    "ChartType": {
+      "x-ms-summary": "Chart Type",
+      "type": "string",
+      "description": "Specify the resulting chart type",
+      "enum": [
+        "Html Table",
+        "Pie Chart",
+        "Time Chart",
+        "Bar Chart"
+      ],
+      "x-ms-test-value": "Html Table"
+    },
+    "VisualizeResults": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "The body of the result in base64 encoding.",
+          "format": "byte",
+          "x-ms-summary": "Body"
+        },
+        "bodyHtml": {
+          "type": "string",
+          "description": "The body of the result in html encoding.",
+          "format": "HTML",
+          "x-ms-summary": "BodyHtml"
+        },
+        "attachmentContent": {
+          "type": "string",
+          "description": "The content of the attachment.",
+          "format": "byte",
+          "x-ms-summary": "Attachment Content"
+        },
+        "attachmentName": {
+          "type": "string",
+          "description": "The name of the attachment file.",
+          "x-ms-summary": "Attachment Name"
+        },
+        "kustoDeepLink": {
+          "type": "string",
+          "description": "Links to run the query in Kusto tools, for instance in KustoExplorer.",
+          "x-ms-summary": "Links to Kusto Explorer"
+        }
+      }
+    },
+    "AsyncCommandResult": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "The state of the command.",
+          "x-ms-summary": "State"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the command.",
+          "x-ms-summary": "Status"
+        },
+        "operationId": {
+          "type": "string",
+          "description": "The operation ID of the control command",
+          "x-ms-summary": "Operation ID"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/kusto"
+  }
+}
