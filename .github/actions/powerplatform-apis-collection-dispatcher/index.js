@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
 
 /**
@@ -30,15 +31,18 @@ module.exports = async (args) => {
   } = args;
   /** @type {string[]} */
   const apiConnectorNames = JSON.parse(apiConnectorNamesJson);
-  for (const connectorName of apiConnectorNames) {
+  let groupNr = 0;
+  do {
+    groupNr += 1;
+    const groupNames = apiConnectorNames.splice(0, 256);
     await core.group(
-      `Power Platform API Connector: ${connectorName}`,
+      `Power Platform API connector group ${groupNr}`,
       async () => {
         try {
           const dispRequest = {
             'api-endpoint': apiEndpoint,
             environment,
-            'api-connector': connectorName,
+            'api-connector-list': JSON.stringify(groupNames),
             'api-version': apiVersion,
           };
           await github.rest.actions.createWorkflowDispatch({
@@ -48,14 +52,13 @@ module.exports = async (args) => {
             workflow_id: '.github/workflows/powerplatform-api-connector.yml',
             inputs: dispRequest,
           });
-          core.info('Workflow dispatched successfully.');
         } catch (error) {
           core.error(error instanceof Error ? error : `${error}`, {
-            title: `Failed to dispatch API Connector: ${connectorName}`,
+            title: `Failed to dispatch API Connector group ${groupNr}`,
           });
           process.exitCode = core.ExitCode.Failure;
         }
       }
     );
-  }
+  } while (apiConnectorNames.length > 0);
 };

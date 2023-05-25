@@ -7,21 +7,14 @@ on:
       environment:
         default: '~default'
         description: ''
-      api-connector:
+      api-connector-list:
         required: true
+        default: >
+          ["shared_logicflows"]
         description: ''
       api-version:
         required: false
         description: ''
-  push:
-    branches:
-      - main
-
-run-name: >
-  ${{ github.workflow }}: ${{ inputs.api-connector || 'shared_logicflows' }}
-
-env:
-  api-connector: ${{ inputs.api-connector || 'shared_logicflows' }}
 
 permissions:
   id-token: write
@@ -30,10 +23,14 @@ permissions:
 
 jobs:
   powerplatform-api-connector:
-    name: Power Platform API Connector
+    strategy:
+      matrix:
+        api-connector: ${{ fromJson(inputs.api-connector-list) }}
+    name: >
+      Power Platform API Connector: ${{ matrix.api-connector }}
     runs-on: ubuntu-latest
     env:
-      branch-name: powerplatform-api-fetcher/${{ inputs.api-connector || 'shared_logicflow' }}
+      branch-name: powerplatform-api-fetcher/${{ matrix.api-connector }}
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
@@ -73,21 +70,21 @@ jobs:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-endpoint: ${{ inputs.api-endpoint }}
           environment: ${{ inputs.environment }}
-          api-connector: ${{ env.api-connector }}
+          api-connector: ${{ matrix.api-connector }}
           api-version: ${{ inputs.api-version }}
       - id: create-pr
         name: Commit and create/update PR (if any changes)
         uses: ./.github/actions/commit-updatecreate-pr
         with:
           branch-name: ${{ env.branch-name }}
-          commit-message: Power Platform API Connector ${{ env.api-connector }}, ${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}
+          commit-message: Power Platform API Connector ${{ matrix.api-connector }}, ${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}
           pr-title: >
             Update Power Platform API Connector: ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
           pr-body: |
             Automatic download of Power Platfrom API Connector
 
             # ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
-            API name: `${{ env.api-connector }}`
+            API name: `${{ matrix.api-connector }}`
             Tier: ${{ fromJson(steps.download-api-connector.outputs.properties).tier }}
             Version: `${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}`
             Publisher: **${{ fromJson(steps.download-api-connector.outputs.properties).publisher }}**
