@@ -1,0 +1,354 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "CGTrader",
+    "description": "Gets models from CGTrader for the connected account",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/cgtrader",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/modelDownload/{model_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "summary": "Downloads a model with the given ID and file type",
+        "description": "Downloads a model with the given ID and file type.",
+        "operationId": "GetModel",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "model_id",
+            "x-ms-summary": "ModelID",
+            "description": "Model ID number from CGTrader.",
+            "in": "path",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "file_type",
+            "x-ms-summary": "File Type",
+            "description": "The preferred file type to download. Examples: glb, obj, stl",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/cgtrader/#downloads-a-model-with-the-given-id-and-file-type"
+        }
+      }
+    },
+    "/{connectionId}/models": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Total": {
+                  "type": "number",
+                  "description": "Total results"
+                },
+                "Models": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ModelInfo"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "summary": "Searches for models from CGTrader based on the given filters",
+        "description": "Searches for models from CGTrader based on the given filters.",
+        "operationId": "SearchModels",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "keywords",
+            "x-ms-summary": "Search query",
+            "description": "Search keywords to query for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "extensions",
+            "x-ms-summary": "File extensions",
+            "description": "Filter models by file extension. Separate with commas, example: \"glb,obj,stl\"",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "x-ms-summary": "Sort option",
+            "description": "Sort models by: best_match, sales, newest, oldest, lower_price, higher_price",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "best_match",
+              "sales",
+              "newest",
+              "oldest",
+              "lower_price",
+              "higher_price"
+            ]
+          },
+          {
+            "name": "category_id",
+            "x-ms-summary": "Category ID",
+            "description": "Filter models by category. Category ids are available via GetCategories.",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "x-ms-dynamic-values": {
+              "operationId": "GetCategories",
+              "value-path": "Id",
+              "value-title": "Title",
+              "value-collection": "",
+              "parameters": {}
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetCategories",
+              "itemsPath": "",
+              "itemTitlePath": "Title",
+              "itemValuePath": "Id",
+              "parameters": {}
+            }
+          },
+          {
+            "name": "low_poly",
+            "x-ms-summary": "Low poly only",
+            "description": "Include or exclude low poly models.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "max_price",
+            "x-ms-summary": "Maximum price",
+            "description": "Maximum price limit. Searches for free models by default.",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "default": 0
+          },
+          {
+            "name": "min_price",
+            "x-ms-summary": "Minimum price",
+            "description": "Minimum price limit. Searches for free models by default.",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "page",
+            "x-ms-summary": "Page number",
+            "description": "Search results are sectioned into pages, use this value to browse lengthy results",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "per_page",
+            "x-ms-summary": "Models per page",
+            "description": "Number of models per page, default is 25",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/cgtrader/#searches-for-models-from-cgtrader-based-on-the-given-filters"
+        }
+      }
+    },
+    "/{connectionId}/modelInfo/{model_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ModelInfo"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "summary": "Gets the info of a model with the given ID",
+        "description": "Gets the info of a model with the given ID.",
+        "operationId": "GetModelInfo",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "model_id",
+            "x-ms-summary": "ModelID",
+            "description": "Model ID number from CGTrader.",
+            "in": "path",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/cgtrader/#gets-the-info-of-a-model-with-the-given-id"
+        }
+      }
+    },
+    "/{connectionId}/categories": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "number",
+                    "description": "Model id"
+                  },
+                  "Title": {
+                    "type": "string",
+                    "description": "Model title"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "summary": "Gets the available category names and IDs",
+        "description": "Gets the available category names and IDs.",
+        "operationId": "GetCategories",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/cgtrader/#gets-the-available-category-names-and-ids"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ModelInfo": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "number",
+          "description": "Model id"
+        },
+        "Title": {
+          "type": "string",
+          "description": "Model title"
+        },
+        "Description": {
+          "type": "string",
+          "description": "Model description"
+        },
+        "Url": {
+          "type": "string",
+          "description": "Model url"
+        },
+        "AuthorName": {
+          "type": "string",
+          "description": "Author of the model"
+        },
+        "License": {
+          "type": "string",
+          "description": "Model license"
+        },
+        "Price": {
+          "type": "number",
+          "description": "Model price"
+        },
+        "AvailableFileExtensions": {
+          "type": "array",
+          "description": "Available file extensions",
+          "items": {
+            "type": "string",
+            "description": "An available file extension"
+          }
+        },
+        "Thumbnail": {
+          "type": "string",
+          "description": "Preview thumbnail"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://api.cgtrader.com/oauth/authorize",
+      "tokenUrl": "https://api.cgtrader.com/oauth/token",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": []
+    }
+  ],
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/cgtrader"
+  }
+}

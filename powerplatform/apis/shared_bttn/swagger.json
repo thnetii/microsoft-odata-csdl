@@ -1,0 +1,637 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0",
+    "title": "bttn",
+    "description": "bttn - The simplest internet user interface in the world.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "x-ms-docs": [
+    {
+      "url": "https://ms.flow.microsoft.com/en-us/blog/physical-buttons/",
+      "description": "Trigger Flows from physical buttons"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/bttn",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "bttn_oauth2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://my.bt.tn/oauthv2/authorize",
+      "tokenUrl": "https://api.bt.tn/oauthv2/token",
+      "scopes": {
+        "restapi": "bt.tn Rest API"
+      }
+    }
+  },
+  "security": [
+    {
+      "bttn_oauth2": [
+        "restapi"
+      ]
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/bttns": {
+      "get": {
+        "summary": "Get list of bttns",
+        "description": "Gets list of bttns associated with the account.",
+        "operationId": "ListBttns",
+        "x-ms-visibility": "advanced",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "fields to include in response items",
+            "description": "comma separated list of field keys: bid|name_id...",
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "bid,name_id"
+          },
+          {
+            "x-ms-summary": "Filter",
+            "description": "all - all bttns, active - only bttns associated with microsoft flow on the bttn portal",
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "enum": [
+              "all",
+              "active"
+            ],
+            "default": "all"
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "OK",
+            "description": "List of bttn devices from bt.tn server.",
+            "schema": {
+              "$ref": "#/definitions/BttnApiList"
+            }
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "The operation could not be completed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#get-list-of-bttns"
+        }
+      }
+    },
+    "/{connectionId}/hook": {
+      "x-ms-notification-content": {
+        "x-ms-summary": "Trigger Details",
+        "description": "Parameters sent from the bttn when triggered",
+        "schema": {
+          "$ref": "#/definitions/BttnApiWebhookTriggerBody"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "When a bttn is pressed",
+        "description": "Trigger a flow with a press of a bttn.",
+        "operationId": "RegisterWebhook",
+        "x-ms-trigger-hint": "To see it work now, press a bttn.",
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ActiveBttnId"
+          },
+          {
+            "name": "Webhook Request Body",
+            "in": "body",
+            "x-ms-summary": "Webhook Body",
+            "description": "This is the request body of the Webhook",
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBody"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "x-ms-summary": "Created",
+            "description": "The webhook was set on the bt.tn service for the specified bttn devices"
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "Failed to set the webhook for the specified bttns"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#when-a-bttn-is-pressed"
+        }
+      }
+    },
+    "/{connectionId}/webhook/{hookId}": {
+      "delete": {
+        "summary": "Delete Webhook",
+        "description": "Delete a previously assigned bt.tn webhook",
+        "operationId": "DeleteWebhook",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "hookId",
+            "in": "path",
+            "x-ms-summary": "Id of webhook to delete",
+            "description": "Id as returned from bt.tn API upon webhook creation",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "Deleted",
+            "description": "The specified webhook was deleted successfully"
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "Could not delete the webhook"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#delete-webhook"
+        }
+      }
+    },
+    "/{connectionId}/callback/{callbackId}": {
+      "post": {
+        "summary": "Return Flow result",
+        "description": "Reflect Flow result via bttn device lights.",
+        "operationId": "ReturnFlowResult",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "callbackId",
+            "in": "path",
+            "x-ms-summary": "Callback Id",
+            "description": "CallbackId as received in the bttn trigger.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Callback Body",
+            "in": "body",
+            "description": "This is the body of the result callback.",
+            "schema": {
+              "$ref": "#/definitions/CallbackBody"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "Delivered",
+            "description": "Result successfully returned to bt.tn"
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "Could not deliver result to bt.tn"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#return-flow-result"
+        }
+      }
+    },
+    "/{connectionId}/{id}/info": {
+      "get": {
+        "description": "Gets the bttn device identification information.",
+        "summary": "Get bttn info",
+        "x-ms-visibility": "advanced",
+        "operationId": "GetBttnInfo",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BttnId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "OK",
+            "description": "bttn info received",
+            "schema": {
+              "$ref": "#/definitions/BttnApiInfo"
+            }
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "Failed to get bttn info"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#get-bttn-info"
+        }
+      }
+    },
+    "/{connectionId}/{id}/counter": {
+      "get": {
+        "description": "Gets the bttn counter value.",
+        "summary": "Get bttn counter value",
+        "operationId": "GetBttnCounter",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BttnId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "OK",
+            "description": "bttn press counter values received",
+            "schema": {
+              "$ref": "#/definitions/BttnApiCounter"
+            }
+          },
+          "default": {
+            "x-ms-summary": "Failure",
+            "description": "Failed to get bttn press counters"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/bttn/#get-bttn-counter-value"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ActiveBttnId": {
+      "description": "bttn short ID or device ID.",
+      "x-ms-summary": "bttn ID",
+      "in": "query",
+      "name": "id",
+      "required": true,
+      "type": "string",
+      "x-ms-dynamic-values": {
+        "operationId": "ListBttns",
+        "parameters": {
+          "fields": "bid,name_id",
+          "filter": "active"
+        },
+        "value-collection": "",
+        "value-path": "bid",
+        "value-title": "name_id"
+      }
+    },
+    "BttnId": {
+      "description": "Bttn short ID or device ID.",
+      "x-ms-summary": "Bttn ID",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "type": "string",
+      "x-ms-dynamic-values": {
+        "operationId": "ListBttns",
+        "parameters": {
+          "fields": "bid,name_id",
+          "filter": "all"
+        },
+        "value-collection": "",
+        "value-path": "bid",
+        "value-title": "name_id"
+      }
+    }
+  },
+  "definitions": {
+    "BttnApiWebhookTriggerBody": {
+      "type": "object",
+      "properties": {
+        "callback-id": {
+          "$ref": "#/definitions/BttnCallbackId"
+        },
+        "press-type": {
+          "$ref": "#/definitions/BttnPressType"
+        },
+        "counter": {
+          "$ref": "#/definitions/BttnCounter"
+        },
+        "counter-short": {
+          "$ref": "#/definitions/BttnCounterShort"
+        },
+        "counter-long": {
+          "$ref": "#/definitions/BttnCounterLong"
+        },
+        "counter-not-pressed": {
+          "$ref": "#/definitions/BttnCounterNot"
+        },
+        "short-id": {
+          "$ref": "#/definitions/BttnShortId"
+        },
+        "device-id": {
+          "$ref": "#/definitions/BttnDeviceId"
+        },
+        "name": {
+          "$ref": "#/definitions/BttnName"
+        },
+        "email": {
+          "$ref": "#/definitions/BttnEmail"
+        },
+        "location": {
+          "$ref": "#/definitions/BttnLocation"
+        },
+        "url": {
+          "$ref": "#/definitions/BttnUrl"
+        },
+        "language": {
+          "$ref": "#/definitions/BttnLanguage"
+        },
+        "user-name": {
+          "$ref": "#/definitions/BttnUserName"
+        }
+      }
+    },
+    "WebhookRequestBody": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "x-ms-summary": "Webhook url",
+          "description": "Url to call in order to trigger webhook",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      }
+    },
+    "BttnApiList": {
+      "type": "array",
+      "x-ms-summary": "Bttn device list",
+      "items": {
+        "$ref": "#/definitions/BttnListData"
+      }
+    },
+    "BttnListData": {
+      "type": "object",
+      "properties": {
+        "bid": {
+          "$ref": "#/definitions/BttnShortId"
+        },
+        "name_id": {
+          "$ref": "#/definitions/BttnNameId"
+        }
+      }
+    },
+    "BttnNameId": {
+      "x-ms-summary": "Name",
+      "description": "The name of the bttn as set on the my.bt.tn portal",
+      "type": "string"
+    },
+    "BttnShortId": {
+      "type": "integer",
+      "x-ms-summary": "Short ID",
+      "description": "Short ID of the bttn (bid)"
+    },
+    "BttnDeviceId": {
+      "type": "string",
+      "x-ms-summary": "Device ID",
+      "description": "Device ID of the bttn"
+    },
+    "BttnName": {
+      "type": "string",
+      "x-ms-summary": "Name",
+      "description": "The name of the bttn as set on the my.bt.tn portal"
+    },
+    "BttnEmail": {
+      "type": "string",
+      "x-ms-summary": "Email address",
+      "description": "E-mail address associated with the bttn on the my.bt.tn portal"
+    },
+    "BttnLocation": {
+      "type": "string",
+      "x-ms-summary": "Location",
+      "description": "Location of the button as set on the my.bt.tn portal"
+    },
+    "BttnUrl": {
+      "type": "string",
+      "x-ms-summary": "Reference URL",
+      "description": "Reference URL of the bt.tn"
+    },
+    "BttnLanguage": {
+      "type": "string",
+      "x-ms-summary": "Language",
+      "description": "Language as set for the bttn on the my.bt.tn portal"
+    },
+    "BttnUserName": {
+      "type": "string",
+      "x-ms-summary": "User name",
+      "description": "User name associated with the button on the my.bt.tn portal"
+    },
+    "BttnCounter": {
+      "type": "integer",
+      "x-ms-summary": "Counter",
+      "description": "Total count of bttn presses (short/long/not pressed)"
+    },
+    "BttnCounterShort": {
+      "type": "integer",
+      "x-ms-summary": "Counter (short)",
+      "description": "Total count of short presses of the bttn"
+    },
+    "BttnCounterLong": {
+      "type": "integer",
+      "x-ms-summary": "Counter (long press trigger)",
+      "description": "Total count of long presses of the bttn"
+    },
+    "BttnCounterNot": {
+      "type": "integer",
+      "x-ms-summary": "Counter (not pressed)",
+      "description": "Total count of not pressed triggers issued for the bttn"
+    },
+    "BttnPressType": {
+      "type": "string",
+      "x-ms-summary": "Press type",
+      "description": "Short press | Long press| Not pressed in the defined time window",
+      "enum": [
+        "short",
+        "long",
+        "not-pressed"
+      ]
+    },
+    "BttnTimezone": {
+      "type": "string",
+      "x-ms-summary": "Timezone",
+      "description": "bttn timezone as specified on the my.bt.tn portal"
+    },
+    "BttnCallbackId": {
+      "x-ms-summary": "Callback Id",
+      "type": "string",
+      "description": "Use this for callback Id in the Bttn Report Result action"
+    },
+    "CallbackBody": {
+      "type": "object",
+      "required": [
+        "result"
+      ],
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/BttnActionResult"
+        }
+      }
+    },
+    "BttnActionResult": {
+      "type": "string",
+      "x-ms-summary": "Flow Result",
+      "description": "Positive for success, Negative for failure, Wait to extend timeout period",
+      "enum": [
+        "Positive",
+        "Negative",
+        "Wait"
+      ]
+    },
+    "BttnApiCounter": {
+      "type": "object",
+      "properties": {
+        "counter": {
+          "$ref": "#/definitions/BttnCounter"
+        },
+        "bid": {
+          "$ref": "#/definitions/BttnShortId"
+        },
+        "address": {
+          "$ref": "#/definitions/BttnDeviceId"
+        },
+        "name": {
+          "$ref": "#/definitions/BttnName"
+        },
+        "emailaddress": {
+          "$ref": "#/definitions/BttnEmail"
+        },
+        "location": {
+          "$ref": "#/definitions/BttnLocation"
+        },
+        "url": {
+          "$ref": "#/definitions/BttnUrl"
+        },
+        "language": {
+          "$ref": "#/definitions/BttnLanguage"
+        },
+        "timezone": {
+          "$ref": "#/definitions/BttnTimezone"
+        },
+        "user": {
+          "$ref": "#/definitions/BttnUserName"
+        }
+      }
+    },
+    "BttnApiInfo": {
+      "type": "object",
+      "properties": {
+        "bid": {
+          "$ref": "#/definitions/BttnShortId"
+        },
+        "address": {
+          "$ref": "#/definitions/BttnDeviceId"
+        },
+        "name": {
+          "$ref": "#/definitions/BttnName"
+        },
+        "emailaddress": {
+          "$ref": "#/definitions/BttnEmail"
+        },
+        "location": {
+          "$ref": "#/definitions/BttnLocation"
+        },
+        "url": {
+          "$ref": "#/definitions/BttnUrl"
+        },
+        "language": {
+          "$ref": "#/definitions/BttnLanguage"
+        },
+        "timezone": {
+          "$ref": "#/definitions/BttnTimezone"
+        },
+        "user": {
+          "$ref": "#/definitions/BttnUserName"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://bt.tn/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://bt.tn/privacy-policy/index.html"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/bttn"
+  }
+}

@@ -1,0 +1,545 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Log Analytics",
+    "description": "Connect to your Azure Log Analytics workspace to run and visualize various Analytics queries.",
+    "version": "1.0.3",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/azureloganalytics",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/listSubscriptions": {
+      "get": {
+        "summary": "List subscriptions",
+        "description": "Gets a list of all the subscriptions to which the principal has access.",
+        "operationId": "ListSubscriptions",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SubscriptionListResult"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#list-subscriptions"
+        }
+      }
+    },
+    "/{connectionId}/listResourceGroupName": {
+      "get": {
+        "summary": "List resource groups",
+        "description": "Lists all the resource groups within the subscription.",
+        "operationId": "ListResourceGroups",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/ResourceGroupListResult"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#list-resource-groups"
+        }
+      }
+    },
+    "/{connectionId}/listWorkspaceNames": {
+      "get": {
+        "summary": "List workspaces",
+        "description": "Lists all the resource groups within the resource group.",
+        "operationId": "ListWorkspaceNames",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/ResourceGroupListResult"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#list-workspaces"
+        }
+      }
+    },
+    "/{connectionId}/queryOms": {
+      "post": {
+        "summary": "Run query and list results",
+        "description": "Runs the query and returns the result as a set of lines which can be iterated over in the following connectors.",
+        "operationId": "RunOmsQuery",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "replacement": {
+            "api": "azuremonitorlogs",
+            "operationId": "QueryData"
+          }
+        },
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspacesNameParameter"
+          },
+          {
+            "$ref": "#/parameters/QueryParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Table"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#run-query-and-list-results-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/omsQuerySchema": {
+      "post": {
+        "summary": "Get query schema",
+        "description": "Gets the schema for a specific query.",
+        "operationId": "ListArmQueryResultsSchema",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspacesNameParameter"
+          },
+          {
+            "$ref": "#/parameters/QueryParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#get-query-schema"
+        }
+      }
+    },
+    "/{connectionId}/omsVisualizeQuery": {
+      "post": {
+        "summary": "Run query and visualize results",
+        "description": "Returns the OMS query results as a chart of your choice.",
+        "operationId": "VisualizeOmsQuery",
+        "x-ms-no-generic-test": true,
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "replacement": {
+            "api": "azuremonitorlogs",
+            "operationId": "VisualizeQuery"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspacesNameParameter"
+          },
+          {
+            "$ref": "#/parameters/QueryParameter"
+          },
+          {
+            "name": "visType",
+            "x-ms-summary": "Chart Type",
+            "description": "Specify the resulting chart type",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Html Table",
+              "Pie Chart",
+              "Time Chart",
+              "Bar Chart"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VisualizeResults"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "security": [
+          {
+            "azure_auth": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureloganalytics/#run-query-and-visualize-results-%5bdeprecated%5d"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Object": {
+      "type": "object"
+    },
+    "Table": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Row"
+          }
+        }
+      }
+    },
+    "Row": {
+      "type": "object",
+      "properties": {},
+      "x-ms-dynamic-schema": {
+        "operationId": "ListArmQueryResultsSchema",
+        "parameters": {
+          "query": {
+            "parameter": "query"
+          },
+          "subscriptions": {
+            "parameter": "subscriptions"
+          },
+          "resourcegroups": {
+            "parameter": "resourcegroups"
+          },
+          "workspaces": {
+            "parameter": "workspaces"
+          }
+        },
+        "value-path": "Schema/Items"
+      }
+    },
+    "VisualizeResults": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "format": "byte",
+          "x-ms-summary": "Body"
+        },
+        "attachmentContent": {
+          "type": "string",
+          "format": "byte",
+          "x-ms-summary": "Attachment Content"
+        },
+        "attachmentName": {
+          "type": "string",
+          "x-ms-summary": "Attachment Name"
+        }
+      }
+    },
+    "SubscriptionListResult": {
+      "description": "Subscription list operation response.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The subscriptions.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Subscription"
+          }
+        },
+        "nextLink": {
+          "description": "The URL to get the next set of results.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Next Link"
+        }
+      }
+    },
+    "Subscription": {
+      "description": "Subscription information.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The fully qualified Id. For example, /subscriptions/00000000-0000-0000-0000-000000000000.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Id"
+        },
+        "subscriptionId": {
+          "description": "The subscription Id.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Subscription Id"
+        },
+        "tenantId": {
+          "description": "The tenant Id.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Tenant Id"
+        },
+        "displayName": {
+          "description": "The subscription display name.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Display Name"
+        },
+        "state": {
+          "description": "The subscription state.",
+          "enum": [
+            "Enabled",
+            "Warned",
+            "PastDue",
+            "Disabled",
+            "Deleted"
+          ],
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "State",
+          "x-ms-enum": {
+            "name": "SubscriptionState",
+            "modelAsString": false
+          }
+        },
+        "authorizationSource": {
+          "description": "The authorization source of the request. Valid values are one or more combinations of Legacy, RoleBased, Bypassed, Direct and Management. For example, 'Legacy, RoleBased'.",
+          "type": "string",
+          "x-ms-summary": "Authorization Source",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "ResourceGroupListResult": {
+      "description": "List of resource groups.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The list of resource groups.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResourceGroup"
+          }
+        },
+        "nextLink": {
+          "description": "The URL to get the next set of results.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Next Link"
+        }
+      }
+    },
+    "ResourceGroup": {
+      "description": "Resource group information.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The ID of the resource group (e.g. /subscriptions/XXX/resourceGroups/YYY).",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Id"
+        },
+        "name": {
+          "description": "The Name of the resource group.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Name"
+        },
+        "managedBy": {
+          "description": "Id of the resource that manages this resource group.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Managed By"
+        },
+        "tags": {
+          "description": "The tags attached to the resource group.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "The additional properties. ",
+            "type": "string"
+          },
+          "x-ms-summary": "Tags"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "SubscriptionIdParameter": {
+      "name": "subscriptions",
+      "in": "query",
+      "description": "Select subscription",
+      "required": true,
+      "x-ms-summary": "Subscription",
+      "x-ms-dynamic-values": {
+        "operationId": "ListSubscriptions",
+        "value-collection": "value",
+        "value-path": "subscriptionId",
+        "value-title": "displayName"
+      },
+      "type": "string"
+    },
+    "ResourceGroupNameParameter": {
+      "name": "resourcegroups",
+      "in": "query",
+      "description": "Select resource group",
+      "required": true,
+      "x-ms-summary": "Resource Group",
+      "x-ms-dynamic-values": {
+        "operationId": "ListResourceGroups",
+        "value-collection": "value",
+        "value-path": "name",
+        "value-title": "name",
+        "parameters": {
+          "subscriptions": {
+            "parameter": "subscriptions"
+          }
+        }
+      },
+      "type": "string",
+      "maxLength": 90,
+      "minLength": 1,
+      "pattern": "^[-\\w\\._\\(\\)]+$"
+    },
+    "WorkspacesNameParameter": {
+      "name": "workspaces",
+      "in": "query",
+      "description": "Select workspace",
+      "required": true,
+      "x-ms-summary": "Workspaces Name",
+      "x-ms-dynamic-values": {
+        "operationId": "ListWorkspaceNames",
+        "value-collection": "value",
+        "value-path": "name",
+        "value-title": "name",
+        "parameters": {
+          "subscriptions": {
+            "parameter": "subscriptions"
+          },
+          "resourcegroups": {
+            "parameter": "resourcegroups"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "QueryParameter": {
+      "name": "query",
+      "x-ms-summary": "Query",
+      "required": true,
+      "description": "Specify the query you would like to run",
+      "in": "body",
+      "schema": {
+        "type": "string"
+      }
+    }
+  },
+  "responses": {},
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://azure.microsoft.com/services/monitor/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/azureloganalytics"
+  }
+}
