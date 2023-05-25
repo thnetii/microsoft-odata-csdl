@@ -16,6 +16,7 @@ on:
   push:
     branches:
       - main
+
 run-name: >
   ${{ github.workflow }}: ${{ inputs.api-connector || 'shared_logicflows' }}
 
@@ -29,7 +30,8 @@ permissions:
 
 jobs:
   powerplatform-api-connector:
-    name: 'Power Platform API Connector: ${{ inputs.api-connector }}'
+    name: >
+      Power Platform API Connector: ${{ inputs.api-connector || 'shared_logicflows' }}
     runs-on: ubuntu-latest
     env:
       branch-name: powerplatform-api-fetcher/${{ inputs.api-connector || 'shared_logicflow' }}
@@ -59,7 +61,7 @@ jobs:
           client-id: ${{ secrets.MSIDP_CLIENTID }}
           resource: https://service.flow.microsoft.com/
       - id: download-api-connector
-        name: 'Download Power Platform API Connector: ${{ inputs.api-connector }}'
+        name: 'Download Power Platform API Connector: ${{ env.api-connector }}'
         uses: ./.github/actions/powerplatform-api-connector-download
         with:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}

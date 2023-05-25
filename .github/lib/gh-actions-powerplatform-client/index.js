@@ -19,7 +19,7 @@ class PowerPlatformClient {
   constructor(accessToken, apiEndpoint, apiVersion) {
     const httpHandler = new BearerCredentialHandler(accessToken);
     this[httpClientSym] = new GhaHttpClient(undefined, [httpHandler]);
-    if (typeof apiEndpoint === 'undefined')
+    if (typeof apiEndpoint === 'undefined' || !apiEndpoint)
       apiEndpoint = 'https://api.flow.microsoft.com';
     this.apiEndpoint = new URL('/', apiEndpoint);
     if (typeof apiVersion !== 'string' || !apiVersion) {
