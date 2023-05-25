@@ -38,20 +38,41 @@ module.exports = async (args) => {
     await core.group(
       `Power Platform API connector group ${groupNr}`,
       async () => {
+        core.info(`Group contains ${groupNames.length} connectors`);
+        for (const apiConnector of groupNames) {
+          core.info(`- ${apiConnector}`);
+        }
         try {
+          core.info('Dispatching group to workflow');
           const dispRequest = {
             'api-endpoint': apiEndpoint,
             environment,
             'api-connector-list': JSON.stringify(groupNames),
             'api-version': apiVersion,
           };
-          await github.rest.actions.createWorkflowDispatch({
-            owner,
-            repo,
-            ref,
-            workflow_id: '.github/workflows/powerplatform-api-connector.yml',
-            inputs: dispRequest,
-          });
+          const dispResponse = await github.rest.actions.createWorkflowDispatch(
+            {
+              owner,
+              repo,
+              ref,
+              workflow_id: '.github/workflows/powerplatform-api-connector.yml',
+              inputs: dispRequest,
+            }
+          );
+          if (core.isDebug()) {
+            const {
+              url: dispUrl,
+              status: dispStatus,
+              headers: dispHeaders,
+            } = dispResponse;
+            core.debug(`${dispUrl}: ${dispStatus}`);
+            for (const [headerName, headerValue] of Object.entries(
+              dispHeaders
+            )) {
+              core.debug(`${headerName}: ${headerValue}`);
+            }
+          }
+          core.info('Successfully dispatched API connector group');
         } catch (error) {
           core.error(error instanceof Error ? error : `${error}`, {
             title: `Failed to dispatch API Connector group ${groupNr}`,
