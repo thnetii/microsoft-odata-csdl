@@ -1,0 +1,590 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Azure Event Grid",
+    "description": "Azure Event Grid is an eventing backplane that enables event based programing with pub/sub semantics and reliable distribution & delivery for all services in Azure as well as third parties.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/subscriptions/{subscriptionId}/providers/{resourceType}/resource/eventSubscriptions": {
+      "post": {
+        "summary": "When a resource event occurs",
+        "description": "When an Azure Event Grid subscription fires an event.",
+        "operationId": "CreateSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "API Version",
+            "x-ms-visibility": "internal",
+            "default": "2017-09-15-preview",
+            "x-ms-test-value": "2017-09-15-preview",
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "name": "resourceType",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Resource Type",
+            "x-ms-visibility": "important",
+            "description": "Type of resource to create event subscription on.",
+            "x-ms-test-value": "Microsoft.EventHub.namespaces",
+            "x-ms-dynamic-values": {
+              "operationId": "TopicTypes_List",
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "name",
+              "parameters": {
+                "x-ms-api-version": "2017-09-15-preview"
+              }
+            },
+            "type": "string"
+          },
+          {
+            "name": "subscriptionName",
+            "in": "query",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "x-ms-summary": "Subscription Name",
+            "description": "Name to use for the new Event Grid subscription.",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EventRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger-hint": "Trigger the Azure Resource with an event to see the app run.",
+        "x-ms-trigger": "batch",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureeventgrid/#when-a-resource-event-occurs"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/EventSchema"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/providers/Microsoft.EventGrid/topicTypes": {
+      "get": {
+        "operationId": "TopicTypes_List",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "API Version",
+            "x-ms-visibility": "internal",
+            "default": "2017-09-15-preview",
+            "x-ms-test-value": "2017-09-15-preview",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/TopicTypesResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/providers/Microsoft.EventGrid/topicTypes/{resourceType}/eventTypes": {
+      "get": {
+        "operationId": "EventTypes_List",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "API Version",
+            "x-ms-visibility": "internal",
+            "default": "2017-09-15-preview",
+            "x-ms-test-value": "2017-09-15-preview",
+            "type": "string"
+          },
+          {
+            "name": "resourceType",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Resource Provider",
+            "x-ms-test-value": "Microsoft.EventHub.Namespaces",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/EventTypesResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/subscriptions/{subscriptionId}/providers/{resourceType}": {
+      "get": {
+        "operationId": "ResourceNames",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "API Version",
+            "x-ms-visibility": "internal",
+            "default": "2017-06-01",
+            "x-ms-test-value": "2017-06-01",
+            "type": "string"
+          },
+          {
+            "name": "resourceType",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Resource Provider",
+            "x-ms-test-value": "Microsoft.EventHub.Namespaces",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/ResourceNameResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/subscriptions": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "List subscriptions",
+        "description": "Gets a list of all the subscriptions to which the principal has access.",
+        "operationId": "Subscriptions_List",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "x-ms-summary": "API Version",
+            "x-ms-test-value": "2015-11-01",
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "2015-11-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SubscriptionListResult"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureeventgrid/#list-subscriptions"
+        }
+      }
+    },
+    "/{connectionId}/eventSubscription/unsubscribe": {
+      "delete": {
+        "summary": "Remove an event subscription",
+        "description": "Deletes an event subscription.",
+        "operationId": "Unsubscribe",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-api-version",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "API Version",
+            "x-ms-visibility": "internal",
+            "default": "2017-09-15-preview",
+            "x-ms-test-value": "2017-09-15-preview",
+            "type": "string"
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "Destination URL template",
+            "x-ms-visibility": "internal",
+            "description": "URL template to make the DELETE request to.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azureeventgrid/#remove-an-event-subscription"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "EventRequest": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "x-ms-dynamic-values": {
+                "operationId": "ResourceNames",
+                "value-collection": "value",
+                "value-path": "id",
+                "value-title": "name",
+                "parameters": {
+                  "x-ms-api-version": "2017-06-01",
+                  "subscriptionId": {
+                    "parameter": "subscriptionId"
+                  },
+                  "resourceType": {
+                    "parameter": "resourceType"
+                  }
+                }
+              },
+              "type": "string",
+              "x-ms-visibility": "important",
+              "x-ms-summary": "Resource Name",
+              "description": "Name of the resource to listen to for events."
+            },
+            "destination": {
+              "type": "object",
+              "required": [
+                "properties",
+                "endpointType"
+              ],
+              "properties": {
+                "endpointType": {
+                  "description": "The type of endpoint to notify on events.",
+                  "type": "string",
+                  "x-ms-visibility": "internal",
+                  "default": "webhook"
+                },
+                "properties": {
+                  "description": "Properties for the Event Grid subscription.",
+                  "type": "object",
+                  "required": [
+                    "endpointUrl"
+                  ],
+                  "properties": {
+                    "endpointUrl": {
+                      "description": "The URL to notify on events for this subscription.",
+                      "type": "string",
+                      "x-ms-summary": "Endpoint URL",
+                      "x-ms-visibility": "internal",
+                      "x-ms-notification-url": true
+                    }
+                  }
+                }
+              }
+            },
+            "filter": {
+              "type": "object",
+              "properties": {
+                "subjectBeginsWith": {
+                  "description": "A filter like: Sample-workitems/{name}",
+                  "type": "string",
+                  "x-ms-summary": "Prefix Filter",
+                  "x-ms-visibility": "advanced"
+                },
+                "subjectEndsWith": {
+                  "description": "A filter like: .jpg",
+                  "type": "string",
+                  "x-ms-summary": "Suffix Filter",
+                  "x-ms-visibility": "advanced"
+                },
+                "includedEventTypes": {
+                  "type": "array",
+                  "x-ms-visibility": "important",
+                  "x-ms-summary": "Event Type",
+                  "description": "Type of event to listen for.",
+                  "items": {
+                    "type": "string",
+                    "x-ms-dynamic-values": {
+                      "operationId": "EventTypes_List",
+                      "value-collection": "value",
+                      "value-path": "name",
+                      "value-title": "name",
+                      "parameters": {
+                        "x-ms-api-version": "2017-09-15-preview",
+                        "resourceType": {
+                          "parameter": "resourceType"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "topic",
+            "destination"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "EventSchema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-ms-summary": "Event data",
+            "description": "Contains the data from the event."
+          },
+          "eventTime": {
+            "format": "date-time",
+            "description": "Time of the event.",
+            "type": "string",
+            "x-ms-summary": "Event Time"
+          },
+          "eventType": {
+            "description": "Type of the event.",
+            "type": "string",
+            "x-ms-summary": "Event Type"
+          },
+          "id": {
+            "description": "ID for the event.",
+            "type": "string",
+            "x-ms-summary": "ID"
+          },
+          "subject": {
+            "description": "Subject of the event.",
+            "type": "string",
+            "x-ms-summary": "Subject"
+          },
+          "topic": {
+            "description": "Resource that fired the event.",
+            "type": "string",
+            "x-ms-summary": "Topic",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "TopicTypesResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Supported topic type resource.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "EventTypesResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Supported event type resource.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ResourceNameResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "SubscriptionListResult": {
+      "description": "Subscription list operation response.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The subscriptions available to the user.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Subscription"
+          }
+        }
+      }
+    },
+    "Subscription": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The fully qualified Id. For example, /subscriptions/00000000-0000-0000-0000-000000000000.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Id"
+        },
+        "subscriptionId": {
+          "description": "The subscription Id.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Subscription Id"
+        },
+        "displayName": {
+          "description": "The subscription display name.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-summary": "Display Name"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "SubscriptionIdParameter": {
+      "name": "subscriptionId",
+      "in": "path",
+      "description": "The unique identifier for the Microsoft Azure subscription. The subscription ID forms part of the ID for every Azure resource.",
+      "required": true,
+      "x-ms-summary": "Subscription",
+      "x-ms-test-value": "80d4fe69-c95b-4dd2-a938-9250f1c8ab03",
+      "x-ms-dynamic-values": {
+        "operationId": "Subscriptions_List",
+        "value-collection": "value",
+        "value-path": "subscriptionId",
+        "value-title": "displayName",
+        "parameters": {
+          "x-ms-api-version": "2016-06-01"
+        }
+      },
+      "type": "string"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://azure.microsoft.com/services/event-grid/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/azureeventgrid"
+  },
+  "basePath": "/apim/azureeventgrid"
+}
