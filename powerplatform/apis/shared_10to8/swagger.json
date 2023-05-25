@@ -1,0 +1,644 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "10to8 Appointment Scheduling",
+    "description": "10to8 is a powerful appointment management, communications & online booking system.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "url": "https://support.10to8.com/"
+    }
+  },
+  "x-ms-docs": [
+    {
+      "url": "https://ms.flow.microsoft.com/en-us/blog/making-bookings-easy-with-10to8-and-flow/",
+      "description": "Making bookings easy with 10to8 and Flow"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "parameters": {
+    "organisation-id": {
+      "name": "organisation-id",
+      "x-ms-summary": "Organisation Id",
+      "x-ms-visibility": "important",
+      "description": "Pick your organisation.",
+      "in": "path",
+      "type": "string",
+      "required": true,
+      "x-ms-dynamic-values": {
+        "operationId": "GetOrganisations",
+        "value-path": "id",
+        "value-title": "name"
+      },
+      "x-ms-test-value": "25011"
+    }
+  },
+  "securityDefinitions": {
+    "10to8-oauth2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://10to8.com/o/authorize/",
+      "tokenUrl": "https://10to8.com/o/token/",
+      "scopes": {
+        "read": "read",
+        "write": "write"
+      }
+    }
+  },
+  "security": [
+    {
+      "10to8-oauth2": [
+        "read",
+        "write"
+      ]
+    }
+  ],
+  "paths": {
+    "/{connectionId}/api/microsoft-flow/v1/organisations/": {
+      "get": {
+        "operationId": "GetOrganisations",
+        "summary": "Get organisations",
+        "description": "Returns a list of all organisations for the authorized account.",
+        "x-ms-visibility": "internal",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#get-organisations"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/appointments/": {
+      "post": {
+        "operationId": "BookAppointment",
+        "summary": "Book new appointment",
+        "description": "Book a new appointment in 10to8.",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          },
+          {
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "description": "Details for a new appointment",
+              "required": [
+                "start",
+                "end",
+                "title",
+                "description"
+              ],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time",
+                  "x-ms-summary": "Start Date-Time",
+                  "description": "(UTC format) yyyy-MM-ddTHH:mm:ss.fffZ"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time",
+                  "x-ms-summary": "End Date-Time",
+                  "description": "(UTC format) yyyy-MM-ddTHH:mm:ss.fffZ"
+                },
+                "title": {
+                  "type": "string",
+                  "x-ms-summary": "Name",
+                  "description": "Appointment name."
+                },
+                "description": {
+                  "type": "string",
+                  "x-ms-summary": "Description",
+                  "description": "Appointment description."
+                }
+              },
+              "x-ms-test-value": {
+                "start": "2027-03-22T12:00:00Z",
+                "end": "2027-03-22T12:30:00Z",
+                "title": "test title",
+                "description": "test"
+              }
+            },
+            "in": "body",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#book-new-appointment"
+        }
+      },
+      "get": {
+        "operationId": "GetAppointments",
+        "summary": "When a booking is made",
+        "description": "Triggers when a new booking is made in 10to8.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a booking in your 10to8 account.",
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "A booked appointment, possibly with a customer",
+                "properties": {
+                  "start": {
+                    "type": "string",
+                    "format": "date-time",
+                    "x-ms-summary": "Start Date-Time",
+                    "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+                    "x-ms-visibility": "important"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "date-time",
+                    "x-ms-summary": "End Date-Time",
+                    "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+                    "x-ms-visibility": "important"
+                  },
+                  "name": {
+                    "type": "string",
+                    "x-ms-summary": "Name of Appointment",
+                    "description": "The name or type of the appointment.",
+                    "x-ms-visibility": "important"
+                  },
+                  "customers_name": {
+                    "type": "string",
+                    "x-ms-summary": "Customer's Name",
+                    "description": "The full name of the customer.",
+                    "x-ms-visibility": "important"
+                  },
+                  "customers_email": {
+                    "type": "string",
+                    "x-ms-summary": "Customer's Email Address",
+                    "description": "The email address of the customer.",
+                    "x-ms-visibility": "important"
+                  },
+                  "customers_number": {
+                    "type": "string",
+                    "x-ms-summary": "Customer's Phone Number",
+                    "description": "The phone number of the customer.",
+                    "x-ms-visibility": "important"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "x-ms-summary": "Appointment ID number",
+                    "description": "The unique identifier of the appointment in 10to8.",
+                    "x-ms-visibility": "advanced"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-booking-is-made"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/customers/": {
+      "get": {
+        "operationId": "GetCustomers",
+        "summary": "When a new customer is added",
+        "description": "Triggers when a new customer is added in 10to8.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a customer in your 10to8 account.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Details of a customer",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "x-ms-summary": "Description",
+                    "description": "The description of the appointment.",
+                    "x-ms-visibility": "important"
+                  },
+                  "email": {
+                    "type": "string",
+                    "x-ms-summary": "Customer's Email Address",
+                    "description": "The contact email address of the customer.",
+                    "x-ms-visibility": "important"
+                  },
+                  "mobile_number": {
+                    "type": "string",
+                    "x-ms-summary": "Customer's Mobile Number",
+                    "description": "The contact mobile phone number of the customer.",
+                    "x-ms-visibility": "important"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "x-ms-summary": "Customer ID Number",
+                    "description": "The unique identifier of the customer in 10to8.",
+                    "x-ms-visibility": "advanced"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-new-customer-is-added"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/incoming-messages/appeared/": {
+      "get": {
+        "operationId": "GetInboxIncomingMessagesAppeared",
+        "summary": "When an incoming message appears in your inbox",
+        "description": "Triggers when an incoming message appears in your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, send yourself a message.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IncomingMessage"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-an-incoming-message-appears-in-your-inbox"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/incoming-messages/disappeared/": {
+      "get": {
+        "operationId": "GetInboxIncomingMessagesDisappeared",
+        "summary": "When an incoming message disappears from your inbox",
+        "description": "Triggers when an incoming message disappears from your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, send yourself a message.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IncomingMessage"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-an-incoming-message-disappears-from-your-inbox"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/booking-proposals/appeared/": {
+      "get": {
+        "operationId": "GetInboxBookingRequestAppeared",
+        "summary": "When a booking request appears in your inbox",
+        "description": "Triggers when a booking request appears in your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a booking.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EventProposal"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-booking-request-appears-in-your-inbox"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/booking-proposals/disappeared/": {
+      "get": {
+        "operationId": "GetInboxBookingRequestDisappeared",
+        "summary": "When a booking request disappears from your inbox",
+        "description": "Triggers when a booking request disappears from your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a booking.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EventProposal"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-booking-request-disappears-from-your-inbox"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/rebook-cancellation-proposals/appeared/": {
+      "get": {
+        "operationId": "GetInboxChangeCancellationRequestAppeared",
+        "summary": "When a change or cancellation request appears in your inbox",
+        "description": "Triggers when a change or cancellation request appears in your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a change or cancellation request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EventProposal"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-change-or-cancellation-request-appears-in-your-inbox"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft-flow/v1/{organisation-id}/inbox/rebook-cancellation-proposals/disappeared/": {
+      "get": {
+        "operationId": "GetInboxChangeCancellationRequestDisappeared",
+        "summary": "When a change or cancellation request disappears from your inbox",
+        "description": "Triggers when a change or cancellation request disappears from your inbox.",
+        "x-ms-trigger-hint": "To successfully fire this trigger, create a change or cancellation request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organisation-id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EventProposal"
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/10to8/#when-a-change-or-cancellation-request-disappears-from-your-inbox"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "IncomingMessage": {
+      "type": "object",
+      "description": "An incoming message from a customer, either by email or SMS.",
+      "x-ms-visibility": "important",
+      "properties": {
+        "from_name": {
+          "type": "string",
+          "x-ms-summary": "Customer Name",
+          "description": "The name of the customer who sent the message.",
+          "x-ms-visibility": "important"
+        },
+        "from_contact": {
+          "type": "string",
+          "x-ms-summary": "Phone Number or Email Address",
+          "description": "The phone number or email address that the message was sent from.",
+          "x-ms-visibility": "important"
+        },
+        "content": {
+          "type": "string",
+          "x-ms-summary": "Message Content",
+          "description": "The Content of the Message.",
+          "x-ms-visibility": "important"
+        },
+        "received": {
+          "type": "string",
+          "format": "date-time",
+          "x-ms-summary": "Received at Date-Time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+          "x-ms-visibility": "advanced"
+        },
+        "id": {
+          "type": "integer",
+          "x-ms-summary": "Message ID",
+          "description": "The unique identifier of the message in 10to8.",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "EventProposal": {
+      "type": "object",
+      "description": "A booking, change or cancellation request for a booking from a customer",
+      "x-ms-visibility": "important",
+      "properties": {
+        "from_name": {
+          "type": "string",
+          "x-ms-summary": "Customer Name",
+          "description": "The name of the customer who made the request.",
+          "x-ms-visibility": "important"
+        },
+        "from_contact": {
+          "type": "string",
+          "x-ms-summary": "Email Address or Phone Number",
+          "description": "The phone number or email address of the customer who made the request.",
+          "x-ms-visibility": "important"
+        },
+        "appointment_name": {
+          "type": "string",
+          "x-ms-summary": "Appointment Name",
+          "description": "The name of the appointment.",
+          "x-ms-visibility": "important"
+        },
+        "appointment_start": {
+          "type": "string",
+          "format": "date-time",
+          "x-ms-summary": "Appointment Start Date-Time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+          "x-ms-visibility": "important"
+        },
+        "received": {
+          "type": "string",
+          "format": "date-time",
+          "x-ms-summary": "Request Received Date-Time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+          "x-ms-visibility": "advanced"
+        },
+        "type": {
+          "type": "string",
+          "x-ms-summary": "Type of Request",
+          "description": "Booking, rebooking or cancellation.",
+          "x-ms-visibility": "important"
+        },
+        "id": {
+          "type": "integer",
+          "x-ms-summary": "Request ID Number",
+          "description": "The unique identifier of the request in 10to8.",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://10to8.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://10to8.com/legal/#tabs|3"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/10to8"
+  },
+  "basePath": "/apim/10to8"
+}
