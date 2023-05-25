@@ -1,0 +1,59 @@
+on:
+  workflow_dispatch:
+    inputs:
+      api-endpoint:
+        default: https://api.flow.microsoft.com
+        description: ''
+      environment:
+        default: '~default'
+        description: ''
+      api-connector:
+        required: true
+        description: ''
+      api-version:
+        required: false
+        description: ''
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  powerplatform-api-connector:
+    name: 'Power Platform API Connector: ${{ inputs.api-connector }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chekout ${{ github.repository }}@${{ github.ref }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 180
+          submodules: true
+      - uses: actions/setup-node@v3
+      - id: npm-clean-install-actions
+        name: Install NPM package dependencies for Github actions
+        uses: thnetii/.github/actions/gh-actions-npm@main
+        with:
+          arguments: |
+            clean-install
+            --workspace=.github/actions/powerplatform-api-connector-download
+            --omit=dev
+            --install-links
+            --no-audit
+            --no-fund
+      - id: msidp-workflow-auth
+        name: Authenticate GitHub Actions Workflow
+        uses: thnetii/.github/actions/ms-idp-workflow-run-auth@main
+        with:
+          tenant-id: ${{ secrets.MSIDP_TENANTID }}
+          client-id: ${{ secrets.MSIDP_CLIENTID }}
+          resource: https://service.flow.microsoft.com/
+      - id: api-connector-download
+        name: 'Download Power Platform API Connector: ${{ inputs.api-connector }}'
+        uses: ./.github/actions/powerplatform-api-connector-download
+        with:
+          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
+          api-endpoint: ${{ inputs.api-endpoint }}
+          environment: ${{ inputs.environment }}
+          api-connector: ${{ inputs.api-connector }}
+          api-version: ${{ inputs.api-version }}

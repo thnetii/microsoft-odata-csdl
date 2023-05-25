@@ -1,11 +1,12 @@
 on:
   workflow_dispatch: {}
-  # push:
-  #   branches:
-  #     - main
-  # schedule:
-  #   - cron: '18 5 * * *'
-  #     # Trigger every day at 05:18
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '18 5 * * *'
+      # Trigger every day at 05:18
+
 permissions:
   id-token: write
   contents: write
@@ -16,11 +17,11 @@ concurrency:
 
 jobs:
   powerplatform-apis:
-    name: Download Power Platform API Connectors
-    runs-on: ubuntu-latest
+    name: Power Platform API Connectors
     env:
       api-version: '2023-05-01'
-      environment: '~default'
+      environment: ~default
+    runs-on: ubuntu-latest
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
@@ -34,8 +35,7 @@ jobs:
         with:
           arguments: |
             clean-install
-            --workspace=@thnetii/microsoft-odata-csdl-github-actions-powerplatform-apis-collection-download
-            --workspace=@thnetii/microsoft-odata-csdl-github-actions-powerplatform-apis-collection-processor
+            --workspace=.github/actions/powerplatform-apis-collection-download
             --omit=dev
             --install-links
             --no-audit
@@ -54,11 +54,10 @@ jobs:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-version: ${{ env.api-version }}
           environment: ${{ env.environment }}
-      - id: process-api-connectors
-        name: Process Power Platform API Connectors
-        uses: ./.github/actions/powerplatform-apis-collection-processor
+      - id: process-apis-dispatch
+        name: Dispatch Power Platform API Connectors
+        uses: ./.github/actions/powerplatform-apis-collection-dispatcher
         with:
-          access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-endpoint: ${{ steps.get-api-connectors.outputs.api-endpoint }}
           environment: ${{ steps.get-api-connectors.outputs.environment }}
           api-connector-names: ${{ steps.get-api-connectors.outputs.api-connector-names }}
