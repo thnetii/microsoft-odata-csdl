@@ -50,28 +50,13 @@ module.exports = async (args) => {
             'api-connector-list': JSON.stringify(groupNames),
             'api-version': apiVersion,
           };
-          const dispResponse = await github.rest.actions.createWorkflowDispatch(
-            {
-              owner,
-              repo,
-              ref,
-              workflow_id: '.github/workflows/powerplatform-api-connector.yml',
-              inputs: dispRequest,
-            }
-          );
-          if (core.isDebug()) {
-            const {
-              url: dispUrl,
-              status: dispStatus,
-              headers: dispHeaders,
-            } = dispResponse;
-            core.debug(`${dispUrl}: ${dispStatus}`);
-            for (const [headerName, headerValue] of Object.entries(
-              dispHeaders
-            )) {
-              core.debug(`${headerName}: ${headerValue}`);
-            }
-          }
+          await github.rest.actions.createWorkflowDispatch({
+            owner,
+            repo,
+            ref,
+            workflow_id: '.github/workflows/powerplatform-api-connector.yml',
+            inputs: dispRequest,
+          });
           core.info('Successfully dispatched API connector group');
         } catch (error) {
           core.error(error instanceof Error ? error : `${error}`, {
