@@ -1,0 +1,803 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Inoreader",
+    "description": "Inoreader is a content reader built for power users. Use Inoreader to subscribe to feeds, read articles or catalogue them for viewing later.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/inoreader",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/trigger/subscription/list": {
+      "get": {
+        "summary": "When a new subscription is added",
+        "description": "Triggers when a new subscription is added to your account.",
+        "operationId": "OnNewSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Subscription"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work, add a subscription.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#when-a-new-subscription-is-added"
+        }
+      }
+    },
+    "/{connectionId}/trigger/unread-count": {
+      "get": {
+        "summary": "When unread count reaches a target",
+        "description": "Triggers when the number of unread items for a subscription reaches or exceeds the target value.",
+        "operationId": "OnUnreadItemCountForStreamExceedsTarget",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/StreamId"
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "description": "The target number of unread items.",
+            "required": true,
+            "x-ms-summary": "Target Count",
+            "type": "integer",
+            "format": "int32",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "$ref": "#/definitions/UnreadCount"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work, wait for unread items to increase or set target to a low number",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#when-unread-count-reaches-a-target"
+        }
+      }
+    },
+    "/{connectionId}/subscription/quickadd": {
+      "post": {
+        "summary": "Add subscription",
+        "description": "Add a new subscription.",
+        "operationId": "AddSubscription",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "quickadd": {
+                  "description": "ID of the stream to add, , e.g. feed/http://feeds.arstechnica.com/arstechnica/science",
+                  "type": "string",
+                  "title": "Feed Id"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Operation Successful",
+            "schema": {
+              "$ref": "#/definitions/AddSubscriptionResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#add-subscription"
+        }
+      }
+    },
+    "/{connectionId}/subscription/edit": {
+      "post": {
+        "summary": "Edit subscription",
+        "description": "Edit the information for a specific subscription.",
+        "operationId": "EditSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/StreamId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "t"
+              ],
+              "properties": {
+                "t": {
+                  "description": "The title of the subscription.",
+                  "type": "string",
+                  "title": "Title"
+                }
+              },
+              "x-ms-test-value": {
+                "t": "new title"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Operation Successful",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#edit-subscription"
+        }
+      }
+    },
+    "/{connectionId}/unsubscribe/subscription/edit": {
+      "post": {
+        "summary": "Unsubscribe subscription",
+        "description": "Unsubscribe from a subscription.",
+        "operationId": "UnsubscribeSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "streamId",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "Subscription Id",
+            "description": "The id of the subscription",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSubscriptions",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "feed/http://atlasobscura.com/rss.xml"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Operation Successful",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#unsubscribe-subscription"
+        }
+      }
+    },
+    "/{connectionId}/remove/subscription/edit": {
+      "post": {
+        "summary": "Remove a subscription from a folder",
+        "description": "Remove a subscription from a specific folder.",
+        "operationId": "RemoveSubscriptionFromFolder",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/StreamId"
+          },
+          {
+            "$ref": "#/parameters/TagId"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Operation Successful",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#remove-a-subscription-from-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/add/subscription/edit": {
+      "post": {
+        "summary": "Add a subscription to a folder",
+        "description": "Add a subscription to a specific folder.",
+        "operationId": "AddSubscriptionToFolder",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/StreamId"
+          },
+          {
+            "$ref": "#/parameters/TagId"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Operation Successful",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#add-a-subscription-to-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/disable-tag": {
+      "post": {
+        "summary": "Delete tag",
+        "description": "Delete a tag from the account.",
+        "operationId": "DeleteTag",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "tagId",
+            "in": "query",
+            "description": "The full tag name, like user/-/label/Tech",
+            "required": true,
+            "x-ms-summary": "Tag Id",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTags",
+              "value-path": "id",
+              "value-title": "niceTitle"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Operation Successful",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#delete-tag"
+        }
+      }
+    },
+    "/{connectionId}/single/unread-count": {
+      "get": {
+        "summary": "Get number of unread items in a stream",
+        "description": "Get the number of unread items for a specific stream.",
+        "operationId": "GetUnreadCountForStream",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/StreamId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "$ref": "#/definitions/UnreadCount"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#get-number-of-unread-items-in-a-stream"
+        }
+      }
+    },
+    "/{connectionId}/unread-count": {
+      "get": {
+        "summary": "Get number of unread items",
+        "description": "Get the number of unread items across all streams.",
+        "operationId": "GetUnreadCount",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UnreadCount"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#get-number-of-unread-items"
+        }
+      }
+    },
+    "/{connectionId}/subscription/list": {
+      "get": {
+        "summary": "Get subscriptions",
+        "description": "Get a list of subscriptions.",
+        "operationId": "GetSubscriptions",
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetSubscriptions_Response"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#get-subscriptions"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/tag/list": {
+      "get": {
+        "summary": "Get tag list",
+        "description": "Get a list of tags.",
+        "operationId": "GetTags",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Tag"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#get-tag-list"
+        }
+      }
+    },
+    "/{connectionId}/stream/contents/{streamId}": {
+      "get": {
+        "summary": "Stream contents",
+        "description": "Lists the articles for a given collection.",
+        "operationId": "StreamContents",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "streamId",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Subscription Id",
+            "description": "The id of the subscription",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSubscriptions",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "feed/http://www.engadget.com/rss.xml"
+          },
+          {
+            "name": "n",
+            "in": "query",
+            "required": false,
+            "description": "Number of items to return (default 20, max 1000).",
+            "x-ms-summary": "Number of items",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation Successful",
+            "schema": {
+              "$ref": "#/definitions/StreamContentsResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inoreader/#stream-contents"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "StreamId": {
+      "name": "streamId",
+      "in": "query",
+      "required": true,
+      "x-ms-summary": "Subscription Id",
+      "description": "The id of the subscription",
+      "x-ms-dynamic-values": {
+        "operationId": "GetSubscriptions",
+        "value-path": "id",
+        "value-title": "title"
+      },
+      "type": "string",
+      "x-ms-test-value": "feed/http://www.engadget.com/rss.xml"
+    },
+    "TagId": {
+      "name": "tagId",
+      "in": "query",
+      "required": true,
+      "x-ms-summary": "Folder Id",
+      "description": "The id of the folder",
+      "x-ms-dynamic-values": {
+        "operationId": "GetTags",
+        "value-path": "id",
+        "value-title": "niceTitle"
+      },
+      "type": "string",
+      "x-ms-test-value": "user/1005766879/state/com.google/starred"
+    }
+  },
+  "definitions": {
+    "StreamContentsResponse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "author": {
+            "type": "string",
+            "title": "Author",
+            "x-ms-visibility": "advanced"
+          },
+          "url": {
+            "type": "string",
+            "title": "Article URL",
+            "x-ms-visibility": "important"
+          },
+          "id": {
+            "type": "string",
+            "title": "Article Id",
+            "x-ms-visibility": "important"
+          },
+          "published": {
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+            "type": "string",
+            "title": "Published Date-Time",
+            "x-ms-visibility": "advanced"
+          },
+          "summary": {
+            "description": "summary",
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "string",
+                "title": "Content",
+                "x-ms-visibility": "important"
+              },
+              "direction": {
+                "type": "string",
+                "title": "Direction",
+                "x-ms-visibility": "advanced"
+              }
+            },
+            "title": "Summary",
+            "x-ms-visibility": "advanced"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "title": "Newest Item Timestamp",
+            "description": "A timestamp of the newest item.",
+            "type": "string",
+            "x-ms-visibility": "advanced"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "x-ms-visibility": "advanced"
+          },
+          "updated": {
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+            "type": "string",
+            "title": "Updated Date-Time",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "AddSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "numResults": {
+          "title": "Success",
+          "description": "Whether adding the subscription was successful.",
+          "type": "boolean",
+          "x-ms-visibility": "advanced"
+        },
+        "streamId": {
+          "title": "Stream Id",
+          "description": "The Id of the stream.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "streamName": {
+          "title": "Stream Name",
+          "description": "The name of the stream.",
+          "type": "string"
+        }
+      }
+    },
+    "UnreadCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "title": "Count",
+          "description": "The count of unread items."
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Newest Item Timestamp",
+          "description": "A timestamp of the newest item.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Unique tag id.",
+          "type": "string"
+        },
+        "sortid": {
+          "title": "Sort Id",
+          "description": "Id for sorting.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "niceTitle": {
+          "title": "Title",
+          "description": "Title",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Subscription": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "The feed identifier.",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "description": "The title of the feed.",
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "title": "Category",
+            "type": "object",
+            "properties": {
+              "id": {
+                "title": "Id",
+                "description": "The identifier of the category.",
+                "type": "string"
+              },
+              "label": {
+                "title": "Label",
+                "description": "The label of the category.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "sortid": {
+          "title": "Sort Id",
+          "type": "string",
+          "x-ms-visibility": "internal"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "First Item Timestamp",
+          "description": "A timestamp of the first item in the feed.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "title": "URL",
+          "description": "Actual XML URL of the feed.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "htmlUrl": {
+          "title": "HTML URL",
+          "description": "The link to the feed website.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "iconUrl": {
+          "title": "Icon URL",
+          "description": "The feed favicon in 16x16 pixels.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "GetSubscriptions_Response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "The feed identifier.",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "description": "The title of the feed.",
+          "type": "string"
+        },
+        "sortid": {
+          "title": "Sort Id",
+          "type": "string",
+          "x-ms-visibility": "internal"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "First Item Timestamp",
+          "description": "A timestamp of the first item in the feed.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "title": "URL",
+          "description": "Actual XML URL of the feed.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "htmlUrl": {
+          "title": "HTML URL",
+          "description": "The link to the feed website.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        },
+        "iconUrl": {
+          "title": "Icon URL",
+          "description": "The feed favicon in 16x16 pixels.",
+          "type": "string",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.inoreader.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.inoreader.com/privacy_policy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/inoreader"
+  }
+}
