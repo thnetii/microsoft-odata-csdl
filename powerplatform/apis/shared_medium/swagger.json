@@ -1,0 +1,556 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Medium",
+    "description": "Medium is a vibrant network of thinkers who care about the world and making it better. Connect to your Medium account to track new publications, write stories and more.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/trigger/publications": {
+      "get": {
+        "summary": "When a publication is created or subscribed to",
+        "description": "Triggers a new flow when a publication is created or subscribed to",
+        "operationId": "TriggerPublicationAdded",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/publications"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create or join a publication.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/medium/#when-a-publication-is-created-or-subscribed-to"
+        }
+      }
+    },
+    "/{connectionId}/action/v1/users/posts": {
+      "post": {
+        "summary": "Write a story",
+        "description": "Write a new story.",
+        "operationId": "WriteStory",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "x-ms-test-value": "{\r\n  \"title\": \"TestPost\",\r\n  \"contentFormat\": \"html\",\r\n  \"content\": \"<h1>Test this</h1>\",\r\n  \"tags\": [\r\n    \"testing\"\r\n  ],\r\n  \"publishStatus\": \"draft\"\r\n}",
+              "type": "object",
+              "required": [
+                "title",
+                "contentFormat",
+                "content"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "x-ms-summary": "Title"
+                },
+                "contentFormat": {
+                  "default": "html",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "content": {
+                  "type": "string",
+                  "format": "html",
+                  "x-ms-summary": "Content"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "x-ms-summary": "Tags",
+                  "description": "Comma separated list of tags to add to the story (max 3)."
+                },
+                "publishStatus": {
+                  "default": "Public",
+                  "enum": [
+                    "Draft",
+                    "Public",
+                    "Unlisted"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Publish Status"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "x-ms-summary": "Id",
+                      "description": "The id of the story."
+                    },
+                    "title": {
+                      "type": "string",
+                      "x-ms-summary": "Title",
+                      "description": "The story title."
+                    },
+                    "authorId": {
+                      "type": "string",
+                      "x-ms-summary": "Author Id",
+                      "description": "The author id of the story."
+                    },
+                    "url": {
+                      "type": "string",
+                      "x-ms-summary": "URL",
+                      "description": "The URL to the story in Medium."
+                    },
+                    "canonicalUrl": {
+                      "type": "string",
+                      "x-ms-summary": "Canonical URL",
+                      "x-ms-visibility": "advanced",
+                      "description": "The canonical URL to the story in Medium."
+                    },
+                    "publishStatus": {
+                      "type": "string",
+                      "x-ms-summary": "Publish Status",
+                      "description": "The publish status of the story, such as Draft or Public."
+                    },
+                    "license": {
+                      "type": "string",
+                      "x-ms-summary": "License",
+                      "x-ms-visibility": "advanced",
+                      "description": "The license associated with the story."
+                    },
+                    "licenseUrl": {
+                      "type": "string",
+                      "x-ms-summary": "License Url",
+                      "x-ms-visibility": "advanced",
+                      "description": "The license URL associated with the story."
+                    },
+                    "tags": {
+                      "type": "array",
+                      "x-ms-summary": "Tags",
+                      "description": "An array of tags on the story.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "x-ms-summary": "Story"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "201",
+            "schema": {
+              "$ref": "#/definitions/952182ce-710d-43dc-9a5b-a7ee6d412856"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/medium/#write-a-story"
+        }
+      }
+    },
+    "/{connectionId}/v1/publications/{publicationId}/posts": {
+      "post": {
+        "summary": "Write a story under a publication",
+        "description": "Write a story under a publication.",
+        "operationId": "WriteStoryToPublication",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "publicationId",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Publication",
+            "description": "The id of the publication",
+            "x-ms-dynamic-values": {
+              "operationId": "PublicationsList",
+              "value-path": "id",
+              "value-title": "name",
+              "value-collection": "data"
+            },
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "contentFormat",
+                "content"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "x-ms-summary": "Title"
+                },
+                "contentFormat": {
+                  "default": "html",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "content": {
+                  "type": "string",
+                  "format": "html",
+                  "x-ms-summary": "Content"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "x-ms-summary": "Tags",
+                  "description": "Comma separated list of tags to add to the story (max 3)."
+                },
+                "publishStatus": {
+                  "default": "Public",
+                  "enum": [
+                    "Draft",
+                    "Public",
+                    "Unlisted"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Publish Status"
+                }
+              },
+              "x-ms-test-value": "{\r\n  \"title\": \"TestPostPublication\",\r\n  \"contentFormat\": \"html\",\r\n  \"content\": \"<h1>Test this</h1>\",\r\n  \"tags\": [\r\n    \"testing\"\r\n  ],\r\n  \"publishStatus\": \"draft\"\r\n}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "x-ms-summary": "Id",
+                      "description": "The id of the story."
+                    },
+                    "title": {
+                      "type": "string",
+                      "x-ms-summary": "Title",
+                      "description": "The title of the story."
+                    },
+                    "authorId": {
+                      "type": "string",
+                      "x-ms-summary": "Author Id",
+                      "description": "The id of the author of the story."
+                    },
+                    "url": {
+                      "type": "string",
+                      "x-ms-summary": "URL",
+                      "description": "The URL to the story in Medium."
+                    },
+                    "canonicalUrl": {
+                      "type": "string",
+                      "x-ms-summary": "Canonical Url",
+                      "x-ms-visibility": "advanced",
+                      "description": "The canonical URL to the story in Medium."
+                    },
+                    "publishStatus": {
+                      "type": "string",
+                      "x-ms-summary": "Publish Status",
+                      "description": "The publish status of the story, such as Draft or Public."
+                    },
+                    "license": {
+                      "type": "string",
+                      "x-ms-summary": "License",
+                      "x-ms-visibility": "advanced",
+                      "description": "The license associated with the story."
+                    },
+                    "licenseUrl": {
+                      "type": "string",
+                      "x-ms-summary": "License Url",
+                      "x-ms-visibility": "advanced",
+                      "description": "The license URL associated with the story."
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "x-ms-summary": "Tags",
+                      "description": "An array of tags on the story."
+                    },
+                    "publicationId": {
+                      "type": "string",
+                      "x-ms-summary": "Publication Id"
+                    }
+                  },
+                  "x-ms-summary": "Story"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "201",
+            "schema": {
+              "$ref": "#/definitions/7dc2cb6a-b492-4991-b628-7a7498e33749"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/medium/#write-a-story-under-a-publication"
+        }
+      }
+    },
+    "/{connectionId}/internal/v1/users/publications": {
+      "get": {
+        "summary": "Publications for internal use",
+        "description": "List of Publications for internal use",
+        "operationId": "PublicationsList",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/publications"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/medium/#publications-for-internal-use"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "677fc051-0605-4730-8926-c6bb62a9073a": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "imageUrl": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "publications": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "x-ms-summary": "Id",
+                "description": "The id of the publication."
+              },
+              "name": {
+                "type": "string",
+                "x-ms-summary": "Name",
+                "description": "The name of the publication."
+              },
+              "description": {
+                "type": "string",
+                "x-ms-summary": "Description",
+                "description": "The description of the publication."
+              },
+              "url": {
+                "type": "string",
+                "x-ms-summary": "URL",
+                "description": "The URL to the publication in Medium."
+              },
+              "imageUrl": {
+                "type": "string",
+                "x-ms-summary": "Image Url",
+                "description": "The image URL for the publication."
+              }
+            }
+          },
+          "x-ms-summary": "Publication"
+        }
+      }
+    },
+    "952182ce-710d-43dc-9a5b-a7ee6d412856": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "authorId": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "canonicalUrl": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "publishStatus": {
+              "type": "string"
+            },
+            "license": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "licenseUrl": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "7dc2cb6a-b492-4991-b628-7a7498e33749": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "authorId": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "canonicalUrl": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "publishStatus": {
+              "type": "string"
+            },
+            "license": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "licenseUrl": {
+              "type": "string",
+              "x-ms-visibility": "advanced"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "x-ms-visibility": "advanced"
+            },
+            "publicationId": {
+              "type": "string"
+            }
+          },
+          "x-ms-summary": "Story"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://medium.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://policy.medium.com/medium-privacy-policy-f03bf92035c9"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/medium"
+  },
+  "basePath": "/apim/medium"
+}
