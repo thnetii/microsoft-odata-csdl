@@ -1,0 +1,5300 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "OneDrive",
+    "description": "Connect to OneDrive to manage your files. You can perform various actions such as upload, update, get, and delete on files in OneDrive.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/onedrive",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/$metadata.json/datasets": {
+      "get": {
+        "tags": [
+          "OneDriveDataSetsMetadata"
+        ],
+        "operationId": "GetDataSetsMetadata",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DataSetsMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file metadata",
+        "description": "This operation gets the metadata for a file.",
+        "operationId": "GetFileMetadata",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-metadata"
+        }
+      },
+      "put": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Update file",
+        "description": "This operation updates a file.",
+        "operationId": "UpdateFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-capabilities": {
+          "chunkTransfer": true
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#update-file"
+        }
+      },
+      "delete": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Delete file",
+        "description": "This operation deletes a file.",
+        "operationId": "DeleteFile",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#delete-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/GetFileByPath": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file metadata using path",
+        "description": "This operation gets the metadata of a file using the path.",
+        "operationId": "GetFileMetadataByPath",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-metadata-using-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/share": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Create share link",
+        "description": "This operation creates a share link for a file.",
+        "operationId": "CreateShareLink",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of link",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "View",
+              "Edit",
+              "Embed",
+              "Direct"
+            ],
+            "x-ms-summary": "Link type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SharingLink"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "CreateShareLink",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#create-share-link-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/shareV2": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Create share link",
+        "description": "This operation creates a share link for a file.",
+        "operationId": "CreateShareLinkV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of link",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "View",
+              "Edit",
+              "Embed"
+            ],
+            "x-ms-summary": "Link type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SharingLink"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "CreateShareLink",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#create-share-link"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/CreateShareLinkByPath": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Create share link by path",
+        "description": "This operation creates a share link for a file using the path.",
+        "operationId": "CreateShareLinkByPath",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of link",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "View",
+              "Edit",
+              "Embed",
+              "Direct"
+            ],
+            "x-ms-summary": "Link type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SharingLink"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "CreateShareLinkByPath",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#create-share-link-by-path-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/CreateShareLinkByPathV2": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Create share link by path",
+        "description": "This operation creates a share link for a file using the path.",
+        "operationId": "CreateShareLinkByPathV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of link",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "View",
+              "Edit",
+              "Embed"
+            ],
+            "x-ms-summary": "Link type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SharingLink"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "CreateShareLinkByPath",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#create-share-link-by-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/GetFileContentByPath": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file content using path",
+        "description": "This operation gets the content of a file using the path.",
+        "operationId": "GetFileContentByPath",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-content-using-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/content": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file content",
+        "description": "This operation gets the content of a file.",
+        "operationId": "GetFileContent",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-content"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Create file",
+        "description": "This operation creates a file.",
+        "operationId": "CreateFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderPath",
+            "in": "query",
+            "description": "The unique path of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the file. Certain characters are disallowed by OneDrive and will be replaced by underscores.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Name"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-capabilities": {
+          "chunkTransfer": true
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#create-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/chunk": {
+      "patch": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "CreateFileUploadChunk",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderPath",
+            "in": "query",
+            "description": "The unique path of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the file. Certain characters are disallowed by OneDrive and will be replaced by underscores.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Name"
+          },
+          {
+            "name": "sessionId",
+            "in": "query",
+            "description": "The search query to use",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Search Query"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/chunk": {
+      "patch": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "UpdateFileUploadChunk",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "sessionId",
+            "in": "query",
+            "description": "The search query to use",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Search Query"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/append": {
+      "patch": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Append file",
+        "description": "This operation appends to a file.",
+        "operationId": "AppendFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#append-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/copyFile": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Upload file from URL",
+        "description": "This operation uploads a file from a URL to OneDrive.",
+        "operationId": "CopyFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "The url to the source file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Source URL"
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The destination file path, including target filename.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination File Path"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination file if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#upload-file-from-url"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/copy": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Copy file",
+        "description": "This operation copies a file within OneDrive.",
+        "operationId": "CopyDriveFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The destination file path, including target filename.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination File Path"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination file if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#copy-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/CopyFileByPath": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Copy file using path",
+        "description": "This operation copies a file within OneDrive by path.",
+        "operationId": "CopyDriveFileByPath",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The destination file path, including target filename.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination File Path"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination file if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#copy-file-using-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/move": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Move or rename a file",
+        "description": "This operation moves or renames a file.",
+        "operationId": "MoveFile",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The destination file path, including target filename.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination File Path"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination file if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#move-or-rename-a-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/MoveFileByPath": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Move or rename a file using path",
+        "description": "This operation moves or renames a file using the path.",
+        "operationId": "MoveFileByPath",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The destination file path, including target filename.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination File Path"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination file if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#move-or-rename-a-file-using-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/convert": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Convert file",
+        "description": "This operation converts a file to another format. The list of supported conversions can be found at https://aka.ms/onedriveconversions",
+        "operationId": "ConvertFile",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The target file type",
+            "required": false,
+            "type": "string",
+            "default": "PDF",
+            "enum": [
+              "PDF",
+              "GLB",
+              "HTML",
+              "JPG"
+            ],
+            "x-ms-summary": "Target type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#convert-file"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/ConvertFileByPath": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Convert file using path",
+        "description": "This operation converts a file to another format using the path. The list of supported conversions can be found at https://aka.ms/onedriveconversions",
+        "operationId": "ConvertFileByPath",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The target file type",
+            "required": false,
+            "type": "string",
+            "default": "PDF",
+            "enum": [
+              "PDF",
+              "GLB",
+              "HTML",
+              "JPG"
+            ],
+            "x-ms-summary": "Target type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#convert-file-using-path"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/tags": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file tags",
+        "description": "This operation gets the tags of a file.",
+        "operationId": "GetFileTags",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tags"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-tags"
+        }
+      },
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Add file tag",
+        "description": "This operation adds a tag to a file.",
+        "operationId": "AddFileTag",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "The name of the tag.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Tag"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tags"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#add-file-tag"
+        }
+      },
+      "delete": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Remove file tag",
+        "description": "This operation removes a tag from a file.",
+        "operationId": "RemoveFileTag",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "The name of the tag.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Tag"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#remove-file-tag"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/files/{id}/thumbnail": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "summary": "Get file thumbnail",
+        "description": "This operation gets the thumbnail of a file. The thumbnail will only be valid for 6 hours.",
+        "operationId": "GetFileThumbnail",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "File",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the thumbnail to retrieve.",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Small",
+              "Medium",
+              "Large"
+            ],
+            "x-ms-summary": "Thumbnail Size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Thumbnail"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#get-file-thumbnail"
+        }
+      }
+    },
+    "/{connectionId}/api/blob/files/{id}": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "GetFileMetadata_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      },
+      "put": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "UpdateFile_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "double"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      },
+      "delete": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "DeleteFile_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/GetFileByPath": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "GetFileMetadataByPath_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/GetFileContentByPath": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "GetFileContentByPath_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/files/{id}/content": {
+      "get": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "GetFileContent_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "double"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/files": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "CreateFile_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderPath",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The content of the file.",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/copyFile": {
+      "post": {
+        "tags": [
+          "OneDriveFileData"
+        ],
+        "operationId": "CopyFile_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/onnewfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is created",
+        "description": "This operation triggers a flow when a new file is created in a folder. Files larger than 50 MB will be skipped and not returned by this trigger. Files moved within OneDrive are not considered new files.",
+        "operationId": "OnNewFile",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-name-encoded": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path-encoded": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work now, add a file to the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnNewFile",
+          "revision": 1
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnNewFileV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-created-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/onnewfilev2": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is created",
+        "description": "This operation triggers a flow when a new file is created in a folder. Files larger than 50 MB will be skipped and not returned by this trigger. Files moved within OneDrive are not considered new files.",
+        "operationId": "OnNewFileV2",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "simulate",
+            "in": "query",
+            "description": "Simulate this call.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Simulate",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-name-encoded": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path-encoded": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work now, add a file to the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnNewFile",
+          "revision": 2
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnNewFileV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-created"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/onupdatedfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is modified",
+        "description": "This operation triggers a flow when a file is modified in a folder. Files larger than 50 MB will be skipped and not returned by this trigger.",
+        "operationId": "OnUpdatedFile",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeFileContent",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Include file content",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-name-encoded": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path-encoded": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work now, modify a file in the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnUpdatedFile",
+          "revision": 1
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnUpdatedFileV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-modified-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/onupdatedfilev2": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is modified",
+        "description": "This operation triggers a flow when a file is modified in a folder. Files larger than 50 MB will be skipped and not returned by this trigger.",
+        "operationId": "OnUpdatedFileV2",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "includeFileContent",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Include file content",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "description": "A boolean value (true, false) to infer content-type based on extension.",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "x-ms-summary": "Infer Content Type",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "simulate",
+            "in": "query",
+            "description": "Simulate this call.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Simulate",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file.",
+              "type": "string",
+              "x-ms-summary": "File content"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path",
+                "x-ms-visibility": "internal"
+              },
+              "x-ms-file-name-encoded": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path-encoded": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "format": "byte",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work now, modify a file in the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnUpdatedFile",
+          "revision": 2
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnUpdatedFileV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-modified"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/batch/onnewfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is created (properties only)",
+        "description": "This operation triggers a flow when a new file is created in a folder. Files moved within OneDrive are not considered new files.",
+        "operationId": "OnNewFiles",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return by single trigger run (1-100). Note that 'Split On' setting can force trigger to process each item individually.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              },
+              "x-ms-summary": "List of Files"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, add a file to the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnNewFiles",
+          "revision": 1
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnNewFilesV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-created-(properties-only)-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/batch/onnewfilesv2": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is created (properties only)",
+        "description": "This operation triggers a flow when a new file is created in a folder. Files moved within OneDrive are not considered new files.",
+        "operationId": "OnNewFilesV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return by single trigger run (1-100). Note that 'Split On' setting can force trigger to process each item individually.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "simulate",
+            "in": "query",
+            "description": "Simulate this call.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Simulate",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              },
+              "x-ms-summary": "List of Files"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, add a file to the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnNewFiles",
+          "revision": 2
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnNewFilesV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-created-(properties-only)"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/batch/onupdatedfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is modified (properties only)",
+        "description": "This operation triggers a flow when a file is modified in a folder.",
+        "operationId": "OnUpdatedFiles",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return by single trigger run (1-100). Note that 'Split On' setting can force trigger to process each item individually.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              },
+              "x-ms-summary": "List of Files"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, modify a file in the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnUpdatedFiles",
+          "revision": 1
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnUpdatedFilesV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-modified-(properties-only)-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/batch/onupdatedfilesv2": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is modified (properties only)",
+        "description": "This operation triggers a flow when a file is modified in a folder.",
+        "operationId": "OnUpdatedFilesV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return by single trigger run (1-100). Note that 'Split On' setting can force trigger to process each item individually.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "simulate",
+            "in": "query",
+            "description": "Simulate this call.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Simulate",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              },
+              "x-ms-summary": "List of Files"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, modify a file in the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "OnUpdatedFiles",
+          "revision": 2
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnUpdatedFilesV2",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-modified-(properties-only)"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/triggers/batch/ondeletedfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "summary": "When a file is deleted (properties only)",
+        "description": "This operation triggers a flow when a file is deleted from a folder.",
+        "operationId": "OnDeletedFiles",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "simulate",
+            "in": "query",
+            "description": "Simulate this call.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Simulate",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              },
+              "x-ms-summary": "List of Files"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, delete a file in the OneDrive folder you selected.",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "x-ms-operation-context": {
+          "simulate": {
+            "operationId": "OnDeletedFiles",
+            "parameters": {
+              "simulate": true
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#when-a-file-is-deleted-(properties-only)"
+        }
+      }
+    },
+    "/{connectionId}/api/trigger/onnewfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "operationId": "OnNewFile_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "x-ms-trigger": "single"
+      }
+    },
+    "/{connectionId}/api/trigger/onupdatedfile": {
+      "get": {
+        "tags": [
+          "OneDriveFileDataTrigger"
+        ],
+        "operationId": "OnUpdatedFile_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "includeFileContent",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true
+          },
+          {
+            "name": "inferContentType",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "headers": {
+              "x-ms-file-id": {
+                "description": "The unique identifier of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File identifier"
+              },
+              "x-ms-file-name": {
+                "description": "The name of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File name"
+              },
+              "x-ms-file-path": {
+                "description": "The path of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File path"
+              },
+              "x-ms-file-etag": {
+                "description": "The etag of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File entity tag"
+              },
+              "Content-Type": {
+                "description": "The content type of the file or folder.",
+                "type": "string",
+                "x-ms-summary": "File content type"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "x-ms-trigger": "single"
+      }
+    },
+    "/{connectionId}/datasets/default/folders/{id}": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "List files in folder",
+        "description": "This operation gets the list of files and subfolders in a folder.",
+        "operationId": "ListFolder",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "includeSubfolders",
+            "in": "query",
+            "description": "Include items in subfolders",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Include subfolders"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "ListFolder",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#list-files-in-folder-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/foldersV2/{id}": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "List files in folder",
+        "description": "This operation gets the list of files and subfolders in a folder.",
+        "operationId": "ListFolderV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "skipToken",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "",
+            "x-ms-summary": "",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "description": "The number of results to return.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 20,
+            "x-ms-summary": "Top",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlobMetadataPage"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "ListFolder",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#list-files-in-folder"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/folders": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "List files in root folder",
+        "description": "This operation gets the list of files and subfolders in the root folder.",
+        "operationId": "ListRootFolder",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#list-files-in-root-folder"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/default/rootfolders": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "Lists all the root folders",
+        "description": "This operation gets the list of root folders.",
+        "operationId": "ListAllRootFolders",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#lists-all-the-root-folders"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/default/extractFolderV2": {
+      "post": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "Extract archive to folder",
+        "description": "This operation extracts an archive file into a folder (example: .zip). Maximum archive size is 50 MB and 100 files inside.",
+        "operationId": "ExtractFolderV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "The path to the archive file.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Source Archive File Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [
+                  "application/zip",
+                  "application/x-zip-compressed"
+                ],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": "(MediaType eq 'application/zip' or MediaType eq 'application/x-zip-compressed')"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": "(MediaType eq 'application/zip' or MediaType eq 'application/x-zip-compressed')"
+              }
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "description": "The path to extract the archive contents.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Destination Folder Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "description": "Overwrites the destination files if set to 'true'.",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "x-ms-summary": "Overwrite"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#extract-archive-to-folder"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/folders/{id}/search": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "Find files in folder",
+        "description": "This operation finds files within a folder using search or name pattern match.",
+        "operationId": "FindFiles",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The search query to use",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Search Query"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": true,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "findMode",
+            "in": "query",
+            "description": "The search method to use. \"Search\" mode searches your OneDrive using the search query (similar a normal search engine). When \"Regular Expression Pattern Match\" mode is selected, the search query will be treated as a regex pattern, and it will return files with names that match the query",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "OneDriveSearch",
+              "Pattern"
+            ],
+            "x-ms-summary": "File Search Mode"
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return (1-100)",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#find-files-in-folder"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/findFile": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "summary": "Find files in folder by path",
+        "description": "This operation finds files within a folder by path using search or name pattern match.",
+        "operationId": "FindFilesByPath",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The search query to use",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Search Query"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The unique path of the folder.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Folder Path",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "dataset": null
+              },
+              "value-path": "Path"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListAllRootFolders",
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  }
+                },
+                "itemValuePath": "Path",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            }
+          },
+          {
+            "name": "findMode",
+            "in": "query",
+            "description": "The search method to use. \"Search\" mode searches your OneDrive using the search query (similar a normal search engine). When \"Regular Expression Pattern Match\" mode is selected, the search query will be treated as a regex pattern, and it will return files with names that match the query",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "OneDriveSearch",
+              "Pattern"
+            ],
+            "x-ms-summary": "File Search Mode"
+          },
+          {
+            "name": "maxFileCount",
+            "in": "query",
+            "description": "Maximum number of files to return (1-100)",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "x-ms-summary": "Number of files to return",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/onedrive/#find-files-in-folder-by-path"
+        }
+      }
+    },
+    "/{connectionId}/api/blob/folders/{id}": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "operationId": "ListFolder_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/api/blob/folders": {
+      "get": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "operationId": "ListRootFolder_Old",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/api/blob/extractFolder": {
+      "post": {
+        "tags": [
+          "OneDriveFolderData"
+        ],
+        "operationId": "ExtractFolder_Old",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/testconnection": {
+      "get": {
+        "tags": [
+          "OneDriveTestConnection"
+        ],
+        "operationId": "TestConnection",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "DataSetsMetadata": {
+      "description": "Dataset metadata",
+      "type": "object",
+      "properties": {
+        "tabular": {
+          "$ref": "#/definitions/TabularDataSetsMetadata"
+        },
+        "blob": {
+          "$ref": "#/definitions/BlobDataSetsMetadata"
+        }
+      }
+    },
+    "TabularDataSetsMetadata": {
+      "description": "Tabular dataset metadata",
+      "type": "object",
+      "properties": {
+        "source": {
+          "description": "Dataset source",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Dataset display name",
+          "type": "string"
+        },
+        "urlEncoding": {
+          "description": "Dataset url encoding",
+          "type": "string"
+        },
+        "tableDisplayName": {
+          "description": "Table display name",
+          "type": "string"
+        },
+        "tablePluralName": {
+          "description": "Table plural display name",
+          "type": "string"
+        }
+      }
+    },
+    "BlobDataSetsMetadata": {
+      "description": "Blob dataset metadata",
+      "type": "object",
+      "properties": {
+        "source": {
+          "description": "Blob dataset source",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Blob dataset display name",
+          "type": "string"
+        },
+        "urlEncoding": {
+          "description": "Blob dataset url encoding",
+          "type": "string"
+        }
+      }
+    },
+    "BlobMetadata": {
+      "description": "Blob metadata",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "The unique identifier of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Id"
+        },
+        "Name": {
+          "description": "The name of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Name"
+        },
+        "NameNoExt": {
+          "description": "The name of the file or folder, without the file extension.",
+          "type": "string",
+          "x-ms-summary": "Name without extension"
+        },
+        "DisplayName": {
+          "description": "The display name of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Display name"
+        },
+        "Path": {
+          "description": "The path of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Path"
+        },
+        "LastModified": {
+          "format": "date-time",
+          "description": "The date and time the file or folder was last modified.",
+          "type": "string",
+          "x-ms-summary": "Last modified time"
+        },
+        "Size": {
+          "format": "int64",
+          "description": "The file or folder size in bytes.",
+          "type": "integer",
+          "x-ms-summary": "Size"
+        },
+        "MediaType": {
+          "description": "The media type of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Media type"
+        },
+        "IsFolder": {
+          "description": "A boolean value (true, false) to indicate whether or not the blob is a folder.",
+          "type": "boolean",
+          "x-ms-summary": "Is folder?"
+        },
+        "ETag": {
+          "description": "The etag of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "ETag"
+        },
+        "FileLocator": {
+          "description": "The file locator of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "File locator"
+        },
+        "LastModifiedBy": {
+          "description": "The user who last modified the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Last modified by"
+        }
+      }
+    },
+    "SharingLink": {
+      "type": "object",
+      "properties": {
+        "WebUrl": {
+          "description": "A URL that points to the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Web URL"
+        }
+      }
+    },
+    "Tags": {
+      "description": "Tags",
+      "type": "object",
+      "properties": {
+        "Tags": {
+          "description": "A list of tags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Tags"
+        }
+      }
+    },
+    "Thumbnail": {
+      "description": "Thumbnail response data",
+      "type": "object",
+      "properties": {
+        "Url": {
+          "description": "A URL that points to the thumbnail.",
+          "type": "string",
+          "x-ms-summary": "Url"
+        },
+        "Width": {
+          "format": "int32",
+          "description": "The thumbnail width in pixels.",
+          "type": "integer",
+          "x-ms-summary": "Width"
+        },
+        "Height": {
+          "format": "int32",
+          "description": "The thumbnail height in pixels.",
+          "type": "integer",
+          "x-ms-summary": "Height"
+        }
+      }
+    },
+    "BlobMetadataPage": {
+      "description": "Represents a page of blob metadata.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Blob metadata collection.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BlobMetadata"
+          },
+          "readOnly": true
+        },
+        "nextLink": {
+          "description": "A URL which can be used to retrieve the next page.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "x-ms-capabilities": {
+    "file-picker": {
+      "open": {
+        "operationId": "ListAllRootFolders"
+      },
+      "browse": {
+        "operationId": "ListFolder",
+        "parameters": {
+          "id": {
+            "value-property": "Id"
+          }
+        }
+      },
+      "value-title": "DisplayName",
+      "value-folder-property": "IsFolder",
+      "value-media-property": "MediaType"
+    },
+    "testConnection": {
+      "operationId": "TestConnection",
+      "parameters": {}
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://products.office.com/onedrive/online-cloud-storage"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/onedrive"
+  }
+}
