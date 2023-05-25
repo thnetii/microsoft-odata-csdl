@@ -1,0 +1,308 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Metatask",
+    "description": "Metatask is a simple tool to organize and control internal processes that lets normal users quickly build and execute business workflows.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "email": "support@metatask.io"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/metatask",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/oauth/api/templates/trigger_completed": {
+      "get": {
+        "summary": "Gets all the Templates for Triggers",
+        "description": "List of Templates for Triggers.",
+        "operationId": "ListTemplatesForTriggers",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListTemplates"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/metatask/#gets-all-the-templates-for-triggers"
+        }
+      }
+    },
+    "/{connectionId}/oauth/api/templates/{templateId-param}/datamodel/flow": {
+      "get": {
+        "summary": "Gets form data fields for selected template",
+        "description": "Gets form data fields for selected template.",
+        "operationId": "ListDataModelForTemplate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "templateId-param",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Template",
+            "type": "string",
+            "x-ms-test-value": "a097d88d325e4c278f95007afde11f39"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProcessCompletedSchema"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/metatask/#gets-form-data-fields-for-selected-template"
+        }
+      }
+    },
+    "/{connectionId}/oauth/subscription/process_completed": {
+      "post": {
+        "summary": "When a process is completed",
+        "description": "Creates Process Completed webhook.",
+        "operationId": "CreateSubscriptionProcessCompleted",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhook_request_body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookCreateBody"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Created"
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/metatask/#when-a-process-is-completed"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details for Process Completed webhook.",
+        "schema": {
+          "$ref": "#/definitions/ProcessCompletedSchemaWebhookResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/oauth/subscription/{hook_id}": {
+      "delete": {
+        "summary": "Deletes webhook",
+        "description": "Deletes webhook.",
+        "operationId": "DeleteSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "hook_id",
+            "in": "path",
+            "description": "ID of the webhook which should be deleted.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/metatask/#deletes-webhook"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ListTemplates": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the template.",
+            "x-ms-summary": "Template Id"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the template.",
+            "x-ms-summary": "Template Name"
+          }
+        }
+      }
+    },
+    "WebhookCreateBody": {
+      "required": [
+        "event",
+        "conditions",
+        "target_url"
+      ],
+      "type": "object",
+      "properties": {
+        "event": {
+          "default": "PROCESS_COMPLETED",
+          "type": "string",
+          "x-ms-visibility": "internal"
+        },
+        "target_url": {
+          "type": "string",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        },
+        "conditions": {
+          "required": [
+            "templateId"
+          ],
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "description": "The template this process is based on.",
+              "type": "string",
+              "x-ms-visibility": "important",
+              "x-ms-summary": "Template",
+              "x-ms-dynamic-values": {
+                "operationId": "ListTemplatesForTriggers",
+                "parameters": {},
+                "value-path": "id",
+                "value-title": "name"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ProcessCompletedSchemaWebhookResponse": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "ListDataModelForTemplate",
+        "parameters": {
+          "templateId-param": {
+            "parameter": "conditions.templateId"
+          }
+        }
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "ListDataModelForTemplate",
+        "parameters": {
+          "templateId-param": {
+            "parameterReference": "webhook_request_body/conditions/templateId"
+          }
+        }
+      }
+    },
+    "ProcessCompletedSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "ListDataModelForTemplate",
+        "parameters": {
+          "templateId-param": {
+            "parameter": "templateId-param"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth_2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://metatask.io/oauth/authorize",
+      "tokenUrl": "https://metatask.io/oauth/access",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth_2": []
+    }
+  ],
+  "tags": [],
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListTemplatesForTriggers",
+      "parameters": {}
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://metatask.io/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.iubenda.com/privacy-policy/7941268/full-legal"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/metatask"
+  }
+}
