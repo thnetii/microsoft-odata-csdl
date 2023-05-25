@@ -45,7 +45,7 @@ module.exports = async (args) => {
             owner,
             repo,
             ref,
-            workflow_id: 'powerplatform-api-connector.yml',
+            workflow_id: '.github/workflows/powerplatform-api-connector.yml',
             inputs: dispRequest,
           });
           core.info('Workflow dispatched successfully.');
