@@ -1,0 +1,361 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Parserr",
+    "description": "Parserr allows you extract data from recurring incoming emails and Excel, CSV and PDF attachments",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/parserr",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/microsoft/subscription/create": {
+      "post": {
+        "summary": "When an email is received",
+        "description": "This operation triggers when a new email is received.",
+        "x-ms-visibility": "important",
+        "operationId": "WebhookEmailReceived",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, send yourself an email.",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parserr/#when-an-email-is-received"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "$ref": "#/definitions/InboxInfo"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/api/microsoft/subscription/{hookId}": {
+      "delete": {
+        "summary": "Delete hook",
+        "description": "Delete a hook.",
+        "operationId": "DeleteHook",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "hookId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parserr/#delete-hook"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft/user/emaillist": {
+      "get": {
+        "summary": "List inboxes",
+        "description": "This operation is used to list all your inboxes.",
+        "operationId": "ListInboxes",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListInboxes_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parserr/#list-inboxes"
+        }
+      }
+    },
+    "/{connectionId}/api/microsoft/subscription/emaillist/{email}": {
+      "get": {
+        "summary": "Get schema",
+        "description": "Get schema",
+        "operationId": "GetSchema",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "email",
+            "in": "path",
+            "description": "Inbox ID",
+            "required": true,
+            "x-ms-summary": "Inbox ID",
+            "type": "string",
+            "x-ms-test-value": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parserr/#get-schema"
+        }
+      }
+    },
+    "/webhook_response": {
+      "post": {
+        "operationId": "WebhookResponse",
+        "parameters": [
+          {
+            "name": "logicAppsUri",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "security": [],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true
+      }
+    }
+  },
+  "definitions": {
+    "InboxInfo": {
+      "type": "object",
+      "properties": {
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        }
+      }
+    },
+    "Item": {
+      "type": "object",
+      "properties": {
+        "ItemInternalId": {
+          "type": "string",
+          "x-ms-visibility": "internal"
+        }
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetSchema",
+        "parameters": {
+          "email": {
+            "parameter": "email"
+          }
+        },
+        "value-path": "schema/items"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetSchema",
+        "parameters": {
+          "email": {
+            "parameterReference": "body/email"
+          }
+        },
+        "itemValuePath": "schema/items"
+      }
+    },
+    "InboxInfoOld": {
+      "type": "object",
+      "properties": {},
+      "x-ms-dynamic-schema": {
+        "operationId": "GetSchema",
+        "parameters": {
+          "email": {
+            "parameter": "email"
+          }
+        },
+        "value-path": "schema"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetSchema",
+        "parameters": {
+          "email": {
+            "parameterReference": "body/email"
+          }
+        },
+        "itemValuePath": "schema"
+      }
+    },
+    "WebhookRequest": {
+      "required": [
+        "TriggerUrl",
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "TriggerUrl": {
+          "type": "string",
+          "x-ms-summary": "url",
+          "x-ms-visibility": "internal",
+          "x-ms-notification-url": true
+        },
+        "email": {
+          "description": "The email address.",
+          "type": "string",
+          "x-ms-summary": "Email",
+          "x-ms-visibility": "important",
+          "x-ms-dynamic-values": {
+            "operationId": "ListInboxes",
+            "value-path": "id",
+            "value-title": "friendlyName"
+          }
+        }
+      }
+    },
+    "ListInboxes_Response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "description": "Email address associated with the inbox.",
+            "type": "string",
+            "x-ms-summary": "Address",
+            "x-ms-visibility": "important"
+          },
+          "dateAdded": {
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ",
+            "type": "string",
+            "x-ms-summary": "Date-Time Created",
+            "x-ms-visibility": "advanced"
+          },
+          "id": {
+            "format": "int32",
+            "description": "Unique identifier of the inbox.",
+            "type": "integer",
+            "x-ms-summary": "Inbox Id",
+            "x-ms-visibility": "advanced"
+          },
+          "name": {
+            "description": "Title of the inbox.",
+            "type": "string",
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic",
+      "description": "HTTP Basic Authentication. Works over HTTP and HTTPS"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListInboxes"
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/parserr"
+  }
+}
