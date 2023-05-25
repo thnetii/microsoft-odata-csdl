@@ -1,0 +1,2612 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Azure SQL Data Warehouse",
+    "description": "Microsoft Azure SQL Data Warehouse is a relational database management system developed by Microsoft. Connect to Azure SQL Data Warehouse to view your data.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/sqldw",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/$metadata.json/datasets": {
+      "get": {
+        "tags": [
+          "SqlDataSetsMetadata"
+        ],
+        "operationId": "GetDataSetsMetadata",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DataSetsMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/testconnection": {
+      "get": {
+        "tags": [
+          "SqlDiagnostic"
+        ],
+        "operationId": "TestConnection",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/default/procedures/{procedure}": {
+      "post": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Execute stored procedure",
+        "description": "This operation runs a stored procedure.",
+        "operationId": "ExecuteProcedure",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProcedures",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "parameters",
+            "in": "body",
+            "description": "Input parameters to the stored procedure",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedure",
+                "parameters": {
+                  "procedure": {
+                    "parameter": "procedure"
+                  }
+                },
+                "value-path": "Schema/InputParameters"
+              }
+            },
+            "x-ms-summary": "Parameters list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/ProcedureResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedure",
+                "parameters": {
+                  "procedure": {
+                    "parameter": "procedure"
+                  }
+                },
+                "value-path": "schema/procedureresultschema"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#execute-stored-procedure"
+        }
+      }
+    },
+    "/{connectionId}/v2/datasets/{server},{database}/procedures/{procedure}": {
+      "post": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Execute stored procedure (V2)",
+        "description": "This operation runs a stored procedure.",
+        "operationId": "ExecuteProcedureV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProceduresV2",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                },
+                "database": {
+                  "parameter": "database"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "parameters",
+            "in": "body",
+            "description": "Input parameters to the stored procedure",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedureV2",
+                "parameters": {
+                  "procedure": {
+                    "parameter": "procedure"
+                  },
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  }
+                },
+                "value-path": "Schema/InputParameters"
+              }
+            },
+            "x-ms-summary": "Parameters list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/ProcedureResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedureV2",
+                "parameters": {
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  },
+                  "procedure": {
+                    "parameter": "procedure"
+                  }
+                },
+                "value-path": "schema/procedureresultschema"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#execute-stored-procedure-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/procedures": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get stored procedures",
+        "description": "This operation gets stored procedures for a database.",
+        "operationId": "GetProcedures",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Procedure"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-stored-procedures"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v2/datasets/{server},{database}/procedures": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get stored procedures (V2)",
+        "description": "This operation gets stored procedures for a database.",
+        "operationId": "GetProceduresV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          }
+        ],
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Procedure"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-stored-procedures-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets('{dataSet}')/procedures": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get stored procedures",
+        "description": "This operation gets stored procedures for a database.",
+        "operationId": "ODataStyleGetProcedures",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataSet",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Dataset name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Procedure"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-stored-procedures"
+        }
+      }
+    },
+    "/{connectionId}/v2/$metadata.json/datasets/{server},{database}/procedures/{procedure}": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get procedure metadata (V2)",
+        "description": "This operation gets metadata for a stored procedure.",
+        "operationId": "GetProcedureV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProcedures",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProcedureMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-procedure-metadata-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets/default/procedures/{procedure}": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get procedure metadata",
+        "description": "This operation gets metadata for a stored procedure.",
+        "operationId": "GetProcedure",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProcedures",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProcedureMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-procedure-metadata"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets('{dataSet}')/procedures('{procedure}')": {
+      "get": {
+        "tags": [
+          "SqlProcedure"
+        ],
+        "summary": "Get procedure metadata",
+        "description": "This operation gets metadata for a stored procedure.",
+        "operationId": "ODataStyleGetProcedure",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataSet",
+            "in": "path",
+            "description": "Name of dataset",
+            "required": true,
+            "x-ms-summary": "Dataset name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProcedureMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-procedure-metadata"
+        }
+      }
+    },
+    "/{connectionId}/v2/$metadata.json/datasets/{server},{database}/tables/{table}": {
+      "get": {
+        "tags": [
+          "SqlTableMetadata"
+        ],
+        "summary": "Get table metadata (v2)",
+        "description": "This operation gets metadata for a table.",
+        "operationId": "GetTableV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TableMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-table-metadata-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets/default/tables/{table}": {
+      "get": {
+        "tags": [
+          "SqlTableMetadata"
+        ],
+        "summary": "Get table metadata",
+        "description": "This operation gets metadata for a table.",
+        "operationId": "GetTable",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TableMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-table-metadata"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets('{dataset}')/tables('{table}')": {
+      "get": {
+        "tags": [
+          "SqlTableMetadata"
+        ],
+        "summary": "Get table metadata",
+        "description": "This operation gets metadata for a table.",
+        "operationId": "ODataStyleGetTable",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of dataset",
+            "required": true,
+            "x-ms-summary": "Dataset name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TableMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-table-metadata"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets/default/query/sql": {
+      "post": {
+        "tags": [
+          "SqlDWPassThroughNativeQueryMetadata"
+        ],
+        "summary": "Get pass-through native query metadata",
+        "description": "Retrieves metadata for a pass-through native query",
+        "operationId": "GetPassThroughNativeQueryMetadata",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query text",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryBody"
+            },
+            "x-ms-summary": "query text"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-pass-through-native-query-metadata"
+        }
+      }
+    },
+    "/{connectionId}/v2/$metadata.json/datasets/{server},{database}/query/sql": {
+      "post": {
+        "tags": [
+          "SqlDWPassThroughNativeQueryMetadata"
+        ],
+        "summary": "Get pass-through native query metadata (V2)",
+        "description": "Retrieves metadata for a pass-through native query",
+        "operationId": "GetPassThroughNativeQueryMetadataV2",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query text",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryBodyV2"
+            },
+            "x-ms-summary": "query text"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-pass-through-native-query-metadata-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets": {
+      "get": {
+        "tags": [
+          "SqlDataSet"
+        ],
+        "summary": "Gets datasets",
+        "description": "This operation gets all datasets available to the connection.",
+        "operationId": "GetDataSets",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DataSetsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#gets-datasets"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/default/tablesfor": {
+      "get": {
+        "tags": [
+          "SqlTable"
+        ],
+        "summary": "GetTables with OData paging and filtering",
+        "description": "GetTables with OData paging and filtering",
+        "operationId": "GetFilteredTables",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Total number of entries to retrieve (default = all)",
+            "required": false,
+            "x-ms-summary": "Top Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#gettables-with-odata-paging-and-filtering"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/tables": {
+      "get": {
+        "tags": [
+          "SqlTable"
+        ],
+        "summary": "Get tables",
+        "description": "This operation gets tables from a database.",
+        "operationId": "GetTables",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-tables"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v2/datasets/{server},{database}/tables": {
+      "get": {
+        "tags": [
+          "SqlTable"
+        ],
+        "summary": "Get tables (V2)",
+        "description": "This operation gets tables from a database.",
+        "operationId": "GetTablesV2",
+        "consumes": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-tables-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets({dataset})/tables": {
+      "get": {
+        "tags": [
+          "SqlTable"
+        ],
+        "operationId": "ODataStyleGetTables",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/datasets/default/query/sql": {
+      "post": {
+        "tags": [
+          "SqlDWPassThroughNativeQuery"
+        ],
+        "summary": "Execute a SQL query",
+        "description": "Execute a SQL query",
+        "operationId": "ExecutePassThroughNativeQuery",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryBody"
+            },
+            "x-ms-summary": "Query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/PassThroughNativeQueryResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetPassThroughNativeQueryMetadata",
+                "parameters": {
+                  "formalParameters": {
+                    "parameter": "formalParameters"
+                  },
+                  "query": {
+                    "parameter": "query"
+                  }
+                },
+                "value-path": "schema/queryresults"
+              },
+              "x-ms-dynamic-properties": {
+                "operationId": "GetPassThroughNativeQueryMetadata",
+                "parameters": {
+                  "query/formalParameters": {
+                    "parameterReference": "query/formalParameters"
+                  },
+                  "query/query": {
+                    "parameterReference": "query/query"
+                  }
+                },
+                "itemValuePath": "schema/queryresults"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#execute-a-sql-query"
+        }
+      }
+    },
+    "/{connectionId}/v2/datasets/{server},{database}/query/sql": {
+      "post": {
+        "tags": [
+          "SqlDWPassThroughNativeQuery"
+        ],
+        "summary": "Execute a SQL query (V2)",
+        "description": "Execute a SQL query",
+        "operationId": "ExecutePassThroughNativeQueryV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryBodyV2"
+            },
+            "x-ms-summary": "Query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/PassThroughNativeQueryResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetPassThroughNativeQueryMetadataV2",
+                "parameters": {
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  },
+                  "formalParameters": {
+                    "parameter": "formalParameters"
+                  },
+                  "query": {
+                    "parameter": "query"
+                  }
+                },
+                "value-path": "schema/queryresults"
+              },
+              "x-ms-dynamic-properties": {
+                "operationId": "GetPassThroughNativeQueryMetadataV2",
+                "parameters": {
+                  "server": {
+                    "parameterReference": "server"
+                  },
+                  "database": {
+                    "parameterReference": "database"
+                  },
+                  "query/formalParameters": {
+                    "parameterReference": "query/formalParameters"
+                  },
+                  "query/query": {
+                    "parameterReference": "query/query"
+                  }
+                },
+                "itemValuePath": "schema/queryresults"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#execute-a-sql-query-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets/default/tables/{table}/items": {
+      "get": {
+        "tags": [
+          "SqlTableData"
+        ],
+        "summary": "Get rows",
+        "description": "This operation gets rows from a table.",
+        "operationId": "GetItems",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of SQL table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Total number of entries to retrieve (default = all)",
+            "required": false,
+            "x-ms-summary": "Top Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Specific fields to retrieve from entries (default = all)",
+            "required": false,
+            "x-ms-summary": "Select Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ItemsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-rows"
+        }
+      }
+    },
+    "/{connectionId}/v2/datasets/{server},{database}/tables/{table}/items": {
+      "get": {
+        "tags": [
+          "SqlTableData"
+        ],
+        "summary": "Get rows (V2)",
+        "description": "This operation gets rows from a table.",
+        "operationId": "GetItemsV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "server name of the database",
+            "x-ms-summary": "server name of the database",
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "required": true
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "name of the database",
+            "x-ms-summary": "name of the database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string",
+            "x-ms-url-encoding": "double",
+            "required": true
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of SQL table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTablesV2",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                },
+                "database": {
+                  "parameter": "database"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Total number of entries to retrieve (default = all)",
+            "required": false,
+            "x-ms-summary": "Top Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Specific fields to retrieve from entries (default = all)",
+            "required": false,
+            "x-ms-summary": "Select Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ItemsListV2"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-rows-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/datasets({dataset})/tables({table})/items": {
+      "get": {
+        "tags": [
+          "SqlTableData"
+        ],
+        "summary": "Get rows",
+        "description": "This operation gets rows from a table.",
+        "operationId": "ODataStyleGetItems",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of dataset",
+            "required": true,
+            "x-ms-summary": "Dataset name",
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "required": true,
+            "x-ms-summary": "Table name",
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Total number of entries to retrieve (default = all)",
+            "required": false,
+            "x-ms-summary": "Top Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Specific fields to retrieve from entries (default = all)",
+            "required": false,
+            "x-ms-summary": "Select Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ItemsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#get-rows"
+        }
+      }
+    },
+    "/{connectionId}/servers": {
+      "get": {
+        "tags": [
+          "SqlDataSet"
+        ],
+        "summary": "List the servers",
+        "description": "List the servers",
+        "operationId": "GetServers",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ODataServersList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#list-the-servers"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/databases": {
+      "get": {
+        "tags": [
+          "SqlDataSet"
+        ],
+        "summary": "List the databases",
+        "description": "List the databases",
+        "operationId": "GetDatabases",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "query",
+            "description": "Server name",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DatabasesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/sqldw/#list-the-databases"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DataSetsMetadata": {
+      "type": "object",
+      "properties": {
+        "tabular": {
+          "$ref": "#/definitions/TabularDataSetsMetadata"
+        },
+        "blob": {
+          "$ref": "#/definitions/BlobDataSetsMetadata"
+        }
+      }
+    },
+    "ODataServersList": {
+      "description": "List of datasets",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of datasets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Server"
+          }
+        }
+      }
+    },
+    "Server": {
+      "description": "Represents a server.",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "The name of the server. The name is used at runtime.",
+          "type": "string"
+        },
+        "DisplayName": {
+          "description": "The display name of the server.",
+          "type": "string"
+        },
+        "DynamicProperties": {
+          "description": "Additional server properties provided by the connector to the clients.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        },
+        "databases": {
+          "description": "Table items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Database"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "Database": {
+      "description": "Represents a database.",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "The name of the database. The name is used at runtime.",
+          "type": "string"
+        },
+        "DisplayName": {
+          "description": "The display name of the database.",
+          "type": "string"
+        },
+        "DynamicProperties": {
+          "description": "Additional database properties provided by the connector to the clients.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        },
+        "tables": {
+          "description": "Database items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Table"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "DatabasesList": {
+      "description": "List of datasets",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of datasets",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Database"
+          }
+        }
+      }
+    },
+    "TabularDataSetsMetadata": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "urlEncoding": {
+          "type": "string"
+        },
+        "tableDisplayName": {
+          "type": "string"
+        },
+        "tablePluralName": {
+          "type": "string"
+        }
+      }
+    },
+    "BlobDataSetsMetadata": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "urlEncoding": {
+          "type": "string"
+        }
+      }
+    },
+    "Procedure": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      }
+    },
+    "ProcedureMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
+    "PassThroughNativeQueryMetadata": {
+      "description": "Represents the metadata for a pass-through native query",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Query name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Query title",
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
+    "PassThroughNativeQueryResult": {
+      "description": "All results of the query",
+      "type": "object",
+      "properties": {
+        "OutputParameters": {
+          "description": "Output parameter values",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        },
+        "ResultSets": {
+          "description": "Collection of all result sets",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              }
+            }
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "PassThroughNativeQueryBodyV2": {
+      "description": "Input body to execute Pass-through Native Query (PNQ)",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Query Text",
+          "type": "string"
+        },
+        "formalParameters": {
+          "description": "Formal Parameters",
+          "x-ms-editor": "dictionary",
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "int",
+              "bigint",
+              "nvarchar",
+              "uniqueidentifier",
+              "bit",
+              "smallint",
+              "tinyint",
+              "decimal",
+              "numeric",
+              "float",
+              "real",
+              "date",
+              "datetime",
+              "datetime2",
+              "time",
+              "smalldatetime",
+              "datetimeoffset",
+              "money",
+              "smallmoney",
+              "binary",
+              "varbinary",
+              "xml"
+            ],
+            "type": "string"
+          }
+        },
+        "actualParameters": {
+          "description": "Actual Parameters",
+          "type": "object",
+          "additionalProperties": true,
+          "x-ms-dynamic-schema": {
+            "operationId": "GetPassThroughNativeQueryMetadataV2",
+            "parameters": {
+              "server": {
+                "parameter": "server"
+              },
+              "database": {
+                "parameter": "database"
+              },
+              "formalParameters": {
+                "parameter": "formalParameters"
+              }
+            },
+            "value-path": "schema/actualparameters"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetPassThroughNativeQueryMetadataV2",
+            "parameters": {
+              "server": {
+                "parameterReference": "server"
+              },
+              "database": {
+                "parameterReference": "database"
+              },
+              "query/formalParameters": {
+                "parameterReference": "query/formalParameters"
+              }
+            },
+            "itemValuePath": "schema/actualparameters"
+          }
+        }
+      }
+    },
+    "PassThroughNativeQueryBody": {
+      "description": "Input body to execute Pass-through Native Query (PNQ)",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Query Text",
+          "type": "string"
+        },
+        "formalParameters": {
+          "description": "Formal Parameters",
+          "x-ms-editor": "dictionary",
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "int",
+              "bigint",
+              "nvarchar",
+              "uniqueidentifier",
+              "bit",
+              "smallint",
+              "tinyint",
+              "decimal",
+              "numeric",
+              "float",
+              "real",
+              "date",
+              "datetime",
+              "datetime2",
+              "time",
+              "smalldatetime",
+              "datetimeoffset",
+              "money",
+              "smallmoney",
+              "binary",
+              "varbinary",
+              "xml"
+            ],
+            "type": "string"
+          }
+        },
+        "actualParameters": {
+          "description": "Actual Parameters",
+          "type": "object",
+          "additionalProperties": true,
+          "x-ms-dynamic-schema": {
+            "operationId": "GetPassThroughNativeQueryMetadata",
+            "parameters": {
+              "formalParameters": {
+                "parameter": "formalParameters"
+              }
+            },
+            "value-path": "schema/actualparameters"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetPassThroughNativeQueryMetadata",
+            "parameters": {
+              "query/formalParameters": {
+                "parameterReference": "query/formalParameters"
+              }
+            },
+            "itemValuePath": "schema/actualparameters"
+          }
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "properties": {}
+    },
+    "ProcedureResult": {
+      "type": "object",
+      "properties": {
+        "OutputParameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        },
+        "ReturnCode": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "ResultSets": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "TableMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "x-ms-permission": {
+          "type": "string"
+        },
+        "x-ms-capabilities": {
+          "$ref": "#/definitions/TableCapabilitiesMetadata"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
+        },
+        "referencedEntities": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
+    "TableCapabilitiesMetadata": {
+      "type": "object",
+      "properties": {
+        "sortRestrictions": {
+          "$ref": "#/definitions/TableSortRestrictionsMetadata"
+        },
+        "filterRestrictions": {
+          "$ref": "#/definitions/TableFilterRestrictionsMetadata"
+        },
+        "isOnlyServerPagable": {
+          "type": "boolean"
+        },
+        "filterFunctionSupport": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "eq",
+              "ne",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "and",
+              "or",
+              "contains",
+              "startswith",
+              "endswith",
+              "length",
+              "indexof",
+              "replace",
+              "substring",
+              "substringof",
+              "tolower",
+              "toupper",
+              "trim",
+              "concat",
+              "year",
+              "month",
+              "day",
+              "hour",
+              "minute",
+              "second",
+              "date",
+              "time",
+              "now",
+              "totaloffsetminutes",
+              "totalseconds",
+              "floor",
+              "ceiling",
+              "round",
+              "not",
+              "negate",
+              "add",
+              "sub",
+              "mul",
+              "div",
+              "mod",
+              "sum",
+              "min",
+              "max",
+              "average",
+              "countdistinct",
+              "null"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TableSortRestrictionsMetadata": {
+      "type": "object",
+      "properties": {
+        "sortable": {
+          "type": "boolean"
+        },
+        "unsortableProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ascendingOnlyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TableFilterRestrictionsMetadata": {
+      "type": "object",
+      "properties": {
+        "filterable": {
+          "type": "boolean"
+        },
+        "nonFilterableProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiredProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DataSetsList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataSet"
+          }
+        }
+      }
+    },
+    "DataSet": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      }
+    },
+    "Table": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      }
+    },
+    "Item": {
+      "type": "object",
+      "properties": {
+        "ItemInternalId": {
+          "type": "string",
+          "x-ms-visibility": "internal"
+        }
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetTable",
+        "parameters": {
+          "table": {
+            "parameter": "table"
+          }
+        },
+        "value-path": "Schema/Items"
+      }
+    },
+    "ItemV2": {
+      "type": "object",
+      "properties": {
+        "ItemInternalId": {
+          "type": "string",
+          "x-ms-visibility": "internal"
+        }
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetTableV2",
+        "parameters": {
+          "table": {
+            "parameter": "table"
+          },
+          "server": {
+            "parameter": "server"
+          },
+          "database": {
+            "parameter": "database"
+          }
+        },
+        "value-path": "Schema/Items"
+      }
+    },
+    "TablesList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Table"
+          }
+        }
+      }
+    },
+    "ItemsList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        }
+      }
+    },
+    "ItemsListV2": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ItemV2"
+          }
+        }
+      }
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "TestConnection",
+      "parameters": {}
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://azure.microsoft.com/services/synapse-analytics/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/sqldw"
+  }
+}
