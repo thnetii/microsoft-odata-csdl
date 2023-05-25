@@ -1,0 +1,968 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "GoToMeeting",
+    "description": "GoToMeeting is an online meeting tool. You can schedule your own meetings or watch for the ones you are invited to.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "url": "https://support.goto.com/meeting"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/gotomeeting",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/upcomingMeetings": {
+      "get": {
+        "summary": "List upcoming meetings",
+        "description": "Returns upcoming meetings for the authenticated organizer.",
+        "operationId": "GetUpcomingMeetings",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MeetingArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#list-upcoming-meetings"
+        }
+      }
+    },
+    "/{connectionId}/new_meeting_trigger/upcomingMeetings": {
+      "get": {
+        "summary": "When a meeting is created",
+        "description": "Triggers a flow when a new meeting is created",
+        "operationId": "OnNewMeeting",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MeetingArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a meeting.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#when-a-meeting-is-created"
+        }
+      }
+    },
+    "/{connectionId}/meetings": {
+      "post": {
+        "tags": [
+          "GoToMeeting"
+        ],
+        "summary": "Create a meeting",
+        "description": "Create a new meeting based on the parameters specified.",
+        "operationId": "CreateMeeting",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "newMeeting",
+            "in": "body",
+            "description": "New meeting to create",
+            "required": true,
+            "schema": {
+              "description": "Model used to create a meeting",
+              "required": [
+                "subject",
+                "starttime",
+                "endtime",
+                "conferencecallinfo",
+                "passwordrequired"
+              ],
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "x-ms-summary": "Subject",
+                  "x-ms-visibility": "important"
+                },
+                "starttime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+                  "type": "string",
+                  "x-ms-summary": "Start time",
+                  "x-ms-visibility": "important"
+                },
+                "endtime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+                  "type": "string",
+                  "x-ms-summary": "End time",
+                  "x-ms-visibility": "important"
+                },
+                "passwordrequired": {
+                  "description": "Indicates whether the meeting requires a password",
+                  "type": "boolean",
+                  "x-ms-summary": "Requires password",
+                  "x-ms-visibility": "important"
+                },
+                "conferencecallinfo": {
+                  "description": "Conference call type (PSTN, Free, Hybrid, Private, VoIP) or a custom value",
+                  "enum": [
+                    "PSTN",
+                    "Free",
+                    "Hybrid",
+                    "Private",
+                    "VoIP"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Conference call info",
+                  "x-ms-visibility": "important"
+                },
+                "meetingtype": {
+                  "enum": [
+                    "immediate",
+                    "recurring",
+                    "scheduled"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Meeting type",
+                  "description": "The type of meeting to create (immediate, recurring, scheduled)",
+                  "x-ms-visibility": "advanced"
+                }
+              },
+              "x-ms-test-value": {
+                "subject": "test meeting",
+                "starttime": "2017-07-20T08:00:59Z",
+                "endtime": "2017-07-20T08:30:59Z",
+                "conferencecallinfo": "Free",
+                "passwordrequired": true,
+                "meetingtype": "immediate"
+              }
+            },
+            "x-ms-summary": "New meeting"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/NewMeetingResponse"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Preview",
+          "family": "CreateMeeting",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#create-a-meeting-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/meetings": {
+      "post": {
+        "tags": [
+          "GoToMeeting"
+        ],
+        "summary": "Create a meeting",
+        "description": "Create a new meeting based on the parameters specified.",
+        "operationId": "CreateMeeting_V2",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "newMeeting",
+            "in": "body",
+            "description": "New meeting to create",
+            "required": true,
+            "schema": {
+              "description": "Model used to create a meeting",
+              "required": [
+                "subject",
+                "starttime",
+                "endtime",
+                "conferencecallinfo",
+                "passwordrequired",
+                "meetingtype"
+              ],
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "x-ms-summary": "Subject",
+                  "x-ms-visibility": "important"
+                },
+                "starttime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+                  "type": "string",
+                  "x-ms-summary": "Start time",
+                  "x-ms-visibility": "important"
+                },
+                "endtime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+                  "type": "string",
+                  "x-ms-summary": "End time",
+                  "x-ms-visibility": "important"
+                },
+                "passwordrequired": {
+                  "description": "Indicates whether the meeting requires a password.",
+                  "type": "boolean",
+                  "x-ms-summary": "Requires password",
+                  "x-ms-visibility": "important"
+                },
+                "conferencecallinfo": {
+                  "description": "Conference call type (PSTN, Free, Hybrid, Private, VoIP) or a custom value.",
+                  "enum": [
+                    "PSTN",
+                    "Free",
+                    "Hybrid",
+                    "Private",
+                    "VoIP"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Conference call info",
+                  "x-ms-visibility": "important"
+                },
+                "meetingtype": {
+                  "description": "The type of meeting to create (immediate, recurring, scheduled).",
+                  "enum": [
+                    "immediate",
+                    "recurring",
+                    "scheduled"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Meeting type",
+                  "x-ms-visibility": "important"
+                }
+              },
+              "x-ms-test-value": {
+                "subject": "test meeting",
+                "starttime": "2017-07-20T08:00:59Z",
+                "endtime": "2017-07-20T08:30:59Z",
+                "conferencecallinfo": "Free",
+                "passwordrequired": true,
+                "meetingtype": "immediate"
+              }
+            },
+            "x-ms-summary": "New meeting"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/NewMeetingResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Preview",
+          "family": "CreateMeeting",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#create-a-meeting"
+        }
+      }
+    },
+    "/{connectionId}/meetings/{meetingId}": {
+      "get": {
+        "summary": "Get a meeting",
+        "description": "Returns the meeting details for the specified meeting.",
+        "operationId": "GetMeeting",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/meetingId__in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Meeting"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#get-a-meeting"
+        }
+      },
+      "put": {
+        "tags": [
+          "GoToMeeting"
+        ],
+        "summary": "Update a meeting",
+        "description": "Updates an existing meeting specified by meetingId.",
+        "operationId": "UpdateMeeting",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/meetingId__in_path"
+          },
+          {
+            "name": "meeting",
+            "in": "body",
+            "description": "Meeting to create or update",
+            "required": true,
+            "schema": {
+              "description": "Model used to update a meeting",
+              "required": [
+                "subject",
+                "starttime",
+                "endtime",
+                "passwordrequired",
+                "conferencecallinfo"
+              ],
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "x-ms-summary": "Subject",
+                  "x-ms-visibility": "important"
+                },
+                "starttime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+                  "type": "string",
+                  "x-ms-summary": "Start time",
+                  "x-ms-visibility": "important"
+                },
+                "endtime": {
+                  "format": "date-time",
+                  "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+                  "type": "string",
+                  "x-ms-summary": "End time",
+                  "x-ms-visibility": "important"
+                },
+                "passwordrequired": {
+                  "description": "Indicates whether the meeting requires a password",
+                  "type": "boolean",
+                  "x-ms-summary": "Requires password",
+                  "x-ms-visibility": "important"
+                },
+                "conferencecallinfo": {
+                  "description": "Conference call type (PSTN, Free, Hybrid, Private, VoIP) or a custom value",
+                  "enum": [
+                    "PSTN",
+                    "Free",
+                    "Hybrid",
+                    "Private",
+                    "VoIP"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Conference call info",
+                  "x-ms-visibility": "important"
+                },
+                "meetingtype": {
+                  "enum": [
+                    "immediate",
+                    "recurring",
+                    "scheduled"
+                  ],
+                  "type": "string",
+                  "x-ms-summary": "Meeting type",
+                  "description": "The type of meeting to create (immediate, recurring, scheduled)",
+                  "x-ms-visibility": "advanced"
+                }
+              },
+              "x-ms-test-value": {
+                "subject": "test meeting",
+                "starttime": "2017-07-20T08:00:59Z",
+                "endtime": "2017-07-20T08:30:59Z",
+                "conferencecallinfo": "Free",
+                "passwordrequired": true,
+                "meetingtype": "recurring"
+              }
+            },
+            "x-ms-summary": "Meeting to update"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#update-a-meeting"
+        }
+      }
+    },
+    "/{connectionId}/meetings/{meetingId}/attendees": {
+      "get": {
+        "summary": "Get meeting attendees",
+        "description": "Returns a list of attendees for a meeting with the given ID.",
+        "operationId": "GetMeetingAttendees",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "meetingId",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Meeting Id",
+            "description": "The id of the meeting",
+            "x-ms-test-value": "138400093",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AttendeeArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#get-meeting-attendees"
+        }
+      }
+    },
+    "/{connectionId}/completed_meeting_trigger/historicalMeetings": {
+      "get": {
+        "summary": "When a meeting ends",
+        "description": "Triggers when a meeting ends.",
+        "operationId": "OnMeetingComplete",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MeetingArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, end a meeting.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/gotomeeting/#when-a-meeting-ends"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Meeting": {
+      "description": "Represents a meeting",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "description": "The subject of the meeting.",
+          "type": "string",
+          "x-ms-summary": "Subject",
+          "x-ms-visibility": "important"
+        },
+        "startTime": {
+          "format": "date-time",
+          "description": "The start time of the meeting, in yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+          "type": "string",
+          "x-ms-summary": "Start time",
+          "x-ms-visibility": "important"
+        },
+        "endTime": {
+          "format": "date-time",
+          "description": "The end time of the meeting, in yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+          "type": "string",
+          "x-ms-summary": "End time",
+          "x-ms-visibility": "important"
+        },
+        "firstName": {
+          "description": "The first name of the meeting organizer.",
+          "type": "string",
+          "x-ms-summary": "Organizer first name",
+          "x-ms-visibility": "advanced"
+        },
+        "lastName": {
+          "description": "The last name of the meeting organizer.",
+          "type": "string",
+          "x-ms-summary": "Organizer last name",
+          "x-ms-visibility": "advanced"
+        },
+        "email": {
+          "description": "The email address of the meeting organizer.",
+          "type": "string",
+          "x-ms-summary": "Organizer email",
+          "x-ms-visibility": "advanced"
+        },
+        "conferenceCallInfo": {
+          "description": "Audio options for the meeting.",
+          "type": "string",
+          "x-ms-summary": "Conference call info",
+          "x-ms-visibility": "important"
+        },
+        "passwordRequired": {
+          "description": "Indicates whether the meeting requires a password.",
+          "type": "string",
+          "x-ms-summary": "Requires password",
+          "x-ms-visibility": "advanced"
+        },
+        "status": {
+          "type": "string",
+          "x-ms-summary": "Status",
+          "x-ms-visibility": "advanced"
+        },
+        "locale": {
+          "description": "Indicates the location and language of the meeting.",
+          "type": "string",
+          "x-ms-summary": "Location code",
+          "x-ms-visibility": "advanced"
+        },
+        "meetingId": {
+          "format": "int32",
+          "description": "The id of the meeting.",
+          "type": "integer",
+          "x-ms-summary": "Meeting Id",
+          "x-ms-visibility": "important"
+        },
+        "meetingType": {
+          "description": "The meeting type, such as immediate, recurring or scheduled.",
+          "type": "string",
+          "x-ms-summary": "Meeting type",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "MeetingArray": {
+      "type": "array",
+      "items": {
+        "description": "Represents a meeting",
+        "type": "object",
+        "properties": {
+          "subject": {
+            "description": "The subject of the meeting.",
+            "type": "string",
+            "x-ms-summary": "Subject",
+            "x-ms-visibility": "important"
+          },
+          "startTime": {
+            "format": "date-time",
+            "description": "The start time of the meeting, in yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+            "type": "string",
+            "x-ms-summary": "Start time",
+            "x-ms-visibility": "important"
+          },
+          "endTime": {
+            "format": "date-time",
+            "description": "The end time of the meeting, in yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z).",
+            "type": "string",
+            "x-ms-summary": "End time",
+            "x-ms-visibility": "important"
+          },
+          "firstName": {
+            "description": "The first name of the meeting organizer.",
+            "type": "string",
+            "x-ms-summary": "Organizer first name",
+            "x-ms-visibility": "advanced"
+          },
+          "lastName": {
+            "description": "The last name of the meeting organizer.",
+            "type": "string",
+            "x-ms-summary": "Organizer last name",
+            "x-ms-visibility": "advanced"
+          },
+          "email": {
+            "description": "The email address of the meeting organizer.",
+            "type": "string",
+            "x-ms-summary": "Organizer email",
+            "x-ms-visibility": "important"
+          },
+          "conferenceCallInfo": {
+            "description": "Audio options for the meeting.",
+            "type": "string",
+            "x-ms-summary": "Conference call info",
+            "x-ms-visibility": "important"
+          },
+          "passwordRequired": {
+            "description": "Indicates whether the meeting requires a password.",
+            "type": "string",
+            "x-ms-summary": "Requires password",
+            "x-ms-visibility": "advanced"
+          },
+          "status": {
+            "type": "string",
+            "x-ms-summary": "Status",
+            "x-ms-visibility": "advanced"
+          },
+          "locale": {
+            "description": "Indicates the location and language of the meeting.",
+            "type": "string",
+            "x-ms-summary": "Location code",
+            "x-ms-visibility": "advanced"
+          },
+          "meetingId": {
+            "description": "The id of the meeting.",
+            "type": "string",
+            "x-ms-summary": "Meeting Id",
+            "x-ms-visibility": "important"
+          },
+          "meetingType": {
+            "description": "The meeting type, such as immediate, recurring or scheduled.",
+            "type": "string",
+            "x-ms-summary": "Meeting type",
+            "x-ms-visibility": "important"
+          }
+        }
+      }
+    },
+    "MeetingRequest": {
+      "description": "Model used to create a meeting",
+      "required": [
+        "subject",
+        "starttime",
+        "endtime",
+        "conferencecallinfo",
+        "passwordrequired"
+      ],
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "x-ms-summary": "Subject",
+          "x-ms-visibility": "important"
+        },
+        "starttime": {
+          "format": "date-time",
+          "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+          "type": "string",
+          "x-ms-summary": "Start time",
+          "x-ms-visibility": "important"
+        },
+        "endtime": {
+          "format": "date-time",
+          "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+          "type": "string",
+          "x-ms-summary": "End time",
+          "x-ms-visibility": "important"
+        },
+        "passwordrequired": {
+          "description": "Indicates whether the meeting requires a password",
+          "type": "boolean",
+          "x-ms-summary": "Requires password",
+          "x-ms-visibility": "important"
+        },
+        "conferencecallinfo": {
+          "description": "Conference call type (PSTN, Free, Hybrid, Private, VoIP) or a custom value",
+          "enum": [
+            "PSTN",
+            "Free",
+            "Hybrid",
+            "Private",
+            "VoIP"
+          ],
+          "type": "string",
+          "x-ms-summary": "Conference call info",
+          "x-ms-visibility": "important"
+        },
+        "meetingtype": {
+          "enum": [
+            "immediate",
+            "recurring",
+            "scheduled"
+          ],
+          "type": "string",
+          "x-ms-summary": "Meeting type",
+          "description": "The type of meeting to create (immediate, recurring, scheduled)",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "NewMeetingResponse": {
+      "type": "object",
+      "properties": {
+        "joinURL": {
+          "description": "A URL that can be used to join the meeting",
+          "type": "string",
+          "x-ms-summary": "Join URL",
+          "x-ms-visibility": "important"
+        },
+        "meetingid": {
+          "format": "int32",
+          "description": "The id of the meeting.",
+          "type": "integer",
+          "x-ms-summary": "Meeting Id",
+          "x-ms-visibility": "important"
+        },
+        "maxParticipants": {
+          "format": "int32",
+          "description": "The maximum number of participants allowed in the meeting.",
+          "type": "integer",
+          "x-ms-summary": "Max participants",
+          "x-ms-visibility": "advanced"
+        },
+        "conferenceCallInfo": {
+          "description": "Audio options for the meeting.",
+          "type": "string",
+          "x-ms-summary": "Conference call info",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "UpdateMeeting": {
+      "description": "Model used to update a meeting",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "x-ms-summary": "Subject",
+          "x-ms-visibility": "important"
+        },
+        "starttime": {
+          "format": "date-time",
+          "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+          "type": "string",
+          "x-ms-summary": "Start time",
+          "x-ms-visibility": "important"
+        },
+        "endtime": {
+          "format": "date-time",
+          "description": "Time format: yyyy-MM-ddTHH:mm:ss.fffZ (2016-07-20T08:00:59.000Z)",
+          "type": "string",
+          "x-ms-summary": "End time",
+          "x-ms-visibility": "important"
+        },
+        "passwordrequired": {
+          "description": "Indicates whether the meeting requires a password",
+          "type": "boolean",
+          "x-ms-summary": "Requires password",
+          "x-ms-visibility": "important"
+        },
+        "conferencecallinfo": {
+          "description": "Conference call type (PSTN, Free, Hybrid, Private, VoIP) or a custom value",
+          "enum": [
+            "PSTN",
+            "Free",
+            "Hybrid",
+            "Private",
+            "VoIP"
+          ],
+          "type": "string",
+          "x-ms-summary": "Conference call info",
+          "x-ms-visibility": "important"
+        },
+        "meetingtype": {
+          "enum": [
+            "immediate",
+            "recurring",
+            "scheduled"
+          ],
+          "type": "string",
+          "x-ms-summary": "Meeting type",
+          "description": "The type of meeting to create (immediate, recurring, scheduled)",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Attendee": {
+      "type": "object",
+      "properties": {
+        "groupName": {
+          "description": "The group the attendee belongs to.",
+          "type": "string",
+          "x-ms-summary": "Group name",
+          "x-ms-visibility": "advanced"
+        },
+        "attendeeName": {
+          "description": "The name of the attendee.",
+          "type": "string",
+          "x-ms-summary": "Name",
+          "x-ms-visibility": "important"
+        },
+        "joinTime": {
+          "format": "date-time",
+          "description": "The time the attendee joined the meeting.",
+          "type": "string",
+          "x-ms-summary": "Join time",
+          "x-ms-visibility": "advanced"
+        },
+        "leaveTime": {
+          "format": "date-time",
+          "description": "The time the attendee left the meeting.",
+          "type": "string",
+          "x-ms-summary": "Leave time",
+          "x-ms-visibility": "advanced"
+        },
+        "attendeeEmail": {
+          "description": "The email address of the attendee.",
+          "type": "string",
+          "x-ms-summary": "Attendee email",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "AttendeeArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Attendee"
+      }
+    }
+  },
+  "parameters": {
+    "meetingId__in_path": {
+      "name": "meetingId",
+      "in": "path",
+      "description": "Select or enter a meeting Id",
+      "required": true,
+      "x-ms-summary": "Meeting Id",
+      "x-ms-dynamic-values": {
+        "operationId": "GetUpcomingMeetings",
+        "value-path": "meetingId",
+        "value-title": "subject"
+      },
+      "x-ms-test-value": "138400093",
+      "type": "string"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.goto.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.logmeininc.com/legal/privacy?c_prod=care&c_name=iph"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/gotomeeting"
+  }
+}

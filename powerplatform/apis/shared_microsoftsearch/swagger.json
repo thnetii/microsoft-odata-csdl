@@ -1,0 +1,271 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Microsoft Search",
+    "description": "Microsoft Search allows intelligent search against M365 content of multiple types from different workloads.",
+    "version": "1.0",
+    "contact": {
+      "name": "Microsoft Search",
+      "url": "https://www.microsoft.com/microsoft-search",
+      "email": "3SApiDevs@service.microsoft.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/microsoftsearch",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/Entities": {
+      "get": {
+        "summary": "Get available entities",
+        "description": "Internal operation to get available entities.",
+        "operationId": "GetEntities",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftsearch/#get-available-entities"
+        }
+      }
+    },
+    "/{connectionId}/api/singleEntityAdvancedOptionsSchema": {
+      "post": {
+        "summary": "Get dynamic schema for advanced options",
+        "description": "Internal operation to get dynamic schema for advanced options.",
+        "operationId": "GetAdvancedOptionsSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "entitytype",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftsearch/#get-dynamic-schema-for-advanced-options"
+        }
+      }
+    },
+    "/{connectionId}/api/singleEntityResponseSchema": {
+      "post": {
+        "summary": "Get dynamic schema for response",
+        "description": "Internal operation to get dynamic schema for response.",
+        "operationId": "GetResponseSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "entitytype",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftsearch/#get-dynamic-schema-for-response"
+        }
+      }
+    },
+    "/{connectionId}/api/singleEntitySearch": {
+      "post": {
+        "summary": "Single-Entity Relevant Search Action",
+        "description": "Single-Entity Relevant Search Action",
+        "operationId": "SingleEntityAction",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "requestBody",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "SearchPhrase": {
+                  "type": "string",
+                  "description": "Phrase to search for.",
+                  "x-ms-summary": "Search Phrase",
+                  "x-ms-visibility": "important"
+                },
+                "EntityType": {
+                  "type": "string",
+                  "description": "Entity type to return.",
+                  "x-ms-summary": "Entity Type",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetEntities"
+                  },
+                  "x-ms-visibility": "important"
+                },
+                "SortByRelevance": {
+                  "type": "boolean",
+                  "description": "Sort results by relevance.",
+                  "default": true,
+                  "x-ms-summary": "Sort By Relevance"
+                },
+                "From": {
+                  "type": "integer",
+                  "description": "Start index of results.",
+                  "default": 0,
+                  "x-ms-summary": "From"
+                },
+                "Size": {
+                  "type": "integer",
+                  "description": "Number of results.",
+                  "default": 1,
+                  "x-ms-summary": "Size"
+                },
+                "AdvancedOptions": {
+                  "x-ms-dynamic-schema": {
+                    "operationId": "GetAdvancedOptionsSchema",
+                    "parameters": {
+                      "entitytype": {
+                        "parameter": "EntityType"
+                      }
+                    }
+                  },
+                  "x-ms-dynamic-properties": {
+                    "operationId": "GetAdvancedOptionsSchema",
+                    "parameters": {
+                      "entitytype": {
+                        "parameterReference": "requestBody/EntityType"
+                      }
+                    }
+                  },
+                  "x-ms-visibility": "advanced"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetResponseSchema",
+                "parameters": {
+                  "entitytype": {
+                    "parameter": "EntityType"
+                  }
+                }
+              },
+              "x-ms-dynamic-properties": {
+                "operationId": "GetResponseSchema",
+                "parameters": {
+                  "entitytype": {
+                    "parameterReference": "requestBody/EntityType"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftsearch/#single-entity-relevant-search-action"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.microsoft.com/microsoft-search"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://learn.microsoft.com/en-us/microsoftsearch/security-for-search"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "AI;Business Intelligence"
+    }
+  ],
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/842322cf-35ee-4836-9355-d8e4152c9d7f/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/842322cf-35ee-4836-9355-d8e4152c9d7f/oauth2/v2.0/token",
+      "scopes": {
+        "https://substrate.office.com/search/SubstrateSearch-Internal.ReadWrite": "https://substrate.office.com/search/SubstrateSearch-Internal.ReadWrite"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "https://substrate.office.com/search/SubstrateSearch-Internal.ReadWrite"
+      ]
+    }
+  ],
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/microsoftsearch"
+  }
+}

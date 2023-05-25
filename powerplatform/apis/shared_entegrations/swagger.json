@@ -1,0 +1,2797 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Entegrations.io",
+    "description": "Entegrations.io, inc provides 3 broad set of features. 1) PayPal Invoicing, Payouts and IPN features leveraging your PayPal account. 2) Webhooks for Invoicing and Contacts leveraging your Xero account. 3) QBO Inovice leveraging your QuickBooks Online account.",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "entegrations.io inc support",
+      "url": "https://www.entegrations.io/#contact",
+      "email": "support@entegrations.io"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/entegrations",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/pp/invoicing": {
+      "post": {
+        "summary": "Create a PayPal Invoice",
+        "description": "Create a draft PayPal Invoice and immediately sends it to a receiver as per their APIs https://developer.paypal.com/docs/api/invoicing/v1/#invoices_create and https://developer.paypal.com/docs/api/invoicing/v1/#invoices_send",
+        "operationId": "CreateAndSendPayPalInvoice",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Create Invoice payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EntegrationsInvoice4PayPalCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsInvoice4PayPalCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#create-a-paypal-invoice"
+        }
+      }
+    },
+    "/{connectionId}/api/pp/payments/payouts": {
+      "post": {
+        "summary": "Create PayPal Payouts",
+        "description": "Create PayPal Payouts to one or more receivers as per their API https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_create",
+        "operationId": "CreatePayouts",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Create Payouts payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EntegrationsPayouts4PayPalCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Default response details including status.",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsPayouts4PayPalCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#create-paypal-payouts"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/webhooksDefault": {
+      "x-ms-notification-content": {
+        "description": "Advanced Use: Details for Entegrations.io Invoicing or Payouts Webhook data for PayPal",
+        "summary": "Advanced Use: Details for Entegrations.io Invoicing or Payouts Webhook data for PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalDefaultPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Advanced Use: When invoicing, payouts updates received",
+        "description": "Advanced Use: Creates an entegrations.io webhook for PayPal Invoicing, Payouts etc webhooks data and it triggers whenever entegrations.io receives an on-behalf-of webhook payload from PayPal. Note that this is default payload, getting you whatever PayPal sends out.",
+        "operationId": "EntegrationsWebhook4PayPalDefaultCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalDefaultCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#advanced-use%3a-when-invoicing%2c-payouts-updates-received"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/invoicingPaid": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io Invoicing Paid Webhook for PayPal",
+        "summary": "Details for Entegrations.io Invoicing Paid Webhook for PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalInvoicingPaidPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever an invoice (at PayPal) is paid",
+        "description": "Creates an entegrations.io webhook for PayPal Invoicing Paid data and it triggers whenever entegrations.io receives an on-behalf-of webhook payload for Invoice Paid from PayPal.",
+        "operationId": "EntegrationsWebhook4PayPalInvoicingPaidCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Invoice Paid Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalInvoicingPaidCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-an-invoice-(at-paypal)-is-paid"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/payoutsPaid": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io Payouts Paid Webhook for PayPal",
+        "summary": "Details for Entegrations.io Payouts Paid Webhook for PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalPayoutsPaidPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever payouts is paid",
+        "description": "Creates an entegrations.io webhook for PayPal Payouts Paid data and it triggers whenever entegrations.io receives an on-behalf-of webhook payload for Payouts Paid from PayPal.",
+        "operationId": "EntegrationsWebhook4PayPalPayoutsPaidCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Payouts Paid Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalPayoutsPaidCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-payouts-is-paid"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipn/{txnType}/{txnStatus}": {
+      "x-ms-notification-content": {
+        "description": "Advanced Use: Details for Entegrations.io IPN event data for PayPal",
+        "summary": "Advanced Use: Details for Entegrations.io IPN event data for PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalDefaultPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Advanced Use: When an IPN (generic) update is received",
+        "description": "Advanced Use: Creates an entegrations.io webhook for PayPal IPN event data and it triggers whenever entegrations.io receives an on-behalf-of IPN payload from PayPal. Note that this is default payload, getting you whatever PayPal sends out.",
+        "operationId": "EntegrationsWebhook4PayPalIpnDynamicCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "txnType",
+            "in": "path",
+            "description": "txn_type of the IPN being created. Leave all for all txn_types.",
+            "x-ms-summary": "txn_type of the IPN being created.",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string",
+            "default": "all"
+          },
+          {
+            "name": "txnStatus",
+            "in": "path",
+            "description": "txn or payment status of the Webhook being created. Leave all for all statuses.",
+            "x-ms-summary": "txn or payment status of the Webhook being created.",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string",
+            "default": "all"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalDefaultCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#advanced-use%3a-when-an-ipn-(generic)-update-is-received"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnEcCompleted": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io webhook for express_checkout completed IPN event from PayPal",
+        "summary": "Details for Entegrations.io webhook for express_checkout completed IPN event from PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnEcCompletedPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever Express Checkout payment is completed",
+        "description": "Creates an entegrations.io webhook for PayPal express_checkout completed IPN event and it triggers whenever entegrations.io receives an on-behalf-of ipn payload from PayPal.",
+        "operationId": "EntegrationsWebhook4PayPalIpnEcCompletedCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the IPN express_completed completed Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnEcCompletedCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-express-checkout-payment-is-completed"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnNewCaseCreated": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io webhook for new_case created IPN event from PayPal",
+        "summary": "Details for Entegrations.io webhook for new_case created IPN event from PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnNewCaseCreatedPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever New Case is created",
+        "description": "Creates an entegrations.io webhook for PayPal new case created IPN event and it triggers whenever entegrations.io receives an on-behalf-of ipn payload from PayPal.",
+        "operationId": "EntegrationsWebhook4PayPalIpnNewCaseCreatedCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the IPN new_case created Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnNewCaseCreatedCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-new-case-is-created"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnRecurringPaymentCompleted": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io webhook for recurring_payment completed IPN event from PayPal",
+        "summary": "Details for Entegrations.io webhook for recurring_payment completed IPN event from PayPal",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever Recurring Payment is completed",
+        "description": "Creates an entegrations.io webhook for PayPal recurring payment completed IPN event and it triggers whenever entegrations.io receives an on-behalf-of ipn payload from PayPal.",
+        "operationId": "EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the IPN recurring_payment completed Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4PayPalBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-recurring-payment-is-completed"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/webhooksDefault/{webhookId}": {
+      "delete": {
+        "summary": "Advanced Use: Delete the invoicing, payouts etc webhook",
+        "description": "Advanced Use: Deletes the Entegrations.io webhook that corresponds to the PayPal webhook.",
+        "operationId": "EntegrationsWebhook4PayPalDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#advanced-use%3a-delete-the-invoicing%2c-payouts-etc-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/invoicingPaid/{webhookId}": {
+      "delete": {
+        "summary": "Delete the invoice paid webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal Invoice paid webhook.",
+        "operationId": "EntegrationsWebhook4PayPalInvoiceDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-invoice-paid-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/payoutsPaid/{webhookId}": {
+      "delete": {
+        "summary": "Delete the payouts success webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal Payouts success webhook.",
+        "operationId": "EntegrationsWebhook4PayPalPayoutsDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthInvAndPayouts": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-payouts-success-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipn/{txnType}/{txnStatus}/{webhookId}": {
+      "delete": {
+        "summary": "Delete the generic IPN webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal IPN's generic webhook.",
+        "operationId": "EntegrationsWebhook4PayPalIpnDynamicDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "txnType",
+            "in": "path",
+            "description": "txnType of the Webhook being deleted",
+            "x-ms-summary": "txnType of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "txnStatus",
+            "in": "path",
+            "description": "txnStatus of the Webhook being deleted",
+            "x-ms-summary": "txnStatus of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-generic-ipn-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnEcCompleted/{webhookId}": {
+      "delete": {
+        "summary": "Delete the IPN's express_checkout completed webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal IPN's express_checkout completed webhook.",
+        "operationId": "EntegrationsWebhook4PayPalIpnEcCompletedDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-ipn%27s-express_checkout-completed-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnNewCaseCreated/{webhookId}": {
+      "delete": {
+        "summary": "Delete the IPN's new_case created webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal IPN's new_case created webhook.",
+        "operationId": "EntegrationsWebhook4PayPalIpnNewCaseCreatedDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-ipn%27s-new_case-created-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/pp/ipnRecurringPaymentCompleted/{webhookId}": {
+      "delete": {
+        "summary": "Delete the IPN's recurring_payment completed webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the PayPal IPN's recurring_payment completed webhook.",
+        "operationId": "EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthIPN": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4PayPalIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-ipn%27s-recurring_payment-completed-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/xero/invoices": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io Invoices updates Webhook for Xero",
+        "summary": "Details for Entegrations.io Invoices updates Webhook for Xero",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4XeroInvoicesPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever an Invoice is created or updated at Xero",
+        "description": "Creates an entegrations.io webhook for Xero Invoices updates data and it triggers whenever entegrations.io receives an on-behalf-of webhook payload for Invoices from Xero.",
+        "operationId": "EntegrationsWebhook4XeroInvoicesCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthXeroWebhooks": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Invoices Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4XeroInvoicesCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4XeroBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-an-invoice-is-created-or-updated-at-xero"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/xero/contacts": {
+      "x-ms-notification-content": {
+        "description": "Details for Entegrations.io Contacts Webhook for Xero",
+        "summary": "Details for Entegrations.io Contacts Webhook for Xero",
+        "schema": {
+          "$ref": "#/definitions/EntegrationsWebhook4XeroContactsPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Whenever a Contact is created or updated at Xero",
+        "description": "Creates an entegrations.io webhook for Xero Contacts data and it triggers whenever entegrations.io receives an on-behalf-of webhook payload for Contacts from Xero.",
+        "operationId": "EntegrationsWebhook4XeroContactsCreateTrigger",
+        "x-ms-trigger": "single",
+        "security": [
+          {
+            "apiKeyAuthXeroWebhooks": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the webhook",
+            "in": "body",
+            "required": true,
+            "description": "This is the request body of the Contacts Webhook",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4XeroContactsCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsWebhook4XeroBaseCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#whenever-a-contact-is-created-or-updated-at-xero"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/xero/invoices/{webhookId}": {
+      "delete": {
+        "summary": "Delete the Invoices webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the Xero Invoices webhook.",
+        "operationId": "EntegrationsWebhook4XeroInvoicesDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthXeroWebhooks": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-invoices-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/btap/webhooks/xero/contacts/{webhookId}": {
+      "delete": {
+        "summary": "Delete the Contacts webhook",
+        "description": "Deletes the Entegrations.io webhook that corresponds to the Xero Contacts updates webhook.",
+        "operationId": "EntegrationsWebhook4XeroContactsDeleteTrigger",
+        "security": [
+          {
+            "apiKeyAuthXeroWebhooks": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the Webhook being deleted",
+            "x-ms-summary": "ID of the Webhook being deleted",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4XeroIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#delete-the-contacts-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/intuit/invoicing": {
+      "post": {
+        "summary": "Create a QBO Invoice",
+        "description": "Create and sends and a QuickBooks Online Invoice as per their API https://developer.intuit.com/app/developer/qbo/docs/api/accounting/ecommerce/invoice",
+        "operationId": "CreateAndSendQuickBooksInvoice",
+        "security": [
+          {
+            "apiKeyAuthIntuitInvoice": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Create QBO Invoice payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EntegrationsInvoice4IntuitCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsInvoice4IntuitCreateResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4IntuitUnauthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/EntegrationsApi4IntuitIntServErrResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/entegrations/#create-a-qbo-invoice"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "EntegrationsInvoice4PayPalCreateRequest": {
+      "type": "object",
+      "properties": {
+        "merchant_info": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Sender's email which corresponds to PayPal account.",
+              "title": "Sender's email",
+              "example": "sender-test@example.com"
+            },
+            "first_name": {
+              "type": "string",
+              "description": "Sender's first name.",
+              "title": "Sender's first name",
+              "example": "John"
+            },
+            "last_name": {
+              "type": "string",
+              "description": "Sender's last name.",
+              "title": "Sender's last name",
+              "example": "Doe"
+            },
+            "business_name": {
+              "type": "string",
+              "description": "Sender's business name.",
+              "title": "Sender's business name",
+              "example": "Test Inc."
+            },
+            "phone": {
+              "type": "object",
+              "properties": {
+                "country_code": {
+                  "type": "string",
+                  "description": "Country code of the phone.",
+                  "title": "Sender's country code of phone",
+                  "example": "001"
+                },
+                "national_number": {
+                  "type": "string",
+                  "description": "Phone nuber with area code.",
+                  "title": "Sender's phone number with area code",
+                  "example": "4084567890"
+                }
+              },
+              "description": "Sender's phone details."
+            },
+            "address": {
+              "type": "object",
+              "properties": {
+                "line1": {
+                  "type": "string",
+                  "description": "Line 1 of address.",
+                  "title": "Sender's Address 1",
+                  "example": "123 Senders Dr"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "City",
+                  "title": "Sender's City",
+                  "example": "Any Town"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "State",
+                  "title": "Sender's State",
+                  "example": "CA"
+                },
+                "postal_code": {
+                  "type": "string",
+                  "description": "Postal Code",
+                  "title": "Sender's Postal Code",
+                  "example": "98765"
+                },
+                "country_code": {
+                  "type": "string",
+                  "description": "Two character ISO country code.",
+                  "title": "Sender's Country Code",
+                  "example": "US"
+                }
+              },
+              "description": "Address of the sender.",
+              "required": [
+                "line1",
+                "city",
+                "country_code"
+              ]
+            }
+          },
+          "description": "Invoice sender's information.",
+          "required": [
+            "email"
+          ]
+        },
+        "billing_info": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Bill to email. This may be an email of reciever's PayPal account.",
+                "title": "Bill to email",
+                "example": "receiver-test@example.com"
+              },
+              "first_name": {
+                "type": "string",
+                "description": "First name",
+                "title": "Billing First name",
+                "example": "Scott"
+              },
+              "last_name": {
+                "type": "string",
+                "description": "Last name",
+                "title": "Billing Last name",
+                "example": "Adams"
+              }
+            },
+            "required": [
+              "email"
+            ]
+          },
+          "description": "Billing information."
+        },
+        "shipping_info": {
+          "type": "object",
+          "properties": {
+            "first_name": {
+              "type": "string",
+              "description": "First name",
+              "title": "Shipping First name",
+              "example": "Scott"
+            },
+            "last_name": {
+              "type": "string",
+              "description": "Last name",
+              "title": "Shipping Last name",
+              "example": "Adams"
+            },
+            "address": {
+              "type": "object",
+              "properties": {
+                "line1": {
+                  "type": "string",
+                  "description": "Line 1 of address.",
+                  "title": "Shipping Address 1",
+                  "example": "123 Receivers St"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "City",
+                  "title": "Shipping City",
+                  "example": "Any Town"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "State",
+                  "title": "Shipping State",
+                  "example": "CA"
+                },
+                "postal_code": {
+                  "type": "string",
+                  "description": "Postal code",
+                  "title": "Shipping Postal code",
+                  "example": "98765"
+                },
+                "country_code": {
+                  "type": "string",
+                  "description": "Country code",
+                  "title": "Shipping Country code",
+                  "example": "US"
+                }
+              },
+              "description": "Shipping address"
+            }
+          },
+          "description": "Shiping information"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Item name",
+                "title": "Item name",
+                "example": "Zoom System wireless headphones"
+              },
+              "quantity": {
+                "type": "string",
+                "description": "Quantity. For e.g. 1.5",
+                "title": "Item Quantity",
+                "example": "2"
+              },
+              "unit_price": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency",
+                    "title": "Unit Price Currency",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value",
+                    "title": "Unit Price Value",
+                    "example": "1"
+                  }
+                },
+                "description": "Unit price details.",
+                "required": [
+                  "currency",
+                  "value"
+                ]
+              },
+              "tax": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Tax type/name",
+                    "title": "Item Tax type/name",
+                    "example": "Sales Tax"
+                  },
+                  "percent": {
+                    "type": "string",
+                    "description": "Percent. For e.g. 8.5",
+                    "title": "Item Tax Percent",
+                    "example": "8"
+                  }
+                },
+                "description": "Tax information",
+                "required": [
+                  "name",
+                  "percent"
+                ]
+              }
+            }
+          },
+          "description": "Invoice line items",
+          "required": [
+            "name",
+            "quantity",
+            "unit_price"
+          ]
+        },
+        "discount": {
+          "type": "object",
+          "properties": {
+            "percent": {
+              "type": "string",
+              "description": "Percent",
+              "title": "Discount percent",
+              "example": "1"
+            }
+          },
+          "description": "Discount details"
+        },
+        "shipping_cost": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "object",
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "Currency",
+                  "title": "Shipping Cost Currency",
+                  "example": "USD"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Value",
+                  "title": "Shipping Cost Value",
+                  "example": "2.01"
+                }
+              },
+              "description": "Shipping Amount"
+            }
+          },
+          "description": "Shipping cost"
+        },
+        "note": {
+          "type": "string",
+          "description": "Invoice note",
+          "title": "Invoice note",
+          "example": "Thank you for your TEST business."
+        },
+        "terms": {
+          "type": "string",
+          "description": "Invoice terms",
+          "title": "Invoice terms",
+          "example": "No refunds after 30 decades ;-)"
+        }
+      },
+      "required": [
+        "merchant_info",
+        "billing_info",
+        "items"
+      ]
+    },
+    "EntegrationsInvoice4PayPalCreateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of creating the Invoice. Possible values: success or error.",
+          "example": "success"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "paypal_invoice_id": {
+              "type": "string",
+              "description": "Invoice ID generated by PayPal.",
+              "example": "INV2-MJAQ-W32D-8MLQ-NY35"
+            },
+            "paypal_invoice_number": {
+              "type": "string",
+              "description": "Invoice Number generated by PayPal.",
+              "example": "0008"
+            }
+          },
+          "description": "Response details."
+        },
+        "errorMessage": {
+          "type": "string",
+          "description": "Error message, if there is any error.",
+          "example": "Internal server error performing the request."
+        }
+      },
+      "description": "Response details including status."
+    },
+    "EntegrationsPayouts4PayPalCreateRequest": {
+      "type": "object",
+      "properties": {
+        "merchant_info": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Sender's email which corresponds to PayPal account.",
+              "title": "Sender's email",
+              "example": "sender-test@example.com"
+            }
+          },
+          "required": [
+            "email"
+          ],
+          "description": "Sender's email information. PayPal api won't require this but as an extra security check entegrations.io would require it."
+        },
+        "sender_batch_header": {
+          "type": "object",
+          "properties": {
+            "sender_batch_id": {
+              "type": "string",
+              "description": "Sender's Batch ID (Should be unique value, in last 30 days, per PayPal).",
+              "title": "Sender's Batch ID",
+              "x-ms-visibility": "",
+              "default": "",
+              "example": "SBI-ABCDE12345"
+            },
+            "email_subject": {
+              "type": "string",
+              "description": "Subject of the email notification that would be sent out by PayPal.",
+              "title": "Email Subject",
+              "x-ms-visibility": "",
+              "default": "",
+              "example": "This is test payout"
+            },
+            "recipient_type": {
+              "type": "string",
+              "description": "Recipient type. Valid values are either of EMAIL /  PAYER_ID / PHONE. Either this value or the ones in Payout item/details is mandatory.",
+              "title": "Receiver Type",
+              "x-ms-visibility": "",
+              "default": "",
+              "example": "EMAIL"
+            }
+          },
+          "description": "Sender's batch header information."
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recipient_type": {
+                "type": "string",
+                "description": "Recipient type. Valid values are either of EMAIL /  PAYER_ID / PHONE. Either this value or the one in Payout batch header is mandatory.",
+                "title": "Receiver Type",
+                "x-ms-visibility": "",
+                "default": "EMAIL",
+                "example": "EMAIL"
+              },
+              "receiver": {
+                "type": "string",
+                "description": "Receiver's email / PayPal payer_id / phone number.",
+                "title": "Receiver (email / payer id / phone)",
+                "x-ms-visibility": "",
+                "default": "",
+                "example": "test@example.com"
+              },
+              "note": {
+                "type": "string",
+                "description": "Payout item level note.",
+                "title": "Note",
+                "x-ms-visibility": "",
+                "default": "",
+                "example": "This is note of the test Payout."
+              },
+              "sender_item_id": {
+                "type": "string",
+                "description": "Sender's Payout Item ID (Should be unique value, in last 30 days, per PayPal).",
+                "title": "Sender's Item ID",
+                "x-ms-visibility": "",
+                "default": "",
+                "example": "SII-ABCDE12345"
+              },
+              "amount": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency",
+                    "title": "Currency",
+                    "x-ms-visibility": "",
+                    "default": "USD",
+                    "example": "USD"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value",
+                    "title": "Value",
+                    "x-ms-visibility": "",
+                    "default": "",
+                    "example": "1.02"
+                  }
+                },
+                "description": "Payout amount",
+                "required": [
+                  "currency",
+                  "value"
+                ]
+              }
+            },
+            "required": [
+              "amount",
+              "receiver"
+            ]
+          },
+          "description": "Payout items"
+        }
+      },
+      "required": [
+        "items",
+        "sender_batch_header",
+        "merchant_info"
+      ]
+    },
+    "EntegrationsPayouts4PayPalCreateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of creating the Payouts. Possible values: success or error.",
+          "example": "success"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "paypal_payout_batch_id": {
+              "type": "string",
+              "description": "Batch ID generated by the PayPal for this Payout.",
+              "example": "PJC66ZAQD6AT4"
+            },
+            "sender_batch_id": {
+              "type": "string",
+              "description": "Batch ID that was sent in the request (echoing back the same value)",
+              "example": "1545876121991"
+            }
+          },
+          "description": "Response details."
+        },
+        "errorMessage": {
+          "type": "string",
+          "description": "Error message, if there is any error.",
+          "example": "Internal server error performing the request."
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalBaseCreateRequest": {
+      "type": "object",
+      "discriminator": "paypalEmailAddress",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalDefaultCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalInvoicingPaidCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalPayoutsPaidCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalIpnEcCompletedCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalIpnNewCaseCreatedCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedCreateRequest": {
+      "type": "object",
+      "properties": {
+        "paypalEmailAddress": {
+          "description": "Email address of the PayPal account. You must use the same PayPal email address you have used to on-board for the connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourPayPalEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "paypalEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4PayPalBaseCreateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "webhook_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalDefaultPushResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-ms-summary": "ID as given by PayPal"
+        },
+        "create_time": {
+          "type": "string",
+          "x-ms-summary": "create_time as given by PayPal"
+        },
+        "event_type": {
+          "type": "string",
+          "x-ms-summary": "event_type as given by PayPal"
+        },
+        "resource_type": {
+          "type": "string",
+          "x-ms-summary": "resource_type as given by PayPal"
+        },
+        "summary": {
+          "type": "string",
+          "x-ms-summary": "summary as given by PayPal"
+        },
+        "resource": {
+          "type": "object",
+          "x-ms-summary": "resource as given by PayPal"
+        },
+        "resource_json_stringified": {
+          "type": "string",
+          "x-ms-summary": "Stringified version of the resource given by PayPal"
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalInvoicingPaidPushResponse": {
+      "type": "object",
+      "properties": {
+        "invoice_paid_paypal_invoice_id": {
+          "type": "string",
+          "x-ms-summary": "ID as given by PayPal"
+        },
+        "invoice_paid_time": {
+          "type": "string",
+          "x-ms-summary": "create_time as given by PayPal"
+        },
+        "invoice_paid_summary": {
+          "type": "string",
+          "x-ms-summary": "summary as given by PayPal"
+        },
+        "invoice_paid_resource": {
+          "type": "object",
+          "x-ms-summary": "resource as given by PayPal"
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalPayoutsPaidPushResponse": {
+      "type": "object",
+      "properties": {
+        "payouts_batch_success_paypal_payout_batch_id": {
+          "type": "string",
+          "x-ms-summary": "ID as given by PayPal"
+        },
+        "payouts_batch_success_time": {
+          "type": "string",
+          "x-ms-summary": "create_time as given by PayPal"
+        },
+        "payouts_batch_success_summary": {
+          "type": "string",
+          "x-ms-summary": "summary as given by PayPal"
+        },
+        "payouts_batch_success_resource": {
+          "type": "object",
+          "x-ms-summary": "resource as given by PayPal"
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalIpnEcCompletedPushResponse": {
+      "type": "object",
+      "properties": {
+        "txn_id": {
+          "type": "string",
+          "x-ms-summary": "txn_id as given by PayPal"
+        },
+        "payment_date": {
+          "type": "string",
+          "x-ms-summary": "payment_date as given by PayPal"
+        },
+        "mc_gross": {
+          "type": "string",
+          "x-ms-summary": "mc_gross as given by PayPal"
+        },
+        "mc_fee": {
+          "type": "string",
+          "x-ms-summary": "mc_fee as given by PayPal"
+        },
+        "payer_email": {
+          "type": "string",
+          "x-ms-summary": "payer_email as given by PayPal"
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalIpnNewCaseCreatedPushResponse": {
+      "type": "object",
+      "properties": {
+        "case_creation_date": {
+          "type": "string",
+          "x-ms-summary": "case_creation_date as given by PayPal"
+        },
+        "case_id": {
+          "type": "string",
+          "x-ms-summary": "case_id as given by PayPal"
+        },
+        "buyer_additional_information": {
+          "type": "string",
+          "x-ms-summary": "buyer_additional_information as given by PayPal"
+        },
+        "case_type": {
+          "type": "string",
+          "x-ms-summary": "case_type as given by PayPal"
+        },
+        "reason_code": {
+          "type": "string",
+          "x-ms-summary": "reason_code as given by PayPal"
+        }
+      }
+    },
+    "EntegrationsWebhook4PayPalIpnRecurringPaymentCompletedPushResponse": {
+      "type": "object",
+      "properties": {
+        "txn_id": {
+          "type": "string",
+          "x-ms-summary": "txn_id as given by PayPal"
+        },
+        "payment_date": {
+          "type": "string",
+          "x-ms-summary": "payment_date as given by PayPal"
+        },
+        "custom": {
+          "type": "string",
+          "x-ms-summary": "custom value (that you must have used during your integration with PayPal and that's) as given by PayPal"
+        },
+        "payment_status": {
+          "type": "string",
+          "x-ms-summary": "payment_status as given by PayPal"
+        },
+        "amount": {
+          "type": "string",
+          "x-ms-summary": "amount as given by PayPal"
+        },
+        "payer_full_name": {
+          "type": "string",
+          "x-ms-summary": "first and last name, if they are null. Otherwise, the business name. These values are as given by PayPal"
+        },
+        "payer_email": {
+          "type": "string",
+          "x-ms-summary": "payer_email as given by PayPal"
+        }
+      }
+    },
+    "EntegrationsApi4PayPalUnauthorizedResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "EntegrationsApi4PayPalIntServErrResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "EntegrationsWebhook4XeroBaseCreateRequest": {
+      "type": "object",
+      "discriminator": "xeroEmailAddress",
+      "properties": {
+        "xeroEmailAddress": {
+          "description": "Email address of the Xero account. You must use the same Xero email address you have used to onboard for the custom connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourXeroEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "xeroEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4XeroInvoicesCreateRequest": {
+      "type": "object",
+      "properties": {
+        "xeroEmailAddress": {
+          "description": "Email address of the Xero account. You must use the same Xero email address you have used to onboard for the custom connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourXeroEmail@example.com"
+        },
+        "shouldGetInvoiceAsPdf": {
+          "description": "Indicate if invoice has also to be gotten as PDF from Xero in addition to invoice resource.",
+          "type": "boolean",
+          "default": "false",
+          "example": "false"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "xeroEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsWebhook4XeroContactsCreateRequest": {
+      "type": "object",
+      "properties": {
+        "xeroEmailAddress": {
+          "description": "Email address of the Xero account. You must use the same Xero email address you have used to onboard for the custom connector.",
+          "type": "string",
+          "default": "",
+          "example": "yourXeroEmail@example.com"
+        },
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "content_type": {
+              "type": "string",
+              "description": "Type of the response",
+              "title": "Type of the response",
+              "x-ms-visibility": "internal",
+              "default": "json",
+              "example": "json"
+            },
+            "url": {
+              "type": "string",
+              "description": "Callback URL",
+              "title": "Callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal"
+            }
+          },
+          "required": [
+            "content_type",
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "xeroEmailAddress",
+        "config"
+      ]
+    },
+    "EntegrationsInvoice4IntuitCreateRequest": {
+      "title": "Invoice Create Request",
+      "example": {
+        "Line": [
+          {
+            "Amount": 100,
+            "DetailType": "SalesItemLineDetail",
+            "SalesItemLineDetail": {
+              "ItemRef": {
+                "value": "1",
+                "name": "Services"
+              }
+            }
+          }
+        ],
+        "CustomerRef": {
+          "value": "1"
+        },
+        "SenderEmail": "test-sender@example.com",
+        "RealmId": "1234"
+      },
+      "type": "object",
+      "properties": {
+        "SenderEmail": {
+          "type": "string",
+          "description": "Sender's email which corresponds to Intuit QuickBooks Online account.",
+          "title": "Sender's email",
+          "example": "sender-test@example.com"
+        },
+        "RealmId": {
+          "type": "string",
+          "description": "Sender's Realm ID or Company ID which corresponds to Intuit QuickBooks Online account.",
+          "title": "Sender's Realm ID or Company ID",
+          "example": "1234"
+        },
+        "TxnDate": {
+          "type": "string",
+          "description": "Transaction Date in YYYY-MM-DD format",
+          "title": "Transaction Date",
+          "example": "2020-10-05"
+        },
+        "DueDate": {
+          "type": "string",
+          "description": "Due Date in YYYY-MM-DD format",
+          "title": "Due Date",
+          "example": "2020-11-11"
+        },
+        "DocNumber": {
+          "type": "string",
+          "description": "DocNumber",
+          "title": "DocNumber",
+          "example": "ABCDEF"
+        },
+        "Line": {
+          "description": "Line Item",
+          "title": "Line Item",
+          "example": [
+            {
+              "Amount": 100,
+              "DetailType": "SalesItemLineDetail",
+              "SalesItemLineDetail": {
+                "ItemRef": {
+                  "value": "1",
+                  "name": "Services"
+                }
+              }
+            }
+          ],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IntuitQBOInvoiceLineItem"
+          }
+        },
+        "CustomerRef": {
+          "$ref": "#/definitions/IntuitQBOInvoiceCustomerRef"
+        }
+      },
+      "required": [
+        "Line",
+        "CustomerRef",
+        "SenderEmail",
+        "RealmId"
+      ]
+    },
+    "IntuitQBOInvoiceLineItem": {
+      "title": "Line Item",
+      "example": {
+        "Amount": 100,
+        "DetailType": "SalesItemLineDetail",
+        "SalesItemLineDetail": {
+          "ItemRef": {
+            "value": "1",
+            "name": "Services"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Amount",
+          "title": "Amount",
+          "example": 100,
+          "type": "number",
+          "format": "double"
+        },
+        "DetailType": {
+          "description": "Detail Type",
+          "title": "Detail Type",
+          "example": "10 Pcs.",
+          "type": "string"
+        },
+        "SalesItemLineDetail": {
+          "$ref": "#/definitions/IntuitQBOInvoiceSalesItemLineDetail"
+        }
+      },
+      "required": [
+        "Amount",
+        "DetailType",
+        "SalesItemLineDetail"
+      ]
+    },
+    "IntuitQBOInvoiceCustomerRef": {
+      "title": "Customer Ref",
+      "example": {
+        "value": "1"
+      },
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Customer Ref",
+          "title": "Customer Ref",
+          "example": "1",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "IntuitQBOInvoiceSalesItemLineDetail": {
+      "title": "Sales Item Line Detail",
+      "example": {
+        "ItemRef": {
+          "value": "3",
+          "name": "Concrete"
+        }
+      },
+      "type": "object",
+      "properties": {
+        "ItemRef": {
+          "$ref": "#/definitions/IntuitQBOInvoiceItemRef"
+        }
+      },
+      "required": [
+        "ItemRef"
+      ]
+    },
+    "IntuitQBOInvoiceItemRef": {
+      "title": "Item Ref",
+      "example": {
+        "value": "1",
+        "name": "Services"
+      },
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Value",
+          "title": "Value",
+          "example": "1",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name",
+          "title": "Name",
+          "example": "Services",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "name"
+      ]
+    },
+    "EntegrationsWebhook4XeroBaseCreateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "webhook_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "EntegrationsWebhook4XeroInvoicesPushResponse": {
+      "type": "object",
+      "properties": {
+        "resource_url": {
+          "type": "string",
+          "x-ms-summary": "resourceUrl as given by Xero"
+        },
+        "resource_id": {
+          "type": "string",
+          "x-ms-summary": "resourceId as given by Xero"
+        },
+        "event_date_tc": {
+          "type": "string",
+          "x-ms-summary": "eventDateUtc as given by Xero, for e.g. 2017-06-21T01:15:39.902"
+        },
+        "event_type": {
+          "type": "string",
+          "x-ms-summary": "eventType as given by Xero. Can be Create or Update"
+        },
+        "event_category": {
+          "type": "string",
+          "x-ms-summary": "eventCategory as given by Xero. Can be INVOICE or CONTACT, but INVOICE for this scenario."
+        },
+        "tenant_id": {
+          "type": "string",
+          "x-ms-summary": "tenantId as given by Xero, for e.g. c2cc9b6e-9458-4c7d-93cc-f02b81b0594f"
+        },
+        "tenantType": {
+          "type": "string",
+          "x-ms-summary": "tenantType as given by Xero, which is ORGANISATION for now"
+        },
+        "invoice_resource": {
+          "type": "object",
+          "x-ms-summary": "Invoice resource as given by Xero."
+        },
+        "invoice_pdf_as_base64": {
+          "type": "object",
+          "x-ms-summary": "When fetching this invoice as PDF, this optional field can contain Base64 version of application/pdf content given by Xero."
+        }
+      }
+    },
+    "EntegrationsWebhook4XeroContactsPushResponse": {
+      "type": "object",
+      "properties": {
+        "resource_url": {
+          "type": "string",
+          "x-ms-summary": "resourceUrl as given by Xero"
+        },
+        "resource_id": {
+          "type": "string",
+          "x-ms-summary": "resourceId as given by Xero"
+        },
+        "event_date_tc": {
+          "type": "string",
+          "x-ms-summary": "eventDateUtc as given by Xero, for e.g. 2017-06-21T01:15:39.902"
+        },
+        "event_type": {
+          "type": "string",
+          "x-ms-summary": "eventType as given by Xero. Can be Create or Update"
+        },
+        "event_category": {
+          "type": "string",
+          "x-ms-summary": "eventCategory as given by Xero. Can be INVOICE or CONTACT, but CONTACT for this scenario."
+        },
+        "tenant_id": {
+          "type": "string",
+          "x-ms-summary": "tenantId as given by Xero, for e.g. c2cc9b6e-9458-4c7d-93cc-f02b81b0594f"
+        },
+        "tenantType": {
+          "type": "string",
+          "x-ms-summary": "tenantType as given by Xero, which is ORGANISATION for now"
+        },
+        "contact_resource": {
+          "type": "object",
+          "x-ms-summary": "contact resource as given by Xero"
+        }
+      }
+    },
+    "EntegrationsApi4XeroUnauthorizedResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "EntegrationsApi4XeroIntServErrResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "EntegrationsInvoice4IntuitCreateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of creating the Invoice. Possible values: success or error.",
+          "example": "success"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "intuit_invoice_id": {
+              "type": "string",
+              "description": "Invoice ID generated by QuickBooks.",
+              "example": "INV2-MJAQ-W32D-8MLQ-NY35"
+            },
+            "intuit_invoice_number": {
+              "type": "string",
+              "description": "Invoice Number generated by QuickBooks.",
+              "example": "0008"
+            }
+          },
+          "description": "Response details."
+        },
+        "errorMessage": {
+          "type": "string",
+          "description": "Error message, if there is any error.",
+          "example": "Internal server error performing the request."
+        }
+      },
+      "description": "Response details including status."
+    },
+    "EntegrationsApi4IntuitUnauthorizedResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "EntegrationsApi4IntuitIntServErrResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "ererorMessage": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "securityDefinitions": {
+    "apiKeyAuthInvAndPayouts": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-AUTH-API-KEY"
+    },
+    "apiKeyAuthIPN": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-AUTH-API-KEY"
+    },
+    "apiKeyAuthXeroWebhooks": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-AUTH-API-KEY"
+    },
+    "apiKeyAuthIntuitInvoice": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-AUTH-API-KEY"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.entegrations.io"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.entegrations.io/privacy.html"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/entegrations"
+  }
+}

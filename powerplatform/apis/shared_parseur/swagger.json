@@ -1,0 +1,537 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Parseur",
+    "description": "Extract structured data trapped in your emails. Then send it to your favorite application.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "url": "https://support.parseur.com",
+      "email": "support@parseur.com"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/parseur",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/user/parser_set": {
+      "get": {
+        "summary": "List mailboxes",
+        "description": "List all your mailboxes",
+        "operationId": "ListMailbox",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListMailbox"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#list-mailboxes"
+        }
+      }
+    },
+    "/{connectionId}/user/table_set": {
+      "get": {
+        "summary": "List tables",
+        "description": "List all tables for this mailbox",
+        "operationId": "ListTable",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListTable"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#list-tables"
+        }
+      }
+    },
+    "/{connectionId}/parser/{mailboxID}/schema": {
+      "get": {
+        "summary": "Get's the item schema of the selected mailbox",
+        "description": "Gets the schema of the selected mailbox",
+        "operationId": "GetMailboxSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "mailboxID",
+            "in": "path",
+            "description": "Select Mailbox you want schema from",
+            "required": true,
+            "x-ms-summary": "Select Mailbox",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#get%27s-the-item-schema-of-the-selected-mailbox"
+        }
+      }
+    },
+    "/{connectionId}/table/{tableID}/schema": {
+      "get": {
+        "summary": "Get's the item schema of the selected table",
+        "description": "Gets the schema of the selected table",
+        "operationId": "GetTableSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "tableID",
+            "in": "path",
+            "description": "Select Table you want schema from",
+            "required": true,
+            "x-ms-summary": "Select Table",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#get%27s-the-item-schema-of-the-selected-table"
+        }
+      }
+    },
+    "/{connectionId}/parser/{mailboxID}/flow_webhook/document.processed": {
+      "post": {
+        "summary": "New document processed",
+        "description": "When an email is successfully processed",
+        "operationId": "NewDocumentExpanded",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "mailboxID",
+            "in": "path",
+            "description": "Select a Mailbox you want to process documents from",
+            "required": true,
+            "x-ms-summary": "Identifier of the mailbox to connect to",
+            "x-ms-dynamic-values": {
+              "operationId": "ListMailbox",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Target to publish the trigger to",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "title": "",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#new-document-processed"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Result of successful document processing (tables and lists are expanded)",
+        "schema": {
+          "type": "object",
+          "x-ms-dynamic-schema": {
+            "operationId": "GetMailboxSchema",
+            "parameters": {
+              "mailboxID": {
+                "parameter": "mailboxID"
+              }
+            },
+            "value-path": "properties"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetMailboxSchema",
+            "parameters": {
+              "mailboxID": {
+                "parameterReference": "mailboxID"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/parser/{mailboxID}/flow_webhook/document.template_needed": {
+      "post": {
+        "summary": "Document failed to process",
+        "description": "When an email fails to process",
+        "operationId": "TemplateNeeded",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "mailboxID",
+            "in": "path",
+            "description": "Select a Mailbox you want to process documents from",
+            "required": true,
+            "x-ms-summary": "Identifier of the mailbox to connect to",
+            "x-ms-dynamic-values": {
+              "operationId": "ListMailbox",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Target to publish the trigger to",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "title": "",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#document-failed-to-process"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Result of failed document processing",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string"
+            },
+            "Parser": {
+              "type": "string"
+            },
+            "URL": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/table/{tableID}/flow_webhook/table.processed": {
+      "post": {
+        "summary": "Table processed",
+        "description": "When a table is successfully processed",
+        "operationId": "TableProcessed",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "tableID",
+            "in": "path",
+            "description": "Select a Table (or List) you want to process rows from",
+            "required": true,
+            "x-ms-summary": "Identifier of the Table (or List) to connect to",
+            "x-ms-dynamic-values": {
+              "operationId": "ListTable",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Target to publish the trigger to",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "title": "",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "batch",
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/parseur/#table-processed"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Result of successful table processing",
+        "schema": {
+          "type": "object",
+          "x-ms-dynamic-schema": {
+            "operationId": "GetTableSchema",
+            "parameters": {
+              "tableID": {
+                "parameter": "tableID"
+              }
+            },
+            "value-path": "properties"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetTableSchema",
+            "parameters": {
+              "tableID": {
+                "parameterReference": "tableID"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ListMailbox": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ListTable": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DynamicResponseGetMailboxSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetMailboxSchema",
+        "parameters": {
+          "mailboxID": {
+            "parameter": "mailboxID"
+          }
+        },
+        "value-path": "properties"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetMailboxSchema",
+        "parameters": {
+          "mailboxID": {
+            "parameterReference": "mailboxID"
+          }
+        }
+      }
+    },
+    "DynamicResponseGetTableSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetTableSchema",
+        "parameters": {
+          "tableID": {
+            "parameter": "tableID"
+          }
+        },
+        "value-path": "properties"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetTableSchema",
+        "parameters": {
+          "tableID": {
+            "parameterReference": "tableID"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://parseur.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://parseur.com/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/parseur"
+  }
+}

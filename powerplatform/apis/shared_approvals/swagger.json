@@ -1,0 +1,887 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0",
+    "title": "Approvals",
+    "description": "Enables approvals in workflows.",
+    "contact": {
+      "name": "Microsoft"
+    },
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/approvals",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/types": {
+      "get": {
+        "operationId": "GetApprovalTypes",
+        "description": "Get the list of approval types.",
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "ListApprovalTypes",
+          "revision": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ApprovalTypesList"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/types/{approvalType}/metadata/{metadataType}": {
+      "get": {
+        "operationId": "GetApprovalTypeMetadataV2",
+        "description": "Get the dynamic schema for operation inputs based on approval type.",
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetApprovalTypeMetadata",
+          "revision": 2
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/DynamicApprovalType"
+          },
+          {
+            "$ref": "#/parameters/MetadataType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/MetadataRequestSuccessful"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/metadata/{metadataType}": {
+      "get": {
+        "operationId": "GetSubscriptionMetadata",
+        "description": "Get the dynamic schema for webhook operation inputs for subscribing to an approval.",
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetSubscriptionMetadata",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/MetadataType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/MetadataRequestSuccessful"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/types/{approvalType}/subscriptions": {
+      "post": {
+        "operationId": "StartAndWaitForAnApproval",
+        "summary": "Start and wait for an approval",
+        "description": "Starts an automated approval process and then waits for it to complete. The approval is cancelable.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "StartAndWaitForAnApproval",
+          "revision": 3
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/DynamicApprovalType"
+          },
+          {
+            "name": "WebhookApprovalCreationInput",
+            "description": "The dynamic webhook input for creating an approval of the specified type.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetApprovalTypeMetadataV2",
+                "parameters": {
+                  "approvalType": {
+                    "parameter": "approvalType"
+                  },
+                  "metadataType": "webhookInputs"
+                },
+                "value-path": "schema"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/ApprovalCreatedAndWebhookSubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#start-and-wait-for-an-approval"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "x-ms-dynamic-schema": {
+            "operationId": "GetApprovalTypeMetadataV2",
+            "parameters": {
+              "approvalType": {
+                "parameter": "approvalType"
+              },
+              "metadataType": "webhookOutputs"
+            },
+            "value-path": "schema"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/types/{approvalType}": {
+      "post": {
+        "operationId": "CreateAnApproval",
+        "summary": "Create an approval",
+        "description": "Starts an automated approval process, but does not wait for the approval to complete. The approval is cancelable.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "CreateAnApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/DynamicApprovalType"
+          },
+          {
+            "name": "ApprovalCreationInput",
+            "description": "The dynamic input for creating an approval of the specified type.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetApprovalTypeMetadataV2",
+                "parameters": {
+                  "approvalType": {
+                    "parameter": "approvalType"
+                  },
+                  "metadataType": "inputs"
+                },
+                "value-path": "schema"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Approval created",
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetApprovalTypeMetadataV2",
+                "parameters": {
+                  "approvalType": {
+                    "parameter": "approvalType"
+                  },
+                  "metadataType": "outputs"
+                },
+                "value-path": "schema"
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#create-an-approval"
+        }
+      }
+    },
+    "/{connectionId}/approvals/{approvalName}/subscriptions": {
+      "post": {
+        "operationId": "WaitForAnApproval",
+        "summary": "Wait for an approval",
+        "description": "Waits for a specified approval to complete.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "WaitForAnApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ApprovalName"
+          },
+          {
+            "name": "ApprovalSubscriptionInput",
+            "description": "The dynamic input for subscribing to an approval.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetSubscriptionMetadata",
+                "parameters": {
+                  "metadataType": "webhookInputs"
+                },
+                "value-path": "schema"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Waiting on the approval."
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#wait-for-an-approval"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "x-ms-dynamic-schema": {
+            "operationId": "GetSubscriptionMetadata",
+            "parameters": {
+              "metadataType": "webhookOutputs"
+            },
+            "value-path": "schema"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/types/{approvalType}/subscriptions/{subscriptionid}": {
+      "delete": {
+        "operationId": "UnsubscribeStartAnApproval",
+        "description": "Unsubscribe route for operation: StartAndWaitForAnApproval",
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "UnsubscribeStartAndWaitForAnApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ApprovalType"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/WebhookUnsubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/approvals/{approvalName}/subscriptions/{subscriptionid}": {
+      "delete": {
+        "operationId": "UnsubscribeWaitForAnApproval",
+        "description": "Unsubscribe route for operation: WaitForAnApproval",
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "UnsubscribeWaitForAnApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ApprovalName"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/WebhookUnsubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/types/{approvalType}/$metadata.json/{metadataType}": {
+      "get": {
+        "operationId": "GetApprovalTypeMetadata",
+        "description": "Get the dynamic schema for operation inputs based on approval type. (Deprecated)",
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetApprovalTypeMetadata",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/DynamicApprovalType"
+          },
+          {
+            "$ref": "#/parameters/MetadataType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/MetadataRequestSuccessful"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/types/{approvalType}/$subscriptions": {
+      "post": {
+        "operationId": "approvalSubscribeV2",
+        "summary": "Start and wait for an approval (Deprecated)",
+        "description": "Starts an automated approval process and then waits for it to complete. The approval is only canceled on timeout. (Deprecated)",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "StartAndWaitForAnApproval",
+          "revision": 2
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/DynamicApprovalType"
+          },
+          {
+            "name": "ApprovalCreationInput",
+            "description": "The dynamic input for creating an approval of the specified type.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetApprovalTypeMetadata",
+                "parameters": {
+                  "approvalType": {
+                    "parameter": "approvalType"
+                  },
+                  "metadataType": "inputs"
+                },
+                "value-path": "schema"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/ApprovalCreatedAndWebhookSubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#start-and-wait-for-an-approval-(deprecated)-%5bdeprecated%5d"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "x-ms-dynamic-schema": {
+            "operationId": "GetApprovalTypeMetadata",
+            "parameters": {
+              "approvalType": {
+                "parameter": "approvalType"
+              },
+              "metadataType": "outputs"
+            },
+            "value-path": "schema"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/types/{approvalType}/$subscriptions/{subscriptionid}": {
+      "delete": {
+        "operationId": "approvalUnsubscribeV2",
+        "description": "Unsubscribe route for operation: approvalSubscribeV2 (Deprecated)",
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "UnsubscribeStartAndWaitForAnApproval",
+          "revision": 2
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ApprovalType"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/WebhookUnsubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    },
+    "/{connectionId}/basic/$subscriptions": {
+      "post": {
+        "operationId": "approvalSubscribe",
+        "summary": "Start and wait for an Approve or Reject - First to respond approval (Deprecated)",
+        "description": "Starts an automated approval process and then waits for it to complete. The approval is only canceled on timeout. (Deprecated)",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "StartAndWaitForAnApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "ApprovalCreationInput",
+            "description": "The input for creating a basic approval.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApprovalCreationInputV0"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/ApprovalCreatedAndWebhookSubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#start-and-wait-for-an-approve-or-reject---first-to-respond-approval-(deprecated)-%5bdeprecated%5d"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/ApprovalCreationOutputV0"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/basic/$subscriptions/{subscriptionid}": {
+      "delete": {
+        "operationId": "approvalUnsubscribe",
+        "description": "Unsubscribe route for operation: approvalSubscribe (Deprecated)",
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "UnsubscribeStartAndWaitForAnApproval",
+          "revision": 3
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/WebhookUnsubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ApprovalName": {
+      "name": "approvalName",
+      "x-ms-summary": "Approval ID",
+      "description": "The ID of the approval.",
+      "in": "path",
+      "required": true,
+      "type": "string"
+    },
+    "ApprovalType": {
+      "name": "approvalType",
+      "x-ms-summary": "Approval type",
+      "description": "The approval type.",
+      "in": "path",
+      "required": true,
+      "type": "string"
+    },
+    "DynamicApprovalType": {
+      "name": "approvalType",
+      "x-ms-summary": "Approval type",
+      "description": "Select an approval type.",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-dynamic-values": {
+        "operationId": "GetApprovalTypes",
+        "value-collection": "value",
+        "value-path": "Name",
+        "value-title": "DisplayName"
+      }
+    },
+    "MetadataType": {
+      "name": "metadataType",
+      "x-ms-summary": "Metadata type",
+      "description": "The metadata type.",
+      "in": "path",
+      "required": true,
+      "type": "string"
+    },
+    "SubscriptionId": {
+      "name": "subscriptionid",
+      "x-ms-summary": "Subscription Id",
+      "description": "Id of the webhook subscription.",
+      "in": "path",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "responses": {
+    "ApprovalCreatedAndWebhookSubscribed": {
+      "description": "Approval Created and Webhook Subscribed"
+    },
+    "MetadataRequestSuccessful": {
+      "description": "Success",
+      "schema": {
+        "$ref": "#/definitions/ApprovalMetadata"
+      }
+    },
+    "WebhookUnsubscribed": {
+      "description": "Webhook Unsubscribed"
+    },
+    "OperationFailed": {
+      "description": "Operation Failed"
+    }
+  },
+  "definitions": {
+    "ApprovalTypesList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": "string"
+              },
+              "DisplayName": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ApprovalMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "x-ms-permission": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "object"
+        },
+        "referencedEntities": {
+          "type": "object"
+        }
+      }
+    },
+    "ApprovalCreationInputV0": {
+      "description": "Model for approval subscription.",
+      "type": "object",
+      "required": [
+        "title",
+        "assignedTo",
+        "NotificationUrl"
+      ],
+      "properties": {
+        "NotificationUrl": {
+          "description": "Gets or sets callback url to flow engine. It is expected as part of the webhook request.",
+          "x-ms-visibility": "internal",
+          "x-ms-notification-url": true,
+          "type": "string"
+        },
+        "title": {
+          "description": "Specify the title of the approval.",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "details": {
+          "description": "Specify the details of the approval request. Markdown syntax is supported, see https://aka.ms/approvaldetails for more information.",
+          "x-ms-summary": "Details",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "itemLink": {
+          "description": "Specify a link to the item to approve.",
+          "x-ms-summary": "Item Link",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "itemLinkDescription": {
+          "description": "Specify a description for the item to approve.",
+          "x-ms-summary": "Item Link Description",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "assignedTo": {
+          "description": "Specify to whom the approval should be assigned. This should be a semi-colon (;) delimited collection of either email addresses, UPNs, or AAD user ids.",
+          "x-ms-summary": "Assigned To",
+          "x-ms-visibility": "important",
+          "x-ms-dynamic-values": {
+            "builtInOperation": "AadGraph.GetUsers",
+            "value-path": "mail",
+            "value-title": "displayName"
+          },
+          "type": "string",
+          "format": "email"
+        }
+      }
+    },
+    "ApprovalCreationOutputV0": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "The title of the approval.",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "details": {
+          "description": "The details of the approval request. Markdown syntax is supported, see https://aka.ms/approvaldetails for more information.",
+          "type": "string",
+          "x-ms-summary": "Details",
+          "x-ms-visibility": "important"
+        },
+        "itemLink": {
+          "description": "A link to the item to approve.",
+          "x-ms-summary": "Item Link",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "responder": {
+          "$ref": "#/definitions/ResponderPrincipal"
+        },
+        "response": {
+          "description": "The approval response: Approve or Reject.",
+          "x-ms-summary": "Response",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "comments": {
+          "description": "Comments provided by approver.",
+          "x-ms-summary": "Comments",
+          "x-ms-visibility": "important",
+          "type": "string"
+        }
+      }
+    },
+    "ResponderPrincipal": {
+      "description": "The user that provided the response.",
+      "x-ms-summary": "Responder",
+      "x-ms-visibility": "important",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The id of the approver.",
+          "x-ms-summary": "Approver Id",
+          "x-ms-visibility": "advanced",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "The name of the approver.",
+          "x-ms-summary": "Approver Name",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "email": {
+          "description": "The email address of the approver.",
+          "x-ms-summary": "Approver Email",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "tenantId": {
+          "description": "The tenant id of the approver.",
+          "x-ms-summary": "Approver Tenant Id",
+          "x-ms-visibility": "advanced",
+          "type": "string"
+        },
+        "userPrincipalName": {
+          "description": "The principal name of the approver.",
+          "x-ms-summary": "Approver User Principal Name",
+          "x-ms-visibility": "advanced",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/approvals"
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "RSS",
+    "description": "RSS is a popular web syndication format used to publish frequently updated content – like blog entries and news headlines.  Many content publishers provide an RSS feed to allow users to subscribe to it.  Use the RSS connector to retrieve feed information and trigger flows when new items are published in an RSS feed.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/rss",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/OnNewFeed": {
+      "get": {
+        "tags": [
+          "Rss"
+        ],
+        "summary": "When a feed item is published",
+        "description": "This operation triggers a workflow when a new item is published in an RSS feed.",
+        "operationId": "OnNewFeed",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "feedUrl",
+            "in": "query",
+            "description": "The RSS feed URL (Example: http://rss.cnn.com/rss/cnn_topstories.rss).",
+            "required": true,
+            "x-ms-summary": "The RSS feed URL",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "sinceProperty",
+            "in": "query",
+            "description": "Chosen property will be used for trigger state.",
+            "required": false,
+            "x-ms-summary": "Chosen property will be used to determine which items are new.",
+            "type": "string",
+            "enum": [
+              "PublishDate",
+              "UpdatedOn"
+            ],
+            "default": "PublishDate"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TriggerBatchResponse[FeedItem]"
+            }
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, publish an item to the RSS feed.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/rss/#when-a-feed-item-is-published"
+        }
+      }
+    },
+    "/{connectionId}/ListFeedItems": {
+      "get": {
+        "tags": [
+          "Rss"
+        ],
+        "summary": "List all RSS feed items",
+        "description": "This operation retrieves all items from an RSS feed.",
+        "operationId": "ListFeedItems",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "feedUrl",
+            "in": "query",
+            "description": "The RSS feed URL (Example: http://rss.cnn.com/rss/cnn_topstories.rss).",
+            "required": true,
+            "x-ms-summary": "The RSS feed URL",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "The date since when RSS feed should be retrieved (Example: 2018-12-29 10:24:05Z).",
+            "required": false,
+            "x-ms-summary": "since",
+            "type": "string"
+          },
+          {
+            "name": "sinceProperty",
+            "in": "query",
+            "description": "Chosen property will be used for trigger state.",
+            "required": false,
+            "x-ms-summary": "Chosen property will be used to determine which items are new.",
+            "type": "string",
+            "enum": [
+              "PublishDate",
+              "UpdatedOn"
+            ],
+            "default": "PublishDate"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FeedItem"
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/rss/#list-all-rss-feed-items"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TriggerBatchResponse[FeedItem]": {
+      "description": "Represents a wrapper object for batch trigger response",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "A list of the response objects",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FeedItem"
+          }
+        }
+      }
+    },
+    "FeedItem": {
+      "description": "Represents an RSS feed item.",
+      "required": [
+        "title"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Feed ID",
+          "type": "string",
+          "x-ms-summary": "Feed ID"
+        },
+        "title": {
+          "description": "Feed title",
+          "type": "string",
+          "x-ms-summary": "Feed title"
+        },
+        "primaryLink": {
+          "description": "Primary feed link",
+          "type": "string",
+          "x-ms-summary": "Primary feed link"
+        },
+        "links": {
+          "description": "Feed links",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Feed links",
+          "x-ms-visibility": "advanced"
+        },
+        "updatedOn": {
+          "description": "Feed updated on",
+          "type": "string",
+          "x-ms-summary": "Feed updated on"
+        },
+        "publishDate": {
+          "description": "Feed published date",
+          "type": "string",
+          "x-ms-summary": "Feed published on"
+        },
+        "summary": {
+          "description": "Feed item summary",
+          "type": "string",
+          "x-ms-summary": "Feed summary"
+        },
+        "copyright": {
+          "description": "Copyright information",
+          "type": "string",
+          "x-ms-summary": "Feed copyright information"
+        },
+        "categories": {
+          "description": "Feed item categories",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Feed categories"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/rss"
+  }
+}

@@ -1,0 +1,974 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.1",
+    "title": "Blogger",
+    "description": "Blogger is a blog publishing service. It allows you to create websites and post to them on an ongoing basis.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/blogger",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/trigger1/blogs/{blogId}/posts": {
+      "get": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "When a post is created",
+        "description": "Triggers a flow when a new post is created",
+        "operationId": "OnPostCreated",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Select a blog to watch",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the posts to retrieve",
+            "required": true,
+            "x-ms-summary": "Post Status",
+            "x-ms-visibility": "important",
+            "type": "string",
+            "enum": [
+              "Draft",
+              "Live",
+              "All"
+            ],
+            "x-ms-test-value": "Live"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Post"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a post on the selected blog.",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#when-a-post-is-created"
+        }
+      }
+    },
+    "/{connectionId}/users/self/blogs": {
+      "get": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "List user blogs",
+        "description": "Lists all blogs for the current user",
+        "operationId": "ListBlogs",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BlogList"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#list-user-blogs"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/blogs/{blogId}/posts": {
+      "get": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "List all posts",
+        "description": "List all posts",
+        "operationId": "ListPosts",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the posts to retrieve (live or draft)",
+            "required": false,
+            "x-ms-summary": "Status",
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "default": "live"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PostList"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#list-all-posts"
+        }
+      },
+      "post": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Create post",
+        "description": "Create post",
+        "operationId": "CreatePost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "post",
+            "in": "body",
+            "description": "The content of the post to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreatePostRequest"
+            },
+            "x-ms-summary": "The post to submit",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "isDraft",
+            "in": "query",
+            "description": "Indicate if this post should be saved as a draft",
+            "required": false,
+            "x-ms-summary": "Draft",
+            "x-ms-visibility": "important",
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#create-post"
+        }
+      }
+    },
+    "/{connectionId}/blogs/{blogId}/posts/{postId}": {
+      "get": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Get a post",
+        "description": "Get a post",
+        "operationId": "GetPost",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "Post",
+            "required": true,
+            "x-ms-summary": "Post Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListPosts",
+              "parameters": {
+                "blogId": {
+                  "parameter": "blogId"
+                }
+              },
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "6840306836930908465"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#get-a-post"
+        }
+      },
+      "put": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Edit a post",
+        "description": "Edit a post",
+        "operationId": "EditPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "Post",
+            "required": true,
+            "x-ms-summary": "Post Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListPosts",
+              "parameters": {
+                "blogId": {
+                  "parameter": "blogId"
+                }
+              },
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "6840306836930908465"
+          },
+          {
+            "name": "post",
+            "in": "body",
+            "description": "The post to submit",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdatePostRequest"
+            },
+            "x-ms-summary": "The post to submit",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#edit-a-post"
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Delete a post",
+        "description": "Delete a post",
+        "operationId": "DeletePost",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "Post",
+            "required": true,
+            "x-ms-summary": "Post Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListPosts",
+              "parameters": {
+                "blogId": {
+                  "parameter": "blogId"
+                }
+              },
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#delete-a-post"
+        }
+      }
+    },
+    "/{connectionId}/blogs/{blogId}/posts/{postId}/publish": {
+      "post": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Publish a post",
+        "description": "Publish a post",
+        "operationId": "PublishPost",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "Post",
+            "required": true,
+            "x-ms-summary": "Post Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListPosts",
+              "parameters": {
+                "blogId": {
+                  "parameter": "blogId"
+                }
+              },
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "6840306836930908465"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#publish-a-post"
+        }
+      }
+    },
+    "/{connectionId}/blogs/{blogId}/posts/{postId}/revert": {
+      "post": {
+        "tags": [
+          "Blogger"
+        ],
+        "summary": "Revert a post",
+        "description": "Revert a post",
+        "operationId": "RevertPost",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "description": "Blog",
+            "required": true,
+            "x-ms-summary": "Blog Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBlogs",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string",
+            "x-ms-test-value": "4918223402810686946"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "Post",
+            "required": true,
+            "x-ms-summary": "Post Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListPosts",
+              "parameters": {
+                "blogId": {
+                  "parameter": "blogId"
+                }
+              },
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string",
+            "x-ms-test-value": "6840306836930908465"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/blogger/#revert-a-post"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PostList": {
+      "description": "A list of Blogger posts",
+      "type": "object",
+      "properties": {
+        "items": {
+          "description": "The list of blog post items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Post"
+          },
+          "x-ms-summary": "Posts",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "Post": {
+      "description": "A Blogger post object",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The id of the post",
+          "type": "string",
+          "x-ms-summary": "Post Id",
+          "x-ms-visibility": "advanced"
+        },
+        "blog.id": {
+          "description": "The associated blog id of the post",
+          "type": "string",
+          "x-ms-summary": "Blog Id",
+          "x-ms-visibility": "advanced"
+        },
+        "published": {
+          "format": "date-time",
+          "description": "The published date of the post",
+          "type": "string",
+          "x-ms-summary": "Published Date",
+          "x-ms-visibility": "advanced"
+        },
+        "updated": {
+          "format": "date-time",
+          "description": "The updated date of the post",
+          "type": "string",
+          "x-ms-summary": "Updated Date",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "description": "The url where this post is displayed",
+          "type": "string",
+          "x-ms-summary": "Post URL",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "description": "The title of the post",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important"
+        },
+        "content": {
+          "description": "The content of the post",
+          "type": "string",
+          "x-ms-summary": "Post content",
+          "x-ms-visibility": "important"
+        },
+        "author.id": {
+          "description": "The id of the author",
+          "type": "string",
+          "x-ms-summary": "Author Id",
+          "x-ms-visibility": "important"
+        },
+        "author.displayName": {
+          "description": "The name of the author",
+          "type": "string",
+          "x-ms-summary": "Author Name",
+          "x-ms-visibility": "important"
+        },
+        "author.url": {
+          "description": "The url of the author",
+          "type": "string",
+          "x-ms-summary": "Author URL",
+          "x-ms-visibility": "important"
+        },
+        "author.image.url": {
+          "description": "The URL of the image of the author",
+          "type": "string",
+          "x-ms-summary": "Author Image URL",
+          "x-ms-visibility": "important"
+        },
+        "labels": {
+          "description": "The list of this post's labels",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Labels",
+          "x-ms-visibility": "advanced"
+        },
+        "location": {
+          "$ref": "#/definitions/Location"
+        },
+        "status": {
+          "description": "The status of the post",
+          "type": "string",
+          "x-ms-summary": "Status",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Location": {
+      "description": "A Location blog object",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the location",
+          "type": "string",
+          "x-ms-summary": "Location Name",
+          "x-ms-visibility": "advanced"
+        },
+        "lat": {
+          "format": "double",
+          "description": "The latitude of the location",
+          "type": "number",
+          "x-ms-summary": "Latitude",
+          "x-ms-visibility": "advanced"
+        },
+        "lng": {
+          "format": "double",
+          "description": "The longitude of the location",
+          "type": "number",
+          "x-ms-summary": "Longitude",
+          "x-ms-visibility": "advanced"
+        },
+        "span": {
+          "description": "The viewport span. Can be used when rendering a map preview",
+          "type": "string",
+          "x-ms-summary": "Location Span",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "BlogList": {
+      "description": "A list of Blogger blogs",
+      "type": "object",
+      "properties": {
+        "items": {
+          "description": "The list of blog items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Blog"
+          },
+          "x-ms-summary": "Blogs",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "Blog": {
+      "description": "A Blogger blog object",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The id of the blog",
+          "type": "string",
+          "x-ms-summary": "Blog ID",
+          "x-ms-visibility": "advanced"
+        },
+        "name": {
+          "description": "The name of the blog",
+          "type": "string",
+          "x-ms-summary": "Blog name",
+          "x-ms-visibility": "important"
+        },
+        "description": {
+          "description": "The description of the blog",
+          "type": "string",
+          "x-ms-summary": "Blog description",
+          "x-ms-visibility": "important"
+        },
+        "published": {
+          "format": "date-time",
+          "description": "The published date of the blog",
+          "type": "string",
+          "x-ms-summary": "Published date",
+          "x-ms-visibility": "advanced"
+        },
+        "updated": {
+          "format": "date-time",
+          "description": "The updated date of the blog",
+          "type": "string",
+          "x-ms-summary": "Updated date",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "description": "The url of the blog",
+          "type": "string",
+          "x-ms-summary": "Blog URL",
+          "x-ms-visibility": "advanced"
+        },
+        "status": {
+          "description": "The status of the blog",
+          "type": "string",
+          "x-ms-summary": "Status",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "CreatePostRequest": {
+      "description": "A Blogger post object for new post requests",
+      "required": [
+        "title",
+        "content"
+      ],
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "The title of the post",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important"
+        },
+        "content": {
+          "description": "The content of the post",
+          "type": "string",
+          "x-ms-summary": "Content",
+          "x-ms-visibility": "important"
+        },
+        "labels": {
+          "description": "The labels for the post",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Labels",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "x-ms-test-value": {
+        "title": "test 1",
+        "content": "some content"
+      }
+    },
+    "UpdatePostRequest": {
+      "description": "A Blogger post object for new post requests",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "The title of the post",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important"
+        },
+        "content": {
+          "description": "The content of the post",
+          "type": "string",
+          "x-ms-summary": "Content",
+          "x-ms-visibility": "important"
+        },
+        "labels": {
+          "description": "The labels for the post",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-summary": "Labels",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "x-ms-test-value": {
+        "title": "test 1",
+        "content": "some content"
+      }
+    },
+    "Object": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListBlogs"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.blogger.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://policies.google.com/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/blogger"
+  }
+}

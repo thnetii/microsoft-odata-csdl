@@ -1,0 +1,2347 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Eventbrite",
+    "description": "Eventbrite is a self-service ticketing platform used to create and discover local events.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/trigger/v3/organizers/{id}/events/": {
+      "get": {
+        "summary": "When an event is created",
+        "description": "Triggers a flow when an organizer has a new event.",
+        "operationId": "OnNewEvent",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Organizer to trigger on new events.",
+            "required": true,
+            "x-ms-summary": "Organizer",
+            "x-ms-test-value": "12803744187",
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizers",
+              "value-path": "id",
+              "value-title": "name",
+              "value-collection": "organizers"
+            },
+            "type": "string"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The order events should be returned in",
+            "required": true,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "created_desc",
+            "type": "string",
+            "default": "created_desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetEventsForOrganizer_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-dev-triggerType": "SimpleFilter",
+        "x-ms-dev-triggerValueCollection": "events",
+        "x-ms-trigger-hint": "To see it work now, add an event under the selected Organizer.",
+        "x-ms-dev-triggerValuePath": "created",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#when-an-event-is-created-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v3/users/me/organizers/": {
+      "get": {
+        "summary": "Get organizers",
+        "description": "Get a list of organizers for your account.",
+        "operationId": "GetOrganizers",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetOrganizers_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-organizers-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v3/users/me/venues/": {
+      "get": {
+        "summary": "Get venues",
+        "description": "Get venues for your account.",
+        "operationId": "GetMyVenues",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetMyVenues_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-venues-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/trigger/v3/events/{id}/orders/": {
+      "get": {
+        "summary": "When an order changes",
+        "description": "Trigger a flow when an order changes.",
+        "operationId": "OnOrderChanged",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Event to trigger on changed order.",
+            "required": true,
+            "x-ms-summary": "Event",
+            "x-ms-test-value": "31647673042",
+            "x-ms-dynamic-values": {
+              "operationId": "GetMyEvents",
+              "parameters": {
+                "order_by": "start_desc",
+                "status": "draft,live"
+              },
+              "value-path": "id",
+              "value-title": "name/text",
+              "value-collection": "events"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetOrders_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-dev-triggerType": "queryFilter",
+        "x-ms-trigger-hint": "To see it work now, update the selected Order.",
+        "x-ms-dev-queryfilterParamName": "changed_since",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#when-an-order-changes-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v3/users/me/owned_events/": {
+      "get": {
+        "summary": "Get My Events",
+        "description": "Get my Eventbrite events.",
+        "operationId": "GetMyEvents",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Order of the returned events.",
+            "required": true,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "start_asc",
+            "default": "start_desc",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the returned events.",
+            "required": true,
+            "x-ms-summary": "Status",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "draft,live",
+            "default": "draft,live",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetMyEvents_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-my-events-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v3/categories/": {
+      "get": {
+        "summary": "Get categories",
+        "description": "Get the Eventbrite event categories.",
+        "operationId": "GetCategories",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetCategories_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-categories"
+        }
+      }
+    },
+    "/{connectionId}/v3/events/": {
+      "post": {
+        "summary": "Create event",
+        "description": "Create a new Eventbrite event.",
+        "operationId": "CreateEvent",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "event.name.html",
+            "in": "query",
+            "description": "The name of the event.",
+            "required": true,
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "NewName",
+            "type": "string"
+          },
+          {
+            "name": "event.description.html",
+            "in": "query",
+            "description": "The description on the event page.",
+            "required": true,
+            "x-ms-summary": "Description",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Here is a new description!",
+            "type": "string"
+          },
+          {
+            "name": "event.start.utc",
+            "in": "query",
+            "description": "Start time (UTC format Ex. \"2017-01-12T13:45:30Z\").",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start",
+            "x-ms-test-value": "2025-01-12T13:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.end.utc",
+            "in": "query",
+            "description": "End time (UTC format Ex. 2017-01-12T16:45:30Z).",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End",
+            "x-ms-test-value": "2025-01-12T20:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.start.timezone",
+            "in": "query",
+            "description": "Timezone of the event.",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start timezone",
+            "x-ms-test-value": "America/Los_Angeles",
+            "type": "string",
+            "enum": [
+              "Pacific/Midway",
+              "Pacific/Honolulu",
+              "America/Anchorage",
+              "America/Los_Angeles",
+              "America/Denver",
+              "America/Chicago",
+              "America/New_York",
+              "America/Santiago",
+              "America/Halifax",
+              "America/Curacao",
+              "America/St_Johns",
+              "America/Sao_Paulo",
+              "America/Argentina/Buenos_Aires",
+              "America/Noronha",
+              "Atlantic/Azores",
+              "Europe/London",
+              "Africa/Casablanca",
+              "Europe/Paris",
+              "Europe/Copenhagen",
+              "Europe/Madrid",
+              "Europe/Rome",
+              "Africa/Cairo",
+              "Africa/Johannesburg",
+              "Europe/Athens",
+              "Africa/Nairobi",
+              "Europe/Istanbul",
+              "Europe/Moscow",
+              "Asia/Tehran",
+              "Asia/Dubai",
+              "Asia/Ashgabat",
+              "Asia/Kolkata",
+              "Asia/Kathmandu",
+              "Asia/Almaty",
+              "Asia/Bangkok",
+              "Asia/Jakarta",
+              "Asia/Hong_Kong",
+              "Asia/Shanghai",
+              "Australia/Perth",
+              "Asia/Pyongyang",
+              "Asia/Seoul",
+              "Asia/Tokyo",
+              "Australia/Darwin",
+              "Australia/Sydney",
+              "Asia/Magadan",
+              "Pacific/Auckland"
+            ]
+          },
+          {
+            "name": "event.end.timezone",
+            "in": "query",
+            "description": "Timezone of the event.",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End timezone",
+            "x-ms-test-value": "America/Los_Angeles",
+            "type": "string",
+            "enum": [
+              "Pacific/Midway",
+              "Pacific/Honolulu",
+              "America/Anchorage",
+              "America/Los_Angeles",
+              "America/Denver",
+              "America/Chicago",
+              "America/New_York",
+              "America/Santiago",
+              "America/Halifax",
+              "America/Curacao",
+              "America/St_Johns",
+              "America/Sao_Paulo",
+              "America/Argentina/Buenos_Aires",
+              "America/Noronha",
+              "Atlantic/Azores",
+              "Europe/London",
+              "Africa/Casablanca",
+              "Europe/Paris",
+              "Europe/Copenhagen",
+              "Europe/Madrid",
+              "Europe/Rome",
+              "Africa/Cairo",
+              "Africa/Johannesburg",
+              "Europe/Athens",
+              "Africa/Nairobi",
+              "Europe/Istanbul",
+              "Europe/Moscow",
+              "Asia/Tehran",
+              "Asia/Dubai",
+              "Asia/Ashgabat",
+              "Asia/Kolkata",
+              "Asia/Kathmandu",
+              "Asia/Almaty",
+              "Asia/Bangkok",
+              "Asia/Jakarta",
+              "Asia/Hong_Kong",
+              "Asia/Shanghai",
+              "Australia/Perth",
+              "Asia/Pyongyang",
+              "Asia/Seoul",
+              "Asia/Tokyo",
+              "Australia/Darwin",
+              "Australia/Sydney",
+              "Asia/Magadan",
+              "Pacific/Auckland"
+            ]
+          },
+          {
+            "name": "event.currency",
+            "in": "query",
+            "description": "Currency for this Event's transactions.",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Event currency",
+            "x-ms-test-value": "USD",
+            "type": "string",
+            "enum": [
+              "USD",
+              "AUD",
+              "CAD",
+              "CHF",
+              "DKK",
+              "EUR",
+              "GBP",
+              "HKD",
+              "IDR",
+              "INR",
+              "JPY",
+              "KRW",
+              "MXN",
+              "MYR",
+              "NOK",
+              "NZD",
+              "RUB",
+              "SAR",
+              "SEK",
+              "TRY",
+              "TWD",
+              "ZAR"
+            ]
+          },
+          {
+            "$ref": "#/parameters/event.organizer_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.venue_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.category_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.password__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.capacity__in_query"
+          },
+          {
+            "name": "event.shareable",
+            "in": "query",
+            "description": "If users can share the event on social media.",
+            "required": false,
+            "x-ms-summary": "Shareable",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.invite_only__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.online_event__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.listed__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.hide_start_date__in_query"
+          },
+          {
+            "name": "event.hide_end_date",
+            "in": "query",
+            "description": "Whether the end date should be hidden.",
+            "required": false,
+            "x-ms-summary": "Hide end date",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.show_remaining__in_query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateEvent_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#create-event-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v3/events/{id}/": {
+      "post": {
+        "summary": "Update event",
+        "description": "Update an existing event.",
+        "operationId": "UpdateEvent",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Event to update.",
+            "required": true,
+            "x-ms-summary": "Event",
+            "x-ms-test-value": "31647673042",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetMyEvents",
+              "value-path": "id",
+              "value-title": "name/text",
+              "value-collection": "events",
+              "parameters": {
+                "order_by": "created_desc",
+                "status": "draft,live"
+              }
+            },
+            "type": "string"
+          },
+          {
+            "name": "event.name.html",
+            "in": "query",
+            "description": "The name of the event.",
+            "required": false,
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "UpdatedName",
+            "type": "string"
+          },
+          {
+            "name": "event.description.html",
+            "in": "query",
+            "description": "The description on the event page.",
+            "required": false,
+            "x-ms-summary": "Description",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Updated",
+            "type": "string"
+          },
+          {
+            "name": "event.start.utc",
+            "in": "query",
+            "description": "Start time (UTC format Ex. \"2017-01-12T13:45:30Z\").",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start",
+            "x-ms-test-value": "2025-01-12T13:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.end.utc",
+            "in": "query",
+            "description": "End time (UTC format Ex. 2017-01-12T16:45:30Z).",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End",
+            "x-ms-test-value": "2025-01-12T20:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.start.timezone",
+            "in": "query",
+            "description": "Timezone of the event.",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start timezone",
+            "x-ms-test-value": "America/Los_Angeles",
+            "type": "string",
+            "enum": [
+              "Pacific/Midway",
+              "Pacific/Honolulu",
+              "America/Anchorage",
+              "America/Los_Angeles",
+              "America/Denver",
+              "America/Chicago",
+              "America/New_York",
+              "America/Santiago",
+              "America/Halifax",
+              "America/Curacao",
+              "America/St_Johns",
+              "America/Sao_Paulo",
+              "America/Argentina/Buenos_Aires",
+              "America/Noronha",
+              "Atlantic/Azores",
+              "Europe/London",
+              "Africa/Casablanca",
+              "Europe/Paris",
+              "Europe/Copenhagen",
+              "Europe/Madrid",
+              "Europe/Rome",
+              "Africa/Cairo",
+              "Africa/Johannesburg",
+              "Europe/Athens",
+              "Africa/Nairobi",
+              "Europe/Istanbul",
+              "Europe/Moscow",
+              "Asia/Tehran",
+              "Asia/Dubai",
+              "Asia/Ashgabat",
+              "Asia/Kolkata",
+              "Asia/Kathmandu",
+              "Asia/Almaty",
+              "Asia/Bangkok",
+              "Asia/Jakarta",
+              "Asia/Hong_Kong",
+              "Asia/Shanghai",
+              "Australia/Perth",
+              "Asia/Pyongyang",
+              "Asia/Seoul",
+              "Asia/Tokyo",
+              "Australia/Darwin",
+              "Australia/Sydney",
+              "Asia/Magadan",
+              "Pacific/Auckland"
+            ]
+          },
+          {
+            "name": "event.end.timezone",
+            "in": "query",
+            "description": "Timezone of the event.",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End timezone",
+            "x-ms-test-value": "America/Los_Angeles",
+            "type": "string",
+            "enum": [
+              "Pacific/Midway",
+              "Pacific/Honolulu",
+              "America/Anchorage",
+              "America/Los_Angeles",
+              "America/Denver",
+              "America/Chicago",
+              "America/New_York",
+              "America/Santiago",
+              "America/Halifax",
+              "America/Curacao",
+              "America/St_Johns",
+              "America/Sao_Paulo",
+              "America/Argentina/Buenos_Aires",
+              "America/Noronha",
+              "Atlantic/Azores",
+              "Europe/London",
+              "Africa/Casablanca",
+              "Europe/Paris",
+              "Europe/Copenhagen",
+              "Europe/Madrid",
+              "Europe/Rome",
+              "Africa/Cairo",
+              "Africa/Johannesburg",
+              "Europe/Athens",
+              "Africa/Nairobi",
+              "Europe/Istanbul",
+              "Europe/Moscow",
+              "Asia/Tehran",
+              "Asia/Dubai",
+              "Asia/Ashgabat",
+              "Asia/Kolkata",
+              "Asia/Kathmandu",
+              "Asia/Almaty",
+              "Asia/Bangkok",
+              "Asia/Jakarta",
+              "Asia/Hong_Kong",
+              "Asia/Shanghai",
+              "Australia/Perth",
+              "Asia/Pyongyang",
+              "Asia/Seoul",
+              "Asia/Tokyo",
+              "Australia/Darwin",
+              "Australia/Sydney",
+              "Asia/Magadan",
+              "Pacific/Auckland"
+            ]
+          },
+          {
+            "name": "event.currency",
+            "in": "query",
+            "description": "Currency for this Event's transactions.",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Event currency",
+            "x-ms-test-value": "USD",
+            "type": "string",
+            "enum": [
+              "USD",
+              "AUD",
+              "CAD",
+              "CHF",
+              "DKK",
+              "EUR",
+              "GBP",
+              "HKD",
+              "IDR",
+              "INR",
+              "JPY",
+              "KRW",
+              "MXN",
+              "MYR",
+              "NOK",
+              "NZD",
+              "RUB",
+              "SAR",
+              "SEK",
+              "TRY",
+              "TWD",
+              "ZAR"
+            ]
+          },
+          {
+            "$ref": "#/parameters/event.organizer_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.venue_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.category_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.password__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.capacity__in_query"
+          },
+          {
+            "name": "event.shareable",
+            "in": "query",
+            "description": "Set specific capacity (if omitted, sums ticket capacities).",
+            "required": false,
+            "x-ms-summary": "Shareable",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.invite_only__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.online_event__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.listed__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.hide_start_date__in_query"
+          },
+          {
+            "name": "event.hide_end_date",
+            "in": "query",
+            "description": "Whether the start date should be hidden.",
+            "required": false,
+            "x-ms-summary": "Hide end date",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.show_remaining__in_query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateEvent_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#update-event-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/trigger/v3/organizations/{organization_id}/events/": {
+      "get": {
+        "summary": "When an event is created (V2)",
+        "description": "Triggers a flow when an organizer has a new event.",
+        "operationId": "OnNewEventV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organization_id"
+          },
+          {
+            "name": "organizer_filter",
+            "in": "query",
+            "description": "The organizer of the event.",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Organizer",
+            "x-ms-test-value": "30572101088",
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizersV2",
+              "value-path": "id",
+              "value-title": "name",
+              "value-collection": "organizers",
+              "parameters": {
+                "organization_id": {
+                  "parameter": "organization_id"
+                }
+              }
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The order events should be returned in",
+            "required": true,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "created_desc",
+            "type": "string",
+            "default": "created_desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetEventsForOrganization_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-dev-triggerType": "SimpleFilter",
+        "x-ms-dev-triggerValueCollection": "events",
+        "x-ms-trigger-hint": "To see it work now, add an event under the selected Organizer.",
+        "x-ms-dev-triggerValuePath": "created",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#when-an-event-is-created-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v2/trigger/v3/events/{id}/orders/": {
+      "get": {
+        "summary": "When an order changes (V2)",
+        "description": "Trigger a flow when an order changes.",
+        "operationId": "OnOrderChangedV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/queryOrganizationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Event to trigger on changed order.",
+            "required": true,
+            "x-ms-summary": "Event",
+            "x-ms-test-value": "31647673042",
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizationEvents",
+              "parameters": {
+                "order_by": "start_desc",
+                "status": "draft,live",
+                "organization_id": {
+                  "parameter": "organization_id"
+                }
+              },
+              "value-path": "id",
+              "value-title": "name/text",
+              "value-collection": "events"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetOrders_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-dev-triggerType": "queryFilter",
+        "x-ms-trigger-hint": "To see it work now, update the selected Order.",
+        "x-ms-dev-queryfilterParamName": "changed_since",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#when-an-order-changes-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v3/users/me/organizations/": {
+      "get": {
+        "operationId": "GetOrganizations",
+        "x-ms-summary": "Get organizations",
+        "description": "Get a list of organizations for your account.",
+        "x-ms-test-value": "354882538111",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetOrganizations_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/v3/organizations/{organization_id}/organizers/": {
+      "get": {
+        "summary": "Get organizers (V2)",
+        "description": "Get a list of organizers for organization.",
+        "operationId": "GetOrganizersV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organization_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetOrganizers_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-organizers-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v3/organizations/{organization_id}/venues/": {
+      "get": {
+        "summary": "Get venues (V2)",
+        "description": "Get venues for organization.",
+        "operationId": "GetMyVenuesV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organization_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetMyVenues_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-venues-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v3/organizations/{organization_id}/events/": {
+      "post": {
+        "summary": "Create event (V2)",
+        "description": "Create a new Eventbrite event.",
+        "operationId": "CreateEventV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organization_id"
+          },
+          {
+            "name": "event.name.html",
+            "in": "query",
+            "description": "The name of the event.",
+            "required": true,
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "NewName",
+            "type": "string"
+          },
+          {
+            "name": "event.description.html",
+            "in": "query",
+            "description": "The description on the event page.",
+            "required": true,
+            "x-ms-summary": "Description",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Here is a new description!",
+            "type": "string"
+          },
+          {
+            "name": "event.start.utc",
+            "in": "query",
+            "description": "Start time (UTC format Ex. 2020-01-12T12:00:00Z).",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start",
+            "x-ms-test-value": "2025-01-12T13:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.end.utc",
+            "in": "query",
+            "description": "End time (UTC format Ex. 2020-01-13T15:00:00Z).",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End",
+            "x-ms-test-value": "2025-01-12T20:45:30Z",
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/eventStartTimezone"
+          },
+          {
+            "$ref": "#/parameters/eventEndTimezone"
+          },
+          {
+            "$ref": "#/parameters/eventCurrency"
+          },
+          {
+            "$ref": "#/parameters/organizer_id__in_query_v2"
+          },
+          {
+            "$ref": "#/parameters/venue_id__in_query_v2"
+          },
+          {
+            "$ref": "#/parameters/event.category_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.password__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.capacity__in_query"
+          },
+          {
+            "name": "event.shareable",
+            "in": "query",
+            "description": "If users can share the event on social media.",
+            "required": false,
+            "x-ms-summary": "Shareable",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.invite_only__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.online_event__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.listed__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.hide_start_date__in_query"
+          },
+          {
+            "name": "event.hide_end_date",
+            "in": "query",
+            "description": "Whether the end date should be hidden.",
+            "required": false,
+            "x-ms-summary": "Hide end date",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.show_remaining__in_query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateEvent_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#create-event-(v2)"
+        }
+      },
+      "get": {
+        "summary": "Get organization events",
+        "description": "Get organization events.",
+        "operationId": "GetOrganizationEvents",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/organization_id"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Order of the returned events.",
+            "required": true,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "start_asc",
+            "default": "start_desc",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the returned events.",
+            "required": true,
+            "x-ms-summary": "Status",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "draft,live",
+            "default": "draft,live",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetMyEvents_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#get-organization-events"
+        }
+      }
+    },
+    "/{connectionId}/v2/v3/events/{id}/": {
+      "post": {
+        "summary": "Update event (V2)",
+        "description": "Update an existing event.",
+        "operationId": "UpdateEventV2",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/queryOrganizationId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Event to update.",
+            "required": true,
+            "x-ms-summary": "Event",
+            "x-ms-test-value": "31647673042",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizationEvents",
+              "value-path": "id",
+              "value-title": "name/text",
+              "value-collection": "events",
+              "parameters": {
+                "organization_id": {
+                  "parameter": "organization_id"
+                },
+                "order_by": "created_desc",
+                "status": "draft,live"
+              }
+            },
+            "type": "string"
+          },
+          {
+            "name": "event.name.html",
+            "in": "query",
+            "description": "The name of the event.",
+            "required": false,
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "UpdatedName",
+            "type": "string"
+          },
+          {
+            "name": "event.description.html",
+            "in": "query",
+            "description": "The description on the event page.",
+            "required": false,
+            "x-ms-summary": "Description",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Updated",
+            "type": "string"
+          },
+          {
+            "name": "event.start.utc",
+            "in": "query",
+            "description": "Start time (UTC format Ex. 2017-01-12T13:45:30Z).",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "Start",
+            "x-ms-test-value": "2025-01-12T13:45:30Z",
+            "type": "string"
+          },
+          {
+            "name": "event.end.utc",
+            "in": "query",
+            "description": "End time (UTC format Ex. 2017-01-12T16:45:30Z).",
+            "required": false,
+            "x-ms-visibility": "important",
+            "x-ms-summary": "End",
+            "x-ms-test-value": "2025-01-12T20:45:30Z",
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/eventStartTimezone"
+          },
+          {
+            "$ref": "#/parameters/eventEndTimezone"
+          },
+          {
+            "$ref": "#/parameters/eventCurrency"
+          },
+          {
+            "$ref": "#/parameters/organizer_id__in_query_v2"
+          },
+          {
+            "$ref": "#/parameters/venue_id__in_query_v2"
+          },
+          {
+            "$ref": "#/parameters/event.category_id__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.password__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.capacity__in_query"
+          },
+          {
+            "name": "event.shareable",
+            "in": "query",
+            "description": "Set specific capacity (if omitted, sums ticket capacities).",
+            "required": false,
+            "x-ms-summary": "Shareable",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.invite_only__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.online_event__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.listed__in_query"
+          },
+          {
+            "$ref": "#/parameters/event.hide_start_date__in_query"
+          },
+          {
+            "name": "event.hide_end_date",
+            "in": "query",
+            "description": "Whether the start date should be hidden.",
+            "required": false,
+            "x-ms-summary": "Hide end date",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/event.show_remaining__in_query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateEvent_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/eventbrite/#update-event-(v2)"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "GetOrganizers_Response": {
+      "type": "object",
+      "properties": {
+        "organizers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The id of the organizer.",
+                "type": "string",
+                "x-ms-summary": "Id",
+                "x-ms-visibility": "advanced"
+              },
+              "name": {
+                "description": "The name of the organizer.",
+                "type": "string",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "Organizer",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "GetMyVenues_Response": {
+      "type": "object",
+      "properties": {
+        "venues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The id of the venue.",
+                "type": "string",
+                "x-ms-summary": "Id",
+                "x-ms-visibility": "advanced"
+              },
+              "name": {
+                "description": "The name of the venue.",
+                "type": "string",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "Venue",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "GetEventsForOrganizer_Response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "The name of the event (in text form).",
+                "type": "string",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "important"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "The description of the event (in text form).",
+                "type": "string",
+                "x-ms-summary": "Description",
+                "x-ms-visibility": "important"
+              }
+            }
+          },
+          "id": {
+            "description": "The id of the event.",
+            "type": "string",
+            "x-ms-summary": "Id",
+            "x-ms-visibility": "advanced"
+          },
+          "url": {
+            "description": "The URL of the event.",
+            "type": "string",
+            "x-ms-summary": "URL",
+            "x-ms-visibility": "important"
+          },
+          "start": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "description": "The timezone of the start of the event.",
+                "type": "string",
+                "x-ms-summary": "Timezone",
+                "x-ms-visibility": "advanced"
+              },
+              "local": {
+                "format": "date-time",
+                "description": "The start date-time of the event in local time.",
+                "type": "string",
+                "x-ms-summary": "local",
+                "x-ms-visibility": "advanced"
+              },
+              "utc": {
+                "format": "date-time",
+                "description": "The start date-time of the event in UTC.",
+                "type": "string",
+                "x-ms-summary": "UTC",
+                "x-ms-visibility": "important"
+              }
+            },
+            "x-ms-summary": "Start"
+          },
+          "end": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "description": "The timezone of the end of the event.",
+                "type": "string",
+                "x-ms-summary": "Timezone",
+                "x-ms-visibility": "advanced"
+              },
+              "local": {
+                "format": "date-time",
+                "description": "The end date-time of the event in local time.",
+                "type": "string",
+                "x-ms-summary": "local",
+                "x-ms-visibility": "advanced"
+              },
+              "utc": {
+                "format": "date-time",
+                "description": "The end date-time of the event in UTC.",
+                "type": "string",
+                "x-ms-summary": "UTC",
+                "x-ms-visibility": "important"
+              }
+            },
+            "x-ms-summary": "End"
+          },
+          "created": {
+            "format": "date-time",
+            "description": "The date-time the event was created at.",
+            "type": "string",
+            "x-ms-summary": "Created Date-Time",
+            "x-ms-visibility": "advanced"
+          },
+          "changed": {
+            "format": "date-time",
+            "description": "The date-time the event was changed at.",
+            "type": "string",
+            "x-ms-summary": "Chaged Date-Time",
+            "x-ms-visibility": "advanced"
+          },
+          "capacity": {
+            "format": "int32",
+            "description": "The capacity of the event.",
+            "type": "integer",
+            "x-ms-summary": "Capacity",
+            "x-ms-visibility": "advanced"
+          },
+          "online_event": {
+            "description": "A boolean indicating whether or not the event is online.",
+            "type": "boolean",
+            "x-ms-summary": "Is Online Event",
+            "x-ms-visibility": "advanced"
+          },
+          "organizer_id": {
+            "description": "The id of the organizer of the event.",
+            "type": "string",
+            "x-ms-summary": "Organizer Id",
+            "x-ms-visibility": "advanced"
+          },
+          "venue_id": {
+            "description": "The id of the venue of the event.",
+            "type": "string",
+            "x-ms-summary": "Venue Id",
+            "x-ms-visibility": "advanced"
+          },
+          "category_id": {
+            "description": "The id of the category of the event.",
+            "type": "string",
+            "x-ms-summary": "Category Id",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "GetOrders_Response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The id of the order.",
+            "type": "string",
+            "x-ms-summary": "Id",
+            "x-ms-visibility": "advanced"
+          },
+          "name": {
+            "description": "The name of the order.",
+            "type": "string",
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important"
+          },
+          "first_name": {
+            "description": "The first name on the order.",
+            "type": "string",
+            "x-ms-summary": "First Name",
+            "x-ms-visibility": "important"
+          },
+          "last_name": {
+            "description": "The last name on the order.",
+            "type": "string",
+            "x-ms-summary": "Last Name",
+            "x-ms-visibility": "important"
+          },
+          "email": {
+            "description": "The email on the order.",
+            "type": "string",
+            "x-ms-summary": "Email",
+            "x-ms-visibility": "important"
+          },
+          "status": {
+            "description": "The status of the order.",
+            "type": "string",
+            "x-ms-summary": "Status",
+            "x-ms-visibility": "important"
+          }
+        }
+      }
+    },
+    "GetMyEvents_Response": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "description": "The name of the event (in text form).",
+                    "type": "string",
+                    "x-ms-summary": "Name",
+                    "x-ms-visibility": "advanced"
+                  }
+                }
+              },
+              "id": {
+                "description": "The id of the event.",
+                "type": "string",
+                "x-ms-summary": "Id",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          }
+        }
+      }
+    },
+    "GetCategories_Response": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The id of the category.",
+                "type": "string",
+                "x-ms-summary": "Id",
+                "x-ms-visibility": "advanced"
+              },
+              "name": {
+                "description": "The name of the category.",
+                "type": "string",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          }
+        }
+      }
+    },
+    "CreateEvent_Response": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "description": "The name of the event (in text form).",
+              "type": "string",
+              "x-ms-summary": "Name",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "description": "The description of the event.",
+              "type": "string",
+              "x-ms-summary": "Description",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "id": {
+          "description": "The id of the event.",
+          "type": "string",
+          "x-ms-summary": "Id",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "description": "The URL of the event.",
+          "type": "string",
+          "x-ms-summary": "URL",
+          "x-ms-visibility": "important"
+        },
+        "start": {
+          "type": "object",
+          "properties": {
+            "timezone": {
+              "description": "The timezone of the start of the event.",
+              "type": "string",
+              "x-ms-summary": "Timezone",
+              "x-ms-visibility": "advanced"
+            },
+            "local": {
+              "format": "date-time",
+              "description": "The start date-time of the event in local time.",
+              "type": "string",
+              "x-ms-summary": "local",
+              "x-ms-visibility": "advanced"
+            },
+            "utc": {
+              "format": "date-time",
+              "description": "The start date-time of the event in UTC.",
+              "type": "string",
+              "x-ms-summary": "UTC",
+              "x-ms-visibility": "important"
+            }
+          },
+          "x-ms-summary": "Start"
+        },
+        "end": {
+          "type": "object",
+          "properties": {
+            "timezone": {
+              "description": "The timezone of the end of the event.",
+              "type": "string",
+              "x-ms-summary": "Timezone",
+              "x-ms-visibility": "advanced"
+            },
+            "local": {
+              "format": "date-time",
+              "description": "The end date-time of the event in local time.",
+              "type": "string",
+              "x-ms-summary": "local",
+              "x-ms-visibility": "advanced"
+            },
+            "utc": {
+              "format": "date-time",
+              "description": "The end date-time of the event in UTC.",
+              "type": "string",
+              "x-ms-summary": "UTC",
+              "x-ms-visibility": "important"
+            }
+          },
+          "x-ms-summary": "End"
+        },
+        "created": {
+          "format": "date-time",
+          "description": "The date-time the event was created at.",
+          "type": "string",
+          "x-ms-summary": "Created Date-Time",
+          "x-ms-visibility": "advanced"
+        },
+        "changed": {
+          "format": "date-time",
+          "description": "The date-time the event was changed at.",
+          "type": "string",
+          "x-ms-summary": "Chaged Date-Time",
+          "x-ms-visibility": "advanced"
+        },
+        "capacity": {
+          "format": "int32",
+          "description": "The capacity of the event.",
+          "type": "integer",
+          "x-ms-summary": "Capacity",
+          "x-ms-visibility": "advanced"
+        },
+        "online_event": {
+          "description": "A boolean indicating whether or not the event is online.",
+          "type": "boolean",
+          "x-ms-summary": "Is Online Event",
+          "x-ms-visibility": "advanced"
+        },
+        "organizer_id": {
+          "description": "The id of the organizer of the event.",
+          "type": "string",
+          "x-ms-summary": "Organizer Id",
+          "x-ms-visibility": "advanced"
+        },
+        "venue_id": {
+          "description": "The id of the venue of the event.",
+          "type": "string",
+          "x-ms-summary": "Venue Id",
+          "x-ms-visibility": "advanced"
+        },
+        "category_id": {
+          "description": "The id of the category of the event.",
+          "type": "string",
+          "x-ms-summary": "Category Id",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "GetOrganizations_Response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Organization ID.",
+            "type": "string",
+            "x-ms-summary": "id",
+            "x-ms-visibility": "important"
+          },
+          "name": {
+            "description": "The name of organization.",
+            "type": "string",
+            "x-ms-summary": "Name",
+            "x-ms-visibility": "important"
+          },
+          "vertical": {
+            "description": "Type of business vertical within which this Organization operates.",
+            "type": "string",
+            "x-ms-summary": "Vertical",
+            "x-ms-visibility": "important"
+          },
+          "image_id": {
+            "description": "ID of the image for an Organization.",
+            "type": "string",
+            "x-ms-summary": "Image id",
+            "x-ms-visibility": "advanced"
+          },
+          "parent_id": {
+            "description": "ID of the parent.",
+            "type": "string",
+            "x-ms-summary": "parent id",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "GetEventsForOrganization_Response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "The name of the event (in text form).",
+                "type": "string",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "important"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "The description of the event (in text form).",
+                "type": "string",
+                "x-ms-summary": "Description",
+                "x-ms-visibility": "important"
+              }
+            }
+          },
+          "id": {
+            "description": "The id of the event.",
+            "type": "string",
+            "x-ms-summary": "Id",
+            "x-ms-visibility": "advanced"
+          },
+          "url": {
+            "description": "The URL of the event.",
+            "type": "string",
+            "x-ms-summary": "URL",
+            "x-ms-visibility": "important"
+          },
+          "start": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "description": "The timezone of the start of the event.",
+                "type": "string",
+                "x-ms-visibility": "advanced"
+              },
+              "local": {
+                "format": "date-time",
+                "description": "The start date-time of the event in local time.",
+                "type": "string",
+                "x-ms-summary": "local",
+                "x-ms-visibility": "advanced"
+              },
+              "utc": {
+                "format": "date-time",
+                "description": "The start date-time of the event in UTC.",
+                "type": "string",
+                "x-ms-summary": "UTC",
+                "x-ms-visibility": "important"
+              }
+            },
+            "x-ms-summary": "Start"
+          },
+          "end": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "description": "The timezone of the end of the event.",
+                "type": "string",
+                "x-ms-visibility": "advanced"
+              },
+              "local": {
+                "format": "date-time",
+                "description": "The end date-time of the event in local time.",
+                "type": "string",
+                "x-ms-summary": "local",
+                "x-ms-visibility": "advanced"
+              },
+              "utc": {
+                "format": "date-time",
+                "description": "The end date-time of the event in UTC.",
+                "type": "string",
+                "x-ms-summary": "UTC",
+                "x-ms-visibility": "important"
+              }
+            },
+            "x-ms-summary": "End"
+          },
+          "created": {
+            "format": "date-time",
+            "description": "The date-time the event was created at.",
+            "type": "string",
+            "x-ms-summary": "Created Date-Time",
+            "x-ms-visibility": "advanced"
+          },
+          "changed": {
+            "format": "date-time",
+            "description": "The date-time the event was changed at.",
+            "type": "string",
+            "x-ms-summary": "Chaged Date-Time",
+            "x-ms-visibility": "advanced"
+          },
+          "capacity": {
+            "format": "int32",
+            "description": "The capacity of the event.",
+            "type": "integer",
+            "x-ms-summary": "Capacity",
+            "x-ms-visibility": "advanced"
+          },
+          "online_event": {
+            "description": "A boolean indicating whether or not the event is online.",
+            "type": "boolean",
+            "x-ms-summary": "Is Online Event",
+            "x-ms-visibility": "advanced"
+          },
+          "organizer_id": {
+            "description": "The id of the organizer of the event.",
+            "type": "string",
+            "x-ms-summary": "Organizer Id",
+            "x-ms-visibility": "advanced"
+          },
+          "organization_id": {
+            "description": "The id of the organization.",
+            "type": "string",
+            "x-ms-summary": "Organization Id",
+            "x-ms-visibility": "advanced"
+          },
+          "venue_id": {
+            "description": "The id of the venue of the event.",
+            "type": "string",
+            "x-ms-summary": "Venue Id",
+            "x-ms-visibility": "advanced"
+          },
+          "category_id": {
+            "description": "The id of the category of the event.",
+            "type": "string",
+            "x-ms-summary": "Category Id",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "event.organizer_id__in_query": {
+      "name": "event.organizer_id",
+      "in": "query",
+      "description": "The ID of the organizer of this event.",
+      "required": false,
+      "x-ms-visibility": "advanced",
+      "x-ms-summary": "Organizer",
+      "x-ms-test-value": "12803744187",
+      "x-ms-dynamic-values": {
+        "operationId": "GetOrganizers",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "organizers"
+      },
+      "type": "string"
+    },
+    "event.venue_id__in_query": {
+      "name": "event.venue_id",
+      "in": "query",
+      "description": "A previously-created venue to associate with this event.",
+      "required": false,
+      "x-ms-summary": "Venue",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "17873874",
+      "x-ms-dynamic-values": {
+        "operationId": "GetMyVenues",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "venues"
+      },
+      "type": "string"
+    },
+    "event.category_id__in_query": {
+      "name": "event.category_id",
+      "in": "query",
+      "description": "The category of the event.",
+      "required": false,
+      "x-ms-summary": "Category",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "119",
+      "x-ms-dynamic-values": {
+        "operationId": "GetCategories",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "categories"
+      },
+      "type": "string"
+    },
+    "event.password__in_query": {
+      "name": "event.password",
+      "in": "query",
+      "description": "Password needed to see the event in unlisted mode.",
+      "required": false,
+      "x-ms-summary": "Password",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "password",
+      "type": "string"
+    },
+    "event.capacity__in_query": {
+      "name": "event.capacity",
+      "in": "query",
+      "description": "Set specific capacity (if omitted, sums ticket capacities).",
+      "required": false,
+      "x-ms-summary": "Capacity",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "100",
+      "type": "string"
+    },
+    "event.invite_only__in_query": {
+      "name": "event.invite_only",
+      "in": "query",
+      "description": "Only invited users can see the event page.",
+      "required": false,
+      "x-ms-summary": "Invite Only",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "false",
+      "type": "boolean"
+    },
+    "event.online_event__in_query": {
+      "name": "event.online_event",
+      "in": "query",
+      "description": "Whether the event is online-only (no venue).",
+      "required": false,
+      "x-ms-summary": "Online Event",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "false",
+      "type": "boolean"
+    },
+    "event.listed__in_query": {
+      "name": "event.listed",
+      "in": "query",
+      "description": "If the event is publicly listed and searchable.",
+      "required": false,
+      "x-ms-summary": "Listed",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "false",
+      "type": "boolean"
+    },
+    "event.hide_start_date__in_query": {
+      "name": "event.hide_start_date",
+      "in": "query",
+      "description": "Whether the start date should be hidden.",
+      "required": false,
+      "x-ms-summary": "Hide start date",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "false",
+      "type": "boolean"
+    },
+    "event.show_remaining__in_query": {
+      "name": "event.show_remaining",
+      "in": "query",
+      "description": "If the remaining number of tickets is publicly visible on the event page.",
+      "required": false,
+      "x-ms-summary": "Show Remaining",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "true",
+      "type": "boolean"
+    },
+    "organization_id": {
+      "name": "organization_id",
+      "in": "path",
+      "x-ms-summary": "Organization",
+      "description": "Select the organization.",
+      "x-ms-test-value": "453882538122",
+      "required": true,
+      "type": "string",
+      "x-ms-dynamic-values": {
+        "operationId": "GetOrganizations",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "organizations"
+      }
+    },
+    "queryOrganizationId": {
+      "name": "organization_id",
+      "in": "query",
+      "x-ms-summary": "Organization",
+      "description": "Select the organization.",
+      "x-ms-test-value": "453882538122",
+      "required": true,
+      "type": "string",
+      "x-ms-dynamic-values": {
+        "operationId": "GetOrganizations",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "organizations"
+      }
+    },
+    "organizer_id__in_query_v2": {
+      "name": "event.organizer_id",
+      "in": "query",
+      "description": "The organizer of the event.",
+      "required": false,
+      "x-ms-visibility": "advanced",
+      "x-ms-summary": "Organizer",
+      "x-ms-test-value": "12803744187",
+      "x-ms-dynamic-values": {
+        "operationId": "GetOrganizersV2",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "organizers",
+        "parameters": {
+          "organization_id": {
+            "parameter": "organization_id"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "venue_id__in_query_v2": {
+      "name": "event.venue_id",
+      "in": "query",
+      "description": "A previously-created venue to associate with this event.",
+      "required": false,
+      "x-ms-summary": "Venue",
+      "x-ms-visibility": "advanced",
+      "x-ms-test-value": "17873874",
+      "x-ms-dynamic-values": {
+        "operationId": "GetMyVenuesV2",
+        "value-path": "id",
+        "value-title": "name",
+        "value-collection": "venues",
+        "parameters": {
+          "organization_id": {
+            "parameter": "organization_id"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "eventStartTimezone": {
+      "name": "event.start.timezone",
+      "x-ms-summary": "Start timezone",
+      "in": "query",
+      "description": "Timezone of the event.",
+      "required": true,
+      "x-ms-visibility": "important",
+      "x-ms-test-value": "America/Los_Angeles",
+      "type": "string",
+      "enum": [
+        "Pacific/Midway",
+        "Pacific/Honolulu",
+        "America/Anchorage",
+        "America/Los_Angeles",
+        "America/Denver",
+        "America/Chicago",
+        "America/New_York",
+        "America/Santiago",
+        "America/Halifax",
+        "America/Curacao",
+        "America/St_Johns",
+        "America/Sao_Paulo",
+        "America/Argentina/Buenos_Aires",
+        "America/Noronha",
+        "Atlantic/Azores",
+        "Europe/London",
+        "Africa/Casablanca",
+        "Europe/Paris",
+        "Europe/Copenhagen",
+        "Europe/Madrid",
+        "Europe/Rome",
+        "Africa/Cairo",
+        "Africa/Johannesburg",
+        "Europe/Athens",
+        "Africa/Nairobi",
+        "Europe/Istanbul",
+        "Europe/Moscow",
+        "Asia/Tehran",
+        "Asia/Dubai",
+        "Asia/Ashgabat",
+        "Asia/Kolkata",
+        "Asia/Kathmandu",
+        "Asia/Almaty",
+        "Asia/Bangkok",
+        "Asia/Jakarta",
+        "Asia/Hong_Kong",
+        "Asia/Shanghai",
+        "Australia/Perth",
+        "Asia/Pyongyang",
+        "Asia/Seoul",
+        "Asia/Tokyo",
+        "Australia/Darwin",
+        "Australia/Sydney",
+        "Asia/Magadan",
+        "Pacific/Auckland"
+      ]
+    },
+    "eventEndTimezone": {
+      "name": "event.end.timezone",
+      "x-ms-summary": "End timezone",
+      "in": "query",
+      "description": "Timezone of the event.",
+      "required": true,
+      "x-ms-visibility": "important",
+      "x-ms-test-value": "America/Los_Angeles",
+      "type": "string",
+      "enum": [
+        "Pacific/Midway",
+        "Pacific/Honolulu",
+        "America/Anchorage",
+        "America/Los_Angeles",
+        "America/Denver",
+        "America/Chicago",
+        "America/New_York",
+        "America/Santiago",
+        "America/Halifax",
+        "America/Curacao",
+        "America/St_Johns",
+        "America/Sao_Paulo",
+        "America/Argentina/Buenos_Aires",
+        "America/Noronha",
+        "Atlantic/Azores",
+        "Europe/London",
+        "Africa/Casablanca",
+        "Europe/Paris",
+        "Europe/Copenhagen",
+        "Europe/Madrid",
+        "Europe/Rome",
+        "Africa/Cairo",
+        "Africa/Johannesburg",
+        "Europe/Athens",
+        "Africa/Nairobi",
+        "Europe/Istanbul",
+        "Europe/Moscow",
+        "Asia/Tehran",
+        "Asia/Dubai",
+        "Asia/Ashgabat",
+        "Asia/Kolkata",
+        "Asia/Kathmandu",
+        "Asia/Almaty",
+        "Asia/Bangkok",
+        "Asia/Jakarta",
+        "Asia/Hong_Kong",
+        "Asia/Shanghai",
+        "Australia/Perth",
+        "Asia/Pyongyang",
+        "Asia/Seoul",
+        "Asia/Tokyo",
+        "Australia/Darwin",
+        "Australia/Sydney",
+        "Asia/Magadan",
+        "Pacific/Auckland"
+      ]
+    },
+    "eventCurrency": {
+      "name": "event.currency",
+      "in": "query",
+      "description": "Currency for this Event's transactions.",
+      "required": true,
+      "x-ms-summary": "Event currency",
+      "x-ms-test-value": "USD",
+      "type": "string",
+      "enum": [
+        "USD",
+        "AUD",
+        "CAD",
+        "CHF",
+        "DKK",
+        "EUR",
+        "GBP",
+        "HKD",
+        "IDR",
+        "INR",
+        "JPY",
+        "KRW",
+        "MXN",
+        "MYR",
+        "NOK",
+        "NZD",
+        "RUB",
+        "SAR",
+        "SEK",
+        "TRY",
+        "TWD",
+        "ZAR"
+      ]
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.eventbrite.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.eventbrite.com/support/articles/en_US/Troubleshooting/eventbrite-privacy-policy?lg=en_US"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/eventbrite"
+  },
+  "basePath": "/apim/eventbrite"
+}

@@ -1,0 +1,507 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Elastic Forms",
+    "description": "Build advanced and interactive forms!",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "securityDefinitions": {
+    "APIKey": {
+      "type": "apiKey",
+      "name": "apikey",
+      "in": "header"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/external/WebHook": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "FormData": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetSchema",
+                "parameters": {
+                  "FormUid": {
+                    "parameter": "FormUid"
+                  }
+                },
+                "value-path": "Section"
+              },
+              "x-ms-dynamic-properties": {
+                "operationId": "GetSchema",
+                "parameters": {
+                  "FormUid": {
+                    "parameterReference": "Request body of webhook/FormUid"
+                  }
+                },
+                "itemValuePath": "Section"
+              }
+            },
+            "UserName": {
+              "title": "User name",
+              "type": "string"
+            },
+            "UserEmail": {
+              "title": "User email",
+              "type": "string"
+            },
+            "SubmitDate": {
+              "title": "Date of submit",
+              "type": "string"
+            },
+            "DisplayDataUrl": {
+              "title": "Display data url",
+              "type": "string"
+            },
+            "FormTitle": {
+              "title": "Form title",
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "When form is filled",
+        "description": "Triggers when form is filled.",
+        "operationId": "TrigNewResponse",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "description": "Webhook request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "TriggerUrl",
+                "FormUid"
+              ],
+              "properties": {
+                "TriggerUrl": {
+                  "type": "string",
+                  "x-ms-visibility": "internal",
+                  "x-ms-notification-url": true
+                },
+                "FormUid": {
+                  "x-ms-summary": "Form",
+                  "description": "Form",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListForms",
+                    "value-path": "Uid",
+                    "value-title": "Title"
+                  },
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see how it works just fill in selected form",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#when-form-is-filled"
+        }
+      }
+    },
+    "/{connectionId}/api/external/WebHook/{hookId}": {
+      "delete": {
+        "summary": "Delete hook",
+        "description": "Delete a hook.",
+        "operationId": "DeleteHook",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "hookId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#delete-hook"
+        }
+      }
+    },
+    "/{connectionId}/api/external/Form": {
+      "get": {
+        "summary": "List forms",
+        "description": "Forms list",
+        "x-ms-visibility": "internal",
+        "operationId": "ListForms",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Uid": {
+                    "x-ms-summary": "Form UID",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  },
+                  "Title": {
+                    "x-ms-summary": "Form title",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#list-forms"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Assign form",
+        "description": "Assign form",
+        "operationId": "AssignForm",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Form assign body",
+            "in": "body",
+            "description": "Request body of form assign endpoint",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "UserName",
+                "FormUid"
+              ],
+              "properties": {
+                "UserName": {
+                  "type": "string",
+                  "x-ms-summary": "User",
+                  "description": "User",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListUsers",
+                    "value-path": "UserName",
+                    "value-title": "Value"
+                  }
+                },
+                "FormUid": {
+                  "x-ms-summary": "Form",
+                  "description": "Form",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListForms",
+                    "value-path": "Uid",
+                    "value-title": "Title"
+                  },
+                  "type": "string"
+                },
+                "FormData": {
+                  "x-ms-summary": "Fields",
+                  "description": "Fields",
+                  "x-ms-visibility": "important",
+                  "type": "object",
+                  "x-ms-dynamic-schema": {
+                    "operationId": "GetSchema",
+                    "parameters": {
+                      "FormUid": {
+                        "parameter": "FormUid"
+                      }
+                    },
+                    "value-path": "Section"
+                  },
+                  "x-ms-dynamic-properties": {
+                    "operationId": "GetSchema",
+                    "parameters": {
+                      "FormUid": {
+                        "parameterReference": "Form assign body/FormUid"
+                      }
+                    },
+                    "itemValuePath": "Section"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "AssignedFormUrl": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#assign-form"
+        }
+      }
+    },
+    "/{connectionId}/api/external/Schema/{FormUid}": {
+      "get": {
+        "summary": "Get schema",
+        "description": "Get schema",
+        "operationId": "GetSchema",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "FormUid",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Form",
+            "description": "Form",
+            "x-ms-dynamic-values": {
+              "operationId": "ListForms",
+              "value-path": "Uid",
+              "value-title": "Title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#get-schema"
+        }
+      }
+    },
+    "/{connectionId}/api/external/FormData": {
+      "post": {
+        "summary": "Fill form",
+        "description": "Fill form",
+        "operationId": "AddData",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Form data body",
+            "in": "body",
+            "description": "Request body of form data endpoint",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "FormUid"
+              ],
+              "properties": {
+                "FormUid": {
+                  "x-ms-summary": "Form",
+                  "description": "Form",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListForms",
+                    "value-path": "Uid",
+                    "value-title": "Title"
+                  },
+                  "type": "string"
+                },
+                "FormDataObject": {
+                  "x-ms-summary": "Fields",
+                  "description": "Fields",
+                  "x-ms-visibility": "important",
+                  "type": "object",
+                  "x-ms-dynamic-schema": {
+                    "operationId": "GetSchema",
+                    "parameters": {
+                      "FormUid": {
+                        "parameter": "FormUid"
+                      }
+                    },
+                    "value-path": "Section"
+                  },
+                  "x-ms-dynamic-properties": {
+                    "operationId": "GetSchema",
+                    "parameters": {
+                      "FormUid": {
+                        "parameterReference": "Form data body/FormUid"
+                      }
+                    },
+                    "itemValuePath": "Section"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#fill-form"
+        }
+      }
+    },
+    "/{connectionId}/api/external/AutoComplete/User": {
+      "get": {
+        "summary": "Users list",
+        "description": "Users list",
+        "x-ms-visibility": "internal",
+        "operationId": "ListUsers",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "x-ms-summary": "User query",
+            "description": "User query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "UserName": {
+                    "x-ms-summary": "User Name",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  },
+                  "Value": {
+                    "x-ms-summary": "Form name",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticforms/#users-list"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/elasticforms"
+  },
+  "basePath": "/apim/elasticforms"
+}

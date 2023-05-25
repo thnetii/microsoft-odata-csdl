@@ -1,0 +1,2115 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Yammer",
+    "description": "Yammer is a leading social network for businesses to get work done smarter and faster. Connect to Yammer to access conversations in your enterprise network.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/yammer",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/networks.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get my networks",
+        "description": "Gets all the networks that the user belongs to.",
+        "operationId": "GetNetworks",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-my-networks"
+        }
+      }
+    },
+    "/{connectionId}/groups.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get groups",
+        "description": "Gets all groups. If mine = 1, get only groups to which the user belongs",
+        "operationId": "GetGroups",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Network ID",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "mine",
+            "in": "query",
+            "description": "Used for getting groups which user is part of",
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "mine",
+            "default": 1
+          },
+          {
+            "name": "showAllCompanyGroup",
+            "in": "query",
+            "description": "Used for showing All Company Group",
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Show All Company Group",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/YammmerEntity"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-groups"
+        }
+      }
+    },
+    "/{connectionId}/trigger/messages/following.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "When there is a new message in my followed feed",
+        "description": "This operation triggers when there is a new message in a network followed by you.",
+        "operationId": "OnNewMessagesFollowing",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Pick a network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "triggerstate",
+            "in": "query",
+            "description": "Trigger state",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Trigger state",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a message in your Yammer Following feed.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#when-there-is-a-new-message-in-my-followed-feed"
+        }
+      }
+    },
+    "/{connectionId}/trigger/in_group/{group_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "When there is a new message in a group",
+        "description": "This operation triggers when a new message is posted in a group.",
+        "operationId": "OnNewMessagesInGroup",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network Id",
+            "description": "Unique identifer of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "group_id",
+            "x-ms-summary": "Group Id",
+            "description": "Unique identifier of the group.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetGroups",
+              "value-path": "id",
+              "value-title": "full_name",
+              "parameters": {
+                "network_id": {
+                  "parameter": "network_id"
+                },
+                "mine": 1
+              }
+            }
+          },
+          {
+            "name": "triggerstate",
+            "in": "query",
+            "description": "Trigger state",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Trigger state",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a new message in the Yammer group you selected.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#when-there-is-a-new-message-in-a-group"
+        }
+      }
+    },
+    "/{connectionId}/messages.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get all messages",
+        "description": "This operation returns all public messages in the logged in user's Yammer network. Corresponds to \"All\" conversations in the Yammer web interface.",
+        "operationId": "GetAllMessages",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Unique identifier of the network",
+            "description": "Network ID",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Get the page specified. If returned data is greater than the limit, you can use this field to access subsequent pages",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Page",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetAllMessages",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-all-messages-%5bdeprecated%5d"
+        }
+      },
+      "post": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Post message",
+        "description": "This operation is used to post a Message to a Group or All Company Feed. If group ID is provided, message will be posted to the specified group else it will be posted in All Company Feed.",
+        "operationId": "PostMessage",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Unique id of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "input",
+            "in": "body",
+            "description": "Post Message Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostOperationRequest"
+            },
+            "x-ms-summary": "Post Message Request"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#post-message"
+        }
+      }
+    },
+    "/{connectionId}/messages/following.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get the messages from my Following feed",
+        "description": "This operation returns the messages from Following feed which is conversations involving people, groups and topics that the user is following.",
+        "operationId": "GetMessagesFollowing",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Unique identifier of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Get the page specified. If returned data is greater than the limit, you can use this field to access subsequent pages",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Page",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetMessagesFollowing",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-the-messages-from-my-following-feed-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/messages/in_group/{group_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get messages in a group",
+        "description": "This operation returns the messages posted in a group.",
+        "operationId": "GetMessagesInGroup",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Unique identifier of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "group_id",
+            "x-ms-summary": "Group ID",
+            "description": "Unique identifier of the group.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetGroups",
+              "value-path": "id",
+              "value-title": "full_name",
+              "parameters": {
+                "network_id": {
+                  "parameter": "network_id"
+                },
+                "mine": 1
+              }
+            }
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Get the page specified. If returned data is greater than the limit, you can use this field to access subsequent pages",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Page",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetMessagesInGroup",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-messages-in-a-group-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/messages/in_thread/{thread_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get messages in a thread",
+        "description": "This operation returns the messages posted in a thread.",
+        "operationId": "GetMessagesInThread",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "thread_id",
+            "x-ms-summary": "Thread ID",
+            "description": "Unique identifier of the thread.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": true,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Preview",
+          "family": "GetMessagesInThread",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-messages-in-a-thread-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/messages.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get all messages (V2)",
+        "description": "This operation returns all public messages in the logged in user's Yammer network. Corresponds to \"All\" conversations in the Yammer web interface.",
+        "operationId": "GetAllMessagesV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Unique identifier of the network",
+            "description": "Network ID",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "threaded",
+            "in": "query",
+            "description": "Threaded=true will only return the thread starter (first message) for each thread. This parameter is intended for apps which need to display message threads collapsed. threaded=extended will return the thread starter messages and the two most recent messages all ordered by activity, as they are viewed in the default view on the Yammer web interface.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Thread type of messages",
+            "enum": [
+              "true",
+              "extended",
+              "false"
+            ]
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PageableMessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetAllMessages",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-all-messages-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v2/messages/following.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get the messages from my Following feed (V2)",
+        "description": "This operation returns the messages from Following feed which is conversations involving people, groups and topics that the user is following.",
+        "operationId": "GetMessagesFollowingV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Unique identifier of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "threaded",
+            "in": "query",
+            "description": "Threaded=true will only return the thread starter (first message) for each thread. This parameter is intended for apps which need to display message threads collapsed. threaded=extended will return the thread starter messages and the two most recent messages all ordered by activity, as they are viewed in the default view on the Yammer web interface.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Thread type of messages",
+            "enum": [
+              "true",
+              "extended",
+              "false"
+            ]
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PageableMessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetMessagesFollowing",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-the-messages-from-my-following-feed-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v2/messages/in_group/{group_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get messages in a group (V2)",
+        "description": "This operation returns the messages posted in a group.",
+        "operationId": "GetMessagesInGroupV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "network_id",
+            "x-ms-summary": "Network ID",
+            "description": "Unique identifier of the network.",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-dynamic-values": {
+              "operationId": "GetNetworks",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "default": "Default"
+          },
+          {
+            "name": "group_id",
+            "x-ms-summary": "Group ID",
+            "description": "Unique identifier of the group.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetGroups",
+              "value-path": "id",
+              "value-title": "full_name",
+              "parameters": {
+                "network_id": {
+                  "parameter": "network_id"
+                },
+                "mine": 1
+              }
+            }
+          },
+          {
+            "name": "older_than",
+            "in": "query",
+            "description": "Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you’re currently viewing 20 messages and the oldest is number 2912, you could append “?older_than=2912″ to your request to get the 20 messages prior to those you’re seeing.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Older than"
+          },
+          {
+            "name": "newer_than",
+            "in": "query",
+            "description": "Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you’re looking at messages, and the most recent message returned is 3516, you can make a request with the parameter “?newer_than=3516″ to ensure that you do not get duplicate copies of messages already on your page.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "x-ms-summary": "Newer than"
+          },
+          {
+            "name": "threaded",
+            "in": "query",
+            "description": "Threaded=true will only return the thread starter (first message) for each thread. This parameter is intended for apps which need to display message threads collapsed. threaded=extended will return the thread starter messages and the two most recent messages all ordered by activity, as they are viewed in the default view on the Yammer web interface.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Thread type of messages",
+            "enum": [
+              "true",
+              "extended",
+              "false"
+            ]
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Return only the specified number of messages.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "x-ms-summary": "Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PageableMessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetMessagesInGroup",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-messages-in-a-group-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/v2/messages/in_thread/{thread_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get messages in a thread (V2)",
+        "description": "This operation returns the messages posted in a thread.",
+        "operationId": "GetMessagesInThreadV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "thread_id",
+            "x-ms-summary": "Thread ID",
+            "description": "Unique identifier of the thread.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PageableMessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "GetMessagesInThread",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-messages-in-a-thread-(v2)"
+        }
+      }
+    },
+    "/{connectionId}/users/{user_id}.json": {
+      "get": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Get user details",
+        "description": "This operation returns user profile details.",
+        "operationId": "GetUserDetailsById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "user_id",
+            "x-ms-summary": "User ID",
+            "description": "Unique identifier of the user.",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#get-user-details"
+        }
+      }
+    },
+    "/{connectionId}/messages/liked_by/current.json": {
+      "post": {
+        "tags": [
+          "YammerConnector"
+        ],
+        "summary": "Like message",
+        "description": "This operation is used to like the specified message.",
+        "operationId": "LikeMessage",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "message_id",
+            "x-ms-summary": "Message ID",
+            "description": "Unique id of the message.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "408": {
+            "description": "Request Timeout"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "503": {
+            "description": "Yammer Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-api-annotation": {
+          "status": "Production"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#like-message"
+        }
+      }
+    },
+    "/{connectionId}/testconnection": {
+      "get": {
+        "tags": [
+          "TestConnection"
+        ],
+        "summary": "Tests the connection",
+        "description": "Tests the connection",
+        "operationId": "TestConnection",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/yammer/#tests-the-connection"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "description": "Properties of Yammer user.",
+      "x-ms-summary": "User",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Username.",
+          "type": "string",
+          "x-ms-summary": "Username"
+        },
+        "job_title": {
+          "description": "User job title.",
+          "type": "string",
+          "x-ms-summary": "Job title"
+        },
+        "location": {
+          "description": "User location.",
+          "type": "string",
+          "x-ms-summary": "Location"
+        },
+        "full_name": {
+          "description": "User full name.",
+          "type": "string",
+          "x-ms-summary": "Full name"
+        },
+        "first_name": {
+          "description": "User first name.",
+          "type": "string",
+          "x-ms-summary": "First name"
+        },
+        "last_name": {
+          "description": "User last name.",
+          "type": "string",
+          "x-ms-summary": "Last name"
+        },
+        "web_url": {
+          "description": "User profile url.",
+          "type": "string",
+          "x-ms-summary": "Profile url"
+        },
+        "email": {
+          "description": "User email.",
+          "type": "string",
+          "x-ms-summary": "Email"
+        },
+        "birth_date": {
+          "description": "User birth date.",
+          "type": "string",
+          "x-ms-summary": "Birth date"
+        },
+        "mugshot_url": {
+          "x-ms-summary": "Photo url",
+          "description": "User photo url.",
+          "type": "string"
+        }
+      }
+    },
+    "Message": {
+      "description": "Properties of a single Yammer message.",
+      "x-ms-summary": "Message",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID associated with the post.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-summary": "ID"
+        },
+        "content_excerpt": {
+          "description": "Text Content of the post.",
+          "type": "string",
+          "x-ms-summary": "Text"
+        },
+        "sender_id": {
+          "format": "int64",
+          "description": "Unique ID of user who posted the message.",
+          "type": "integer",
+          "x-ms-summary": "Sender",
+          "x-ms-visibility": "advanced"
+        },
+        "replied_to_id": {
+          "description": "ID of the message to which this message is a reply.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-summary": "Replied to",
+          "x-ms-visibility": "advanced"
+        },
+        "created_at": {
+          "description": "Time at which the message was created.",
+          "type": "string",
+          "x-ms-summary": "Created At",
+          "x-ms-visibility": "advanced"
+        },
+        "network_id": {
+          "description": "Id of the network message is associated with.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-summary": "Network",
+          "x-ms-visibility": "advanced"
+        },
+        "message_type": {
+          "description": "Descripton of the message type.",
+          "type": "string",
+          "x-ms-summary": "Type",
+          "x-ms-visibility": "advanced"
+        },
+        "sender_type": {
+          "description": "Description of the type of sender.",
+          "type": "string",
+          "x-ms-summary": "Sender Type",
+          "x-ms-visibility": "advanced"
+        },
+        "url": {
+          "description": "API url of the post.",
+          "type": "string",
+          "format": "uri",
+          "x-ms-summary": "Url",
+          "x-ms-visibility": "advanced"
+        },
+        "web_url": {
+          "description": "Web url of the post.",
+          "type": "string",
+          "format": "uri",
+          "x-ms-summary": "Web Url",
+          "x-ms-visibility": "advanced"
+        },
+        "group_id": {
+          "description": "Unique ID of group who posted the message.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-summary": "Group ID",
+          "x-ms-visibility": "advanced"
+        },
+        "body": {
+          "$ref": "#/definitions/MessageBody"
+        },
+        "thread_id": {
+          "format": "int64",
+          "description": "Unique ID of thread.",
+          "type": "integer",
+          "x-ms-summary": "Thread ID",
+          "x-ms-visibility": "advanced"
+        },
+        "direct_message": {
+          "description": "Flag to specify if the post is a  a direct message.",
+          "type": "boolean",
+          "x-ms-summary": "Direct message",
+          "x-ms-visibility": "advanced"
+        },
+        "client_type": {
+          "description": "Type of the client.",
+          "type": "string",
+          "x-ms-summary": "Client Id",
+          "x-ms-visibility": "advanced"
+        },
+        "client_url": {
+          "description": "Web link of the client.",
+          "type": "string",
+          "format": "uri",
+          "x-ms-summary": "Client URL",
+          "x-ms-visibility": "advanced"
+        },
+        "language": {
+          "description": "Language used in the message.",
+          "type": "string",
+          "x-ms-summary": "Language",
+          "x-ms-visibility": "advanced"
+        },
+        "notified_user_ids": {
+          "description": "Details of users notified.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "x-ms-summary": "Tagged User",
+          "x-ms-visibility": "advanced"
+        },
+        "privacy": {
+          "description": "Details of the privacy associated with the message.",
+          "type": "string",
+          "x-ms-summary": "Privacy",
+          "x-ms-visibility": "advanced"
+        },
+        "liked_by": {
+          "$ref": "#/definitions/LikedBy"
+        },
+        "system_message": {
+          "description": "Flag to specify if the post is a system generated message or not.",
+          "type": "boolean",
+          "x-ms-summary": "Is System Message",
+          "x-ms-visibility": "advanced"
+        },
+        "topics": {
+          "description": "List of topics.",
+          "x-ms-summary": "Topics",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Topic"
+          }
+        }
+      }
+    },
+    "Topic": {
+      "description": "Properties of a single topic.",
+      "x-ms-summary": "Topic",
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "description": "Unique identifier of the topic.",
+          "type": "integer",
+          "x-ms-summary": "ID"
+        },
+        "name": {
+          "description": "Name of the topic.",
+          "type": "string",
+          "x-ms-summary": "Name"
+        }
+      }
+    },
+    "PostOperationRequest": {
+      "description": "Represents a post request for Yammer Connector to post to yammer.",
+      "required": [
+        "body",
+        "group_id"
+      ],
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "description": "The group to post a message to (0 = All Company/Network).",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-summary": "Group ID",
+          "x-ms-dynamic-values": {
+            "operationId": "GetGroups",
+            "value-path": "id",
+            "value-title": "full_name",
+            "parameters": {
+              "network_id": {
+                "parameter": "network_id"
+              },
+              "mine": 1,
+              "showAllCompanyGroup": 1
+            }
+          }
+        },
+        "body": {
+          "description": "Your message to be posted into your network.",
+          "type": "string",
+          "x-ms-summary": "Message Text"
+        },
+        "replied_to_id": {
+          "format": "int64",
+          "description": "The message ID this message is in reply to.",
+          "type": "integer",
+          "x-ms-summary": "Replied To Id",
+          "x-ms-visibility": "advanced"
+        },
+        "direct_to_id": {
+          "format": "int64",
+          "description": "If set, a private message will be sent directly to the user with the indicated ID.",
+          "type": "integer",
+          "x-ms-summary": "Direct To Id",
+          "x-ms-visibility": "advanced"
+        },
+        "broadcast": {
+          "description": "Post message as an announcement to all users in a group.",
+          "type": "boolean",
+          "x-ms-summary": "Broadcast",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "description": "Title of the message to be posted.",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "advanced"
+        },
+        "topic1": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 1",
+          "x-ms-visibility": "advanced"
+        },
+        "topic2": {
+          "description": "Topic to apply to the message",
+          "type": "string",
+          "x-ms-summary": "Topic 2",
+          "x-ms-visibility": "advanced"
+        },
+        "topic3": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 3",
+          "x-ms-visibility": "advanced"
+        },
+        "topic4": {
+          "description": "Topic to apply to the message",
+          "type": "string",
+          "x-ms-summary": "Topic 4",
+          "x-ms-visibility": "advanced"
+        },
+        "topic5": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 5",
+          "x-ms-visibility": "advanced"
+        },
+        "topic6": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 6",
+          "x-ms-visibility": "advanced"
+        },
+        "topic7": {
+          "description": "Topic to apply to the message",
+          "type": "string",
+          "x-ms-summary": "Topic 7",
+          "x-ms-visibility": "advanced"
+        },
+        "topic8": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 8",
+          "x-ms-visibility": "advanced"
+        },
+        "topic9": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 9",
+          "x-ms-visibility": "advanced"
+        },
+        "topic10": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 10",
+          "x-ms-visibility": "advanced"
+        },
+        "topic11": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 11",
+          "x-ms-visibility": "advanced"
+        },
+        "topic12": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 12",
+          "x-ms-visibility": "advanced"
+        },
+        "topic13": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 13",
+          "x-ms-visibility": "advanced"
+        },
+        "topic14": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 14",
+          "x-ms-visibility": "advanced"
+        },
+        "topic15": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 15",
+          "x-ms-visibility": "advanced"
+        },
+        "topic16": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 16",
+          "x-ms-visibility": "advanced"
+        },
+        "topic17": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 17",
+          "x-ms-visibility": "advanced"
+        },
+        "topic18": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 18",
+          "x-ms-visibility": "advanced"
+        },
+        "topic19": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 19",
+          "x-ms-visibility": "advanced"
+        },
+        "topic20": {
+          "description": "Topic to apply to the message.",
+          "type": "string",
+          "x-ms-summary": "Topic 20",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "PageableMessageList": {
+      "description": "List of one or multiple messages.",
+      "x-ms-summary": "Message List",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          },
+          "x-ms-summary": "Messages"
+        }
+      }
+    },
+    "MessageList": {
+      "description": "List of one or multiple messages.",
+      "x-ms-summary": "Message List",
+      "type": "object",
+      "properties": {
+        "messages": {
+          "description": "messages",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          },
+          "x-ms-summary": "Messages"
+        }
+      }
+    },
+    "MessageBody": {
+      "description": "Content associated with a single message.",
+      "x-ms-summary": "Message Body",
+      "type": "object",
+      "properties": {
+        "parsed": {
+          "description": "Parsed text format.",
+          "type": "string",
+          "x-ms-summary": "Text",
+          "x-ms-visibility": "advanced"
+        },
+        "plain": {
+          "description": "Plain text format.",
+          "type": "string",
+          "x-ms-summary": "Plain",
+          "x-ms-visibility": "advanced"
+        },
+        "rich": {
+          "description": "Rich text format.",
+          "type": "string",
+          "x-ms-summary": "Rich",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "LikedBy": {
+      "description": "Liked By",
+      "type": "object",
+      "properties": {
+        "count": {
+          "description": "Number of distinct likes.",
+          "type": "integer",
+          "format": "int32",
+          "x-ms-summary": "Count",
+          "x-ms-visibility": "advanced"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "full_name": {
+                "description": "The full name of the person who liked the post.",
+                "type": "string",
+                "x-ms-summary": "Full Name",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "Names",
+          "description": "List of people who liked the post.",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Network": {
+      "x-ms-summary": "Network",
+      "description": "Properties of a single network.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the network.",
+          "type": "string",
+          "x-ms-summary": "ID"
+        },
+        "name": {
+          "description": "Summary of the network.",
+          "type": "string",
+          "x-ms-summary": "Name"
+        },
+        "permalink": {
+          "description": "Web link to the network page.",
+          "type": "string",
+          "x-ms-summary": "Link"
+        }
+      }
+    },
+    "YammmerEntity": {
+      "description": "Properties of a single yammer entity.",
+      "x-ms-summary": "Yammer Entity",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Details of the yammer entity.",
+          "type": "string",
+          "x-ms-summary": "Description",
+          "x-ms-visibility": "advanced"
+        },
+        "id": {
+          "format": "int64",
+          "description": "Unique identifier of the group.",
+          "type": "integer",
+          "x-ms-summary": "Group ID"
+        },
+        "full_name": {
+          "description": "Name of the yammer entity.",
+          "type": "string",
+          "x-ms-summary": "Full Name"
+        }
+      }
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "TestConnection",
+      "parameters": {}
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://products.office.com/yammer/yammer-overview"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/yammer"
+  }
+}

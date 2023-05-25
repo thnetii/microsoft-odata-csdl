@@ -1,0 +1,985 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Apache Impala",
+    "description": "Apache Impala (incubating) is the open source, native analytic database for Apache Hadoop.  Connect to your Impala database to read data from tables.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/impala",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/testconnection": {
+      "get": {
+        "tags": [
+          "ImpalaDiagnostic"
+        ],
+        "operationId": "TestConnection",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets": {
+      "get": {
+        "tags": [
+          "ImpalaMashupDataSetsMetadata"
+        ],
+        "operationId": "GetDataSetsMetadata",
+        "summary": "Get database metadata",
+        "description": "Retrieves metadata of a database in Impala",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DataSetsMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-database-metadata"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets/{dataset}/tables/{table}": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableMetadata"
+        ],
+        "summary": "Get table metadata",
+        "description": "Retrieves metadata of a single table in Impala",
+        "operationId": "GetTable",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDataSets",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "parameters": {
+                "dataset": {
+                  "parameter": "dataset"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TableMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-table-metadata"
+        }
+      }
+    },
+    "/{connectionId}/$metadata.json/datasets('{dataset}')/tables('{table}')": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableMetadata"
+        ],
+        "summary": "Get table metadata",
+        "description": "Retrieves metadata of a single table in Impala",
+        "operationId": "ODataStyleGetTable",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TableMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-table-metadata"
+        }
+      }
+    },
+    "/{connectionId}/datasets": {
+      "get": {
+        "tags": [
+          "ImpalaMashupDataSet"
+        ],
+        "summary": "Gets databases",
+        "description": "Retrieves all databases available to the connection",
+        "operationId": "GetDataSets",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DataSetsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#gets-databases"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/datasets/{dataset}/tables": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTable"
+        ],
+        "summary": "Get tables",
+        "description": "Retrieves tables from an Impala database",
+        "operationId": "GetTables",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDataSets",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-tables"
+        }
+      }
+    },
+    "/{connectionId}/datasets({dataset})/tables": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTable"
+        ],
+        "operationId": "ODataStyleGetTables",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TablesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/{connectionId}/datasets/{dataset}/tables/{table}/items": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableData"
+        ],
+        "summary": "Get rows",
+        "description": "Retrieves rows from an Impala table",
+        "operationId": "GetItems",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDataSets",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "parameters": {
+                "dataset": {
+                  "parameter": "dataset"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned (e.g. stringColumn eq 'string' OR numberColumn lt 123).",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Maximum number of entries to retrieve (default = 256)",
+            "required": false,
+            "x-ms-summary": "Maximum Get Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Specific fields to retrieve from entries (default = all).",
+            "required": false,
+            "x-ms-summary": "Select Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ItemsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-rows"
+        }
+      }
+    },
+    "/{connectionId}/datasets({dataset})/tables({table})/items": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableData"
+        ],
+        "summary": "Get rows",
+        "description": "Retrieves rows from an Impala table",
+        "operationId": "ODataStyleGetItems",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "An ODATA filter query to restrict the entries returned (e.g. stringColumn eq 'string' OR numberColumn lt 123).",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "An ODATA orderBy query for specifying the order of entries",
+            "required": false,
+            "x-ms-summary": "Order By",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "Number of entries to skip (default = 0)",
+            "required": false,
+            "x-ms-summary": "Skip Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Maximum number of entries to retrieve (default = 256)",
+            "required": false,
+            "x-ms-summary": "Maximum Get Count",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Specific fields to retrieve from entries (default = all).",
+            "required": false,
+            "x-ms-summary": "Select Query",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ItemsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-rows"
+        }
+      }
+    },
+    "/{connectionId}/datasets/{dataset}/tables/{table}/items/{id}": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableData"
+        ],
+        "summary": "Get row",
+        "description": "Retrieves a single row from an Impala table",
+        "operationId": "GetItem",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDataSets",
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetTables",
+              "parameters": {
+                "dataset": {
+                  "parameter": "dataset"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of the row to retrieve",
+            "x-ms-summary": "Row id",
+            "required": true,
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-row"
+        }
+      }
+    },
+    "/{connectionId}/datasets({dataset})/tables({table})/items({id})": {
+      "get": {
+        "tags": [
+          "ImpalaMashupTableData"
+        ],
+        "summary": "Get row",
+        "description": "Retrieves a single row from a Impala table",
+        "operationId": "ODataStyleGetItem",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "description": "Name of database",
+            "x-ms-summary": "Name of database",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "description": "Name of table",
+            "x-ms-summary": "Name of table",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of the row to retrieve",
+            "x-ms-summary": "Row id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/impala/#get-row"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DataSetsMetadata": {
+      "type": "object",
+      "properties": {
+        "tabular": {
+          "$ref": "#/definitions/TabularDataSetsMetadata"
+        }
+      }
+    },
+    "TabularDataSetsMetadata": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "urlEncoding": {
+          "type": "string"
+        },
+        "tableDisplayName": {
+          "type": "string"
+        },
+        "tablePluralName": {
+          "type": "string"
+        }
+      }
+    },
+    "TableMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "x-ms-permission": {
+          "type": "string"
+        },
+        "x-ms-capabilities": {
+          "$ref": "#/definitions/TableCapabilitiesMetadata"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
+    "TableCapabilitiesMetadata": {
+      "type": "object",
+      "properties": {
+        "sortRestrictions": {
+          "$ref": "#/definitions/TableSortRestrictionsMetadata"
+        },
+        "filterRestrictions": {
+          "$ref": "#/definitions/TableFilterRestrictionsMetadata"
+        },
+        "selectRestrictions": {
+          "$ref": "#/definitions/TableSelectRestrictionsMetadata"
+        },
+        "filterFunctions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "Equal",
+              "NotEqual",
+              "GreaterThan",
+              "GreaterThanOrEqual",
+              "LessThan",
+              "LessThanOrEqual",
+              "And",
+              "Or"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "properties": {}
+    },
+    "TableSortRestrictionsMetadata": {
+      "description": "Metadata for a table (sort restrictions)",
+      "type": "object",
+      "properties": {
+        "sortable": {
+          "description": "Indicates whether this table has sortable columns",
+          "type": "boolean"
+        },
+        "unsortableProperties": {
+          "description": "List of unsortable properties",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ascendingOnlyProperties": {
+          "description": "List of properties which support ascending order only",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TableFilterRestrictionsMetadata": {
+      "description": "Metadata for a table (filter restrictions)",
+      "type": "object",
+      "properties": {
+        "filterable": {
+          "description": "Indicates whether this table has filterable columns",
+          "type": "boolean"
+        },
+        "nonFilterableProperties": {
+          "description": "List of non filterable properties",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiredProperties": {
+          "description": "List of required properties",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TableSelectRestrictionsMetadata": {
+      "description": "Metadata for a table (select restrictions)",
+      "type": "object",
+      "properties": {
+        "selectable": {
+          "description": "Indicates whether this table has selectable columns",
+          "type": "boolean"
+        }
+      }
+    },
+    "DataSetsList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataSet"
+          }
+        }
+      }
+    },
+    "DataSet": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      }
+    },
+    "Table": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      }
+    },
+    "Item": {
+      "type": "object",
+      "properties": {
+        "ItemInternalId": {
+          "type": "string",
+          "x-ms-visibility": "internal"
+        }
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetTable",
+        "parameters": {
+          "dataset": {
+            "parameter": "dataset"
+          },
+          "table": {
+            "parameter": "table"
+          }
+        },
+        "value-path": "Schema/Items"
+      }
+    },
+    "TablesList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Table"
+          }
+        }
+      }
+    },
+    "ItemsList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://impala.apache.org/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.apache.org/foundation/policies/privacy.html"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/impala"
+  }
+}

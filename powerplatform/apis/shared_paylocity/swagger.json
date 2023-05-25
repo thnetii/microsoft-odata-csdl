@@ -1,0 +1,217 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Paylocity",
+    "description": "Paylocity develops industry-leading, cloud-based payroll and human capital management software solutions for medium-sized organizations. Use this connector to create events triggered by actions initiated in Paylocity payroll and HCM applications. Contact Paylocity to obtain access credentials to set up your Office 365 integration.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/paylocity",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/v2/webhooks/TimeOffRequestApprovalNotification": {
+      "post": {
+        "summary": "When a Time Off Request is approved",
+        "description": "Creates a subscription to a Time Off Request Approved event in Paylocity.",
+        "operationId": "WebhookTrigger",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of webhook.",
+            "in": "body",
+            "description": "Request body of webhook.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/paylocity/#when-a-time-off-request-is-approved"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details for Time Off Request Approval Notification Webhook.",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/api/v2/companies/{companyId}/webhooks/{webhookId}": {
+      "delete": {
+        "summary": "Unsubscribes to appovals of Time Off Requests",
+        "description": "Deletes a subscription to a Time Off Request Approved events in Paylocity.",
+        "operationId": "DeleteTrigger",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "companyId",
+            "in": "path",
+            "description": "Company Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "ID of the webhook being deleted.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/paylocity/#unsubscribes-to-appovals-of-time-off-requests"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WebhookPushResponse": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "description": "The unique identifier of the subscription to Time Off Request Approvals.",
+          "type": "string",
+          "x-ms-summary": "Event ID"
+        },
+        "companyId": {
+          "description": "The Paylocity company identifier.",
+          "type": "string",
+          "x-ms-summary": "Company ID"
+        },
+        "employeeName": {
+          "description": "The name of the employee taking time off.",
+          "type": "string",
+          "x-ms-summary": "Employee Name"
+        },
+        "employeeWorkEmail": {
+          "description": "The employee's work email address.",
+          "type": "string",
+          "x-ms-summary": "Employee Work Email"
+        },
+        "employeeCostCenter1": {
+          "description": "The employee's first cost center.",
+          "type": "string",
+          "x-ms-summary": "Employee Cost Center 1"
+        },
+        "employeeCostCenter2": {
+          "description": "The employee's second cost center.",
+          "type": "string",
+          "x-ms-summary": "Employee Cost Center 2"
+        },
+        "employeeCostCenter3": {
+          "description": "The employee's third cost center.",
+          "type": "string",
+          "x-ms-summary": "Employee Cost Center 3"
+        },
+        "supervisorWorkEmail": {
+          "description": "The employee's supervisior's email address.",
+          "type": "string",
+          "x-ms-summary": "Supervisor Work Email"
+        },
+        "timeOffStartDate": {
+          "description": "The start date of the employee's time off request.",
+          "type": "string",
+          "x-ms-summary": "Time Off Start Date"
+        },
+        "timeOffEndDate": {
+          "description": "The end date of the employee's time off request.",
+          "type": "string",
+          "x-ms-summary": "Time Off End Date"
+        },
+        "isAllDayEvent": {
+          "description": "Indicates whether or not the employee's time off request is an all day event.",
+          "type": "boolean",
+          "x-ms-summary": "Is All Day Event"
+        },
+        "hoursPerDay": {
+          "description": "The number of hours per day of the employee's time off resquest.",
+          "type": "number",
+          "x-ms-summary": "Hours Per Day"
+        }
+      }
+    },
+    "WebhookRequestBody": {
+      "type": "object",
+      "required": [
+        "callbackURL"
+      ],
+      "properties": {
+        "companyId": {
+          "title": "Paylocity Company ID",
+          "description": "The Paylocity Company ID.",
+          "type": "string"
+        },
+        "callbackURL": {
+          "title": "Webhook URL",
+          "description": "Webhook URL",
+          "type": "string",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/paylocity"
+  }
+}

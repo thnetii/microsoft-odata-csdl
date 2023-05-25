@@ -1,0 +1,435 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "LinkedIn",
+    "description": "Amplify your content's reach by easily sharing on LinkedIn.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "x-ms-docs": [
+    {
+      "url": "https://go.microsoft.com/fwlink/?linkid=861422",
+      "description": "Using the LinkedIn Connector with Microsoft Flow"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/linkedin",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/v1/people/~/shares": {
+      "post": {
+        "summary": "Share an article",
+        "description": "Post an article using a URL to the content you wish to share. LinkedIn analyzes the included URL and automatically identifies the title, description, image, etc. You can overwrite the auto-identified content by providing the title, description and image directly.",
+        "operationId": "ShareUpdate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShareArticle_Request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Share_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "replacement": {
+            "api": "linkedinv2",
+            "operationId": "ShareUpdateV2"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/linkedin/#share-an-article-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1/companies/{companyId}/shares": {
+      "post": {
+        "summary": "Share a company update",
+        "description": "Post a company update (article) using a URL to the content you wish to share. LinkedIn analyzes the included URL and automatically identifies the title, description, image, etc. You can overwrite the auto-identified content by providing the title, description and image directly.",
+        "operationId": "ShareCompanyUpdate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "companyId",
+            "in": "path",
+            "description": "Unique id of the company.",
+            "required": true,
+            "x-ms-summary": "Company Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListCompanies",
+              "value-collection": "values",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "x-ms-test-value": "2414183",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShareCompanyUpdate_Request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Share_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "replacement": {
+            "api": "linkedinv2",
+            "operationId": "ShareCompanyUpdateV2"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/linkedin/#share-a-company-update-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1/companies": {
+      "get": {
+        "summary": "List my companies",
+        "description": "This operation returns a list of all companies that you are an administrator of.",
+        "operationId": "ListCompanies",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ListCompanies_Response"
+            }
+          }
+        },
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "replacement": {
+            "api": "linkedinv2",
+            "operationId": "ListCompaniesV2"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/linkedin/#list-my-companies-%5bdeprecated%5d"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ShareArticle_Request": {
+      "type": "object",
+      "required": [
+        "content",
+        "visibility"
+      ],
+      "properties": {
+        "content": {
+          "type": "object",
+          "required": [
+            "submitted-url"
+          ],
+          "properties": {
+            "title": {
+              "description": "The title of the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Title",
+              "x-ms-visibility": "advanced"
+            },
+            "description": {
+              "description": "The description of the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Description",
+              "x-ms-visibility": "advanced"
+            },
+            "submitted-url": {
+              "description": "A fully qualified URL for the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Content URL"
+            },
+            "submitted-image-url": {
+              "description": "A fully qualified URL to a thumbnail image to accompany the shared content.",
+              "type": "string",
+              "x-ms-summary": "Image URL",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "visibility": {
+          "type": "object",
+          "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "description": "Pick the audience for your content.",
+              "type": "string",
+              "x-ms-summary": "Visibility",
+              "enum": [
+                "anyone",
+                "connections-only"
+              ]
+            }
+          }
+        },
+        "comment": {
+          "description": "A comment to associate with the share.",
+          "type": "string",
+          "x-ms-summary": "Comment",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "x-ms-test-value": {
+        "comment": "Check out developer.linkedin.com!",
+        "content": {
+          "title": "LinkedIn Developers Resources",
+          "description": "Leverage LinkedIn's APIs to maximize engagement",
+          "submitted-url": "https://developer.linkedin.com",
+          "submitted-image-url": "https://example.com/logo.png"
+        },
+        "visibility": {
+          "code": "anyone"
+        }
+      }
+    },
+    "ShareCompanyUpdate_Request": {
+      "type": "object",
+      "required": [
+        "content",
+        "visibility"
+      ],
+      "properties": {
+        "content": {
+          "type": "object",
+          "required": [
+            "submitted-url"
+          ],
+          "properties": {
+            "title": {
+              "description": "The title of the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Title",
+              "x-ms-visibility": "advanced"
+            },
+            "description": {
+              "description": "The description of the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Description",
+              "x-ms-visibility": "advanced"
+            },
+            "submitted-url": {
+              "description": "A fully qualified URL for the content being shared.",
+              "type": "string",
+              "x-ms-summary": "Content URL"
+            },
+            "submitted-image-url": {
+              "description": "A fully qualified URL to a thumbnail image to accompany the shared content.",
+              "type": "string",
+              "x-ms-summary": "Image URL",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "visibility": {
+          "type": "object",
+          "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "description": "Pick the audience for your content.",
+              "type": "string",
+              "x-ms-summary": "Visibility",
+              "enum": [
+                "anyone",
+                "connections-only"
+              ]
+            }
+          }
+        },
+        "shareTargetReach": {
+          "description": "shareTargetReach",
+          "type": "object",
+          "properties": {
+            "shareTargets": {
+              "type": "object",
+              "properties": {
+                "shareTarget": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "description": "The target segment code.",
+                      "type": "string",
+                      "x-ms-summary": "Target segment",
+                      "x-ms-visibility": "advanced",
+                      "enum": [
+                        "geos",
+                        "companySizes",
+                        "jobFunc",
+                        "industries",
+                        "seniorities"
+                      ]
+                    },
+                    "tvalues": {
+                      "type": "object",
+                      "properties": {
+                        "tvalue": {
+                          "description": "The target segment value.",
+                          "type": "string",
+                          "x-ms-summary": "Target segment value",
+                          "x-ms-visibility": "advanced"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "comment": {
+          "description": "A comment by the member to associated with the share.",
+          "type": "string",
+          "x-ms-summary": "Comment",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "x-ms-test-value": {
+        "visibility": {
+          "code": "anyone"
+        },
+        "comment": "Testing a full company share!",
+        "content": {
+          "submitted-url": "https://www.linkedin.com/pulse/always-learning-linkedin-acquire-lyndacom-jeff-weiner",
+          "title": "Test Share with Content",
+          "description": "content description",
+          "submitted‐image-­url": "https://spdy.linkedin.com/mpr/mpr/jc/AAEAAQAAAAAAAALgAAAAJGMxYzIyZGRiLTA4NjYtNDlhYi1hNjQxLTQ2NWNkOTNmNGQyNQ.png"
+        },
+        "shareTargetReach": {
+          "shareTargets": {
+            "shareTarget": {
+              "tvalues": {
+                "tvalue": "na"
+              },
+              "code": "geos"
+            }
+          }
+        }
+      }
+    },
+    "Share_Response": {
+      "type": "object",
+      "properties": {
+        "updateKey": {
+          "description": "Unique id of the post.",
+          "type": "string",
+          "x-ms-summary": "Update Key",
+          "x-ms-visibility": "advanced"
+        },
+        "updateUrl": {
+          "description": "Direct link to the newly posted content on LinkedIn.com.",
+          "type": "string",
+          "x-ms-summary": "Update URL"
+        }
+      }
+    },
+    "ListCompanies_Response": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "values",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "format": "int32",
+                "description": "Unique Id of the company.",
+                "type": "integer",
+                "x-ms-summary": "Company Id",
+                "x-ms-visibility": "advanced"
+              },
+              "name": {
+                "description": "Name of the company.",
+                "type": "string",
+                "x-ms-summary": "Company Name"
+              }
+            }
+          },
+          "x-ms-summary": "values"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "OAuth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://www.linkedin.com/oauth/v2/authorization",
+      "tokenUrl": "https://www.linkedin.com/oauth/v2/accessToken"
+    }
+  },
+  "security": [
+    {}
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.linkedin.com/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/linkedin"
+  }
+}

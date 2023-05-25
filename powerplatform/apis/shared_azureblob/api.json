@@ -1,0 +1,461 @@
+{
+  "name": "shared_azureblob",
+  "id": "/providers/Microsoft.PowerApps/apis/shared_azureblob",
+  "type": "/providers/Microsoft.PowerApps/apis",
+  "properties": {
+    "displayName": "Azure Blob Storage",
+    "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1627/1.0.1627.3238/azureblob/icon.png",
+    "purpose": "NotSpecified",
+    "connectionParameters": {
+      "accountName": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "Azure Storage account name or blob endpoint",
+          "description": "Name or blob endpoint of the Azure Storage account the connector should use.",
+          "tooltip": "Provide the Azure Storage account name or blob endpoint",
+          "constraints": {
+            "tabIndex": 1,
+            "required": "true",
+            "capability": [
+              "cloud",
+              "gateway"
+            ]
+          }
+        }
+      },
+      "accessKey": {
+        "type": "securestring",
+        "uiDefinition": {
+          "displayName": "Azure Storage Account Access Key",
+          "description": "Specify a valid primary/secondary Azure Storage account access key.",
+          "tooltip": "Specify a valid primary/secondary Azure Storage account access key.",
+          "constraints": {
+            "tabIndex": 2,
+            "required": "false",
+            "capability": [
+              "cloud",
+              "gateway"
+            ]
+          }
+        }
+      },
+      "authType": {
+        "type": "string",
+        "allowedValues": [
+          {
+            "value": "basic"
+          },
+          {
+            "value": "anonymous"
+          }
+        ],
+        "uiDefinition": {
+          "displayName": "Authentication Type",
+          "description": "Authentication type to connect to your database",
+          "tooltip": "Authentication type to connect to your database",
+          "constraints": {
+            "tabIndex": 3,
+            "required": "false",
+            "hidden": "true",
+            "allowedValues": [
+              {
+                "text": "Basic",
+                "value": "basic"
+              },
+              {
+                "text": "Anonymous",
+                "value": "anonymous"
+              }
+            ],
+            "capability": [
+              "cloud",
+              "gateway"
+            ]
+          }
+        }
+      },
+      "gateway": {
+        "type": "gatewaySetting",
+        "gatewaySettings": {
+          "dataSourceType": "azureblobs",
+          "connectionDetails": [
+            "AccountName"
+          ]
+        },
+        "uiDefinition": {
+          "constraints": {
+            "tabIndex": 4,
+            "required": "false",
+            "hidden": "true",
+            "capability": [
+              "gateway"
+            ]
+          }
+        }
+      },
+      "privacySetting": {
+        "type": "string",
+        "allowedValues": [
+          {
+            "value": "None"
+          },
+          {
+            "value": "Private"
+          },
+          {
+            "value": "Organizational"
+          },
+          {
+            "value": "Public"
+          }
+        ],
+        "uiDefinition": {
+          "displayName": "Privacy Setting",
+          "description": "Privacy Setting",
+          "tooltip": "Privacy Setting",
+          "constraints": {
+            "tabIndex": 5,
+            "required": "false",
+            "hidden": "true",
+            "capability": [
+              "cloud",
+              "gateway"
+            ],
+            "allowedValues": [
+              {
+                "name": "None",
+                "value": "None"
+              },
+              {
+                "name": "Private",
+                "value": "Private"
+              },
+              {
+                "name": "Organizational",
+                "value": "Organizational"
+              },
+              {
+                "name": "Public",
+                "value": "Public"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "connectionParameterSets": {
+      "uiDefinition": {
+        "displayName": "Authentication type",
+        "description": "Type of authentication to be used"
+      },
+      "values": [
+        {
+          "name": "servicePrincipalAuth",
+          "uiDefinition": {
+            "displayName": "Service principal authentication",
+            "description": "Use your own Azure Active Directory app for service principal authentication."
+          },
+          "parameters": {
+            "token": {
+              "type": "oauthSetting",
+              "oAuthSettings": {
+                "identityProvider": "aad",
+                "scopes": [],
+                "redirectMode": "Global",
+                "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+                "properties": {
+                  "IsFirstParty": "False",
+                  "AzureActiveDirectoryResourceId": "https://storage.azure.com/",
+                  "IsOnbehalfofLoginSupported": true
+                },
+                "customParameters": {
+                  "grantType": {
+                    "value": "client_credentials"
+                  },
+                  "resourceUri": {
+                    "value": "https://storage.azure.com/"
+                  },
+                  "loginUriAAD": {
+                    "value": "https://login.windows.net"
+                  }
+                }
+              },
+              "uiDefinition": {
+                "displayName": "Login your Credentials",
+                "description": "Login your Credentials",
+                "tooltip": "Provide your Credentials",
+                "constraints": {
+                  "required": "false",
+                  "hidden": "true"
+                }
+              }
+            },
+            "token:clientId": {
+              "type": "string",
+              "uiDefinition": {
+                "displayName": "Client ID",
+                "schema": {
+                  "type": "string",
+                  "description": "Client (or Application) ID of your AAD application."
+                },
+                "constraints": {
+                  "required": "true",
+                  "hidden": "false"
+                }
+              }
+            },
+            "token:clientSecret": {
+              "type": "securestring",
+              "uiDefinition": {
+                "displayName": "Client Secret",
+                "schema": {
+                  "type": "securestring",
+                  "description": "Client secret of your Azure Active Directory application."
+                },
+                "constraints": {
+                  "required": "true",
+                  "hidden": "false"
+                }
+              }
+            },
+            "token:TenantId": {
+              "type": "string",
+              "uiDefinition": {
+                "schema": {
+                  "description": "The tenant ID of for the Azure Active Directory application",
+                  "type": "string"
+                },
+                "displayName": "Tenant",
+                "constraints": {
+                  "required": "true",
+                  "hidden": "false"
+                }
+              }
+            }
+          },
+          "metadata": {
+            "allowSharing": false
+          }
+        },
+        {
+          "name": "keyBasedAuth",
+          "uiDefinition": {
+            "displayName": "Access Key",
+            "description": "Provide Azure Storage account name (or blob endpoint) and Access Key to access your Azure Blob Storage."
+          },
+          "parameters": {
+            "accountName": {
+              "type": "string",
+              "uiDefinition": {
+                "displayName": "Azure Storage account name or blob endpoint",
+                "description": "Name or blob endpoint of the Azure Storage account the connector should use.",
+                "tooltip": "Provide the Azure Storage account name or blob endopoint",
+                "constraints": {
+                  "tabIndex": 1,
+                  "required": "true",
+                  "capability": [
+                    "cloud",
+                    "gateway"
+                  ]
+                }
+              }
+            },
+            "accessKey": {
+              "type": "securestring",
+              "uiDefinition": {
+                "displayName": "Azure Storage Account Access Key",
+                "description": "Specify a valid primary/secondary Azure Storage account access key.",
+                "tooltip": "Specify a valid primary/secondary Azure Storage account access key.",
+                "constraints": {
+                  "tabIndex": 2,
+                  "required": "false",
+                  "capability": [
+                    "cloud",
+                    "gateway"
+                  ]
+                }
+              }
+            },
+            "authType": {
+              "type": "string",
+              "allowedValues": [
+                {
+                  "value": "basic"
+                },
+                {
+                  "value": "anonymous"
+                }
+              ],
+              "uiDefinition": {
+                "displayName": "Authentication Type",
+                "description": "Authentication type to connect to your database",
+                "tooltip": "Authentication type to connect to your database",
+                "constraints": {
+                  "tabIndex": 3,
+                  "required": "false",
+                  "hidden": "true",
+                  "allowedValues": [
+                    {
+                      "text": "Basic",
+                      "value": "basic"
+                    },
+                    {
+                      "text": "Anonymous",
+                      "value": "anonymous"
+                    }
+                  ],
+                  "capability": [
+                    "cloud",
+                    "gateway"
+                  ]
+                }
+              }
+            },
+            "gateway": {
+              "type": "gatewaySetting",
+              "gatewaySettings": {
+                "dataSourceType": "azureblobs",
+                "connectionDetails": [
+                  "AccountName"
+                ]
+              },
+              "uiDefinition": {
+                "constraints": {
+                  "tabIndex": 4,
+                  "required": "false",
+                  "hidden": "true",
+                  "capability": [
+                    "gateway"
+                  ]
+                }
+              }
+            },
+            "privacySetting": {
+              "type": "string",
+              "allowedValues": [
+                {
+                  "value": "None"
+                },
+                {
+                  "value": "Private"
+                },
+                {
+                  "value": "Organizational"
+                },
+                {
+                  "value": "Public"
+                }
+              ],
+              "uiDefinition": {
+                "displayName": "Privacy Setting",
+                "description": "Privacy Setting",
+                "tooltip": "Privacy Setting",
+                "constraints": {
+                  "tabIndex": 5,
+                  "required": "false",
+                  "hidden": "true",
+                  "capability": [
+                    "cloud",
+                    "gateway"
+                  ],
+                  "allowedValues": [
+                    {
+                      "name": "None",
+                      "value": "None"
+                    },
+                    {
+                      "name": "Private",
+                      "value": "Private"
+                    },
+                    {
+                      "name": "Organizational",
+                      "value": "Organizational"
+                    },
+                    {
+                      "name": "Public",
+                      "value": "Public"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "metadata": {
+            "allowSharing": true
+          }
+        },
+        {
+          "name": "tokenBasedAuth",
+          "uiDefinition": {
+            "displayName": "Azure AD Integrated",
+            "description": "Use Azure Active Directory to access your Azure Blob storage."
+          },
+          "parameters": {
+            "token": {
+              "type": "oauthSetting",
+              "oAuthSettings": {
+                "identityProvider": "aadcertificate",
+                "clientId": "283fc47b-8ce6-42be-a9ce-2fd5a0c42683",
+                "scopes": [],
+                "redirectMode": "Global",
+                "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+                "properties": {
+                  "IsFirstParty": "True",
+                  "AzureActiveDirectoryResourceId": "https://storage.azure.com/",
+                  "IsOnbehalfofLoginSupported": true
+                },
+                "customParameters": {
+                  "grantType": {
+                    "value": "code"
+                  },
+                  "resourceUri": {
+                    "value": "https://storage.azure.com/"
+                  },
+                  "loginUriAAD": {
+                    "value": "https://login.windows.net"
+                  }
+                }
+              },
+              "uiDefinition": {
+                "displayName": "Provide your credentials",
+                "description": "Create a connection using your Azure Active Directory credentials",
+                "tooltip": "Provide Azure Active Directory credentials",
+                "constraints": {
+                  "required": "true",
+                  "hidden": "false"
+                }
+              }
+            }
+          },
+          "metadata": {
+            "allowSharing": false
+          }
+        }
+      ]
+    },
+    "scopes": {
+      "will": [],
+      "wont": []
+    },
+    "metadata": {
+      "source": "marketplace",
+      "brandColor": "#804998",
+      "allowSharing": true,
+      "useNewApimVersion": "true",
+      "version": {
+        "previous": "releases/v1.0.1623\\1.0.1623.3210",
+        "current": "releases/v1.0.1627\\1.0.1627.3238"
+      }
+    },
+    "capabilities": [
+      "actions",
+      "cloud"
+    ],
+    "tier": "Premium",
+    "isCustomApi": false,
+    "description": "Microsoft Azure Storage provides a massively scalable, durable, and highly available storage for data on the cloud, and serves as the data storage solution for modern applications. Connect to Blob Storage to perform various operations such as create, update, get and delete on blobs in your Azure Storage account.",
+    "createdTime": "2018-07-10T17:17:26.4330342Z",
+    "changedTime": "2023-04-04T16:18:32.4656748Z",
+    "publisher": "Microsoft"
+  }
+}
