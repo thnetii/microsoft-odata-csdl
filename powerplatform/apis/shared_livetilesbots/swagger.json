@@ -1,0 +1,1011 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "LiveTiles Bots",
+    "description": "Let people focus on the work that matters most. Automate mundane, repetitive tasks. Create personal, team, enterprise and external assistants with a range of abilities.\nThis connector allows LiveTiles Bots customers to easily connect a flow to their bot, in order to allow users to trigger the flow through a Conversational User Interface.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "url": "https://support.livetiles.nyc/hc/en-us/articles/360036205731-Contact-us"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/livetilesbots",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/flows/schema": {
+      "get": {
+        "tags": [
+          "Flows"
+        ],
+        "operationId": "GetSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "bot",
+            "description": "The bot to list abilities",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "x-ms-summary": "Bot"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "description": "The subscription key to the flow ability",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Subscription Key"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "x-ms-visibility": "internal",
+        "summary": "Get Flow Ability Schema",
+        "description": "Returns the JSON schema for the Flow ability in the Bot Designer.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#get-flow-ability-schema"
+        }
+      }
+    },
+    "/{connectionId}/flows/subscribe": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "x-ms-dynamic-schema": {
+            "operationId": "GetSchema",
+            "parameters": {
+              "bot": {
+                "parameter": "bot"
+              },
+              "key": {
+                "parameter": "key"
+              }
+            },
+            "value-path": "Schema"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetSchema",
+            "parameters": {
+              "bot": {
+                "parameterReference": "Subscription/bot"
+              },
+              "key": {
+                "parameterReference": "Subscription/key"
+              }
+            },
+            "itemValuePath": "Schema"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "x-ms-trigger": "single",
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "IntentRecognized",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "Subscription",
+            "required": true,
+            "description": "The flow to subscribe to",
+            "schema": {
+              "type": "object",
+              "required": [
+                "bot",
+                "key",
+                "callbackUri"
+              ],
+              "properties": {
+                "bot": {
+                  "type": "string",
+                  "x-ms-summary": "Bot",
+                  "x-ms-dynamic-list": {
+                    "operationId": "ListBots",
+                    "itemValuePath": "id",
+                    "itemTitlePath": "name"
+                  },
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListBots",
+                    "value-path": "id",
+                    "value-title": "name"
+                  }
+                },
+                "key": {
+                  "type": "string",
+                  "x-ms-summary": "Flow",
+                  "x-ms-dynamic-list": {
+                    "operationId": "ListFlows",
+                    "itemValuePath": "key",
+                    "itemTitlePath": "name",
+                    "parameters": {
+                      "bot": {
+                        "parameterReference": "Subscription/bot"
+                      }
+                    }
+                  },
+                  "x-ms-dynamic-values": {
+                    "operationId": "ListFlows",
+                    "value-path": "key",
+                    "value-title": "name",
+                    "parameters": {
+                      "bot": {
+                        "parameter": "bot"
+                      }
+                    }
+                  }
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              }
+            }
+          }
+        ],
+        "summary": "When an intent is recognized",
+        "description": "This operation triggers when the related intent is recognized in the bot's LUIS model.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#when-an-intent-is-recognized"
+        }
+      }
+    },
+    "/{connectionId}/flows": {
+      "get": {
+        "tags": [
+          "Flows"
+        ],
+        "operationId": "ListFlows",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "bot",
+            "x-ms-summary": "Bot",
+            "description": "The bot to list abilities",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "x-ms-visibility": "internal",
+        "summary": "List Flows",
+        "description": "Returns a list of Flow Abilities available on this bot.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#list-flows"
+        }
+      }
+    },
+    "/{connectionId}/bots": {
+      "get": {
+        "tags": [
+          "Bots"
+        ],
+        "operationId": "ListBots",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "summary": "List Bots",
+        "x-ms-visibility": "internal",
+        "description": "Returns a list of available bots.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#list-bots"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/flowCallback/String": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt String",
+        "operationId": "PromptString",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "prompt",
+                  "title": "Prompt"
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              },
+              "required": [
+                "callbackUri"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user for a string input.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-string"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Number": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt Number",
+        "operationId": "PromptNumber",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "prompt",
+                  "title": "Prompt"
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              },
+              "required": [
+                "callbackUri"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user for a number input.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-number"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Form": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "object"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt Form",
+        "operationId": "PromptForm",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Conversation Resumption Token",
+            "description": "The token used to navigate back to the correct bot conversation."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "The user prompt for this field.",
+                  "title": "Prompt"
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Field title.",
+                  "title": "Title"
+                },
+                "formFields": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fieldType": {
+                        "type": "string",
+                        "enum": [
+                          "Text",
+                          "Number",
+                          "Choice",
+                          "DateTime",
+                          "Boolean"
+                        ],
+                        "description": "The type of the field.",
+                        "title": "Field Type"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Field name.",
+                        "title": "Name"
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "The display name of the field.",
+                        "title": "Label"
+                      },
+                      "isRequired": {
+                        "type": "boolean",
+                        "description": "Is this a mandatory field?",
+                        "title": "Required"
+                      },
+                      "isMultiline": {
+                        "type": "boolean",
+                        "description": "Allow multiple lines of text.",
+                        "title": "Multiline"
+                      },
+                      "minLength": {
+                        "type": "number",
+                        "description": "Minimum field length.",
+                        "title": "Min Length"
+                      },
+                      "maxLength": {
+                        "type": "number",
+                        "description": "Maximum field length.",
+                        "title": "Max Length"
+                      },
+                      "isMultiSelect": {
+                        "type": "boolean",
+                        "description": "Allow multiple choices to be selected.",
+                        "title": "Multi-Select"
+                      },
+                      "choices": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "display": {
+                              "type": "string",
+                              "title": "Label"
+                            },
+                            "value": {
+                              "type": "string",
+                              "title": "Value"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "callbackUri",
+                "formFields"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user for a form input.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-form"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Bool": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "boolean"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt Boolean",
+        "operationId": "PromptBoolean",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "The user prompt for this value.",
+                  "title": "Prompt"
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              },
+              "required": [
+                "callbackUri"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user for a bool value.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-boolean"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Choice": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt Choice",
+        "operationId": "PromptChoice",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "The user prompt for this variable.",
+                  "title": "Prompt"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "display": {
+                        "type": "string",
+                        "description": "The display value for this option.",
+                        "title": "Label"
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "The value of this option.",
+                        "title": "Value"
+                      }
+                    }
+                  }
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              },
+              "required": [
+                "callbackUri"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user with a choice variable.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-choice"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/File": {
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prompt File",
+        "operationId": "PromptFile",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "The user prompt for this field.",
+                  "title": "Prompt"
+                },
+                "contentTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "What types of files should be allowed?",
+                    "title": "File Type"
+                  }
+                },
+                "callbackUri": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": "Callback URI"
+                }
+              },
+              "required": [
+                "callbackUri"
+              ]
+            }
+          }
+        ],
+        "description": "Prompts the bot user for a file variable.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#prompt-file"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Message": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "summary": "Post Message",
+        "operationId": "PostMessage",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The Message back to the user.",
+                  "title": "Message"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "contentType": {
+                        "type": "string",
+                        "description": "The content type of the message back to the user.",
+                        "title": "Content Type"
+                      },
+                      "content": {
+                        "type": "object"
+                      },
+                      "contentUrl": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "The URL of the message back to the user.",
+                        "title": "Content URL"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "description": "Posts a message back to the bot user.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#post-message"
+        }
+      }
+    },
+    "/{connectionId}/flowCallback/Done": {
+      "post": {
+        "summary": "Flow Complete",
+        "operationId": "FlowComplete",
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resumptionToken",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "The token used to navigate back to the correct bot conversation.",
+            "x-ms-summary": "Conversation Resumption Token"
+          }
+        ],
+        "description": "Finish the current flow and allow the user to ask something else",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/livetilesbots/#flow-complete"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+      "scopes": {
+        "api://f608e0b6-456f-41a7-8843-21ba5bdc158f/Designer offline_access": "api://f608e0b6-456f-41a7-8843-21ba5bdc158f/Designer offline_access"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "api://f608e0b6-456f-41a7-8843-21ba5bdc158f/Designer offline_access"
+      ]
+    }
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.livetiles.nyc/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.livetiles.nyc/privacy-policy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/livetilesbots"
+  }
+}
