@@ -53,6 +53,7 @@ module.exports = async (args) => {
           core.error(error instanceof Error ? error : `${error}`, {
             title: `Failed to dispatch API Connector: ${connectorName}`,
           });
+          process.exitCode = core.ExitCode.Failure;
         }
       }
     );
