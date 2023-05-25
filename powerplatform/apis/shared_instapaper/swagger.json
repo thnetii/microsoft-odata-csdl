@@ -1,0 +1,1438 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0",
+    "title": "Instapaper",
+    "description": "Instapaper is a tool for saving web pages to read later. You can create reading lists by organizing pages into folders which can then be accessed from any mobile or web client.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/instapaper",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/1/bookmarks/list/starred": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Get all liked bookmarks",
+        "description": "Get all liked bookmarks",
+        "operationId": "ListBookmarksLiked",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "readFilter",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ReadFilterEnum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#get-all-liked-bookmarks"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/list/archive": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Get all archived bookmarks",
+        "description": "Get all archived bookmarks",
+        "operationId": "ListBookmarksArchived",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "filters",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ReadAndLikedFilterEnum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#get-all-archived-bookmarks"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/list/folder_id": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Get bookmarks in a folder",
+        "description": "Get bookmarks in a folder",
+        "operationId": "ListBookmarksInFolder",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder id, or \"unread\" for the home folder",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          },
+          {
+            "name": "likedFilter",
+            "required": false,
+            "in": "query",
+            "description": "Whether to filter on the \"liked\" feature of a bookmark",
+            "enum": [
+              "Liked",
+              "Not liked"
+            ],
+            "type": "string",
+            "x-ms-summary": "Liked filter (default: all)",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "readFilter",
+            "required": false,
+            "in": "query",
+            "description": "Whether to filter on the read progress of a bookmark",
+            "enum": [
+              "Unread",
+              "Unread or partially read",
+              "Partially read",
+              "Partially read or read",
+              "Read"
+            ],
+            "type": "string",
+            "x-ms-summary": "Read filter (default: all)",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#get-bookmarks-in-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/1/folders/list": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Get folders",
+        "description": "Get folders",
+        "operationId": "ListFolders",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FoldersResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#get-folders"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/1.1/bookmarks/{bookmark_id}/highlights": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "operationId": "ListHighlights",
+        "summary": "List highlights",
+        "description": "List the highlights from a specific bookmark.",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HighlighstResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#list-highlights"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/unstar": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Unlike a bookmark",
+        "description": "Unlike a bookmark",
+        "operationId": "UnlikeBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarkResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#unlike-a-bookmark"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/star": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Like a bookmark",
+        "description": "Like a bookmark",
+        "operationId": "LikeBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarkResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#like-a-bookmark"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/archive": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Archive a bookmark",
+        "description": "Archive a bookmark",
+        "operationId": "ArchiveBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarkResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#archive-a-bookmark"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/unarchive": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Unarchive a bookmark",
+        "description": "Unarchive a bookmark",
+        "operationId": "UnarchiveBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarkResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#unarchive-a-bookmark"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/delete": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Delete a bookmark permenantly (warning: can not be undone)",
+        "description": "Delete a bookmark permenantly (warning: can not be undone)",
+        "operationId": "DeleteBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#delete-a-bookmark-permenantly-(warning%3a-can-not-be-undone)"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/update_read_progress/read": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Mark a bookmark read",
+        "description": "Mark a bookmark read",
+        "operationId": "MarkReadBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#mark-a-bookmark-read"
+        }
+      }
+    },
+    "/{connectionId}/1/bookmarks/update_read_progress/unread": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Mark a bookmark unread",
+        "description": "Mark a bookmark unread",
+        "operationId": "MarkUnreadBookmark",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#mark-a-bookmark-unread"
+        }
+      }
+    },
+    "/{connectionId}/1.1/bookmarks/{bookmark_id}/highlight": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Add a highlight to a bookmark",
+        "description": "Add a highlight to a bookmark",
+        "operationId": "AddHighlight",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/BookmarkIdInPath"
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "description": "The text to highlight",
+            "required": true,
+            "x-ms-summary": "Text",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HighlightResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#add-a-highlight-to-a-bookmark"
+        }
+      }
+    },
+    "/{connectionId}/1/folders/add": {
+      "post": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "Create a folder",
+        "description": "Create a folder",
+        "operationId": "CreateFolder",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "The name of the new folder, must be unique",
+            "required": true,
+            "x-ms-summary": "Name",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FolderResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#create-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/bookmark_folder_trigger/1/bookmarks/list/folder_id": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a bookmark is added to a folder",
+        "description": "When a bookmark is added to a folder",
+        "operationId": "OnBookmarkAdded",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder id, or \"unread\" for the home folder",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, add a bookmark to the selected folder.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-bookmark-is-added-to-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/bookmark_removed_folder_trigger/1/bookmarks/list/folder_id": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a bookmark is removed from a folder",
+        "description": "When a bookmark is removed from a folder",
+        "operationId": "OnBookmarkRemoved",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder id, or \"unread\" for the home folder",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, add a bookmark to the selected folder.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-bookmark-is-removed-from-a-folder"
+        }
+      }
+    },
+    "/{connectionId}/bookmark_archive_trigger/1/bookmarks/list/archive": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a bookmark is archived",
+        "description": "When a bookmark is archived",
+        "operationId": "OnBookmarkArchived",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, archive a bookmark.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-bookmark-is-archived"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/bookmark_starred_trigger/1/bookmarks/list/starred": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a bookmark is liked",
+        "description": "When a bookmark is liked",
+        "operationId": "OnBookmarkLiked",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, like a bookmark.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-bookmark-is-liked"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/folder_trigger/1/folders/list": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a folder is created",
+        "description": "When a folder is created",
+        "operationId": "OnFolderCreated",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FoldersResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, create a new folder.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-folder-is-created"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/bookmark_progress_trigger/1/bookmarks/list/folder_id": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When the read progress of a bookmark is updated",
+        "description": "When the read progress of a bookmark is updated",
+        "operationId": "OnBookmarkProgressUpdated",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder id, or \"unread\" for the home folder",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, change the read progress of a bookmark.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-the-read-progress-of-a-bookmark-is-updated"
+        }
+      }
+    },
+    "/{connectionId}/bookmark_progressread_trigger/1/bookmarks/list/folder_id": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a bookmark is marked read",
+        "description": "When a bookmark is marked read",
+        "operationId": "OnBookmarkProgressRead",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder id, or \"unread\" for the home folder",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/BookmarksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, fully read or mark a bookmark read.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-bookmark-is-marked-read"
+        }
+      }
+    },
+    "/{connectionId}/highlight_added_trigger/1.1/bookmarks/{bookmark_id}/highlights": {
+      "get": {
+        "tags": [
+          "Instapaper"
+        ],
+        "summary": "When a highlight is added to a bookmark",
+        "description": "When a highlight is added to a bookmark",
+        "operationId": "OnHighlightAdded",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "The folder to look a bookmark up in",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "ListFolders",
+              "value-collection": "Folders",
+              "value-path": "folder_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          },
+          {
+            "name": "bookmark_id",
+            "in": "path",
+            "description": "The bookmark to check for highlights",
+            "required": true,
+            "x-ms-summary": "Bookmark",
+            "x-ms-dynamic-values": {
+              "operationId": "ListBookmarksInFolder",
+              "parameters": {
+                "folder_id": {
+                  "parameter": "folder_id"
+                }
+              },
+              "value-collection": "Bookmarks",
+              "value-path": "bookmark_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HighlighstResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see this work now, add a highlight to the selected bookmark.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/instapaper/#when-a-highlight-is-added-to-a-bookmark"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "BookmarkIdInPath": {
+      "name": "bookmark_id",
+      "in": "path",
+      "required": true,
+      "x-ms-summary": "Bookmark Id",
+      "description": "The id of the bookmark",
+      "type": "string"
+    },
+    "BookmarkIdInQuery": {
+      "name": "bookmark_id",
+      "in": "query",
+      "required": true,
+      "x-ms-summary": "Bookmark Id",
+      "description": "The id of the bookmark",
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "ReadFilterEnum": {
+      "type": "object",
+      "properties": {
+        "readFilter": {
+          "type": "string"
+        }
+      }
+    },
+    "BookmarksResponse": {
+      "description": "The response model for bookmark searches",
+      "type": "object",
+      "properties": {
+        "Bookmarks": {
+          "description": "A list of bookmarks returned by the action",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bookmark"
+          }
+        }
+      }
+    },
+    "Bookmark": {
+      "description": "A user",
+      "type": "object",
+      "properties": {
+        "bookmark_id": {
+          "format": "int32",
+          "description": "Identifier of the bookmark",
+          "type": "integer",
+          "x-ms-summary": "Bookmark Id",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "description": "Title of the bookmark",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important"
+        },
+        "description": {
+          "type": "string",
+          "x-ms-summary": "Description",
+          "x-ms-visibility": "important"
+        },
+        "url": {
+          "description": "The original url of the bookmarked item",
+          "type": "string",
+          "x-ms-summary": "Url",
+          "x-ms-visibility": "important"
+        },
+        "starred": {
+          "description": "Indicates whether the bookmark has been liked or not",
+          "type": "boolean",
+          "x-ms-summary": "Liked",
+          "x-ms-visibility": "advanced"
+        },
+        "time": {
+          "format": "date-time",
+          "description": "The time the bookmark was created",
+          "type": "string",
+          "x-ms-summary": "Creation time",
+          "x-ms-visibility": "advanced"
+        },
+        "progress": {
+          "format": "double",
+          "description": "The percentage of the bookmark that has been read",
+          "type": "number",
+          "x-ms-summary": "Read progress",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "ReadAndLikedFilterEnum": {
+      "type": "object",
+      "properties": {
+        "likedFilter": {
+          "description": "Whether to filter on the \"liked\" feature of a bookmark",
+          "enum": [
+            "Liked",
+            "Not liked"
+          ],
+          "type": "string",
+          "x-ms-summary": "Liked filter (default: all)",
+          "x-ms-visibility": "advanced"
+        },
+        "readFilter": {
+          "description": "Whether to filter on the read progress of a bookmark",
+          "enum": [
+            "Unread",
+            "Unread or partially read",
+            "Partially read",
+            "Partially read or read",
+            "Read"
+          ],
+          "type": "string",
+          "x-ms-summary": "Read filter (default: all)",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "FoldersResponse": {
+      "description": "The resposne model for folder searches",
+      "type": "object",
+      "properties": {
+        "Folders": {
+          "description": "A list of folders returned by the action",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Folder"
+          }
+        }
+      }
+    },
+    "Folder": {
+      "description": "A user",
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "format": "int32",
+          "description": "Identifier of the folder",
+          "type": "integer",
+          "x-ms-summary": "Folder Id",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "advanced"
+        },
+        "display_title": {
+          "type": "string",
+          "x-ms-summary": "Display title",
+          "x-ms-visibility": "important"
+        },
+        "sync_to_mobile": {
+          "description": "indicates whether this folder is synced to mobile app",
+          "type": "boolean",
+          "x-ms-summary": "Sync to mobile",
+          "x-ms-visibility": "advanced"
+        },
+        "position": {
+          "format": "int32",
+          "description": "Ordinal position of the folder",
+          "type": "integer",
+          "x-ms-summary": "Position",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "HighlighstResponse": {
+      "description": "The response model for highlights actions",
+      "type": "object",
+      "properties": {
+        "Highlights": {
+          "description": "The highlights",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Highlight"
+          }
+        }
+      }
+    },
+    "Highlight": {
+      "description": "A user",
+      "type": "object",
+      "properties": {
+        "highlight_id": {
+          "format": "int32",
+          "type": "integer",
+          "x-ms-summary": "Highlight Id",
+          "x-ms-visibility": "advanced"
+        },
+        "text": {
+          "description": "The text to highlight",
+          "type": "string",
+          "x-ms-summary": "Text",
+          "x-ms-visibility": "advanced"
+        },
+        "position": {
+          "format": "int32",
+          "description": "Position where to start searching for the text",
+          "type": "integer",
+          "x-ms-summary": "Position",
+          "x-ms-visibility": "advanced"
+        },
+        "time": {
+          "format": "date-time",
+          "description": "Time the highlight was created",
+          "type": "string",
+          "x-ms-summary": "Creation time",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "BookmarkResponse": {
+      "description": "The response model for bookark actions",
+      "type": "object",
+      "properties": {
+        "Bookmark": {
+          "$ref": "#/definitions/Bookmark"
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "properties": {}
+    },
+    "HighlightResponse": {
+      "description": "The response model for highlight actions",
+      "type": "object",
+      "properties": {
+        "Highlight": {
+          "$ref": "#/definitions/Highlight"
+        }
+      }
+    },
+    "FolderResponse": {
+      "description": "The resposne model for folder searches",
+      "type": "object",
+      "properties": {
+        "Folders": {
+          "$ref": "#/definitions/Folder"
+        }
+      }
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListFolders"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.instapaper.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.instapaper.com/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/instapaper"
+  }
+}
