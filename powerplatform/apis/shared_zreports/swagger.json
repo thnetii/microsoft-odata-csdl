@@ -1,0 +1,483 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "zReports integrates stock control and accounting with data from your restaurant/bar POS system. You can upload data and receive notifications about activity in your account.",
+    "title": "zReports",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "email": "support@zreports.cz"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/zreports",
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "Brand": {
+      "properties": {
+        "id": {
+          "description": "The brand identifier.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The brand name.",
+          "type": "string"
+        },
+        "stores": {
+          "description": "The stores within the brand.",
+          "items": {
+            "$ref": "#/definitions/Store"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CreateWebhookRequestBody": {
+      "properties": {
+        "storeIds": {
+          "description": "The optional list of 3-digit store identifiers.",
+          "title": "Store IDs",
+          "type": "string"
+        },
+        "url": {
+          "description": "The URL to which payloads will be delivered.",
+          "title": "",
+          "type": "string",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "object"
+    },
+    "CreateWebhookResponseBody": {
+      "properties": {
+        "event": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "url": {
+          "description": "The delete hook URL.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DespatchAdviceModel": {
+      "properties": {
+        "deliveryTime": {
+          "description": "The delivery date or time.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "stock": {
+          "description": "The stock name.",
+          "type": "string"
+        },
+        "supplier": {
+          "description": "The supplier name.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "InvoiceModel": {
+      "properties": {
+        "amount": {
+          "description": "The total amount of the invoice.",
+          "format": "double",
+          "title": "Amount",
+          "type": "number"
+        },
+        "dueDate": {
+          "description": "The date the payment is due.",
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "invoiceDate": {
+          "description": "The date of the invoice.",
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "paymentMeans": {
+          "description": "How the payment should be made.",
+          "title": "Payment Method",
+          "type": "string"
+        },
+        "store": {
+          "description": "The store name.",
+          "title": "Store Name",
+          "type": "string"
+        },
+        "supplier": {
+          "description": "The supplier name.",
+          "title": "Supplier Name",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Store": {
+      "properties": {
+        "id": {
+          "description": "The store identifier.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The store name.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "brandId": {
+      "description": "The brand identifier.",
+      "in": "path",
+      "maxLength": 3,
+      "minLength": 3,
+      "name": "brandId",
+      "pattern": "\\d{3}",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Brand ID"
+    },
+    "hookId": {
+      "description": "The hook identifier.",
+      "in": "path",
+      "name": "hookId",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Hook ID"
+    },
+    "storeId": {
+      "description": "The store identifier.",
+      "in": "path",
+      "maxLength": 3,
+      "minLength": 3,
+      "name": "storeId",
+      "pattern": "\\d{3}",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Store ID"
+    }
+  },
+  "paths": {
+    "/{connectionId}/stores": {
+      "get": {
+        "description": "Get list of stores that one can upload documents to and receive EDI notifications for.",
+        "operationId": "GetStores",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of stores.",
+            "headers": {
+              "Content-Type": {
+                "description": "Content-Type",
+                "type": "string"
+              }
+            },
+            "schema": {
+              "items": {
+                "properties": {
+                  "brandId": {
+                    "description": "brandId",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "name",
+                    "type": "string"
+                  },
+                  "storeId": {
+                    "description": "storeId",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "Get list of stores",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/zreports/#get-list-of-stores"
+        }
+      }
+    },
+    "/{connectionId}/{brandId}/despatch-advice-hooks": {
+      "post": {
+        "description": "When an EDI despatch advice document is received by zReports this notification is triggered.",
+        "operationId": "NewDispatchAdvice",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/brandId"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "storeIds": {
+                  "description": "The optional list of 3-digit store identifiers.",
+                  "title": "Store IDs",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "The URL to which payloads will be delivered.",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "url"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Webhook created.",
+            "schema": {
+              "$ref": "#/definitions/CreateWebhookResponseBody"
+            }
+          }
+        },
+        "summary": "When a despatch advice is received",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/zreports/#when-a-despatch-advice-is-received"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Despatch advice summary information.",
+        "schema": {
+          "$ref": "#/definitions/DespatchAdviceModel"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/{brandId}/hooks/{hookId}": {
+      "delete": {
+        "description": "Deletes specified hook.",
+        "operationId": "DeleteHook",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/brandId"
+          },
+          {
+            "$ref": "#/parameters/hookId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Hook successfully deleted."
+          }
+        },
+        "summary": "Deletes specified hook",
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/zreports/#deletes-specified-hook"
+        }
+      }
+    },
+    "/{connectionId}/{brandId}/invoice-hooks": {
+      "post": {
+        "description": "When an EDI invoice document is received by zReports this notification is triggered.",
+        "operationId": "NewInvoice",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/brandId"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "storeIds": {
+                  "description": "The optional list of 3-digit store identifiers.",
+                  "title": "Store IDs",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "The URL to which payloads will be delivered.",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "url"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Webhook created.",
+            "schema": {
+              "$ref": "#/definitions/CreateWebhookResponseBody"
+            }
+          }
+        },
+        "summary": "When an invoice is received",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/zreports/#when-an-invoice-is-received"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Invoice summary information.",
+        "schema": {
+          "$ref": "#/definitions/InvoiceModel"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/{brandId}/{storeId}/documents": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Upload delivery or invoice document.",
+        "operationId": "UploadDocument",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/brandId"
+          },
+          {
+            "$ref": "#/parameters/storeId"
+          },
+          {
+            "description": "The document to be uploaded.",
+            "in": "formData",
+            "name": "document",
+            "required": true,
+            "type": "file",
+            "x-ms-summary": "Document"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Document successfully uploaded."
+          }
+        },
+        "summary": "Upload delivery or invoice document",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/zreports/#upload-delivery-or-invoice-document"
+        }
+      }
+    },
+    "/{connectionId}/{brandId}/{storeId}/hooks/{hookId}": {}
+  },
+  "produces": [
+    "application/json"
+  ],
+  "responses": {},
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "oauth2_auth": [
+        "https://zreports.onmicrosoft.com/flow-api/user_impersonation"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "authorizationUrl": "https://zreports.b2clogin.com/zreports.onmicrosoft.com/b2c_1_signin/oauth2/v2.0/authorize",
+      "flow": "accessCode",
+      "scopes": {
+        "https://zreports.onmicrosoft.com/flow-api/user_impersonation": "https://zreports.onmicrosoft.com/flow-api/user_impersonation"
+      },
+      "tokenUrl": "https://zreports.b2clogin.com/zreports.onmicrosoft.com/b2c_1_signin/oauth2/v2.0/token",
+      "type": "oauth2"
+    }
+  },
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://zreports.cz"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://zreports.cz"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/zreports"
+  }
+}
