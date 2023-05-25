@@ -41,6 +41,13 @@ jobs:
         with:
           fetch-depth: 180
           submodules: true
+      - name: Git configure comitter identity
+        uses: thnetii/.github/actions/git-user-config@main
+      - id: checkout-pr-branch
+        name: Swich to new branch for possible PR
+        uses: thnetii/.github/actions/create-rebase-pr-branch@main
+        with:
+          branch-name: ${{ env.branch-name }}
       - uses: actions/setup-node@v3
       - id: npm-clean-install-actions
         name: Install NPM package dependencies for Github actions
@@ -61,7 +68,7 @@ jobs:
           client-id: ${{ secrets.MSIDP_CLIENTID }}
           resource: https://service.flow.microsoft.com/
       - id: download-api-connector
-        name: 'Download Power Platform API Connector: ${{ env.api-connector }}'
+        name: 'Download Power Platform API Connector'
         uses: ./.github/actions/powerplatform-api-connector-download
         with:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
