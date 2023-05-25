@@ -1,0 +1,533 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Docparser",
+    "description": "Extract data from PDF files & automate your workflow with our reliable document parsing software.",
+    "termsOfService": "https://dev.docparser.com/",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/docparser",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/parsers": {
+      "get": {
+        "summary": "Get a list of document parsers",
+        "description": "This endpoint returns a list of all Document Parsers linked to your account. Each entry contains an id and a label. The id value an be used in other API routes, e.g. for importing documents to a specific Document Parser or obtaining parsing results.",
+        "operationId": "ParserList",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Parser"
+              }
+            },
+            "examples": {
+              "application/json": [
+                {
+                  "id": "ngzwzowicrdk",
+                  "label": "My Purchase Orders Parser"
+                },
+                {
+                  "id": "cqiotmxdarjn",
+                  "label": "Another Test Parser"
+                }
+              ]
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#get-a-list-of-document-parsers"
+        }
+      }
+    },
+    "/{connectionId}/document/upload/{parser_id}": {
+      "post": {
+        "summary": "Upload a document to Docparser",
+        "description": "Uploading a document to Docparser works like uploading a file with a HTML form. All you need to do is to send a form-data request to the API endpoint containing the document in the form field file.The return value of a successful upload is the ID of the newly created document, the filesize of the imported document as well as account usage data.",
+        "operationId": "UploadDocument",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "parser_id",
+            "in": "path",
+            "description": "Enter parser id.",
+            "required": true,
+            "x-ms-summary": "Your Document Parser",
+            "x-ms-dynamic-values": {
+              "operationId": "ParserList",
+              "value-path": "id",
+              "value-title": "label"
+            },
+            "type": "string"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "The file to upload.",
+            "required": true,
+            "x-ms-summary": "File Content",
+            "x-ms-visibility": "important",
+            "type": "file"
+          },
+          {
+            "name": "remote_id",
+            "in": "query",
+            "description": "Optional parameter to pass through your own document ID.",
+            "x-ms-summary": "Remote Id",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "examples": {
+              "application/json": {
+                "id": "abc123efg456",
+                "file_size": 119540,
+                "quota_used": 642,
+                "quota_left": 258,
+                "quota_refill": "2017-05-02T02:43:48+00:00"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "abc123efg456",
+                  "x-ms-summary": "Id",
+                  "description": "Unique identifier of the document."
+                },
+                "file_size": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Size",
+                  "description": "File size of the uploaded document."
+                },
+                "quota_used": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Quota Used",
+                  "description": "Part of the quota used for file upload."
+                },
+                "quota_left": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Quota Left",
+                  "description": "Part of the quota left after file upload."
+                },
+                "quota_refill": {
+                  "type": "string",
+                  "example": "2017-05-02T02:43:48+00:00",
+                  "x-ms-summary": "Quota Refill",
+                  "description": "Updated date-time of the quota."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#upload-a-document-to-docparser"
+        }
+      }
+    },
+    "/{connectionId}/document/fetch/{parser_id}": {
+      "post": {
+        "summary": "Fetch document from a URL",
+        "description": "If your files are stored under a publicly accessible URL, you can also import a document by providing the URL to our API. This method is really straight forward and you just need to perform a simple POST or GET request with url as the parameter.",
+        "operationId": "FetchDocument",
+        "consumes": [
+          "application/json",
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "parser_id",
+            "in": "path",
+            "description": "Enter parser id.",
+            "required": true,
+            "x-ms-summary": "Your Document Parser",
+            "x-ms-dynamic-values": {
+              "operationId": "ParserList",
+              "value-path": "id",
+              "value-title": "label"
+            },
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "in": "query",
+            "description": "The location of a publicly accessible document.",
+            "x-ms-summary": "Url",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "remote_id",
+            "in": "query",
+            "description": "Optional parameter to pass through your own document ID.",
+            "x-ms-summary": "Remote Id",
+            "x-ms-visibility": "advanced",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "examples": {
+              "application/json": {
+                "id": "abc123efg456",
+                "file_size": 119540,
+                "quota_used": 642,
+                "quota_left": 258,
+                "quota_refill": "2017-05-02T02:43:48+00:00"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "abc123efg456",
+                  "x-ms-summary": "Id",
+                  "description": "Unique identifier of the document."
+                },
+                "file_size": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Size",
+                  "description": "File size of the fetched document."
+                },
+                "quota_used": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Quota Used",
+                  "description": "Part of the quota used."
+                },
+                "quota_left": {
+                  "type": "integer",
+                  "example": 123,
+                  "x-ms-summary": "Quota Left",
+                  "description": "Part of the quota left."
+                },
+                "quota_refill": {
+                  "type": "string",
+                  "example": "2017-05-02T02:43:48+00:00",
+                  "x-ms-summary": "Quota Refill",
+                  "description": "Updated date-time of the quota."
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#fetch-document-from-a-url"
+        }
+      }
+    },
+    "/{connectionId}/results/{parser_id}/schema/flow": {
+      "get": {
+        "summary": "Show the schema of parsed data of last document",
+        "description": "Returns the schema of the parsed data.",
+        "operationId": "GetResultSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "parser_id",
+            "in": "path",
+            "description": "Enter parser id.",
+            "required": true,
+            "x-ms-summary": "Your Document Parser",
+            "x-ms-dynamic-values": {
+              "operationId": "ParserList",
+              "value-path": "id",
+              "value-title": "label"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#show-the-schema-of-parsed-data-of-last-document"
+        }
+      }
+    },
+    "/{connectionId}/webhook/subscribe/{parser_id}/flow": {
+      "post": {
+        "summary": "New parsed document data is available",
+        "description": "Creates a Docparser webhook.",
+        "operationId": "WebhookCreate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "parser_id",
+            "in": "path",
+            "description": "Enter parser id.",
+            "required": true,
+            "x-ms-summary": "Your Document Parser",
+            "x-ms-dynamic-values": {
+              "operationId": "ParserList",
+              "value-path": "id",
+              "value-title": "label"
+            },
+            "type": "string"
+          },
+          {
+            "name": "target_url",
+            "in": "body",
+            "description": "This is the URL to which we send the parsed data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/WebhookCreateReponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-summary": "New document data is available",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#new-parsed-document-data-is-available"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details for Webhook",
+        "schema": {
+          "$ref": "#/definitions/DynamicResultSchema"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/webhook/unsubscribe/{parser_id}/flow/{webhook_id}": {
+      "delete": {
+        "description": "Delete a Docparser webhook.",
+        "summary": "Delete a Docparser webhook",
+        "operationId": "WebhookDelete",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "parser_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "webhook_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "x-ms-summary": "New document data is available",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docparser/#delete-a-docparser-webhook"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Parser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "ngzwzowicrdk",
+          "description": "Unique identifier of the parser.",
+          "x-ms-summary": "Id"
+        },
+        "label": {
+          "type": "string",
+          "example": "My Purchase Orders Parser",
+          "x-ms-summary": "Label",
+          "description": "Description of the parser."
+        }
+      }
+    },
+    "WebhookCreate": {
+      "type": "object",
+      "required": [
+        "target_url"
+      ],
+      "properties": {
+        "target_url": {
+          "type": "string",
+          "example": "http://",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      }
+    },
+    "WebhookCreateReponse": {
+      "type": "object",
+      "properties": {
+        "webhook_id": {
+          "type": "string",
+          "example": "ABC123"
+        },
+        "parser_id": {
+          "type": "string",
+          "example": "ABC123"
+        }
+      }
+    },
+    "DynamicResultSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetResultSchema",
+        "parameters": {
+          "parser_id": {
+            "parameter": "parser_id"
+          }
+        },
+        "value-path": "properties"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetResultSchema",
+        "parameters": {
+          "parser_id": {
+            "parameterReference": "parser_id"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "description": "Your Docparser API key.",
+      "name": "api_key",
+      "in": "header",
+      "x-ms-summary": "API key"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "externalDocs": {
+    "description": "Find out more about the Docparser API.",
+    "url": "https://docs.microsoft.com/connectors/docparser"
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ParserList"
+    }
+  }
+}
