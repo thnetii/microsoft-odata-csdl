@@ -1,0 +1,681 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Azure Data Lake",
+    "description": "Azure Data Lake Store connector allows you to read and add data to an Azure Data Lake account.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/trigger/store/folders/webhdfs/v1/": {
+      "get": {
+        "summary": "When a file is created or modified (metadata only)",
+        "description": "Trigger whenever a new file is uploaded to a specific folder.  Only returns metadata of file and not content.",
+        "operationId": "Trigger_ListFiles",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-test-value": "LISTSTATUS",
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "LISTSTATUS",
+            "required": true
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-summary": "Folder path",
+            "description": "Path of the folder (no leading '/')."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/fileStatusArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a file in Azure Data Lake.",
+        "x-ms-dev-triggerType": "SimpleFilter",
+        "x-ms-dev-triggerValueCollection": "FileStatuses.FileStatus",
+        "x-ms-dev-triggerValuePath": "modificationTime",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#when-a-file-is-created-or-modified-(metadata-only)"
+        }
+      }
+    },
+    "/{connectionId}/store/folders/webhdfs/v1/": {
+      "get": {
+        "summary": "List Files",
+        "description": "List files and folders in a Data Lake Store account.",
+        "operationId": "ListFiles",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-test-value": "LISTSTATUS",
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "LISTSTATUS",
+            "required": true
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "x-ms-summary": "Folder path",
+            "description": "Path of the folder (no leading '/')."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/folderResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#list-files"
+        }
+      },
+      "put": {
+        "summary": "Create Folder",
+        "description": "Create a folder in a Data Lake Store account.",
+        "operationId": "CreateFolder",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "MKDIRS",
+            "type": "string",
+            "required": true,
+            "default": "MKDIRS"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "x-ms-test-value": " ",
+            "x-ms-summary": "Folder path",
+            "description": "Path of the folder to create (no leading '/')."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/operationPerformed"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#create-folder"
+        }
+      }
+    },
+    "/{connectionId}/webhdfsext/{filepath}": {
+      "post": {
+        "summary": "Append File (concurrent)",
+        "description": "Concurrent append to a file.",
+        "operationId": "AppendFile_Concurrent",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "concurrentappend",
+            "type": "string",
+            "default": "concurrentappend",
+            "required": true
+          },
+          {
+            "name": "appendMode",
+            "in": "query",
+            "x-ms-summary": "Append mode",
+            "description": "Set to auto-create if path doesn't exist.",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "autocreate",
+            "enum": [
+              "autocreate",
+              ""
+            ],
+            "type": "string",
+            "default": "autocreate",
+            "required": false
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "test.txt",
+            "description": "Path of the file (no leading '/')."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Content of the file",
+            "x-ms-summary": "Content",
+            "required": true,
+            "x-ms-test-value": "This is the file text",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "x-ms-summary": "Operation message"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#append-file-(concurrent)"
+        }
+      }
+    },
+    "/{connectionId}/webhdfs/v1/{filepath}": {
+      "get": {
+        "summary": "Read File",
+        "description": "Read data from a Data Lake Store account.",
+        "operationId": "ReadFile",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "OPEN",
+            "type": "string",
+            "default": "OPEN",
+            "required": true
+          },
+          {
+            "name": "read",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "true",
+            "type": "string",
+            "default": "true",
+            "required": true
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "testing/bigdata02.csv",
+            "description": "Path of the file (no leading '/')."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "type": "string",
+              "x-ms-summary": "File content"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#read-file"
+        }
+      },
+      "put": {
+        "summary": "Upload File",
+        "description": "Upload data into a Data Lake Store account.",
+        "operationId": "UploadFile",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "CREATE",
+            "type": "string",
+            "default": "CREATE",
+            "required": true
+          },
+          {
+            "name": "write",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "true",
+            "type": "string",
+            "default": "true",
+            "required": true
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "test.txt",
+            "description": "Path of the file (no leading '/')."
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "type": "boolean",
+            "required": false,
+            "x-ms-summary": "Overwrite",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "true",
+            "description": "Overwrite if existing file.",
+            "default": false
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Content of the file",
+            "x-ms-summary": "Content",
+            "required": true,
+            "x-ms-test-value": "This is the file text",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-capabilities": {
+          "chunkTransfer": true
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#upload-file"
+        }
+      },
+      "post": {
+        "summary": "Append File (sequential)",
+        "description": "Append to a file serially.",
+        "operationId": "AppendFile_Sequential",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "test.txt",
+            "description": "Path of the file (no leading '/')."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Content to append",
+            "required": true,
+            "x-ms-test-value": " this is appended",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "Content"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-summary": "Append type",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "APPEND",
+            "type": "string",
+            "default": "APPEND",
+            "required": true
+          },
+          {
+            "name": "append",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "true",
+            "type": "string",
+            "default": "true",
+            "required": true
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "x-ms-visibility": "advanced",
+            "x-ms-summary": "Offset",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "description": "The optional offset in the stream to begin the append operation. Leave it empty or set value to file size in bytes. In both cases, the operation appends at the end of the stream."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "File was not found"
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#append-file-(sequential)"
+        }
+      },
+      "delete": {
+        "summary": "Delete File",
+        "description": "Delete a file from a Data Lake Store account.",
+        "operationId": "DeleteFile",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "DELETE",
+            "type": "string",
+            "default": "DELETE",
+            "required": true
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "test.txt",
+            "description": "Path of the file (no leading '/')."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/operationPerformed"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#delete-file"
+        }
+      },
+      "patch": {
+        "summary": "Append Chunk",
+        "description": "Append chunk of data into a partial file in Azure Data Lake account.",
+        "operationId": "AppendChunk",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/account"
+          },
+          {
+            "name": "filepath",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "File path",
+            "x-ms-test-value": "test.txt",
+            "description": "Path of the file (no leading '/')."
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "APPEND",
+            "type": "string",
+            "default": "APPEND",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Content of the chunk",
+            "x-ms-summary": "Content",
+            "required": true,
+            "x-ms-test-value": "This is the text chunk",
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "x-ms-test-value": "",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuredatalake/#append-chunk"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "folderResponse": {
+      "type": "object",
+      "properties": {
+        "FileStatuses": {
+          "description": "FileStatuses",
+          "type": "object",
+          "properties": {
+            "FileStatus": {
+              "$ref": "#/definitions/fileStatusArray"
+            }
+          }
+        }
+      }
+    },
+    "fileStatusArray": {
+      "description": "FileStatus",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pathSuffix": {
+            "description": "File or folder name.",
+            "type": "string",
+            "x-ms-summary": "File name"
+          },
+          "type": {
+            "description": "Type of item (directory or file).",
+            "type": "string",
+            "x-ms-summary": "Type",
+            "x-ms-visibility": "advanced"
+          },
+          "blockSize": {
+            "format": "int32",
+            "description": "Block size of folder or file.",
+            "type": "integer",
+            "x-ms-summary": "Block Size",
+            "x-ms-visibility": "advanced"
+          },
+          "accessTime": {
+            "format": "int64",
+            "description": "Unix (Epoch) time when the item last accessed.",
+            "type": "integer",
+            "x-ms-summary": "Access Time",
+            "x-ms-visibility": "advanced"
+          },
+          "modificationTime": {
+            "format": "int64",
+            "description": "Unix (Epoch) time when the item last modified.",
+            "type": "integer",
+            "x-ms-summary": "Modification Time",
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "operationPerformed": {
+      "type": "object",
+      "properties": {
+        "boolean": {
+          "description": "Flag if the last operation was successful.",
+          "type": "boolean",
+          "x-ms-summary": "Is Successful"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "account": {
+      "name": "account",
+      "in": "query",
+      "type": "string",
+      "required": true,
+      "x-ms-summary": "Account name",
+      "x-ms-test-value": "dmkubydatalaketest",
+      "description": "Account name for Azure Data Lake."
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://azure.microsoft.com/solutions/data-lake/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/azuredatalake"
+  },
+  "basePath": "/apim/azuredatalake"
+}
