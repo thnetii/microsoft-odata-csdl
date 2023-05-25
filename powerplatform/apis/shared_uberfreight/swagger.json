@@ -1,0 +1,258 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Uber Freight",
+    "description": "Uber Freight is a logistics platform providing 24/7 access to truckload freight with instant quoting + booking, price transparency, and real time visibility.",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft Dynamics",
+      "url": "https://dynamics.microsoft.com/en-us/support/",
+      "email": "iomdri@microsoft.com"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.uber.com/freight/platform/join-us/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://developer.uber.com/docs/riders/terms-of-use"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/uberfreight",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/v1/freight/loads/quotes": {
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "uber_quote_uuid": {
+                  "type": "string",
+                  "description": "The Uber Freight-generated UUID for the quote that was created."
+                },
+                "price": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "Amount of money in the currency’s lowest denomination (i.e. cents for USD)."
+                    },
+                    "currency_code": {
+                      "type": "string",
+                      "description": "ISO 4217 currency code."
+                    }
+                  },
+                  "description": "The money amount that Uber will guarantee to tender the load for."
+                },
+                "expiration_time_utc": {
+                  "type": "string",
+                  "description": "Unix UTC epoch timestamp in seconds. The time by which the API call to tender a load must be made in order for this quote to be guaranteed."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Whether or not the load can be quoted."
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "Human-readable notes."
+                },
+                "uber_quote_id": {
+                  "type": "string",
+                  "description": "The Uber Freight-generated 10-digit ID for the quote that was created."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "summary": "Generate a price quote for an Uber Freight load",
+        "description": "Generate a price quote for an Uber Freight load.",
+        "operationId": "GenerateQuote",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The Request body for creating a Quote.",
+            "x-ms-summary": "Request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uberfreight/#generate-a-price-quote-for-an-uber-freight-load"
+        }
+      }
+    },
+    "/{connectionId}/v1/freight/loads/tenders": {
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "uber_load_id": {
+                  "type": "string",
+                  "description": "The Uber Freight-generated ID for the load that was created."
+                },
+                "uber_load_uuid": {
+                  "type": "string",
+                  "description": "The Uber Freight-generated UUID for the load that was created."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "summary": "Tender an Uber Freight load",
+        "description": "Tender an Uber Freight load.",
+        "operationId": "CreateTender",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The Request body for creating a Tender.",
+            "x-ms-summary": "Request body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uberfreight/#tender-an-uber-freight-load"
+        }
+      }
+    },
+    "/{connectionId}/v1/freight/loads/tenders/{loadid}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "summary": "Cancel a Tender",
+        "description": "Cancel a Tender.",
+        "operationId": "CancelTender",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "loadid",
+            "in": "path",
+            "description": "The load id for canceling the Tender.",
+            "x-ms-summary": "Freight load id",
+            "required": true,
+            "x-ms-url-encoding": "single",
+            "type": "string"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uberfreight/#cancel-a-tender"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Code can be used to determine how to handle the error."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable string describing the Code."
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {},
+  "security": [],
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/uberfreight"
+  }
+}
