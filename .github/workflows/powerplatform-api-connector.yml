@@ -13,6 +13,14 @@ on:
       api-version:
         required: false
         description: ''
+  push:
+    branches:
+      - main
+run-name: >
+  ${{ github.workflow }}: ${{ inputs.api-connector || 'shared_logicflows' }}
+
+env:
+  api-connector: ${{ inputs.api-connector || 'shared_logicflows' }}
 
 permissions:
   id-token: write
@@ -23,6 +31,8 @@ jobs:
   powerplatform-api-connector:
     name: 'Power Platform API Connector: ${{ inputs.api-connector }}'
     runs-on: ubuntu-latest
+    env:
+      branch-name: powerplatform-api-fetcher/${{ inputs.api-connector || 'shared_logicflow' }}
     steps:
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
@@ -48,12 +58,46 @@ jobs:
           tenant-id: ${{ secrets.MSIDP_TENANTID }}
           client-id: ${{ secrets.MSIDP_CLIENTID }}
           resource: https://service.flow.microsoft.com/
-      - id: api-connector-download
+      - id: download-api-connector
         name: 'Download Power Platform API Connector: ${{ inputs.api-connector }}'
         uses: ./.github/actions/powerplatform-api-connector-download
         with:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-endpoint: ${{ inputs.api-endpoint }}
           environment: ${{ inputs.environment }}
-          api-connector: ${{ inputs.api-connector }}
+          api-connector: ${{ env.api-connector }}
           api-version: ${{ inputs.api-version }}
+      - id: create-pr
+        name: Commit and create/update PR (if any changes)
+        uses: ./.github/actions/commit-updatecreate-pr
+        with:
+          branch-name: ${{ env.branch-name }}
+          commit-message: Power Platform API Connector ${{ env.api-connector }}, ${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}
+          pr-title: >
+            Update Power Platform API Connector: ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
+          pr-body: |
+            Automatic download of Power Platfrom API Connector
+
+            # ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
+            API name: `${{ env.api-connector }}`
+            Tier: ${{ fromJson(steps.download-api-connector.outputs.properties).tier }}
+            Version: `${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}`
+            Publisher: **${{ fromJson(steps.download-api-connector.outputs.properties).publisher }}**
+            Created: `${{ fromJson(steps.download-api-connector.outputs.properties).createdTime }}`
+            Changed: `${{ fromJson(steps.download-api-connector.outputs.properties).changedTime }}`
+
+            ## Description
+            > ${{ fromJson(steps.download-api-connector.outputs.properties).description }}
+
+            ## Includes:
+            - Swagger document
+            - API Connector resource information
+      - name: Add Labels to Pull Request
+        if: steps.create-pr.outputs.pr-number
+        uses: ./.github/actions/add-labels-pr
+        with:
+          pr-number: ${{ steps.create-pr.outputs.pr-number }}
+          labels: |
+            swagger-update
+            powerplatform
+            api-connector
