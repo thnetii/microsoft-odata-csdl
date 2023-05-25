@@ -1,0 +1,329 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "JotForm is an online form service used to generate leads, distribute surveys, collect payments and more.",
+    "version": "1.0.0",
+    "title": "JotForm",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "API Team",
+      "url": "https://www.jotform.com/contact/",
+      "email": "api@jotform.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/jotform",
+  "tags": [
+    {
+      "name": "Form",
+      "description": "Operations related to form"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "security": [
+    {
+      "jotformAuth": []
+    }
+  ],
+  "paths": {
+    "/{connectionId}/forms": {
+      "get": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "List forms",
+        "description": "This operation returns a list of forms associated with your account.",
+        "operationId": "ListForms",
+        "security": [
+          {
+            "jotformAuth": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-ms-summary": "Forms",
+            "description": "List of forms.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FormListResponse"
+              }
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/jotform/#list-forms"
+        }
+      }
+    },
+    "/{connectionId}/form/fields": {
+      "get": {
+        "tags": [
+          "Form"
+        ],
+        "summary": "List fields",
+        "description": "This operation returns a list of fields associated with a specific form.",
+        "operationId": "ListFields",
+        "security": [
+          {
+            "jotformAuth": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "formID",
+            "type": "string",
+            "in": "header",
+            "description": "Unique id of the form.",
+            "required": true,
+            "x-ms-summary": "Form Id",
+            "x-ms-test-value": "71356757884977"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the form fields.",
+            "x-ms-summary": "Fields",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/jotform/#list-fields"
+        }
+      }
+    },
+    "/{connectionId}/webhook": {
+      "x-ms-notification-content": {
+        "schema": {
+          "type": "object",
+          "x-ms-summary": "Fields",
+          "description": "List of fields associated with the form.",
+          "x-ms-dynamic-schema": {
+            "operationId": "ListFields",
+            "parameters": {
+              "formID": {
+                "parameter": "Form_ID"
+              }
+            },
+            "value-path": "schema/items"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "ListFields",
+            "parameters": {
+              "formID": {
+                "parameterReference": "Request body of webhook/Form_ID"
+              }
+            },
+            "itemValuePath": "schema/items"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "description": "This operation triggers when a new response is submitted for a given form.",
+        "summary": "When a response is submitted",
+        "operationId": "TriggerNewResponse",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Webhook created",
+            "schema": {
+              "$ref": "#/definitions/WebhookCreationResponse"
+            }
+          }
+        },
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/jotform/#when-a-response-is-submitted"
+        }
+      }
+    },
+    "/{connectionId}/webhook/delete": {
+      "delete": {
+        "description": "Delete webhook",
+        "operationId": "deleteWebhook",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Webhook ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook deleted",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true
+      }
+    }
+  },
+  "securityDefinitions": {
+    "jotformAuth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://ifttt.jotform.com/oauth2/authorize",
+      "tokenUrl": "https://ifttt.jotform.com/oauth2/token",
+      "scopes": {}
+    }
+  },
+  "definitions": {
+    "WebhookCreationResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "WebhookRequestBody": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Callback URL",
+          "title": "Callback URL",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        },
+        "Form_ID": {
+          "type": "string",
+          "x-ms-dynamic-values": {
+            "operationId": "ListForms",
+            "value-path": "id",
+            "value-title": "name"
+          },
+          "x-ms-summary": "Form Id",
+          "description": "Pick a form."
+        },
+        "format": {
+          "type": "array",
+          "description": "Pick a format.",
+          "default": [
+            "HTML"
+          ],
+          "items": {
+            "enum": [
+              "HTML",
+              "Text"
+            ],
+            "type": "string"
+          },
+          "x-ms-summary": "Output Format"
+        }
+      }
+    },
+    "FormListResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-ms-summary": "Form Id",
+          "description": "Unique id of the form."
+        },
+        "name": {
+          "type": "string",
+          "x-ms-summary": "Name",
+          "description": "Title of the form."
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.jotform.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.jotform.com/privacy/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/jotform"
+  }
+}
