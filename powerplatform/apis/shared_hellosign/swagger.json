@@ -1,0 +1,646 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "HelloSign",
+    "description": "HelloSign enables secure electronic signatures that are business-caliber, easy-to-use and legally binding.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/v3/signature_request/send_with_template": {
+      "post": {
+        "summary": "Send signature request from template",
+        "description": "Create and send a new signature request based off an existing template.",
+        "operationId": "CreateRequest",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "test_mode",
+            "in": "query",
+            "required": false,
+            "x-ms-summary": "Account type",
+            "description": "The type of account, either Free or Paid.",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Free",
+            "type": "string",
+            "enum": [
+              "Free",
+              "Paid"
+            ]
+          },
+          {
+            "name": "template_id",
+            "in": "query",
+            "x-ms-summary": "Template id",
+            "description": "The unique identifer of the template to create a SignatureRequest from.",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-test-value": "ebf05fd00b6203642636c0935068a370a9b47be6",
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "ListTemplates",
+              "value-collection": "templates",
+              "value-path": "template_id",
+              "value-title": "title"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "x-ms-summary": "Subject",
+            "x-ms-visibility": "advanced",
+            "description": "The subject in the email that will be sent to the signers.",
+            "x-ms-test-value": "Purchase Order.",
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "in": "query",
+            "x-ms-summary": "Message",
+            "x-ms-visibility": "advanced",
+            "description": "The custom message in the email that will be sent to the signers.",
+            "x-ms-test-value": "Glad we could come to an agreement.",
+            "type": "string"
+          },
+          {
+            "name": "signing_redirect_url",
+            "in": "query",
+            "x-ms-summary": "Redirect URL",
+            "description": "The URL you want the signer redirected to after they successfully sign.",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": "https://flow.microsoft.com",
+            "type": "string"
+          },
+          {
+            "name": "allow_decline",
+            "in": "query",
+            "x-ms-summary": "Allow Decline",
+            "x-ms-visibility": "advanced",
+            "description": "Allows signers to decline to sign a document if set to true. Defaults to false.",
+            "x-ms-test-value": true,
+            "type": "boolean"
+          },
+          {
+            "name": "signers",
+            "in": "body",
+            "description": "The signers of the document.",
+            "x-ms-visibility": "important",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DynamicSigners"
+            },
+            "x-ms-summary": "Signers"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#send-signature-request-from-template"
+        }
+      }
+    },
+    "/{connectionId}/v3/signature_request/{requestId}": {
+      "get": {
+        "summary": "Get signature request",
+        "description": "Get a signature request that includes the current status for each signer.",
+        "operationId": "GetRequest",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Request Id",
+            "description": "The id of the request to retrieve",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "82fec5bbe52ddbdeb9dbf77cd0e0663394a0be63",
+            "x-ms-dynamic-values": {
+              "operationId": "ListSignatureRequests",
+              "value-collection": "signature_requests",
+              "value-path": "signature_request_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#get-signature-request"
+        }
+      }
+    },
+    "/{connectionId}/v3/template/list": {
+      "get": {
+        "summary": "List templates",
+        "description": "List templates",
+        "operationId": "ListTemplates",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/List_templates_Response"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#list-templates"
+        }
+      }
+    },
+    "/{connectionId}/v3/signature_request/list": {
+      "get": {
+        "summary": "List signature requests",
+        "description": "Lists the SignatureRequests (both inbound and outbound) that you have access to.",
+        "operationId": "ListSignatureRequests",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponseArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#list-signature-requests"
+        }
+      }
+    },
+    "/{connectionId}/request_trigger/v3/signature_request/list": {
+      "get": {
+        "summary": "When a signature request is created",
+        "description": "Triggers when a new signature request is created.",
+        "operationId": "OnNewRequest",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponseArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a signature request.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#when-a-signature-request-is-created"
+        }
+      }
+    },
+    "/{connectionId}/v3/signature_request/cancel/{requestId}": {
+      "post": {
+        "summary": "Cancel signature request",
+        "description": "Cancel an existing signature request.",
+        "operationId": "CancelRequest",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "x-ms-summary": "Request Id",
+            "description": "The id of the incomplete request to cancel.",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "2f0cedc5ab3a0175a03ab3fabb94c491a722db14",
+            "x-ms-dynamic-values": {
+              "operationId": "ListSignatureRequests",
+              "value-collection": "signature_requests",
+              "value-path": "signature_request_id",
+              "value-title": "title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#cancel-signature-request"
+        }
+      }
+    },
+    "/{connectionId}/signers/v3/template/{template_id}": {
+      "get": {
+        "tags": [
+          "HelloSign"
+        ],
+        "summary": "Get the signers of a template in dynamic schema format",
+        "description": "Get the signers of a template in dynamic schema format.",
+        "operationId": "GetDynamicSigners",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "template_id",
+            "in": "path",
+            "x-ms-test-value": "ebf05fd00b6203642636c0935068a370a9b47be6",
+            "required": true,
+            "x-ms-summary": "Template Id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#get-the-signers-of-a-template-in-dynamic-schema-format"
+        }
+      }
+    },
+    "/{connectionId}/complete_trigger/v3/signature_request/list": {
+      "get": {
+        "summary": "When a signature request is completed",
+        "description": "Triggers when a signature request is completed by all parties.",
+        "operationId": "OnRequestCompleted",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponseArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, complete a signature request.",
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#when-a-signature-request-is-completed"
+        }
+      }
+    },
+    "/{connectionId}/decline_trigger/v3/signature_request/list": {
+      "get": {
+        "summary": "When a signature request is declined",
+        "description": "Triggers when a signature request is decline.",
+        "operationId": "OnRequestDeclined",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RequestResponseArray"
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, decline a signature request.",
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/hellosign/#when-a-signature-request-is-declined"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RequestResponse": {
+      "type": "object",
+      "properties": {
+        "signature_request_id": {
+          "description": "Unique id of the signature request.",
+          "type": "string",
+          "x-ms-summary": "Request id",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "description": "Signature request title.",
+          "type": "string",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important"
+        },
+        "subject": {
+          "description": "Subject of the email sent to signers.",
+          "type": "string",
+          "x-ms-summary": "Subject",
+          "x-ms-visibility": "important"
+        },
+        "message": {
+          "description": "Custom message in the email sent to signers.",
+          "type": "string",
+          "x-ms-summary": "Message",
+          "x-ms-visibility": "important"
+        },
+        "is_complete": {
+          "description": "True if the request has been fully executed by all signers.",
+          "type": "boolean",
+          "x-ms-summary": "Is complete",
+          "x-ms-visibility": "important"
+        },
+        "is_declined": {
+          "description": "True if the request has been declined by a signer.",
+          "type": "boolean",
+          "x-ms-summary": "Is declined",
+          "x-ms-visibility": "important"
+        },
+        "signing_url": {
+          "description": "Url where a signer, after authenticating, can sign the documents.",
+          "type": "string",
+          "x-ms-summary": "Signing Url",
+          "x-ms-visibility": "advanced"
+        },
+        "details_url": {
+          "description": "Url where the requester and the signers can view the current status of the request.",
+          "type": "string",
+          "x-ms-summary": "Details Url",
+          "x-ms-visibility": "advanced"
+        },
+        "requester_email_address": {
+          "description": "Email address of the initiator of the signature request.",
+          "type": "string",
+          "x-ms-summary": "Requester email",
+          "x-ms-visibility": "advanced"
+        },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "signature_id": {
+                "type": "string",
+                "x-ms-summary": "Signature Id",
+                "description": "Unique identifier of the signature.",
+                "x-ms-visibility": "advanced"
+              },
+              "signer_email_address": {
+                "description": "Email address of the signer.",
+                "type": "string",
+                "x-ms-summary": "Signer Email",
+                "x-ms-visibility": "important"
+              },
+              "signer_name": {
+                "description": "Name of the signer.",
+                "type": "string",
+                "x-ms-summary": "Signer Name",
+                "x-ms-visibility": "important"
+              },
+              "status_code": {
+                "description": "Current status of the signature.",
+                "type": "string",
+                "x-ms-summary": "Status Code",
+                "x-ms-visibility": "advanced"
+              },
+              "signed_at": {
+                "description": "Date in ISO UTC format (yyyy-MM-ddTHH:mm:ss.fffZ)",
+                "type": "string",
+                "format": "date",
+                "x-ms-summary": "Signed Date",
+                "x-ms-visibility": "important"
+              },
+              "last_viewed_at": {
+                "description": "Date in ISO UTC format (yyyy-MM-ddTHH:mm:ss.fffZ)",
+                "type": "string",
+                "format": "date",
+                "x-ms-summary": "Last Viewed Date",
+                "x-ms-visibility": "advanced"
+              },
+              "last_reminded_at": {
+                "description": "Date in ISO UTC format (yyyy-MM-ddTHH:mm:ss.fffZ)",
+                "type": "string",
+                "x-ms-summary": "Last Reminded Date",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "Signatures",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "RequestResponseArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RequestResponse"
+      }
+    },
+    "List_templates_Response": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "description": "templates",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "template_id": {
+                "description": "template_id",
+                "type": "string",
+                "x-ms-summary": "template_id",
+                "x-ms-visibility": "advanced"
+              },
+              "title": {
+                "description": "title",
+                "type": "string",
+                "x-ms-summary": "title",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "templates",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "DynamicSigners": {
+      "description": "An object that represents signers based on a template.",
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetDynamicSigners",
+        "parameters": {
+          "template_id": {
+            "parameter": "template_id"
+          }
+        },
+        "value-path": "Schema/Items"
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Authorization": {
+      "type": "basic"
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListTemplates",
+      "parameters": {}
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.hellosign.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.hellosign.com/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/hellosign"
+  },
+  "basePath": "/apim/hellosign"
+}
