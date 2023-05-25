@@ -1,0 +1,423 @@
+{
+  "swagger": "2.0",
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/flic",
+  "schemes": [
+    "https"
+  ],
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "title": "Flic",
+    "version": "1.0",
+    "description": "The Flic connector allows a workflow to be triggered by the press of a Flic button or Flic task, in combination with the Flic Android or iOS app.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "x-ms-docs": [
+    {
+      "url": "https://ms.flow.microsoft.com/en-us/blog/physical-buttons/",
+      "description": "Trigger Flows from physical buttons"
+    }
+  ],
+  "paths": {
+    "/{connectionId}/buttontrigger/api/v1/msflow/subscribe/{button_uuid}": {
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/WebhookPushDataFlic"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "description": "Triggers a workflow when the configured Flic is pressed.",
+        "summary": "When a Flic is pressed",
+        "operationId": "FlicButtonTrigger",
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "button_uuid",
+            "x-ms-summary": "Flic button",
+            "x-ms-dynamic-values": {
+              "operationId": "ButtonList",
+              "parameters": {},
+              "value-collection": "buttons",
+              "value-path": "button_uuid",
+              "value-title": "name"
+            },
+            "in": "path",
+            "description": "The Flic that will trigger the workflow.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBodyFlic"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/flic/#when-a-flic-is-pressed"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/msflow/subscribe/{task_uuid}": {
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/WebhookPushDataTask"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "description": "Triggers a workflow when the configured Task is executed.",
+        "summary": "When a Task is executed",
+        "operationId": "FlicTaskTrigger",
+        "x-ms-trigger": "single",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "task_uuid",
+            "x-ms-summary": "Task",
+            "x-ms-dynamic-values": {
+              "operationId": "TaskList",
+              "parameters": {},
+              "value-collection": "tasks",
+              "value-path": "task_uuid",
+              "value-title": "name"
+            },
+            "in": "path",
+            "description": "The Task that will trigger the workflow.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBodyTask"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/flic/#when-a-task-is-executed"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/msflow/unsubscribe/{user_uuid}/{hook_Id}": {
+      "delete": {
+        "description": "Deletes a webhook",
+        "summary": "Delete a webhook",
+        "x-ms-visibility": "internal",
+        "operationId": "DeleteTrigger",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "user_uuid",
+            "in": "path",
+            "description": "User UUID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "hook_Id",
+            "in": "path",
+            "description": "ID of hook",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/flic/#delete-a-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/msflow/buttons": {
+      "get": {
+        "description": "Gets Flic list",
+        "summary": "Get Flic list",
+        "operationId": "ButtonList",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetFlicsResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/flic/#get-flic-list"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/msflow/tasks": {
+      "get": {
+        "description": "Gets Task list",
+        "summary": "Get Task list",
+        "operationId": "TaskList",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetTasksResponse"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/flic/#get-task-list"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "flic": {
+      "description": "Flic Login",
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://api.flic.io/users/oauth2/authorize",
+      "tokenUrl": "https://api.flic.io/api/v1/oauth2/access_token"
+    }
+  },
+  "security": [
+    {}
+  ],
+  "definitions": {
+    "WebhookRequestBodyFlic": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Url",
+          "title": "Url",
+          "x-ms-summary": "Url",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        },
+        "events": {
+          "description": "Events to listen to",
+          "title": "Events",
+          "x-ms-summary": "Events",
+          "type": "string",
+          "default": "any",
+          "enum": [
+            "click",
+            "double click",
+            "hold",
+            "any"
+          ]
+        }
+      }
+    },
+    "WebhookRequestBodyTask": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Url",
+          "title": "Url",
+          "x-ms-summary": "Url",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      }
+    },
+    "WebhookPushDataFlic": {
+      "type": "object",
+      "properties": {
+        "click_type": {
+          "type": "string",
+          "x-ms-summary": "Click type",
+          "description": "Click type may be click, double click or hold",
+          "enum": [
+            "click",
+            "double click",
+            "hold"
+          ]
+        },
+        "clicked_at": {
+          "type": "string",
+          "x-ms-summary": "Click time",
+          "description": "The date/time the Flic was clicked"
+        },
+        "button_uuid": {
+          "type": "string",
+          "x-ms-summary": "Button UUID",
+          "description": "The UUID of the button"
+        },
+        "longitude": {
+          "type": "string",
+          "x-ms-summary": "Longitude",
+          "description": "Longitude coordinates"
+        },
+        "latitude": {
+          "type": "string",
+          "x-ms-summary": "Latitude",
+          "description": "Latitude coordinates"
+        }
+      }
+    },
+    "WebhookPushDataTask": {
+      "type": "object",
+      "properties": {
+        "executed_at": {
+          "type": "string",
+          "x-ms-summary": "Executed time",
+          "description": "The date/time the Task was executed"
+        },
+        "task_uuid": {
+          "type": "string",
+          "x-ms-summary": "Task UUID",
+          "description": "The UUID of the Task"
+        },
+        "longitude": {
+          "type": "string",
+          "x-ms-summary": "Longitude",
+          "description": "Longitude coordinates"
+        },
+        "latitude": {
+          "type": "string",
+          "x-ms-summary": "Latitude",
+          "description": "Latitude coordinates"
+        }
+      }
+    },
+    "GetFlicsResponse": {
+      "type": "object",
+      "properties": {
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of Flic",
+                "title": "Name of Flic"
+              },
+              "button_uuid": {
+                "type": "string",
+                "description": "Button UUID",
+                "title": "Button UUID"
+              }
+            }
+          }
+        }
+      }
+    },
+    "GetTasksResponse": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of Task",
+                "title": "Name of task"
+              },
+              "task_uuid": {
+                "type": "string",
+                "description": "Task UUID",
+                "title": "Task UUID"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/flic"
+  }
+}
