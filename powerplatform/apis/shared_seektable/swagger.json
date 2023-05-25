@@ -1,0 +1,345 @@
+{
+  "basePath": "/apim/seektable",
+  "consumes": [],
+  "definitions": {},
+  "host": "europe-002.azure-apim.net",
+  "info": {
+    "description": "Generates tabular reports saved in your SeekTable account.",
+    "title": "SeekTable",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "email": "support@seektable.com"
+    }
+  },
+  "parameters": {},
+  "paths": {
+    "/{connectionId}/api/cube": {
+      "get": {
+        "description": "List of CSV cubes",
+        "operationId": "CsvCubeList",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "default": "file-csv",
+            "in": "query",
+            "name": "source_type",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "properties": {
+                  "Id": {
+                    "description": "Id",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "List of CSV cubes",
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/seektable/#list-of-csv-cubes"
+        }
+      }
+    },
+    "/{connectionId}/api/cube/import/csv": {
+      "post": {
+        "description": "Uploads a CSV file to refresh existing cube",
+        "operationId": "CubeImportCsv",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Cube ID",
+            "in": "query",
+            "name": "cubeId",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "CsvCubeList",
+              "parameters": {
+                "source_type": "file-csv"
+              },
+              "value-path": "Id",
+              "value-title": "Name"
+            },
+            "x-ms-summary": "Cube ID"
+          },
+          {
+            "description": "CSV File Name",
+            "in": "query",
+            "name": "filename",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "CSV File Name"
+          },
+          {
+            "in": "body",
+            "name": "CSV content",
+            "required": true,
+            "schema": {
+              "properties": {},
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Upload CSV File",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/seektable/#upload-csv-file"
+        }
+      }
+    },
+    "/{connectionId}/api/report": {
+      "get": {
+        "description": "Gets a list of reports",
+        "operationId": "ReportList",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "properties": {
+                  "CreateDate": {
+                    "description": "CreateDate",
+                    "type": "string"
+                  },
+                  "Id": {
+                    "description": "Id",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name",
+                    "type": "string"
+                  },
+                  "ReportType": {
+                    "description": "ReportType",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "Get Reports List",
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/seektable/#get-reports-list"
+        }
+      }
+    },
+    "/{connectionId}/api/report/{report_id}/export": {
+      "get": {
+        "description": "Exports specified report to PDF/Excel/CSV/HTML/JSON file.",
+        "operationId": "ReportExport",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Report ID",
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "ReportList",
+              "value-path": "Id",
+              "value-title": "Name"
+            },
+            "x-ms-summary": "Report ID"
+          },
+          {
+            "description": "Format",
+            "enum": [
+              "pdf",
+              "csv",
+              "excel",
+              "excelpivottable",
+              "json",
+              "html",
+              "png"
+            ],
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Format"
+          },
+          {
+            "description": "Enable inline styles for HTML",
+            "in": "query",
+            "name": "html_inline_style",
+            "required": false,
+            "type": "boolean",
+            "x-ms-summary": "Enable inline styles for HTML export."
+          },
+          {
+            "description": "Chart Only",
+            "in": "query",
+            "name": "chart_only",
+            "required": false,
+            "type": "boolean",
+            "x-ms-summary": "Export only chart for PDF or PNG export."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "title": "Export Result",
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Report Export",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/seektable/#report-export"
+        }
+      }
+    },
+    "/{connectionId}/api/report/{report_id}/share/email": {
+      "post": {
+        "description": "Sends report in email body",
+        "operationId": "ReportShareByEmail",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Report ID",
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "ReportList",
+              "value-path": "Id",
+              "value-title": "Name"
+            },
+            "x-ms-summary": "Report ID"
+          },
+          {
+            "description": "To",
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "To"
+          },
+          {
+            "description": "Subject",
+            "in": "query",
+            "name": "subject",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Subject"
+          },
+          {
+            "description": "Message",
+            "in": "query",
+            "name": "message",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Content for email body (placed above the report)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Share report by email",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/seektable/#share-report-by-email"
+        }
+      }
+    }
+  },
+  "produces": [],
+  "responses": {},
+  "schemes": [
+    "https"
+  ],
+  "security": [],
+  "securityDefinitions": {
+    "api_key": {
+      "in": "header",
+      "name": "Authorization",
+      "type": "apiKey"
+    }
+  },
+  "swagger": "2.0",
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.seektable.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.seektable.com/privacy-policy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/seektable"
+  }
+}
