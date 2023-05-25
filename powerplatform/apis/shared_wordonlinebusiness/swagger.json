@@ -1,0 +1,740 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Word Online (Business)",
+    "description": "Word Online (Business) connector lets you work with Word files in document libraries supported by Microsoft Graph (OneDrive for Business, SharePoint Online Sites, and Office 365 Groups).",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/wordonlinebusiness",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/templates/schema": {
+      "get": {
+        "summary": "Fetches the schema of the selected file",
+        "description": "Fetches the schema of the selected file.",
+        "operationId": "GetFileSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "me"
+          },
+          {
+            "name": "drive",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "me"
+          },
+          {
+            "name": "file",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#fetches-the-schema-of-the-selected-file"
+        }
+      }
+    },
+    "/{connectionId}/api/templates/getFile": {
+      "post": {
+        "summary": "Populate a Microsoft Word template",
+        "description": "Reads a Microsoft Word template to then fill the template fields with selected dynamic values to generate a Word Document.",
+        "operationId": "CreateFileItem",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/source"
+          },
+          {
+            "$ref": "#/parameters/queryDrive"
+          },
+          {
+            "$ref": "#/parameters/file"
+          },
+          {
+            "name": "dynamicFileSchema",
+            "in": "body",
+            "description": "Dynamic Schema of items in selected File",
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetFileSchema",
+                "parameters": {
+                  "source": {
+                    "parameter": "source"
+                  },
+                  "drive": {
+                    "parameter": "drive"
+                  },
+                  "file": {
+                    "parameter": "file"
+                  }
+                },
+                "value-path": "items"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "format": "binary",
+              "title": "Microsoft Word document",
+              "type": "string",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#populate-a-microsoft-word-template"
+        }
+      }
+    },
+    "/{connectionId}/codeless/v1.0/sources": {
+      "get": {
+        "summary": "Get sources",
+        "description": "Get a list of sources.",
+        "operationId": "GetSources",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Top.",
+            "required": false,
+            "x-ms-summary": "Top",
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Select.",
+            "required": false,
+            "x-ms-summary": "Select",
+            "x-ms-visibility": "internal",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation is successful.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "title": "Id",
+                        "description": "Id.",
+                        "type": "string",
+                        "x-ms-summary": "Id"
+                      },
+                      "displayName": {
+                        "title": "Name",
+                        "description": "Name.",
+                        "type": "string",
+                        "x-ms-summary": "Name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#get-sources"
+        }
+      }
+    },
+    "/{connectionId}/codeless/v1.0/drives": {
+      "get": {
+        "summary": "Get drives",
+        "description": "Get a list of drives.",
+        "operationId": "GetDrives",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Select from the drop-down or specify one of the following:\r\n              - \"me\"\r\n              - \"SharePoint Site URL\"\r\n              - \"users/someone's UPN\"\r\n              - \"groups/group Id\"\r\n              - \"sites/SharePoint Site URL:/teams/team name:\" (colons are required).",
+            "required": true,
+            "x-ms-summary": "Location",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSources",
+              "value-path": "id",
+              "value-title": "displayName",
+              "value-collection": "value",
+              "parameters": {
+                "$select": "id,displayName",
+                "$top": "999"
+              }
+            },
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "me"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Select.",
+            "required": false,
+            "x-ms-summary": "Select",
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation is successful.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "title": "Id",
+                        "description": "Drive Id.",
+                        "type": "string",
+                        "x-ms-summary": "Id"
+                      },
+                      "name": {
+                        "title": "Name",
+                        "description": "Drive name.",
+                        "type": "string",
+                        "x-ms-summary": "Name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#get-drives"
+        }
+      }
+    },
+    "/{connectionId}/codeless/v1.0/drives/{drive}/root/children": {
+      "get": {
+        "summary": "List the root folder",
+        "description": "List the root folder.",
+        "operationId": "ListRootFolder",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/source"
+          },
+          {
+            "$ref": "#/parameters/drive"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation is successful.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#list-the-root-folder"
+        }
+      }
+    },
+    "/{connectionId}/codeless/v1.0/drives/{drive}/items/{id}/children": {
+      "get": {
+        "summary": "List blobs under a given folder",
+        "description": "List blobs under a given folder.",
+        "operationId": "ListFolder",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/source"
+          },
+          {
+            "$ref": "#/parameters/drive"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Folder Id.",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "source": {
+                  "parameter": "source"
+                },
+                "drive": {
+                  "parameter": "drive"
+                },
+                "isFolder": true,
+                "fileFilter": []
+              },
+              "value-path": "Id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": true,
+                "canSelectLeafNodes": false
+              },
+              "open": {
+                "operationId": "ListRootFolder",
+                "parameters": {
+                  "source": {
+                    "parameterReference": "source"
+                  },
+                  "drive": {
+                    "parameterReference": "drive"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  },
+                  "source": {
+                    "parameterReference": "source"
+                  },
+                  "drive": {
+                    "parameterReference": "drive"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)"
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation is successful.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlobMetadata"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#list-blobs-under-a-given-folder"
+        }
+      }
+    },
+    "/{connectionId}/api/templates/convertFile": {
+      "get": {
+        "summary": "Convert Word Document to PDF",
+        "description": "Gets a PDF version of the selected file",
+        "operationId": "GetFilePDF",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/source"
+          },
+          {
+            "$ref": "#/parameters/queryDrive"
+          },
+          {
+            "$ref": "#/parameters/file"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format of the content",
+            "required": true,
+            "type": "string",
+            "default": "pdf",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation is successful.",
+            "schema": {
+              "format": "binary",
+              "title": "PDF document",
+              "type": "string",
+              "x-ms-visibility": "important"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wordonlinebusiness/#convert-word-document-to-pdf"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "GetFiles": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BlobMetadata": {
+      "description": "Blob metadata",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "The unique identifier of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Id"
+        },
+        "Name": {
+          "description": "The name of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Name"
+        },
+        "DisplayName": {
+          "description": "The display name of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Display name"
+        },
+        "Path": {
+          "description": "The path of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Path"
+        },
+        "MediaType": {
+          "description": "The media type of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "Media type"
+        },
+        "IsFolder": {
+          "description": "A boolean value (true, false) to indicate whether or not the blob is a folder.",
+          "type": "boolean",
+          "x-ms-summary": "Is folder?"
+        },
+        "FileLocator": {
+          "description": "The file locator of the file or folder.",
+          "type": "string",
+          "x-ms-summary": "File locator"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.windows.net/common/oauth2/authorize",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "Files.Read": "Files.Read",
+        "Files.ReadWrite": "Files.ReadWrite",
+        "Files.Read.All": "Files.Read.All",
+        "Files.ReadWrite.All": "Files.ReadWrite.All"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "Files.Read",
+        "Files.ReadWrite",
+        "Files.Read.All",
+        "Files.ReadWrite.All"
+      ]
+    }
+  ],
+  "x-ms-capabilities": {
+    "file-picker": {
+      "open": {
+        "operationId": "ListRootFolder",
+        "parameters": {
+          "source": {
+            "parameter": "source"
+          },
+          "drive": {
+            "parameter": "drive"
+          }
+        }
+      },
+      "browse": {
+        "operationId": "ListFolder",
+        "parameters": {
+          "source": {
+            "parameter": "source"
+          },
+          "drive": {
+            "parameter": "drive"
+          },
+          "id": {
+            "value-property": "Id"
+          }
+        }
+      },
+      "value-title": "DisplayName",
+      "value-folder-property": "IsFolder",
+      "value-media-property": "MediaType"
+    }
+  },
+  "parameters": {
+    "source": {
+      "name": "source",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Location",
+      "description": "Select from the drop-down or specify one of the following:\r\n              - \"me\"\r\n              - \"SharePoint Site URL\"\r\n              - \"users/someone's UPN\"\r\n              - \"groups/group Id\"\r\n              - \"sites/SharePoint Site URL:/teams/team name:\" (colons are required).",
+      "x-ms-dynamic-values": {
+        "operationId": "GetSources",
+        "value-path": "id",
+        "value-collection": "value",
+        "value-title": "displayName",
+        "parameters": {
+          "$select": "id,displayName",
+          "$top": "999"
+        }
+      }
+    },
+    "drive": {
+      "name": "drive",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "Select a document library from the drop-down.",
+      "x-ms-summary": "Document Library",
+      "x-ms-dynamic-values": {
+        "operationId": "GetDrives",
+        "value-path": "id",
+        "value-collection": "value",
+        "value-title": "name",
+        "parameters": {
+          "source": {
+            "parameter": "source"
+          },
+          "$select": "id,name"
+        }
+      }
+    },
+    "queryDrive": {
+      "name": "drive",
+      "in": "query",
+      "description": "Select a document library from the drop-down.",
+      "required": true,
+      "x-ms-summary": "Document Library",
+      "x-ms-dynamic-values": {
+        "operationId": "GetDrives",
+        "parameters": {
+          "source": {
+            "parameter": "source"
+          },
+          "$select": "id,name"
+        },
+        "value-collection": "value",
+        "value-path": "id",
+        "value-title": "name"
+      },
+      "type": "string"
+    },
+    "file": {
+      "name": "file",
+      "in": "query",
+      "description": "Select a Word file through File Browse.",
+      "required": true,
+      "x-ms-summary": "File",
+      "x-ms-dynamic-values": {
+        "capability": "file-picker",
+        "parameters": {
+          "isFolder": false,
+          "fileFilter": [
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ],
+          "source": {
+            "parameter": "source"
+          },
+          "drive": {
+            "parameter": "drive"
+          },
+          "dataset": null
+        },
+        "value-path": "Id"
+      },
+      "x-ms-dynamic-tree": {
+        "settings": {
+          "canSelectParentNodes": false,
+          "canSelectLeafNodes": true
+        },
+        "open": {
+          "operationId": "ListRootFolder",
+          "parameters": {
+            "source": {
+              "parameterReference": "source"
+            },
+            "drive": {
+              "parameterReference": "drive"
+            }
+          },
+          "itemValuePath": "Id",
+          "itemTitlePath": "DisplayName",
+          "itemFullTitlePath": "Path",
+          "itemIsParent": "(IsFolder eq true)",
+          "selectableFilter": "(MediaType eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')"
+        },
+        "browse": {
+          "operationId": "ListFolder",
+          "parameters": {
+            "id": {
+              "selectedItemValuePath": "Id"
+            },
+            "source": {
+              "parameterReference": "source"
+            },
+            "drive": {
+              "parameterReference": "drive"
+            }
+          },
+          "itemValuePath": "Id",
+          "itemTitlePath": "DisplayName",
+          "itemFullTitlePath": "Path",
+          "itemIsParent": "(IsFolder eq true)",
+          "selectableFilter": "(MediaType eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')"
+        }
+      },
+      "type": "string"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://products.office.com/en-us/word"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/wordonlinebusiness"
+  }
+}
