@@ -45,10 +45,8 @@ async function saveApiConnectorProperties(connector) {
   const connectorFolder = path.join('powerplatform', 'apis', name);
   await fs.mkdir(connectorFolder, { recursive: true });
   const swaggerPath = path.join(connectorFolder, 'swagger.json');
-  const swaggerText = JSON.stringify(swagger, undefined, 2).replaceAll(
-    '\n',
-    EOL
-  );
+  const swaggerText =
+    JSON.stringify(swagger, undefined, 2).replaceAll('\n', EOL) + EOL;
   await fs.writeFile(swaggerPath, swaggerText, 'utf-8');
   /** @type {PartiallyOptional<(typeof connector)['properties']>} */
   const props = connector.properties;
@@ -56,10 +54,8 @@ async function saveApiConnectorProperties(connector) {
   delete props.primaryRuntimeUrl;
   delete props.swagger;
   const connectorPath = path.join(connectorFolder, 'api.json');
-  const connectorText = JSON.stringify(connector, undefined, 2).replaceAll(
-    '\n',
-    EOL
-  );
+  const connectorText =
+    JSON.stringify(connector, undefined, 2).replaceAll('\n', EOL) + EOL;
   await fs.writeFile(connectorPath, connectorText, 'utf-8');
 }
 
