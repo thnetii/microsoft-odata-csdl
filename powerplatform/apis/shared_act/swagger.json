@@ -1,0 +1,352 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "v1",
+    "title": "Act!",
+    "description": "Act! helps individuals, small businesses, and sales teams organize prospect and customer details in one place.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/act",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/Contacts/": {
+      "get": {
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Get all contacts",
+        "description": "Get a list of all contacts.",
+        "operationId": "ListContacts",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "OData compliant $filter query i.e. (recordOwner eq 'John Smith')",
+            "required": false,
+            "x-ms-summary": "Filter Query",
+            "type": "string",
+            "x-ms-test-value": "firstName eq 'PowerApps'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK indicates that the request succeeded and that the requested information is in the response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/act.web.api.models.Contact"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized indicates that the requested resource requires authentication."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/act/#get-all-contacts"
+        }
+      },
+      "post": {
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Create a contact",
+        "description": "Create a new contact.",
+        "x-ms-no-generic-test": true,
+        "operationId": "CreateContact",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "contact",
+            "in": "body",
+            "description": "The contact definition.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/act.web.api.models.Contact.noID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created indicates that the request resulted in a new resource created before the response was sent.",
+            "schema": {
+              "$ref": "#/definitions/act.web.api.models.Contact"
+            }
+          },
+          "400": {
+            "description": "BadRequest indicates that the request could not be understood by the server. BadRequest is sent when no other error is applicable, or if the exact error is unknown or does not have its own error code."
+          },
+          "401": {
+            "description": "Unauthorized indicates that the requested resource requires authentication. The WWW-Authenticate header contains the details of how to perform the authentication."
+          },
+          "404": {
+            "description": "NotFound indicates that the requested resource does not exist on the server."
+          },
+          "500": {
+            "description": "Unexpected error."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/act/#create-a-contact"
+        }
+      }
+    },
+    "/{connectionId}/trigger/api/Contacts/": {
+      "get": {
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "When there is a new contact",
+        "description": "Triggers when there is a new contact (up to 100 contacts).",
+        "operationId": "TrigNewContact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK indicates that the request succeeded and that the requested information is in the response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/act.web.api.models.Contact"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized indicates that the requested resource requires authentication."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a contact.",
+        "x-ms-dev-triggerType": "queryFilter",
+        "x-ms-dev-queryfilterParamName": "$filter",
+        "x-ms-dev-triggerValueCollection": "",
+        "x-ms-dev-triggerValuePath": "created",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/act/#when-there-is-a-new-contact"
+        }
+      }
+    },
+    "/{connectionId}/api/Contacts/{contactid}": {
+      "get": {
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Get a contact",
+        "description": "Get details of a specific contact.",
+        "operationId": "GetContact",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "contactid",
+            "in": "path",
+            "description": "Select a contact",
+            "required": true,
+            "x-ms-summary": "Contact Id",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListContacts",
+              "value-path": "id",
+              "value-title": "fullName"
+            },
+            "type": "string",
+            "x-ms-test-value": "ea4b2c12-85a2-49c7-bbf5-5c335a419a5c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK indicates that the request succeeded and that the requested information is in the response.",
+            "schema": {
+              "$ref": "#/definitions/act.web.api.models.Contact"
+            }
+          },
+          "401": {
+            "description": "Unauthorized indicates that the requested resource requires authentication."
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/act/#get-a-contact"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "act.web.api.models.Contact.noID": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "description": "The full name (first and last) of the contact.",
+          "type": "string",
+          "x-ms-summary": "Full Name"
+        },
+        "emailAddress": {
+          "description": "The email address of the contact.",
+          "type": "string",
+          "x-ms-summary": "Email Address"
+        },
+        "company": {
+          "description": "The name of the company.",
+          "type": "string",
+          "x-ms-summary": "Company"
+        },
+        "idStatus": {
+          "description": "The id status of the contact.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Id Status"
+        },
+        "referredBy": {
+          "description": "The person who referred the contact.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Referred By"
+        },
+        "jobTitle": {
+          "description": "The job title of the contact.",
+          "type": "string",
+          "x-ms-summary": "Job Title"
+        },
+        "businessPhone": {
+          "description": "The business phone number (with area code).",
+          "type": "string",
+          "x-ms-summary": "Business Phone Number"
+        },
+        "mobilePhone": {
+          "description": "The mobile phone number (with area code).",
+          "type": "string",
+          "x-ms-summary": "Mobile Phone Number"
+        },
+        "customFields": {
+          "description": "Key-value pairs representing the custom fields for this contact (where key is the field name, and value is the field value).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Custom Fields"
+        }
+      }
+    },
+    "act.web.api.models.Contact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The id of the contact.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Id"
+        },
+        "fullName": {
+          "description": "The full name (first and last) of the contact.",
+          "type": "string",
+          "x-ms-summary": "Full Name"
+        },
+        "emailAddress": {
+          "description": "The email address of the contact.",
+          "type": "string",
+          "x-ms-summary": "Email Address"
+        },
+        "company": {
+          "description": "The name of the company.",
+          "type": "string",
+          "x-ms-summary": "Company"
+        },
+        "idStatus": {
+          "description": "The id status of the contact.",
+          "type": "string",
+          "x-ms-summary": "Id Status"
+        },
+        "referredBy": {
+          "description": "The person who referred the contact.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Referred By"
+        },
+        "jobTitle": {
+          "description": "The job title of the contact.",
+          "type": "string",
+          "x-ms-summary": "Job Title"
+        },
+        "businessPhone": {
+          "description": "The business phone number (with area code).",
+          "type": "string",
+          "x-ms-summary": "Business Phone Number"
+        },
+        "mobilePhone": {
+          "description": "The mobile phone number (with area code).",
+          "type": "string",
+          "x-ms-summary": "Mobile Phone Number"
+        },
+        "customFields": {
+          "description": "Key-value pairs representing the custom fields for this contact (where key is the field name, and value is the field value).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Custom Fields"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/act"
+  }
+}
