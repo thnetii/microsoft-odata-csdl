@@ -1,0 +1,837 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "ElasticOCR",
+    "description": "The new, modern way to OCR your documents.",
+    "contact": {
+      "name": "Customer Support",
+      "url": "https://elasticocr.com/help",
+      "email": "help@elasticocr.com"
+    },
+    "license": {
+      "name": "License & Terms of Service",
+      "url": "https://elasticocr.com/terms"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/elasticocr",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/v1.0/jobs/download/{jobId}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Download a job",
+        "description": "Downloads an available job's processed file.",
+        "operationId": "DownloadJob",
+        "consumes": [],
+        "produces": [
+          "application/octet-stream",
+          "application/pdf"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Unique Id of an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Job Id",
+            "x-ntx-summary": "Job Id",
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job was successfully downloaded.",
+            "schema": {
+              "format": "binary",
+              "description": "The content of the file",
+              "type": "string",
+              "x-ms-summary": "File Content",
+              "x-ntx-summary": "File Content"
+            }
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "403": {
+            "description": "Job is not in a state that can be downloaded."
+          },
+          "404": {
+            "description": "Job was not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Download a job",
+        "x-ntx-summary": "Download a job",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#download-a-job-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/jobs/complete/{jobId}": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Complete a job",
+        "description": "Marks a job as complete after successful retrieval of the processed file.",
+        "operationId": "CompleteJob",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Unique Id of an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Job Id",
+            "x-ntx-summary": "Job Id",
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job was successfully completed.",
+            "schema": {
+              "$ref": "#/definitions/JobResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "403": {
+            "description": "Job is not in a state that can be completed."
+          },
+          "404": {
+            "description": "Job was not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Complete a job",
+        "x-ntx-summary": "Complete a job",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#complete-a-job-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get all jobs",
+        "description": "Retrieve all jobs and their current statuses. By default, a maximum of 1,000 jobs are returned.",
+        "operationId": "GetJobs",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jobs have been returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/JobResponse"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "x-ms-summary": "Get all jobs",
+        "x-ntx-summary": "Get all jobs",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#get-all-jobs-%5bdeprecated%5d"
+        }
+      },
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Create a job with a file",
+        "description": "Create an ElasticOCR job for a supplied binary file.",
+        "operationId": "CreateJobWithFile",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "filename",
+            "in": "header",
+            "description": "Filename of the file supplied for an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Filename",
+            "x-ntx-summary": "Filename",
+            "type": "string"
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "Job specific metadata to be stored with the ElasticOCR job",
+            "required": false,
+            "x-ms-summary": "Metadata",
+            "x-ntx-summary": "Metadata",
+            "type": "string"
+          },
+          {
+            "name": "filedata",
+            "in": "body",
+            "description": "Content of the file supplied for an ElasticOCR job",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Data (binary)",
+            "x-ntx-summary": "File Data (binary)"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Job was successfully created.",
+            "schema": {
+              "$ref": "#/definitions/JobResponse"
+            }
+          },
+          "400": {
+            "description": "The filename is missing or the supplied metadata does not meet the required format."
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "415": {
+            "description": "The supplied file is either empty, not a supported type, or was not provided."
+          },
+          "429": {
+            "description": "Throttle limits of this service tier have been exceeded."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Create a job with a file",
+        "x-ntx-summary": "Create a job with a file",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#create-a-job-with-a-file-%5bdeprecated%5d"
+        }
+      },
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Create a job without a file",
+        "description": "Create an ElasticOCR job without supplying a file; supply a file later using [PUT] /v{version}/jobs/{jobId}.",
+        "operationId": "CreateJobWithoutFile",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "Job specific metadata to be stored with the ElasticOCR job",
+            "required": false,
+            "x-ms-summary": "Metadata",
+            "x-ntx-summary": "Metadata",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Job was successfully created.",
+            "schema": {
+              "$ref": "#/definitions/JobResponse"
+            }
+          },
+          "400": {
+            "description": "The filename is missing or the supplied metadata does not meet the required format."
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "429": {
+            "description": "Throttle limits of this service tier have been exceeded."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Create a job without a file",
+        "x-ntx-summary": "Create a job without a file",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#create-a-job-without-a-file-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/jobs/{jobId}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Retrieve a job",
+        "description": "Retrieve a specific job.",
+        "operationId": "GetJob",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Unique Id of an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Job Id",
+            "x-ntx-summary": "Job Id",
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job has been returned.",
+            "schema": {
+              "$ref": "#/definitions/JobResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "404": {
+            "description": "Job was not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Retrieve a job",
+        "x-ntx-summary": "Retrieve a job",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#retrieve-a-job-%5bdeprecated%5d"
+        }
+      },
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Update an existing job with a file",
+        "description": "Add a file to an existing ElasticOCR job. Only jobs with a status of Pending may be updated.",
+        "operationId": "UpdateJobWithFile",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "filename",
+            "in": "header",
+            "description": "Filename of the file supplied for an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Filename",
+            "x-ntx-summary": "Filename",
+            "type": "string"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Unique Id of an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Job Id",
+            "x-ntx-summary": "Job Id",
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "Job specific metadata to be stored with the ElasticOCR job",
+            "required": false,
+            "x-ms-summary": "Metadata",
+            "x-ntx-summary": "Metadata",
+            "type": "string"
+          },
+          {
+            "name": "filedata",
+            "in": "body",
+            "description": "Content of the file supplied for an ElasticOCR job",
+            "required": true,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "x-ms-summary": "File Data (binary)",
+            "x-ntx-summary": "File Data (binary)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job was successfully updated.",
+            "schema": {
+              "$ref": "#/definitions/JobResponse"
+            }
+          },
+          "400": {
+            "description": "The filename is missing or the supplied metadata does not meet the required format."
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "403": {
+            "description": "Job is not in a state that can be updated."
+          },
+          "404": {
+            "description": "Job was not found."
+          },
+          "415": {
+            "description": "The supplied file is either empty, not a supported type, or was not provided."
+          },
+          "429": {
+            "description": "Throttle limits of this service tier have been exceeded."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "important",
+        "x-ms-summary": "Update an existing job with a file",
+        "x-ntx-summary": "Update an existing job with a file",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#update-an-existing-job-with-a-file-%5bdeprecated%5d"
+        }
+      },
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Delete a job",
+        "description": "Delete an ElasticOCR job before it begins processing. Only jobs with a status of Pending or Uploaded may be\r\ndeleted.",
+        "operationId": "DeleteJob",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Unique Id of an ElasticOCR job",
+            "required": true,
+            "x-ms-summary": "Job Id",
+            "x-ntx-summary": "Job Id",
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Job was successfully deleted."
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "403": {
+            "description": "Job is not in a state that can be deleted."
+          },
+          "404": {
+            "description": "Job was not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "x-ms-summary": "Delete a job",
+        "x-ntx-summary": "Delete a job",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#delete-a-job-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/license": {
+      "get": {
+        "tags": [
+          "Licenses"
+        ],
+        "summary": "Retrieve a license",
+        "description": "Validate a license and identify the associated processing region.",
+        "operationId": "GetLicense",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "License has been returned.",
+            "schema": {
+              "$ref": "#/definitions/LicenseResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid License Id and App Id combination."
+          },
+          "404": {
+            "description": "License was not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request. It has been logged for review by the ElasticOCR team."
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "licenseId": [],
+            "appId": []
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "x-ms-summary": "Retrieve a license",
+        "x-ntx-summary": "Retrieve a license",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/elasticocr/#retrieve-a-license-%5bdeprecated%5d"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "JobResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "description": "The unique Id of the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Job Id",
+          "x-ntx-summary": "Job Id"
+        },
+        "licenseId": {
+          "format": "uuid",
+          "description": "The License Id associated with the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "License Id",
+          "x-ntx-summary": "License Id"
+        },
+        "appId": {
+          "format": "uuid",
+          "description": "The App Id associated with the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "App Id",
+          "x-ntx-summary": "App Id"
+        },
+        "processingRegion": {
+          "description": "The processing region associated with the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-summary": "Processing Region",
+          "x-ntx-summary": "Processing Region"
+        },
+        "status": {
+          "description": "The current status of the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Status",
+          "x-ntx-summary": "Status"
+        },
+        "filename": {
+          "description": "The name of the file associated with the ElasticOCR job.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Filename",
+          "x-ntx-summary": "Filename"
+        },
+        "createdDate": {
+          "format": "date-time",
+          "description": "The date & time the ElasticOCR job was created.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Created Date",
+          "x-ntx-summary": "Created Date"
+        },
+        "availableDate": {
+          "format": "date-time",
+          "description": "The date & time the ElasticOCR job became available for retrieval.",
+          "type": "string",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Available Date",
+          "x-ntx-summary": "Available Date"
+        },
+        "downloadUrl": {
+          "description": "The unique URL to retrieve the processed document.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Download URL",
+          "x-ntx-summary": "Download URL"
+        },
+        "downloadUrlExpires": {
+          "format": "date-time",
+          "description": "The date & time that the temporary download URL expires.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Download URL Expires",
+          "x-ntx-summary": "Download URL Expires"
+        },
+        "completedDate": {
+          "format": "date-time",
+          "description": "The date & time the ElasticOCR job was completed.",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-summary": "Completed Date",
+          "x-ntx-summary": "Completed Date"
+        },
+        "metadata": {
+          "description": "Custom JSON metadata supplied for the job.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Metadata",
+          "x-ntx-summary": "Metadata"
+        }
+      }
+    },
+    "LicenseResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "description": "The License Id of the associated ElasticOCR subscription.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "License Id",
+          "x-ntx-summary": "License Id"
+        },
+        "appId": {
+          "format": "uuid",
+          "description": "The Id of a valid app within the ElasticOCR subscription.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "App Id",
+          "x-ntx-summary": "App Id"
+        },
+        "type": {
+          "description": "The license type configured for the associated ElasticOCR subscription.",
+          "enum": [
+            "Development",
+            "Trial",
+            "Tier1",
+            "Tier2",
+            "Tier3"
+          ],
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-summary": "Type",
+          "x-ntx-summary": "Type"
+        },
+        "processingRegion": {
+          "description": "The country prefix configured for the associated ElasticOCR subscription.",
+          "type": "string",
+          "x-ms-visibility": "important",
+          "x-ms-summary": "Processing Region",
+          "x-ntx-summary": "Processing Region"
+        },
+        "enabled": {
+          "description": "The enabled state of the associated ElasticOCR app.",
+          "type": "boolean",
+          "x-ms-visibility": "internal",
+          "x-ms-summary": "Enabled",
+          "x-ntx-summary": "Enabled"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "licenseId": {
+      "type": "apiKey",
+      "description": "License Id",
+      "name": "licenseId",
+      "in": "header",
+      "x-ms-summary": "License Id",
+      "x-ntx-summary": "License Id"
+    },
+    "appId": {
+      "type": "apiKey",
+      "description": "App Id",
+      "name": "appId",
+      "in": "header",
+      "x-ms-summary": "App Id",
+      "x-ntx-summary": "App Id"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "externalDocs": {
+    "description": "API Reference",
+    "url": "https://docs.microsoft.com/connectors/elasticocr"
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://elasticocr.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://elasticocr.com/legal"
+    }
+  ]
+}
