@@ -1,0 +1,311 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "MailParser",
+    "description": "Extract data from emails & automate your workflow with our powerful email parser software. Convert emails to Excel, parse leads from emails, and more.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "email": "support@team.mailparser.io"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/mailparser",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/inboxes": {
+      "get": {
+        "description": "This will return an array of inboxes that the user has created.",
+        "operationId": "InboxList",
+        "summary": "This will return an array of inboxes that you have created",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InboxListResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/mailparser/#this-will-return-an-array-of-inboxes-that-you-have-created"
+        }
+      }
+    },
+    "/{connectionId}/inboxes/{inbox_id}/dispatcher": {
+      "post": {
+        "summary": "New parsed email is available",
+        "description": "Creates a Mailparser Webhook",
+        "operationId": "WebhookCreate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "inbox_id",
+            "in": "path",
+            "type": "string",
+            "description": "Insert inbox id",
+            "required": true,
+            "x-ms-summary": "Your Inbox",
+            "x-ms-dynamic-values": {
+              "operationId": "InboxList",
+              "value-path": "id",
+              "value-collection": "data",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "description": "This is the request body of Webhook",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/WebhookCreationResponse"
+            }
+          }
+        },
+        "x-ms-no-generic-test": true,
+        "x-ms-visibility": "important",
+        "x-ms-summary": "New parsed email is available",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/mailparser/#new-parsed-email-is-available"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/DynamicResultSchema"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/inboxes/unsubscribe/{inbox_id}/dispatcher/{dispatcher_id}": {
+      "delete": {
+        "description": "Deletes a Mailparser Webhook",
+        "summary": "Deletes the Mailparser webhook",
+        "operationId": "WebhookDelete",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "inbox_id",
+            "in": "path",
+            "description": "ID of inbox",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dispatcher_id",
+            "in": "path",
+            "description": "Dispatcher id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "x-ms-summary": "New parsed email is available",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/mailparser/#deletes-the-mailparser-webhook"
+        }
+      }
+    },
+    "/{connectionId}/inboxes/{inbox_id}/schema/flow": {
+      "get": {
+        "summary": "Show the schema of parsed data of last email",
+        "description": "Returns the schema of the parsed data.",
+        "operationId": "GetResultSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "inbox_id",
+            "type": "string",
+            "in": "path",
+            "required": true,
+            "description": "Enter inbox id",
+            "x-ms-summary": "Your inbox",
+            "x-ms-dynamic-values": {
+              "operationId": "InboxList",
+              "value-collection": "data",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-ms-no-generic-test": true,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/mailparser/#show-the-schema-of-parsed-data-of-last-email"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Inbox": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of inbox",
+          "title": "ID of inbox"
+        },
+        "name": {
+          "type": "string",
+          "description": "Label of inbox",
+          "title": "Label of inbox"
+        }
+      }
+    },
+    "InboxListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Inbox"
+          }
+        }
+      }
+    },
+    "WebhookCreationResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "dispatcher_id": {
+              "type": "string",
+              "description": "ID of dispatcher",
+              "title": "ID of dispatcher"
+            }
+          }
+        }
+      }
+    },
+    "WebhookRequestBody": {
+      "type": "object",
+      "required": [
+        "target_url",
+        "provider"
+      ],
+      "properties": {
+        "target_url": {
+          "description": "Configuration of the Trigger",
+          "title": "URL of webhook on external service",
+          "type": "string",
+          "example": "http://",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The provider that is responsible for this dispatcher",
+          "default": "flow",
+          "x-ms-visibility": "internal"
+        },
+        "label": {
+          "type": "string",
+          "description": "The label for the dispatcher"
+        }
+      }
+    },
+    "DynamicResultSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetResultSchema",
+        "parameters": {
+          "inbox_id": {
+            "parameter": "inbox_id"
+          }
+        },
+        "value-path": "data"
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://mailparser.io"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://mailparser.io/legal/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/mailparser"
+  }
+}
