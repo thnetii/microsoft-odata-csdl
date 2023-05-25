@@ -1,0 +1,736 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "LUIS",
+    "description": "Azure cognitive services language understanding intelligent service (LUIS) lets you understand language contextually, so your apps communicate with people in the way they speak.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    }
+  },
+  "x-ms-docs": [
+    {
+      "url": "https://ms.flow.microsoft.com/en-us/blog/create-smarter-flows-using-azure-cognitive-services-luis/",
+      "description": "Create smarter flows using Microsoft Cognitive Services LUIS"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/luis",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/luis/v2.0/apps/{app-id}/": {
+      "get": {
+        "summary": "Get prediction",
+        "description": "Given some input text, this operations returns a prediction based on a pre-trained model. The prediction object returned can also be used as input for other LUIS actions.",
+        "operationId": "GetPredictions",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/AppId"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Utterance Text",
+            "description": "String to predict",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Remind me to get a haircut"
+          },
+          {
+            "$ref": "#/parameters/DesiredIntentNotRequired"
+          },
+          {
+            "$ref": "#/parameters/VersionId"
+          },
+          {
+            "name": "verbose",
+            "default": true,
+            "in": "query",
+            "required": true,
+            "type": "boolean",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PredictResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#get-prediction"
+        }
+      }
+    },
+    "/{connectionId}/luis/api/v2.0/apps/": {
+      "get": {
+        "summary": "List Apps",
+        "description": "List Apps In Your Subscription",
+        "operationId": "ListApps",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Apps"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#list-apps"
+        }
+      }
+    },
+    "/{connectionId}/luis/api/v2.0/apps/{app-id}/intents/": {
+      "get": {
+        "summary": "List Intents",
+        "description": "List Intents For Selected App",
+        "operationId": "ListIntents",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/AppId"
+          },
+          {
+            "$ref": "#/parameters/VersionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Intents"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#list-intents"
+        }
+      }
+    },
+    "/{connectionId}/luis/api/v2.0/apps/{app-id}/models/": {
+      "get": {
+        "summary": "List Entities",
+        "description": "List Entities For Selected App",
+        "operationId": "ListEntities",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/AppId"
+          },
+          {
+            "$ref": "#/parameters/VersionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Entities"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#list-entities"
+        }
+      }
+    },
+    "/{connectionId}/noApiCall/GetTopScoringMatchingEntity": {
+      "post": {
+        "summary": "Get entity by type",
+        "description": "For a given entity type, the operation returns the best matching entity model from the LUIS prediction object.",
+        "operationId": "GetTopScoringMatchingEntity",
+        "x-ms-visibility": "important",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/AppIdInQuery"
+          },
+          {
+            "$ref": "#/parameters/DesiredEntity"
+          },
+          {
+            "$ref": "#/parameters/VersionId"
+          },
+          {
+            "name": "luisPredictionObject",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "description": "Output from 'Get Predictions' action",
+              "type": "string",
+              "x-ms-summary": "LUIS Prediction",
+              "x-ms-visibility": "important"
+            },
+            "x-ms-test-value": {
+              "query": "remind me to get a haircut",
+              "topScoringIntent": {
+                "intent": "CreateReminder",
+                "score": 0.7367652
+              },
+              "intents": [
+                {
+                  "intent": "CreateReminder",
+                  "score": 0.7367652
+                },
+                {
+                  "intent": "None",
+                  "score": 0.1052774
+                },
+                {
+                  "intent": "SetAlarm",
+                  "score": 0.00455331337
+                },
+                {
+                  "intent": "GetWeather",
+                  "score": 0.0042570536,
+                  "actions": [
+                    {
+                      "triggered": false,
+                      "name": "GetWeather",
+                      "parameters": [
+                        {
+                          "name": "Location",
+                          "type": "Location",
+                          "required": true,
+                          "value": null
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "intent": "BookFlight",
+                  "score": 0.00000154771521,
+                  "actions": [
+                    {
+                      "triggered": false,
+                      "name": "BookFlight",
+                      "parameters": [
+                        {
+                          "name": "FromLocation",
+                          "type": "Location::FromLocation",
+                          "required": true,
+                          "value": null
+                        },
+                        {
+                          "name": "ToLocation",
+                          "type": "Location::ToLocation",
+                          "required": true,
+                          "value": null
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "entities": [
+                {
+                  "entity": "get a haircut",
+                  "type": "Reminder",
+                  "startIndex": 13,
+                  "endIndex": 25,
+                  "score": 0.855472445
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetTopScoringMatchingEntityResponse"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#get-entity-by-type"
+        }
+      }
+    },
+    "/{connectionId}/luis/api/v2.0/apps/{app-id}/versions": {
+      "get": {
+        "summary": "List Versions",
+        "description": "List Application Versions For Selected App",
+        "operationId": "ListVersions",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/AppId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Versions"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/luis/#list-versions"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PredictResponse": {
+      "type": "object",
+      "properties": {
+        "luisPrediciton": {
+          "description": "Used as input for other other LUIS actions.",
+          "type": "string",
+          "x-ms-summary": "LUIS Prediction",
+          "x-ms-visibility": "important"
+        },
+        "isDesiredIntent": {
+          "description": "True if the top scoring intent matches the desired intent.",
+          "type": "boolean",
+          "x-ms-summary": "Is Desired Intent",
+          "x-ms-visibility": "important"
+        },
+        "desiredIntent": {
+          "description": "Desired intent specified as input, if any.",
+          "type": "string",
+          "x-ms-summary": "Desired Intent",
+          "x-ms-visibility": "advanced"
+        },
+        "query": {
+          "description": "String that the prediction is based off.",
+          "type": "string",
+          "x-ms-summary": "Utterance Text",
+          "x-ms-visibility": "advanced"
+        },
+        "topScoringIntent": {
+          "description": "Top scoring intent model.",
+          "type": "object",
+          "properties": {
+            "intent": {
+              "description": "Name of the intent model.",
+              "type": "string",
+              "x-ms-summary": "Name",
+              "x-ms-visibility": "important"
+            },
+            "score": {
+              "format": "float",
+              "description": "Percent confidence of prediction.",
+              "type": "number",
+              "x-ms-summary": "Score",
+              "x-ms-visibility": "advanced"
+            }
+          },
+          "x-ms-summary": "Top Scoring Intent"
+        },
+        "intents": {
+          "description": "List of all predicted intents.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "description": "Name of the intent model.",
+                "type": "string",
+                "x-ms-summary": "Intent Name",
+                "x-ms-visibility": "advanced"
+              },
+              "score": {
+                "format": "float",
+                "description": "Percent confidence of prediction.",
+                "type": "number",
+                "x-ms-summary": "Intent Score",
+                "x-ms-visibility": "advanced"
+              }
+            }
+          },
+          "x-ms-summary": "Intents Array",
+          "x-ms-visibility": "advanced"
+        },
+        "entities": {
+          "description": "List of all predicted entities.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LuisPredictResponseEntity"
+          },
+          "x-ms-summary": "Entities Array",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "LuisPredictResponseEntity": {
+      "type": "object",
+      "properties": {
+        "entity": {
+          "description": "Value of the corresponding entity type.",
+          "type": "string",
+          "x-ms-summary": "Entity Value",
+          "x-ms-visibility": "advanced"
+        },
+        "type": {
+          "description": "Name of the entity model.",
+          "type": "string",
+          "x-ms-summary": "Entity Type",
+          "x-ms-visibility": "advanced"
+        },
+        "startIndex": {
+          "format": "int32",
+          "description": "Start Index",
+          "type": "integer",
+          "x-ms-summary": "Start Index",
+          "x-ms-visibility": "internal"
+        },
+        "endIndex": {
+          "format": "int32",
+          "description": "End Index",
+          "type": "integer",
+          "x-ms-summary": "End Index",
+          "x-ms-visibility": "internal"
+        },
+        "score": {
+          "format": "float",
+          "description": "Percent confidence of prediction.",
+          "type": "number",
+          "x-ms-summary": "Entity Score",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Apps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/App"
+      }
+    },
+    "App": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "description": "LUIS app id.",
+          "type": "string",
+          "x-ms-summary": "App ID",
+          "x-ms-visibility": "advanced"
+        },
+        "Name": {
+          "description": "Name of the LUIS app.",
+          "type": "string",
+          "x-ms-summary": "App name",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Intents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intent"
+      }
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Id of the LUIS intent model.",
+          "type": "string",
+          "x-ms-summary": "Intent Id",
+          "x-ms-visibility": "advanced"
+        },
+        "name": {
+          "description": "Name of the intent model.",
+          "type": "string",
+          "x-ms-summary": "Intent Name",
+          "x-ms-visibility": "advanced"
+        },
+        "readableType": {
+          "description": "Type of the intent model.",
+          "type": "string",
+          "x-ms-summary": "Intent Type",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Entities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Entity"
+      }
+    },
+    "Entity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Id of the LUIS entity model.",
+          "type": "string",
+          "x-ms-summary": "Entity Id",
+          "x-ms-visibility": "advanced"
+        },
+        "name": {
+          "description": "Name of the entity model.",
+          "type": "string",
+          "x-ms-summary": "Entity Name",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "GetTopScoringMatchingEntityResponse": {
+      "type": "object",
+      "properties": {
+        "entity": {
+          "$ref": "#/definitions/LuisPredictResponseEntityMinusType"
+        },
+        "entityMatchInfo": {
+          "$ref": "#/definitions/EntityMatchInfo"
+        }
+      }
+    },
+    "LuisPredictResponseEntityMinusType": {
+      "type": "object",
+      "properties": {
+        "entity": {
+          "description": "Value of the corresponding entity type.",
+          "type": "string",
+          "x-ms-summary": "Entity Value",
+          "x-ms-visibility": "important"
+        },
+        "score": {
+          "format": "float",
+          "description": "Percent confidence of prediction.",
+          "type": "number",
+          "x-ms-summary": "Entity Score",
+          "x-ms-visibility": "important"
+        },
+        "resolution": {
+          "description": "The resolution of this entity. Only applies to built in entities.",
+          "type": "string",
+          "x-ms-summary": "Entity Resolution",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "EntityMatchInfo": {
+      "type": "object",
+      "properties": {
+        "desiredEntity": {
+          "description": "Desired entity specified as input, if any.",
+          "type": "string",
+          "x-ms-summary": "Desired Entity",
+          "x-ms-visibility": "advanced"
+        },
+        "isEntityMatch": {
+          "description": "True if the specific entity was found.",
+          "type": "boolean",
+          "x-ms-summary": "Is Entity Match",
+          "x-ms-visibility": "advanced"
+        },
+        "entityMatchCount": {
+          "description": "Number of entities that match the desired entity type.",
+          "type": "integer",
+          "x-ms-summary": "Entity Match Count",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Versions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Version"
+      }
+    },
+    "Version": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "description": "App version",
+          "type": "string",
+          "x-ms-summary": "App version name",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "AppId": {
+      "name": "app-id",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "App Id",
+      "description": "Id of the trained application.",
+      "x-ms-visibility": "important",
+      "x-ms-dynamic-values": {
+        "operationId": "ListApps",
+        "value-path": "ID",
+        "value-title": "Name"
+      },
+      "x-ms-test-value": "acddf125-bec9-42a1-98ea-7ef72d38a1da"
+    },
+    "AppIdInQuery": {
+      "name": "app-id",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "App Id",
+      "description": "Id of the trained application",
+      "x-ms-visibility": "important",
+      "x-ms-dynamic-values": {
+        "operationId": "ListApps",
+        "value-path": "ID",
+        "value-title": "Name"
+      },
+      "x-ms-test-value": "acddf125-bec9-42a1-98ea-7ef72d38a1da"
+    },
+    "DesiredIntentNotRequired": {
+      "name": "desiredIntent",
+      "in": "query",
+      "required": false,
+      "type": "string",
+      "x-ms-summary": "Desired Intent",
+      "description": "Desired top scoring intent",
+      "x-ms-dynamic-values": {
+        "operationId": "ListIntents",
+        "value-path": "name",
+        "value-title": "name",
+        "parameters": {
+          "app-id": {
+            "parameter": "app-id"
+          },
+          "versionId": {
+            "parameter": "versionId"
+          }
+        }
+      },
+      "x-ms-test-value": "CreateReminder"
+    },
+    "DesiredIntentRequired": {
+      "name": "desiredIntent",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Desired Intent",
+      "description": "Desired top scoring intent",
+      "x-ms-dynamic-values": {
+        "operationId": "ListIntents",
+        "value-path": "name",
+        "value-title": "name",
+        "parameters": {
+          "app-id": {
+            "parameter": "app-id"
+          },
+          "versionId": {
+            "parameter": "versionId"
+          }
+        }
+      },
+      "x-ms-test-value": "CreateReminder"
+    },
+    "DesiredEntity": {
+      "name": "desiredEntity",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "x-ms-summary": "Desired Entity",
+      "description": "The Desired Entity.",
+      "x-ms-visibility": "important",
+      "x-ms-dynamic-values": {
+        "operationId": "ListEntities",
+        "value-path": "name",
+        "value-title": "name",
+        "parameters": {
+          "app-id": {
+            "parameter": "app-id"
+          },
+          "versionId": {
+            "parameter": "versionId"
+          }
+        }
+      },
+      "x-ms-test-value": "Reminder"
+    },
+    "VersionId": {
+      "name": "versionId",
+      "in": "query",
+      "required": false,
+      "default": "0.1",
+      "type": "string",
+      "x-ms-summary": "App version",
+      "description": "The version name. The value 0.1 will be used by default.",
+      "x-ms-visibility": "important",
+      "x-ms-dynamic-values": {
+        "operationId": "ListVersions",
+        "value-path": "version",
+        "value-title": "version",
+        "parameters": {
+          "app-id": {
+            "parameter": "app-id"
+          }
+        }
+      },
+      "x-ms-test-value": "0.1"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://azure.microsoft.com/services/cognitive-services/language-understanding-intelligent-service/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/luis"
+  }
+}
