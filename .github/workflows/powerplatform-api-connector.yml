@@ -35,6 +35,10 @@ jobs:
     env:
       branch-name: powerplatform-api-fetcher/${{ matrix.api-connector }}
     steps:
+      - name: Check GitHub API Rate-Limit
+        uses: thnetii/.github/actions/gh-actions-ratelimit-check@main
+        with:
+          remaining-threshold: 50
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
         with:
@@ -109,12 +113,3 @@ jobs:
             swagger-update
             powerplatform
             api-connector
-      - name: Delay Workflow execution
-        uses: actions/github-script@v6.4.1
-        with:
-          script: |
-            const delaySecs = 15;
-            core.info(`Wating for ${delaySecs} seconds.`);
-            await new Promise(resolve => {
-              setTimeout(resolve, 1000 * delaySecs);
-            });
