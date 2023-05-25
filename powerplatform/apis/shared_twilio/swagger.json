@@ -1,0 +1,1454 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Twilio",
+    "description": "Twilio enables apps to send and receive global SMS, MMS and IP messages.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/twilio",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/Messages.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "List Messages",
+        "description": "Returns a list of messages associated with your account.",
+        "operationId": "ListMessages",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "description": "Only show messages to this phone number.",
+            "required": false,
+            "x-ms-summary": "To Phone Number",
+            "type": "string"
+          },
+          {
+            "name": "From",
+            "in": "query",
+            "description": "Only show messages from this phone number.",
+            "required": false,
+            "x-ms-summary": "From Phone Number",
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "ListIncomingPhoneNumbers",
+              "value-collection": "incoming_phone_numbers",
+              "value-path": "phone_number",
+              "value-title": "friendly_name"
+            }
+          },
+          {
+            "name": "DateSent",
+            "in": "query",
+            "description": "Only show messages sent on this date (in GMT format), given as YYYY-MM-DD. Example: 2009-07-06.",
+            "required": false,
+            "x-ms-summary": "Date Sent",
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "How many resources to return in each list page. Default is 50.",
+            "required": false,
+            "x-ms-summary": "Limit",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32",
+            "default": 50
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page number. Default is 0.",
+            "required": false,
+            "x-ms-summary": "Page",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/MessageList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#list-messages"
+        }
+      },
+      "post": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Send Text Message (SMS)",
+        "description": "This operation is used to send a new message to a mobile number.",
+        "operationId": "SendMessage",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "sendMessageRequest",
+            "in": "body",
+            "description": "Message To Send",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendMessageRequest"
+            },
+            "x-ms-summary": "Send Message Request Model"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#send-text-message-(sms)"
+        }
+      }
+    },
+    "/{connectionId}/Messages/{MessageId}.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Get Message",
+        "description": "This operation returns a single message specified by the provided Message ID.",
+        "operationId": "GetMessage",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "MessageId",
+            "in": "path",
+            "description": "Unique SID of the message.",
+            "required": true,
+            "x-ms-summary": "Message SID",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Message not found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#get-message"
+        }
+      }
+    },
+    "/{connectionId}/IncomingPhoneNumbers.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "List Incoming Phone Numbers",
+        "description": "This operation returns a list of incoming phone number resources, each representing a phone number given to your account.",
+        "operationId": "ListIncomingPhoneNumbers",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "PhoneNumber",
+            "in": "query",
+            "description": "Only show the incoming phone number resources that match this pattern. You can specify partial numbers and use '*' as a wildcard for any digit.",
+            "required": false,
+            "x-ms-summary": "Phone Number",
+            "type": "string"
+          },
+          {
+            "name": "FriendlyName",
+            "in": "query",
+            "description": "Only show the incoming phone number resources with friendly names that exactly match this name.",
+            "required": false,
+            "x-ms-summary": "Friendly Name",
+            "type": "string"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "Maximum number of results.",
+            "required": false,
+            "x-ms-summary": "Limit",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32",
+            "default": 1000
+          },
+          {
+            "name": "Beta",
+            "in": "query",
+            "description": "Include phone numbers new to the Twilio platform. Possible values are either true or false. Default is false.",
+            "required": false,
+            "type": "boolean",
+            "x-ms-summary": "Beta",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/IncomingPhoneNumberList"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#list-incoming-phone-numbers"
+        }
+      },
+      "post": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Add Incoming Number",
+        "description": "If a phone number is provided instead, adds a new phone number to your account. If an area code is provided, adds a random phone number available for the area depending on the Area Code provided.",
+        "operationId": "AddIncomingNumber",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "addIncomingPhoneNumberRequest",
+            "in": "body",
+            "description": "Add Incoming Phone Number Request Model",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddIncomingPhoneNumberRequest"
+            },
+            "x-ms-summary": "Add Incoming Phone Number Request Model"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/IncomingPhoneNumber"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#add-incoming-number"
+        }
+      }
+    },
+    "/{connectionId}/IncomingPhoneNumbers/{IncomingPhoneNumberSid}.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Get Incoming Phone Number",
+        "description": "Fetches the details of a phone number purchased from Twilio.",
+        "operationId": "GetIncomingPhoneNumber",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "IncomingPhoneNumberSid",
+            "in": "path",
+            "description": "Incoming Phone number ID",
+            "required": true,
+            "x-ms-summary": "Incoming Phone Number ID",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/IncomingPhoneNumber"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#get-incoming-phone-number"
+        }
+      }
+    },
+    "/{connectionId}/AvailablePhoneNumbers/{IsoCountryCode}/TollFree.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Get Available Toll Free Numbers",
+        "description": "Returns a list of toll-free available phone numbers, each representing a phone number that is currently available for your account",
+        "operationId": "GetAvailableTollFreeNumbers",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "IsoCountryCode",
+            "in": "path",
+            "description": "Iso country code of the Toll Free Numbers",
+            "required": true,
+            "x-ms-summary": "ISO Country Code",
+            "type": "string"
+          },
+          {
+            "name": "AreaCode",
+            "in": "query",
+            "description": "Area Code of the Toll Free Numbers",
+            "required": false,
+            "x-ms-summary": "Area Code",
+            "type": "string"
+          },
+          {
+            "name": "Contains",
+            "in": "query",
+            "description": "Toll Free Numbers Contains a specific number",
+            "required": false,
+            "x-ms-summary": "Contains",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/AvailablePhoneNumberWrapper"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#get-available-toll-free-numbers"
+        }
+      }
+    },
+    "/{connectionId}/AvailablePhoneNumbers/{IsoCountryCode}/Mobile.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Get Available Mobile Numbers",
+        "description": "Returns a list of mobile available phone numbers, each representing a phone number that is currently available for your account",
+        "operationId": "GetAvailableMobileNumbers",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "IsoCountryCode",
+            "in": "path",
+            "description": "Iso country code of the Mobile Numbers",
+            "required": true,
+            "x-ms-summary": "ISO Country Code",
+            "type": "string"
+          },
+          {
+            "name": "AreaCode",
+            "in": "query",
+            "description": "Area Code of the Toll Free Numbers",
+            "required": false,
+            "x-ms-summary": "Area Code",
+            "type": "string"
+          },
+          {
+            "name": "Contains",
+            "in": "query",
+            "description": "Mobile Numbers Contains a specific number",
+            "required": false,
+            "x-ms-summary": "Contains",
+            "type": "string"
+          },
+          {
+            "name": "SmsEnabled",
+            "in": "query",
+            "description": "Sms Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "SMS Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          },
+          {
+            "name": "MmsEnabled",
+            "in": "query",
+            "description": "Mms Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "MMS Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          },
+          {
+            "name": "VoiceEnabled",
+            "in": "query",
+            "description": "Voice Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "Voice Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/AvailablePhoneNumberWrapper"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#get-available-mobile-numbers"
+        }
+      }
+    },
+    "/{connectionId}/AvailablePhoneNumbers/{IsoCountryCode}/Local.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "Get Available Local Numbers",
+        "description": "Returns a list of local available phone numbers, each representing a phone number that is currently available for your account",
+        "operationId": "GetAvailableLocalNumbers",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "IsoCountryCode",
+            "in": "path",
+            "description": "Iso country code of the Local Numbers",
+            "required": true,
+            "x-ms-summary": "ISO Country Code",
+            "type": "string"
+          },
+          {
+            "name": "AreaCode",
+            "in": "query",
+            "description": "Area Code of the Toll Free Numbers",
+            "required": false,
+            "x-ms-summary": "Area Code",
+            "type": "string"
+          },
+          {
+            "name": "Contains",
+            "in": "query",
+            "description": "Local Numbers Contains a specific number.",
+            "required": false,
+            "x-ms-summary": "Contains",
+            "type": "string"
+          },
+          {
+            "name": "SmsEnabled",
+            "in": "query",
+            "description": "Sms Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "SMS Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          },
+          {
+            "name": "MmsEnabled",
+            "in": "query",
+            "description": "Mms Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "MMS Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          },
+          {
+            "name": "VoiceEnabled",
+            "in": "query",
+            "description": "Voice Enabled on the numbers?",
+            "required": false,
+            "x-ms-summary": "Voice Enabled",
+            "x-ms-visibility": "advanced",
+            "type": "boolean"
+          },
+          {
+            "name": "NearNumber",
+            "in": "query",
+            "description": "Given a phone number, find a geographically close number within Distance miles. Distance defaults to 25 miles.",
+            "type": "string",
+            "required": false,
+            "x-ms-summary": "Near Number"
+          },
+          {
+            "name": "NearLatLong",
+            "in": "query",
+            "description": "Given a latitude/longitude pair lat,long find geographically close numbers within Distance miles.",
+            "x-ms-summary": "Near Latitude,Longitude",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "InPostalCode",
+            "in": "query",
+            "description": "Postal code of the number",
+            "required": false,
+            "x-ms-summary": "In Postal Code",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "InRegion",
+            "in": "query",
+            "description": "Number belongs to which region",
+            "required": false,
+            "x-ms-summary": "In Region",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/AvailablePhoneNumberWrapper"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#get-available-local-numbers"
+        }
+      }
+    },
+    "/{connectionId}/Usage/Records.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "List Usage",
+        "description": "Returns Usage records for usage categories",
+        "operationId": "ListUsage",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Category",
+            "in": "query",
+            "description": "Category of usage",
+            "required": false,
+            "x-ms-summary": "Category",
+            "type": "string"
+          },
+          {
+            "name": "SubResource",
+            "in": "query",
+            "description": "Sub Resource",
+            "required": false,
+            "x-ms-summary": "Sub Resource",
+            "x-ms-visibility": "advanced",
+            "type": "string"
+          },
+          {
+            "name": "EndDate",
+            "in": "query",
+            "description": "List usage upto a given date",
+            "required": false,
+            "x-ms-summary": "End Date",
+            "type": "string"
+          },
+          {
+            "name": "StartDate",
+            "in": "query",
+            "description": "List usage from a given date",
+            "required": false,
+            "x-ms-summary": "Start Date",
+            "type": "string"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "Maximum number of results",
+            "required": false,
+            "x-ms-summary": "Max Results",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32",
+            "default": 1000
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UsageRecords"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "swagger definition not registered."
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#list-usage"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SendMessageRequest": {
+      "description": "Request model for Send Message operation.",
+      "required": [
+        "from",
+        "to",
+        "body"
+      ],
+      "type": "object",
+      "properties": {
+        "from": {
+          "description": "A Twilio phone number (in E.164 format) or alphanumeric sender ID enabled for the type of message you wish to send.",
+          "type": "string",
+          "title": "From Phone Number",
+          "x-ms-dynamic-values": {
+            "operationId": "ListIncomingPhoneNumbers",
+            "value-collection": "incoming_phone_numbers",
+            "value-path": "phone_number",
+            "value-title": "friendly_name"
+          }
+        },
+        "to": {
+          "description": "The destination phone number. Format with a '+' and country code e.g., +16175551212 (E.164 format).",
+          "type": "string",
+          "title": "To Phone Number"
+        },
+        "body": {
+          "description": "The text of the message you want to send, limited to 1600 characters.",
+          "type": "string",
+          "title": "Text"
+        },
+        "media_url": {
+          "description": "List of URIs of media to be sent.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri",
+            "title": "Media Url"
+          },
+          "title": "Media Urls",
+          "x-ms-visibility": "advanced"
+        },
+        "StatusCallback": {
+          "description": "A URL that Twilio will POST to each time your message status changes.",
+          "type": "string",
+          "format": "uri",
+          "title": "Status Call back",
+          "x-ms-visibility": "advanced"
+        },
+        "messaging_service_sid": {
+          "description": "Unique id of the Messaging Service.",
+          "type": "string",
+          "title": "Messaging Service Sid",
+          "x-ms-visibility": "advanced"
+        },
+        "application_sid": {
+          "description": "SID of Twilio Application which is configured with the required Message status call back.",
+          "type": "string",
+          "title": "Application SID",
+          "x-ms-visibility": "advanced"
+        },
+        "max_price": {
+          "description": "The total maximum price limit for the message.",
+          "type": "string",
+          "title": "Max Price",
+          "x-ms-visibility": "advanced"
+        },
+        "validity_period": {
+          "description": "The number of seconds that the message can remain in a Twilio queue.",
+          "type": "string",
+          "title": "Validity Period",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Message": {
+      "x-ms-summary": "Message",
+      "description": "Proprties of a single message.",
+      "type": "object",
+      "properties": {
+        "body": {
+          "description": "Body of the message.",
+          "type": "string",
+          "title": "Text"
+        },
+        "from": {
+          "description": "Phone number from which the message was sent.",
+          "format": "phone",
+          "type": "string",
+          "title": "From Number"
+        },
+        "to": {
+          "description": "Phone number to which the message was sent.",
+          "format": "phone",
+          "type": "string",
+          "title": "To Number"
+        },
+        "status": {
+          "description": "Sent status of the message.",
+          "type": "string",
+          "title": "Status"
+        },
+        "sid": {
+          "description": "SID of the sent message.",
+          "type": "string",
+          "title": "SID",
+          "x-ms-visibility": "advanced"
+        },
+        "account_sid": {
+          "description": "SID of the account associated with the sent message.",
+          "type": "string",
+          "title": "Account Sid",
+          "x-ms-visibility": "advanced"
+        },
+        "api_version": {
+          "description": "Version of the API used to send the message.",
+          "type": "string",
+          "title": "API",
+          "x-ms-visibility": "advanced"
+        },
+        "num_segments": {
+          "description": "Number of segments the message was divided into.",
+          "type": "string",
+          "title": "Segment Count",
+          "x-ms-visibility": "advanced"
+        },
+        "num_media": {
+          "description": "Number of media files associated with the sent message.",
+          "type": "string",
+          "title": "Media Count",
+          "x-ms-visibility": "advanced"
+        },
+        "date_created": {
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string",
+          "title": "Created Date-Time",
+          "x-ms-visibility": "advanced"
+        },
+        "date_sent": {
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string",
+          "title": "Sent Date-Time",
+          "x-ms-visibility": "advanced"
+        },
+        "date_updated": {
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string",
+          "title": "Updated Date-Time",
+          "x-ms-visibility": "advanced"
+        },
+        "direction": {
+          "description": "Direction associated with the sent message.",
+          "type": "string",
+          "title": "Direction",
+          "x-ms-visibility": "advanced"
+        },
+        "error_code": {
+          "description": "Error codes associated with the sent message, if any.",
+          "type": "integer",
+          "title": "Error Codes",
+          "x-ms-visibility": "advanced"
+        },
+        "error_message": {
+          "description": "Error messages associated with the sent message, if any.",
+          "type": "string",
+          "title": "Error Messages",
+          "x-ms-visibility": "advanced"
+        },
+        "price": {
+          "description": "Cost of the sent message.",
+          "type": "string",
+          "title": "Price",
+          "x-ms-visibility": "advanced"
+        },
+        "price_unit": {
+          "description": "Price unit used to evaluate the cost of the message.",
+          "type": "string",
+          "title": "Unit",
+          "x-ms-visibility": "advanced"
+        },
+        "uri": {
+          "description": "Relative URI for this resource.",
+          "type": "string",
+          "format": "uri",
+          "title": "URI",
+          "x-ms-visibility": "advanced"
+        },
+        "subresource_uris": {
+          "description": "Relative URIs for any subresources.",
+          "type": "object",
+          "title": "Subresource URIs",
+          "x-ms-visibility": "advanced"
+        },
+        "messaging_service_sid": {
+          "description": "Unique id of the messaging Service.",
+          "type": "string",
+          "title": "Messaging Service Sid",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "MessageList": {
+      "x-ms-summary": "Message List",
+      "description": "List of one or more messages.",
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          }
+        },
+        "page": {
+          "description": "Page number of the respone.",
+          "type": "integer",
+          "format": "int32",
+          "title": "Page",
+          "x-ms-visibility": "advanced"
+        },
+        "page_size": {
+          "description": "Page size of the response.",
+          "type": "integer",
+          "format": "int32",
+          "title": "Limit",
+          "x-ms-visibility": "advanced"
+        },
+        "num_pages": {
+          "description": "Total number of pages in the response.",
+          "type": "integer",
+          "format": "int32",
+          "title": "Page Count",
+          "x-ms-visibility": "advanced"
+        },
+        "start": {
+          "description": "Index of the first message.",
+          "type": "integer",
+          "format": "int32",
+          "title": "Start",
+          "x-ms-visibility": "advanced"
+        },
+        "end": {
+          "description": "Index of the last message.",
+          "type": "integer",
+          "format": "int32",
+          "title": "End",
+          "x-ms-visibility": "advanced"
+        },
+        "uri": {
+          "description": "Relative URI for this list.",
+          "type": "string",
+          "format": "uri",
+          "title": "URI",
+          "x-ms-visibility": "advanced"
+        },
+        "first_page_uri": {
+          "description": "Relative URI for the first page.",
+          "type": "string",
+          "format": "uri",
+          "title": "First Page URI",
+          "x-ms-visibility": "advanced"
+        },
+        "next_page_uri": {
+          "description": "Relative URI for the next page.",
+          "type": "string",
+          "format": "uri",
+          "title": "Next Page URI",
+          "x-ms-visibility": "advanced"
+        },
+        "total": {
+          "description": "Total number of messages.",
+          "type": "integer",
+          "format": "int32",
+          "title": "Message Count",
+          "x-ms-visibility": "advanced"
+        },
+        "previous_page_uri": {
+          "description": "Relative URI for the previous page.",
+          "type": "string",
+          "format": "uri",
+          "title": "Previous Page URI",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "IncomingPhoneNumberList": {
+      "description": "Response model for List Messages operation.",
+      "type": "object",
+      "properties": {
+        "incoming_phone_numbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IncomingPhoneNumber"
+          }
+        },
+        "page": {
+          "description": "Page number",
+          "type": "integer",
+          "format": "int32",
+          "title": "Page number",
+          "x-ms-visibility": "advanced"
+        },
+        "page_size": {
+          "description": "Page Size",
+          "type": "integer",
+          "format": "int32",
+          "title": "Limit",
+          "x-ms-visibility": "advanced"
+        },
+        "num_pages": {
+          "description": "Number of Pages",
+          "type": "integer",
+          "format": "int32",
+          "title": "Number of Pages",
+          "x-ms-visibility": "advanced"
+        },
+        "uri": {
+          "description": "relative URI for this list",
+          "type": "string",
+          "format": "uri",
+          "title": "URI",
+          "x-ms-visibility": "advanced"
+        },
+        "first_page_uri": {
+          "description": "relative URI for the first page",
+          "type": "string",
+          "format": "uri",
+          "title": "First page uri",
+          "x-ms-visibility": "advanced"
+        },
+        "next_page_uri": {
+          "description": "relative URI for the next page",
+          "type": "string",
+          "format": "uri",
+          "title": "Next page uri",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "AddIncomingPhoneNumberRequest": {
+      "description": "Request model for Add Incoming Number operation",
+      "required": [
+        "PhoneNumber"
+      ],
+      "type": "object",
+      "properties": {
+        "PhoneNumber": {
+          "description": "Phone Number",
+          "type": "string",
+          "title": "Phone Number"
+        },
+        "AreaCode": {
+          "description": "Area Code",
+          "type": "string",
+          "title": "Area Code",
+          "x-ms-visibility": "advanced"
+        },
+        "FriendlyName": {
+          "description": "Friendly Name",
+          "type": "string",
+          "title": "Friendly Name",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "IncomingPhoneNumber": {
+      "description": "Incoming Phone Number",
+      "type": "object",
+      "properties": {
+        "phone_number": {
+          "description": "Phone Number",
+          "type": "string",
+          "title": "Phone Number"
+        },
+        "friendly_name": {
+          "description": "Friendly Name",
+          "type": "string",
+          "title": "Friendly Name"
+        },
+        "sid": {
+          "description": "Id",
+          "type": "string",
+          "title": "Phone Number Sid",
+          "x-ms-visibility": "advanced"
+        },
+        "account_sid": {
+          "description": "Account Sid",
+          "type": "string",
+          "title": "Account Sid",
+          "x-ms-visibility": "advanced"
+        },
+        "date_created": {
+          "description": "Date Created",
+          "type": "string",
+          "title": "Created Date",
+          "x-ms-visibility": "advanced"
+        },
+        "date_updated": {
+          "description": "Date Updated",
+          "type": "string",
+          "title": "Updated Date",
+          "x-ms-visibility": "advanced"
+        },
+        "capabilities": {
+          "$ref": "#/definitions/Capabilities"
+        },
+        "StatusCallback": {
+          "description": "The URL that Twilio will request to pass status parameters (such as call ended) to your application",
+          "type": "string",
+          "format": "uri",
+          "title": "Status Call back",
+          "x-ms-visibility": "advanced"
+        },
+        "StatusCallbackMethod": {
+          "description": "The HTTP method Twilio will use to make requests to the StatusCallback URL. Either GET or POST.",
+          "type": "string",
+          "title": "Status Call back",
+          "x-ms-visibility": "advanced"
+        },
+        "api_version": {
+          "description": "API version",
+          "type": "string",
+          "title": "API version",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Capabilities": {
+      "description": "Phone Number Capabilities",
+      "type": "object",
+      "properties": {
+        "mms": {
+          "description": "Mms Enabled?",
+          "type": "boolean",
+          "title": "MMS Capability",
+          "x-ms-visibility": "advanced"
+        },
+        "sms": {
+          "description": "Sms Enabled?",
+          "type": "boolean",
+          "title": "SMS Capability",
+          "x-ms-visibility": "advanced"
+        },
+        "voice": {
+          "description": "Voice Enabled?",
+          "type": "boolean",
+          "title": "Voice Capability",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "AvailablePhoneNumberWrapper": {
+      "description": "Available Phone Numbers",
+      "type": "object",
+      "properties": {
+        "available_phone_numbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AvailablePhoneNumbers"
+          }
+        }
+      }
+    },
+    "AvailablePhoneNumbers": {
+      "description": "Available Phone Numbers",
+      "type": "object",
+      "properties": {
+        "phone_number": {
+          "description": "Phone Number",
+          "type": "string",
+          "title": "Phone Number",
+          "x-ms-visibility": "advanced"
+        },
+        "friendly_name": {
+          "description": "Friendly Name",
+          "type": "string",
+          "title": "Friendly Name"
+        },
+        "lata": {
+          "description": "Local Access Transport Area",
+          "type": "string",
+          "title": "Lata"
+        },
+        "latitude": {
+          "description": "Latitude",
+          "type": "string",
+          "title": "Latitude",
+          "x-ms-visibility": "advanced"
+        },
+        "longitude": {
+          "description": "Longitude",
+          "type": "string",
+          "title": "Longitude",
+          "x-ms-visibility": "advanced"
+        },
+        "postal_code": {
+          "description": "Postal Code",
+          "type": "string",
+          "title": "Postal Code",
+          "x-ms-visibility": "advanced"
+        },
+        "rate_center": {
+          "description": "Rate Center",
+          "type": "string",
+          "title": "Rate Center",
+          "x-ms-visibility": "advanced"
+        },
+        "region": {
+          "description": "Region",
+          "type": "string",
+          "title": "Region",
+          "x-ms-visibility": "advanced"
+        },
+        "MMS": {
+          "description": "Mms Enabled?",
+          "type": "boolean",
+          "title": "MMS Capability",
+          "x-ms-visibility": "advanced"
+        },
+        "SMS": {
+          "description": "Sms Enabled?",
+          "type": "boolean",
+          "title": "Sms Capability",
+          "x-ms-visibility": "advanced"
+        },
+        "voice": {
+          "description": "Voice Enabled?",
+          "type": "boolean",
+          "title": "Voice Capability",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "UsageRecords": {
+      "description": "Usage Records class",
+      "type": "object",
+      "properties": {
+        "category": {
+          "description": "Category",
+          "type": "string",
+          "title": "Category"
+        },
+        "usage": {
+          "description": "Usage",
+          "type": "string",
+          "title": "Usage"
+        },
+        "usage_unit": {
+          "description": "Usage Unit",
+          "type": "string",
+          "title": "Usage Unit"
+        },
+        "description": {
+          "description": "Description",
+          "type": "string",
+          "title": "Description",
+          "x-ms-visibility": "advanced"
+        },
+        "price": {
+          "format": "double",
+          "description": "Price",
+          "type": "number",
+          "title": "Price",
+          "x-ms-visibility": "advanced"
+        },
+        "price_unit": {
+          "description": "Price Unit",
+          "type": "string",
+          "title": "Price Unit",
+          "x-ms-visibility": "advanced"
+        },
+        "count": {
+          "description": "Count",
+          "type": "string",
+          "title": "Count",
+          "x-ms-visibility": "advanced"
+        },
+        "count_unit": {
+          "description": "Count Unit",
+          "type": "string",
+          "title": "Count Unit"
+        },
+        "start_date": {
+          "description": "Start Date",
+          "type": "string",
+          "title": "Start Date",
+          "x-ms-visibility": "advanced"
+        },
+        "end_date": {
+          "description": "End Date",
+          "type": "string",
+          "title": "End Date",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    }
+  },
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "ListMessages",
+      "parameters": {
+        "PageSize": 0
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.twilio.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.twilio.com/legal/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/twilio"
+  }
+}
