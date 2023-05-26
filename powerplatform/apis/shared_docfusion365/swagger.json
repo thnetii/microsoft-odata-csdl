@@ -1,0 +1,572 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "DocFusion365 – SP",
+    "description": "DocFusion® 365 is a dynamic, cloud-based document composition and automation engine designed to help you manage all of your document content and processes within the Office 365 environment.",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "email": "support@aissa.co.za"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/docfusion365",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/api/DocFusion365/GetVersion": {
+      "get": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "Get api version",
+        "description": "This operation retrieves the current DocFusion365 API version.",
+        "operationId": "GetApiVersion",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#get-api-version"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/api/DocFusion365/GetLinkedListTemplates": {
+      "get": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "Get the linked list templates",
+        "description": "This operation retrieves the linked DocFusion365 templates of a SharePoint list.",
+        "operationId": "GetTheLinkedListTemplates",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "siteUrl",
+            "in": "query",
+            "description": "The site Url the SharePoint list exists in.",
+            "required": true,
+            "x-ms-summary": "Site Url",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "https://flowcertification.sharepoint.com/sites/FlowCertificationTest",
+            "type": "string"
+          },
+          {
+            "name": "listName",
+            "in": "query",
+            "description": "The name of the list.",
+            "required": true,
+            "x-ms-summary": "List Name",
+            "x-ms-visibility": "important",
+            "x-ms-test-value": "Invoicing",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSiteLists",
+              "parameters": {
+                "siteUrl": {
+                  "parameter": "siteUrl"
+                }
+              },
+              "value-collection": "Lists",
+              "value-path": "Title",
+              "value-title": "Title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GetLinkedListTemplatesResponse"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#get-the-linked-list-templates"
+        }
+      }
+    },
+    "/{connectionId}/api/DocFusion365/ComposeLinkedTemplate": {
+      "post": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "Compose a linked template",
+        "description": "This operation composes a template that is linked to a SharePoint list.",
+        "operationId": "ComposeALinkedTemplate",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "siteUrl",
+            "in": "query",
+            "description": "The site Url the SharePoint list exists in.",
+            "required": true,
+            "x-ms-summary": "Site Url",
+            "x-ms-test-value": "https://flowcertification.sharepoint.com/sites/FlowCertificationTest",
+            "type": "string"
+          },
+          {
+            "name": "listName",
+            "in": "query",
+            "description": "The name of the list.",
+            "required": true,
+            "x-ms-summary": "List Name",
+            "x-ms-test-value": "Invoicing",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSiteLists",
+              "parameters": {
+                "siteUrl": {
+                  "parameter": "siteUrl"
+                }
+              },
+              "value-collection": "Lists",
+              "value-path": "Title",
+              "value-title": "Title"
+            },
+            "type": "string"
+          },
+          {
+            "name": "TemplateId",
+            "in": "query",
+            "description": "The id of the template you want to compose.",
+            "required": true,
+            "x-ms-summary": "Template Id",
+            "x-ms-test-value": "445",
+            "x-ms-dynamic-values": {
+              "operationId": "GetListTemplates",
+              "parameters": {
+                "siteUrl": {
+                  "parameter": "siteUrl"
+                },
+                "listName": {
+                  "parameter": "listName"
+                }
+              },
+              "value-collection": "Templates",
+              "value-path": "TemplateId",
+              "value-title": "TemplateName"
+            },
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "listItemId",
+            "in": "query",
+            "description": "The id of the item in the list you want to compose against.",
+            "required": true,
+            "x-ms-summary": "List Item Id",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "skipPostProcess",
+            "in": "query",
+            "description": "Use this to ignore all post processes configured.",
+            "required": true,
+            "x-ms-summary": "Skip Post Process",
+            "x-ms-test-value": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ComposeLinkedTemplateResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#compose-a-linked-template"
+        }
+      }
+    },
+    "/{connectionId}/api/DocFusion365/ComposeAllLinkedTemplates": {
+      "post": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "Compose all the linked templates",
+        "description": "This operation composes all templates that are linked to a SharePoint list.",
+        "operationId": "ComposeAllTheLinkedTemplates",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "siteUrl",
+            "in": "query",
+            "description": "The site Url the SharePoint list exists in.",
+            "required": true,
+            "x-ms-summary": "Site Url",
+            "x-ms-test-value": "https://flowcertification.sharepoint.com/sites/FlowCertificationTest",
+            "type": "string"
+          },
+          {
+            "name": "listName",
+            "in": "query",
+            "description": "The name of the list.",
+            "required": true,
+            "x-ms-summary": "List Name",
+            "x-ms-test-value": "Invoicing",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSiteLists",
+              "parameters": {
+                "siteUrl": {
+                  "parameter": "siteUrl"
+                }
+              },
+              "value-collection": "Lists",
+              "value-path": "Title",
+              "value-title": "Title"
+            },
+            "type": "string"
+          },
+          {
+            "name": "listItemId",
+            "in": "query",
+            "description": "The id of the item in the list you want to compose against.",
+            "required": true,
+            "x-ms-summary": "List Item Id",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "skipPostProcess",
+            "in": "query",
+            "description": "Use this to ignore all post processes configured.",
+            "required": true,
+            "x-ms-summary": "Skip Post Process",
+            "x-ms-visibility": "advanced",
+            "x-ms-test-value": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of resulting items.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ComposeLinkedTemplateResponse"
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#compose-all-the-linked-templates"
+        }
+      }
+    },
+    "/{connectionId}/api/DocFusion365/GetSiteLists": {
+      "get": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "GetSiteLists",
+        "operationId": "GetSiteLists",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "siteUrl",
+            "in": "query",
+            "required": true,
+            "x-ms-test-value": "https://flowcertification.sharepoint.com/sites/FlowCertificationTest",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SPListCollection"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#getsitelists"
+        }
+      }
+    },
+    "/{connectionId}/api/DocFusion365/GetListTemplates": {
+      "get": {
+        "tags": [
+          "DocFusion365"
+        ],
+        "summary": "GetListTemplates",
+        "operationId": "GetListTemplates",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "siteUrl",
+            "in": "query",
+            "required": true,
+            "x-ms-test-value": "https://flowcertification.sharepoint.com/sites/FlowCertificationTest",
+            "type": "string"
+          },
+          {
+            "name": "listName",
+            "in": "query",
+            "required": true,
+            "x-ms-test-value": "Invoicing",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DFTemplateCollection"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/docfusion365/#getlisttemplates"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "VersionResponse": {
+      "type": "object",
+      "properties": {
+        "ApiVersion": {
+          "description": "The version of the api.",
+          "type": "string",
+          "x-ms-summary": "Api Version"
+        }
+      }
+    },
+    "GetLinkedListTemplatesResponse": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "format": "int64",
+          "description": "The id of the template.",
+          "type": "integer",
+          "x-ms-summary": "Id"
+        },
+        "DisplayName": {
+          "description": "The display name of the template.",
+          "type": "string",
+          "x-ms-summary": "Display Name"
+        },
+        "OutputFormat": {
+          "description": "The output format the template will compose to.",
+          "type": "string",
+          "x-ms-summary": "Output Format"
+        }
+      }
+    },
+    "ComposeLinkedTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "Error": {
+          "description": "The error message displayed if something failed.",
+          "type": "string",
+          "x-ms-summary": "Error"
+        },
+        "Succeeded": {
+          "description": "Did the compose succeed.",
+          "type": "boolean",
+          "x-ms-summary": "Succeeded"
+        },
+        "OutputItemUrl": {
+          "description": "The url of the composed item.",
+          "type": "string",
+          "x-ms-summary": "Output Item Url"
+        },
+        "LogListUrl": {
+          "description": "The url of the compose log.",
+          "type": "string",
+          "x-ms-summary": "Log List Url"
+        },
+        "ListName": {
+          "description": "The name of the list that was composed against.",
+          "type": "string",
+          "x-ms-summary": "List Name"
+        },
+        "ListItemId": {
+          "format": "int32",
+          "description": "The id of the item in the list that was composed against.",
+          "type": "integer",
+          "x-ms-summary": "List Item Id"
+        }
+      }
+    },
+    "SPListCollection": {
+      "type": "object",
+      "properties": {
+        "Lists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SPList"
+          }
+        }
+      }
+    },
+    "SPList": {
+      "type": "object",
+      "properties": {
+        "Title": {
+          "type": "string"
+        },
+        "Id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      }
+    },
+    "DFTemplateCollection": {
+      "type": "object",
+      "properties": {
+        "Templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DFTemplate"
+          }
+        }
+      }
+    },
+    "DFTemplate": {
+      "type": "object",
+      "properties": {
+        "TemplateName": {
+          "type": "string"
+        },
+        "TemplateId": {
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "description": "API Key Authentication",
+      "name": "X-AIS-DF365Key",
+      "in": "header"
+    }
+  },
+  "security": [],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.aissa.co.za"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.aissa.co.za/terms-privacy/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/docfusion365"
+  }
+}

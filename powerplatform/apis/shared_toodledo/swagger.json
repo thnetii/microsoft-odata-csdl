@@ -1,0 +1,435 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Toodledo",
+    "description": "Toodledo is a powerful online productivity tool. Manage your to-do list by creating and updating tasks.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "basePath": "/apim/toodledo",
+  "paths": {
+    "/{connectionId}/trigger/tasks/get.php": {
+      "get": {
+        "summary": "When a new task is created or updated",
+        "description": "Triggers a new workflow when a task is created or updated.",
+        "operationId": "TrigOnNewTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it working, create or update a task.",
+        "x-ms-dev-triggerType": "queryFilter",
+        "x-ms-dev-queryfilterParamName": "after",
+        "x-ms-dev-triggerValueCollection": "",
+        "x-ms-dev-triggerValuePath": "modified",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#when-a-new-task-is-created-or-updated"
+        }
+      }
+    },
+    "/{connectionId}/tasks/get.php": {
+      "get": {
+        "summary": "Get a list of tasks",
+        "description": "Returns a list of tasks (up to 1000 results).",
+        "operationId": "ListTasks",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Set to 0 to find only uncompleted tasks or 1 to find only completed tasks. Default includes both.",
+            "default": -1,
+            "format": "int32",
+            "in": "query",
+            "name": "comp",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Completed",
+            "x-ms-test-value": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#get-a-list-of-tasks"
+        }
+      }
+    },
+    "/{connectionId}/tasks/add.php": {
+      "post": {
+        "summary": "Create a task",
+        "description": "Create a new task with the specified fields.",
+        "operationId": "CreateTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "task",
+            "in": "body",
+            "required": true,
+            "x-ms-summary": "task",
+            "schema": {
+              "$ref": "#/definitions/NewTask"
+            },
+            "x-ms-test-value": {
+              "title": "Generic Test Task (Create)",
+              "folder": 2433039,
+              "priority": 2,
+              "note": "Created from generic test",
+              "duedate": "2017-01-20T06:10:23Z",
+              "duetime": "2017-01-20T07:10:23Z"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#create-a-task"
+        }
+      }
+    },
+    "/{connectionId}/tasks/getById.php": {
+      "get": {
+        "summary": "Get task",
+        "description": "Get a task by id.",
+        "operationId": "GetTaskById",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "The server id number for this task.",
+            "format": "int32",
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Task Id",
+            "x-ms-test-value": 127695983
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#get-task"
+        }
+      }
+    },
+    "/{connectionId}/tasks/edit.php": {
+      "post": {
+        "summary": "Update task",
+        "description": "Update the fields for an existing task.",
+        "operationId": "UpdateTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "task",
+            "in": "body",
+            "required": true,
+            "x-ms-summary": "task",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            },
+            "x-ms-test-value": {
+              "id": 131307117,
+              "title": "Generic Test Task (Update)",
+              "modified": "2017-01-20T23:10:23Z",
+              "completed": "2017-01-20T23:10:23Z",
+              "folder": 0,
+              "priority": 2,
+              "note": "",
+              "duedate": "2017-01-20T23:10:23Z"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#update-task"
+        }
+      }
+    },
+    "/{connectionId}/folders/get.php": {
+      "get": {
+        "summary": "Get folders",
+        "description": "Get a list of folders.",
+        "operationId": "GetFolders",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Folder"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "advanced",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/toodledo/#get-folders"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NewTask": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "A string for the name of the task. Up to 255 characters.",
+          "type": "string",
+          "x-ms-summary": "Title"
+        },
+        "folder": {
+          "format": "int32",
+          "description": "The id number of the folder. Omit this field or set it to 0 to leave the task unassigned to a folder.",
+          "type": "integer",
+          "x-ms-summary": "Folder Id",
+          "x-ms-dynamic-values": {
+            "operationId": "GetFolders",
+            "value-path": "id",
+            "value-title": "name"
+          }
+        },
+        "priority": {
+          "format": "int32",
+          "description": "An integer that represents the priority of the task.",
+          "type": "integer",
+          "x-ms-summary": "Priority"
+        },
+        "note": {
+          "description": "A text string up to 32,000 bytes long. New lines should be sent as \n.",
+          "type": "string",
+          "x-ms-summary": "Note"
+        },
+        "duedate": {
+          "format": "date-time",
+          "description": "A timestamp for when the task is due. The time component of this timestamp doesn't matter.",
+          "type": "string",
+          "x-ms-summary": "Due Date",
+          "x-ms-visibility": "advanced"
+        },
+        "duetime": {
+          "format": "date-time",
+          "description": "A timestamp for when the task is due. If the task does not have a time set, then this will be empty.",
+          "type": "string",
+          "x-ms-summary": "Due Time",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "description": "The server id number for this task.",
+          "type": "integer",
+          "x-ms-summary": "Id",
+          "x-ms-visibility": "advanced"
+        },
+        "title": {
+          "description": "A string for the name of the task.",
+          "type": "string",
+          "x-ms-summary": "Title"
+        },
+        "completed": {
+          "format": "date-time",
+          "description": "A timestamp for when the task was completed. If the task is not completed, the value will be 0.",
+          "type": "string",
+          "x-ms-summary": "Completed"
+        },
+        "duedate": {
+          "format": "date-time",
+          "description": "A timestamp for when the task is due.",
+          "type": "string",
+          "x-ms-summary": "Due Date",
+          "x-ms-visibility": "advanced"
+        },
+        "duetime": {
+          "format": "date-time",
+          "description": "A timestamp for when the task is due. If the task does not have a time set, then this will be empty.",
+          "type": "string",
+          "x-ms-summary": "Due Time",
+          "x-ms-visibility": "advanced"
+        },
+        "note": {
+          "description": "A text string up to 32,000 bytes long.",
+          "type": "string",
+          "x-ms-summary": "Note"
+        },
+        "priority": {
+          "format": "int32",
+          "description": "An integer that represents the priority.",
+          "type": "integer",
+          "x-ms-summary": "Priority"
+        },
+        "folder": {
+          "format": "int32",
+          "description": "The id number of the folder. If unassigned to a folder, the value will be 0.",
+          "type": "integer",
+          "x-ms-summary": "Folder",
+          "x-ms-visibility": "advanced"
+        },
+        "modified": {
+          "format": "date-time",
+          "description": "A timestamp for when the task was last modified.",
+          "type": "string",
+          "x-ms-summary": "Modified",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "Folder": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "format": "int32",
+          "description": "The id number of the folder.",
+          "type": "integer",
+          "x-ms-summary": "Id"
+        },
+        "name": {
+          "description": "A text string up to 32 characters.",
+          "type": "string",
+          "x-ms-summary": "Name"
+        },
+        "archived": {
+          "format": "int32",
+          "description": "A boolean value indicating whether the folder has been archived.",
+          "type": "integer",
+          "x-ms-summary": "Archived",
+          "x-ms-visibility": "advanced"
+        },
+        "private": {
+          "format": "int32",
+          "description": "A boolean value indicating whether the folder has been shared with other people.",
+          "type": "integer",
+          "x-ms-summary": "Private",
+          "x-ms-visibility": "advanced"
+        },
+        "order": {
+          "format": "int32",
+          "description": "An integer representing the preferred order for listing folders with 1 being the top.",
+          "type": "integer",
+          "x-ms-summary": "Order",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.toodledo.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.toodledo.com/info/privacy.php"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/toodledo"
+  }
+}

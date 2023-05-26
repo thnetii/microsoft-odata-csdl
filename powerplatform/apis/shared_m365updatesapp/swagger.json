@@ -1,0 +1,288 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Updates App (Microsoft 365)",
+    "description": "Updates in Microsoft Teams is an app that saves people time and energy by helping them create, submit, and review all their updates right in the flow of work.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://support.microsoft.com/teams",
+      "email": "reportfc@microsoft.com"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/connector/powerautomate/triggers/{reportDefinitionId}/reports": {
+      "get": {
+        "summary": "When I receive a new update tied to a specific request",
+        "description": "This operation triggers when the user receive a new update tied to a specific request. The requests can be listed when the user has been specified as the request viewer.",
+        "operationId": "ListReceivedReportsByReportDefinition",
+        "x-ms-api-annotation": {
+          "family": "ListReceivedReportsByReportDefinition",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "reportDefinitionId",
+            "description": "Select an update request",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Update Request",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "ListReportDefinitionsByReceiver",
+              "value-path": "Id",
+              "value-title": "Title"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "description": "Received Updates",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "x-ms-dynamic-schema": {
+                  "operationId": "GetSchemaByReportDefinition",
+                  "parameters": {
+                    "reportDefinitionId": {
+                      "parameter": "reportDefinitionId"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it works now, submit an update.",
+        "x-ms-trigger-metadata": {
+          "mode": "polling",
+          "kind": "query"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/m365updatesapp/#when-i-receive-a-new-update-tied-to-a-specific-request"
+        }
+      }
+    },
+    "/{connectionId}/connector/powerautomate/triggers/reports": {
+      "get": {
+        "summary": "When I receive a new update",
+        "description": "This operation triggers when the user receives a new update.",
+        "operationId": "ListReceivedReports",
+        "x-ms-api-annotation": {
+          "family": "ListAllReceivedUpdates",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "description": "Received Updates",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "x-ms-dynamic-schema": {
+                  "operationId": "GetGeneralSchema"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it works now, submit an update.",
+        "x-ms-trigger-metadata": {
+          "mode": "polling",
+          "kind": "query"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/m365updatesapp/#when-i-receive-a-new-update"
+        }
+      }
+    },
+    "/{connectionId}/connector/powerautomate/triggers/templateDefinitions": {
+      "get": {
+        "summary": "List requests",
+        "description": "This operation returns a list of requests that you are receiver.",
+        "operationId": "ListReportDefinitionsByReceiver",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/TemplateDefinitionList"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/m365updatesapp/#list-requests"
+        }
+      }
+    },
+    "/{connectionId}/connector/powerautomate/triggers/reportResponse/schema": {
+      "get": {
+        "summary": "Get schema by request",
+        "description": "Get the schema by request id.",
+        "operationId": "GetSchemaByReportDefinition",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "reportDefinitionId",
+            "in": "query",
+            "description": "Unique id of the request.",
+            "required": false,
+            "x-ms-summary": "Request ID",
+            "x-ms-dynamic-values": {
+              "operationId": "ListReportDefinitionsByReceiver",
+              "value-path": "Id",
+              "value-title": "Title"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/m365updatesapp/#get-schema-by-request"
+        }
+      }
+    },
+    "/{connectionId}/connector/powerautomate/triggers/reportResponse/generalSchema": {
+      "get": {
+        "summary": "Get general response schema",
+        "description": "Get the general schema by request id.",
+        "operationId": "GetGeneralSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/m365updatesapp/#get-general-response-schema"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TemplateDefinitionList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "x-ms-summary": "The update request ID",
+            "description": "Unique id of the request."
+          },
+          "Title": {
+            "type": "string",
+            "x-ms-summary": "The update request title",
+            "description": "Title of the request."
+          }
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://learn.microsoft.com/en-us/microsoftteams/manage-updates-app"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/privacystatement"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {},
+      "authorizationUrl": "https://login.windows.net/common/oauth2/authorize"
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": []
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/m365updatesapp"
+  },
+  "basePath": "/apim/m365updatesapp"
+}

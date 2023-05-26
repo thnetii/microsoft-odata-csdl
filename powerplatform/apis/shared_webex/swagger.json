@@ -1,0 +1,2781 @@
+{
+  "basePath": "/apim/webex",
+  "consumes": [],
+  "definitions": {},
+  "host": "europe-002.azure-apim.net",
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.webex.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.cisco.com/c/en/us/about/legal/privacy-full.html"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Communication;Collaboration"
+    }
+  ],
+  "info": {
+    "description": "Webex enables continuous teamwork with video meetings, group messaging, file sharing, and white boarding. Always available. Cisco secure. With the Webex connector, you can send and receive messages, manage files, and manage spaces and teams.",
+    "title": "Webex",
+    "version": "1.1",
+    "contact": {
+      "name": "Webex Support",
+      "email": "devsupport@webex.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "parameters": {},
+  "paths": {
+    "/{connectionId}/v1/memberships": {
+      "post": {
+        "description": "Add a member to an existing space",
+        "operationId": "CreateSpaceMember",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "isModerator": {
+                  "default": false,
+                  "description": "Is moderator?",
+                  "title": "Moderator",
+                  "type": "boolean"
+                },
+                "personEmail": {
+                  "description": "Email address",
+                  "title": "Email",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "Person ID of the new member",
+                  "title": "Person ID",
+                  "type": "string",
+                  "x-ms-visibility": "advanced"
+                },
+                "roomId": {
+                  "description": "Select a space",
+                  "title": "Space",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetSpaces",
+                    "parameters": {
+                      "type": "group"
+                    },
+                    "value-collection": "items",
+                    "value-path": "id",
+                    "value-title": "title"
+                  }
+                }
+              },
+              "required": [
+                "isModerator",
+                "roomId"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isModerator": {
+                  "description": "isModerator",
+                  "type": "boolean"
+                },
+                "isMonitor": {
+                  "description": "isMonitor",
+                  "type": "boolean"
+                },
+                "personDisplayName": {
+                  "description": "personDisplayName",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "personOrgId": {
+                  "description": "personOrgId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "roomId",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Add Member to Space",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#add-member-to-space"
+        }
+      }
+    },
+    "/{connectionId}/v1/messages": {
+      "get": {
+        "description": "Get a list of recent messages for a space",
+        "operationId": "GetMessages",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "List messages in a space for a given space ID",
+            "in": "query",
+            "name": "roomId",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSpaces",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "x-ms-summary": "Space"
+          },
+          {
+            "description": "List messages where the caller is mentioned by specifying \"me\" or the caller personId.",
+            "in": "query",
+            "name": "mentionedPeople",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Mentioned People"
+          },
+          {
+            "description": "List messages sent before a message, by ID.",
+            "in": "query",
+            "name": "beforeMessage",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Before Message"
+          },
+          {
+            "description": "List messages sent before a date and time, in ISO8601 format.",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Before"
+          },
+          {
+            "description": "Limit the maximum number of messages in the response.",
+            "in": "query",
+            "name": "max",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Max"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "items": {
+                  "description": "items",
+                  "items": {
+                    "properties": {
+                      "created": {
+                        "description": "created",
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "id",
+                        "type": "string"
+                      },
+                      "personEmail": {
+                        "description": "personEmail",
+                        "type": "string"
+                      },
+                      "personId": {
+                        "description": "personId",
+                        "type": "string"
+                      },
+                      "roomId": {
+                        "description": "roomId",
+                        "type": "string"
+                      },
+                      "roomType": {
+                        "description": "roomType",
+                        "type": "string"
+                      },
+                      "text": {
+                        "description": "text",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get Messages",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-messages"
+        }
+      },
+      "post": {
+        "description": "Send a message to webex",
+        "operationId": "SendMessage",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "files": {
+                  "description": "files",
+                  "items": {
+                    "description": "Attach files to this message",
+                    "title": "Files",
+                    "type": "string",
+                    "x-ms-visibility": "advanced"
+                  },
+                  "maxItems": 1,
+                  "type": "array",
+                  "x-ms-visibility": "advanced"
+                },
+                "markdown": {
+                  "description": "Message, in markdown format",
+                  "title": "Text",
+                  "type": "string",
+                  "x-ms-visibility": "important"
+                },
+                "roomId": {
+                  "description": "Select a recipient space",
+                  "title": "Space",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetSpaces",
+                    "value-collection": "items",
+                    "value-path": "id",
+                    "value-title": "title"
+                  },
+                  "x-ms-visibility": "important"
+                },
+                "text": {
+                  "description": "Message Text, in plain text, used for clients that do not support markdown",
+                  "title": "text",
+                  "type": "string",
+                  "x-ms-visibility": "advanced"
+                },
+                "toPersonEmail": {
+                  "description": "The email address of the recipient when sending a private 1:1 message",
+                  "title": "Email",
+                  "type": "string",
+                  "x-ms-visibility": "advanced"
+                },
+                "toPersonId": {
+                  "description": "The ID of the recipient when sending a 1:1 message",
+                  "title": "Person ID",
+                  "type": "string",
+                  "x-ms-visibility": "advanced"
+                }
+              },
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "roomId",
+                  "type": "string"
+                },
+                "roomType": {
+                  "description": "roomType",
+                  "type": "string"
+                },
+                "text": {
+                  "description": "text",
+                  "type": "string"
+                },
+                "toPersonEmail": {
+                  "description": "toPersonEmail",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Send a Message",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#send-a-message"
+        }
+      }
+    },
+    "/{connectionId}/v1/messages/{messageId}": {
+      "get": {
+        "description": "Shows details for a message, by message ID.",
+        "operationId": "GetMessageDetails",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "The message ID",
+            "in": "path",
+            "name": "messageId",
+            "x-ms-summary": "Message ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "files": {
+                  "description": "files",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "markdown": {
+                  "description": "markdown",
+                  "type": "string"
+                },
+                "mentionedGroups": {
+                  "description": "mentionedGroups",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "mentionedPeople": {
+                  "description": "mentionedPeople",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "roomId",
+                  "type": "string"
+                },
+                "roomType": {
+                  "description": "roomType",
+                  "type": "string"
+                },
+                "text": {
+                  "description": "text",
+                  "type": "string"
+                },
+                "toPersonEmail": {
+                  "description": "toPersonEmail",
+                  "type": "string"
+                },
+                "toPersonId": {
+                  "description": "toPersonId",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get Message Details",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-message-details"
+        }
+      }
+    },
+    "/{connectionId}/v1/people": {
+      "get": {
+        "description": "Lookup details and presence information for people in your organization",
+        "operationId": "GetPeople",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "List people by ID. Accepts up to 85 person IDs separated by commas.",
+            "in": "query",
+            "name": "id",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Person ID"
+          },
+          {
+            "description": "List people with this email address",
+            "in": "query",
+            "name": "email",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "items": {
+                  "description": "items",
+                  "items": {
+                    "properties": {
+                      "avatar": {
+                        "description": "avatar",
+                        "type": "string"
+                      },
+                      "created": {
+                        "description": "created",
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "description": "displayName",
+                        "type": "string"
+                      },
+                      "emails": {
+                        "description": "emails",
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "firstName": {
+                        "description": "firstName",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "id",
+                        "type": "string"
+                      },
+                      "lastActivity": {
+                        "description": "lastActivity",
+                        "type": "string"
+                      },
+                      "lastName": {
+                        "description": "lastName",
+                        "type": "string"
+                      },
+                      "nickName": {
+                        "description": "nickName",
+                        "type": "string"
+                      },
+                      "orgId": {
+                        "description": "orgId",
+                        "type": "string"
+                      },
+                      "phoneNumbers": {
+                        "description": "phoneNumbers",
+                        "items": {
+                          "properties": {
+                            "type": {
+                              "description": "type",
+                              "type": "string"
+                            },
+                            "value": {
+                              "description": "value",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      },
+                      "status": {
+                        "description": "status",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "type",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "notFoundIds": {
+                  "description": "notFoundIds",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get People",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-people"
+        }
+      }
+    },
+    "/{connectionId}/v1/people/me": {
+      "get": {
+        "description": "Lookup your own details",
+        "operationId": "GetMyOwnDetails",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "avatar": {
+                  "description": "avatar",
+                  "type": "string"
+                },
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "displayName": {
+                  "description": "displayName",
+                  "type": "string"
+                },
+                "emails": {
+                  "description": "emails",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "firstName": {
+                  "description": "firstName",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "lastActivity": {
+                  "description": "lastActivity",
+                  "type": "string"
+                },
+                "lastName": {
+                  "description": "lastName",
+                  "type": "string"
+                },
+                "nickName": {
+                  "description": "nickName",
+                  "type": "string"
+                },
+                "orgId": {
+                  "description": "orgId",
+                  "type": "string"
+                },
+                "phoneNumbers": {
+                  "description": "phoneNumbers",
+                  "items": {
+                    "properties": {
+                      "type": {
+                        "description": "type",
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "value",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "type",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get My Own Details",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-my-own-details"
+        }
+      }
+    },
+    "/{connectionId}/v1/rooms": {
+      "get": {
+        "description": "This action retrieves a list of spaces",
+        "operationId": "GetSpaces",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Maximum number of spaces to return",
+            "in": "query",
+            "name": "max",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Max Results"
+          },
+          {
+            "description": "(group) only include group spaces, (direct) only include 1 to 1 spaces, returns all if not specified",
+            "enum": [
+              "group",
+              "direct"
+            ],
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Type of space"
+          },
+          {
+            "default": "lastactivity",
+            "description": "(id) the space id, (lastactivity) the last activity timestamp, (created) space creation date",
+            "enum": [
+              "lastactivity",
+              "created"
+            ],
+            "in": "query",
+            "name": "sortBy",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Sort By"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "items": {
+                  "description": "items",
+                  "items": {
+                    "properties": {
+                      "created": {
+                        "description": "created",
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "creatorId": {
+                        "description": "creatorId",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "id",
+                        "type": "string"
+                      },
+                      "isLocked": {
+                        "description": "isLocked",
+                        "type": "boolean"
+                      },
+                      "lastActivity": {
+                        "description": "lastActivity",
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "title",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "type",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get Spaces List",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-spaces-list"
+        }
+      },
+      "post": {
+        "description": "Create space or team space",
+        "operationId": "CreateSpace",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "teamId": {
+                  "description": "Optionally select a team",
+                  "title": "Team",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetTeams",
+                    "value-collection": "items",
+                    "value-path": "id",
+                    "value-title": "name"
+                  }
+                },
+                "title": {
+                  "description": "Space Title",
+                  "title": "Title",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "creatorId": {
+                  "description": "creatorId",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isLocked": {
+                  "description": "isLocked",
+                  "type": "boolean"
+                },
+                "lastActivity": {
+                  "description": "lastActivity",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "title",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "type",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Create Space",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#create-space"
+        }
+      }
+    },
+    "/{connectionId}/v1/rooms/{roomId}": {
+      "get": {
+        "description": "Return details of a given space",
+        "operationId": "GetSpaceDetail",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Select a space",
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSpaces",
+              "value-collection": "items",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "x-ms-summary": "Space"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "creatorId": {
+                  "description": "creatorId",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isLocked": {
+                  "description": "isLocked",
+                  "type": "boolean"
+                },
+                "lastActivity": {
+                  "description": "lastActivity",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "title",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "type",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get Space Details",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-space-details"
+        }
+      }
+    },
+    "/{connectionId}/v1/team/memberships": {
+      "post": {
+        "description": "Add a member to a team",
+        "operationId": "CreateTeamMember",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "isModerator": {
+                  "default": false,
+                  "description": "Is Moderator?",
+                  "title": "Moderator",
+                  "type": "boolean"
+                },
+                "personEmail": {
+                  "description": "Email address",
+                  "title": "Email",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "Person ID of the new member",
+                  "title": "Person ID",
+                  "type": "string",
+                  "x-ms-visibility": "advanced"
+                },
+                "teamId": {
+                  "description": "Select a team",
+                  "title": "Team",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetTeams",
+                    "value-collection": "items",
+                    "value-path": "id",
+                    "value-title": "name"
+                  }
+                }
+              },
+              "required": [
+                "isModerator",
+                "teamId"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isModerator": {
+                  "description": "isModerator",
+                  "type": "boolean"
+                },
+                "personDisplayName": {
+                  "description": "personDisplayName",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "personOrgId": {
+                  "description": "personOrgId",
+                  "type": "string"
+                },
+                "teamId": {
+                  "description": "teamId",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Add Member to Team",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#add-member-to-team"
+        }
+      }
+    },
+    "/{connectionId}/v1/teams": {
+      "get": {
+        "description": "Get a list of teams you belong to",
+        "operationId": "GetTeams",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "description": "Max number of teams to return",
+            "in": "query",
+            "name": "max",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "items": {
+                  "description": "items",
+                  "items": {
+                    "properties": {
+                      "created": {
+                        "description": "created",
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      "creatorId": {
+                        "description": "creatorId",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "id",
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "name",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Get Teams",
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#get-teams"
+        }
+      }
+    },
+    "/{connectionId}/v1/webhooks/1": {
+      "post": {
+        "description": "Someone's membership was updated in a room that you're in; primarily used to detect moderator changes",
+        "operationId": "MembershipsUpdated",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "updated",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "MembershipUpdated",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "memberships",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "name",
+                "event",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a membership is updated",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-membership-is-updated"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isModerator": {
+                  "description": "isModerator",
+                  "type": "boolean"
+                },
+                "isMonitor": {
+                  "description": "isMonitor",
+                  "type": "boolean"
+                },
+                "personDisplayName": {
+                  "description": "personDisplayName",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "personOrgId": {
+                  "description": "personOrgId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "spaceId",
+                  "title": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/2": {
+      "post": {
+        "description": "Someone left or was kicked out of a room that you're in, or you left or were removed from a room; only triggers for group rooms, not 1-to-1 rooms",
+        "operationId": "MembershipsDeleted",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "deleted",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "MembershipDeleted",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "memberships",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a membership is deleted",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-membership-is-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isModerator": {
+                  "description": "isModerator",
+                  "type": "boolean"
+                },
+                "isMonitor": {
+                  "description": "isMonitor",
+                  "type": "boolean"
+                },
+                "personDisplayName": {
+                  "description": "personDisplayName",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "personOrgId": {
+                  "description": "personOrgId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "spaceId",
+                  "title": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/3": {
+      "post": {
+        "description": "Someone joined a room that you're in or you've been added to a new room",
+        "operationId": "MembershipsCreated",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "created",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "MembershipCreated",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "memberships",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a membership is created",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-membership-is-created"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "200 OK",
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "title": "",
+                  "type": "string"
+                },
+                "isModerator": {
+                  "description": "isModerator",
+                  "type": "boolean"
+                },
+                "isMonitor": {
+                  "description": "isMonitor",
+                  "type": "boolean"
+                },
+                "personDisplayName": {
+                  "description": "personDisplayName",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "personOrgId": {
+                  "description": "personOrgId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "spaceId",
+                  "title": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/4": {
+      "post": {
+        "description": "New message posted into a room that you're in",
+        "operationId": "MessagesCreated",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "created",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "MessageCreated",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "messages",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a message is created",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-message-is-created"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "spaceId",
+                  "title": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/5": {
+      "post": {
+        "description": "A message was deleted from a room that you're in",
+        "operationId": "MessagesDeleted",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "deleted",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "MessageDeleted",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "messages",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a message is deleted",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-message-is-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "personEmail": {
+                  "description": "personEmail",
+                  "type": "string"
+                },
+                "personId": {
+                  "description": "personId",
+                  "type": "string"
+                },
+                "roomId": {
+                  "description": "spaceId",
+                  "title": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/6": {
+      "post": {
+        "description": "A new space was created by you or one of your integrations",
+        "operationId": "SpaceCreated",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "created",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "SpaceCreated",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "rooms",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a space is created",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-space-is-created"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "creatorId": {
+                  "description": "creatorId",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isLocked": {
+                  "description": "isLocked",
+                  "type": "boolean"
+                },
+                "lastActivity": {
+                  "description": "lastActivity",
+                  "type": "string"
+                },
+                "teamId": {
+                  "description": "teamId",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "title",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "type",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/webhooks/7": {
+      "post": {
+        "description": "A space that you're in was updated; primarily used to detect when a space becomes Locked or Unlocked",
+        "operationId": "SpaceUpdated",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "event": {
+                  "default": "updated",
+                  "description": "event",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "name": {
+                  "default": "SpaceUpdated",
+                  "description": "name",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "resource": {
+                  "default": "rooms",
+                  "description": "resource",
+                  "title": "",
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              },
+              "required": [
+                "event",
+                "name",
+                "resource",
+                "targetUrl"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "name",
+                  "type": "string"
+                },
+                "targetUrl": {
+                  "description": "targetUrl",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "resource",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "event",
+                  "type": "string"
+                },
+                "filter": {
+                  "description": "filter",
+                  "type": "string"
+                },
+                "secret": {
+                  "description": "secret",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "status",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "When a space is updated",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/webex/#when-a-space-is-updated"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "properties": {
+            "actorId": {
+              "description": "actorId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "appId": {
+              "description": "appId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "createdBy": {
+              "description": "createdBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "data": {
+              "description": "data",
+              "properties": {
+                "created": {
+                  "description": "created",
+                  "type": "string"
+                },
+                "creatorId": {
+                  "description": "creatorId",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string"
+                },
+                "isLocked": {
+                  "description": "isLocked",
+                  "type": "boolean"
+                },
+                "lastActivity": {
+                  "description": "lastActivity",
+                  "type": "string"
+                },
+                "teamId": {
+                  "description": "teamId",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "title",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "type",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "event": {
+              "description": "event",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "filter": {
+              "description": "filter",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "id": {
+              "description": "id",
+              "title": "webhookId",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "name": {
+              "description": "name",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "orgId": {
+              "description": "orgId",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "ownedBy": {
+              "description": "ownedBy",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "resource": {
+              "description": "resource",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            },
+            "status": {
+              "description": "status",
+              "title": "",
+              "type": "string",
+              "x-ms-visibility": "internal"
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    }
+  },
+  "produces": [],
+  "responses": {},
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "oauth2_auth": [
+        "spark:people_read",
+        "spark:rooms_read",
+        "spark:rooms_write",
+        "spark:memberships_read",
+        "spark:memberships_write",
+        "spark:messages_read",
+        "spark:messages_write",
+        "spark:teams_read",
+        "spark:teams_write",
+        "spark:team_memberships_read",
+        "spark:team_memberships_write"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "authorizationUrl": "https://api.ciscospark.com/v1/authorize",
+      "flow": "accessCode",
+      "scopes": {
+        "spark:memberships_read": "spark:memberships_read",
+        "spark:memberships_write": "spark:memberships_write",
+        "spark:messages_read": "spark:messages_read",
+        "spark:messages_write": "spark:messages_write",
+        "spark:people_read": "spark:people_read",
+        "spark:rooms_read": "spark:rooms_read",
+        "spark:rooms_write": "spark:rooms_write",
+        "spark:team_memberships_read": "spark:team_memberships_read",
+        "spark:team_memberships_write": "spark:team_memberships_write",
+        "spark:teams_read": "spark:teams_read",
+        "spark:teams_write": "spark:teams_write"
+      },
+      "tokenUrl": "https://api.ciscospark.com/v1/access_token",
+      "type": "oauth2"
+    }
+  },
+  "swagger": "2.0",
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/webex"
+  }
+}

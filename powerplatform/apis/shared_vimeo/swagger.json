@@ -1,0 +1,377 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "x-ms-deployment-version": "1.0.0",
+    "version": "1.0.0",
+    "title": "Vimeo",
+    "description": "Vimeo is a powerful tool for video management, marketing, and analytics all in one place.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/me/channels": {
+      "get": {
+        "tags": [
+          "Vimeo"
+        ],
+        "summary": "List channels you follow",
+        "description": "Lists all channels which the authenticated user follows",
+        "operationId": "ListChannelsFollowed",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "uri,name,description,link,created_time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Channel"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vimeo/#list-channels-you-follow"
+        }
+      }
+    },
+    "/{connectionId}/trigger/me/videos": {
+      "get": {
+        "summary": "When I upload a new video",
+        "description": "Triggers a flow when the logged in user uploads a new video",
+        "operationId": "OnVideoUpload",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "user,uri,name,description,link,created_time,modified_time"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Video"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, upload a video.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vimeo/#when-i-upload-a-new-video"
+        }
+      }
+    },
+    "/{connectionId}/trigger/channels/videos": {
+      "get": {
+        "summary": "When a video is added to a channel",
+        "description": "Triggers a new flow when a video is added to a channel",
+        "operationId": "OnNewVideoInChannel",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "channelId",
+            "in": "query",
+            "description": "Unique ID of the channel to watch for new videos",
+            "required": true,
+            "x-ms-summary": "Channel ID",
+            "x-ms-dynamic-values": {
+              "operationId": "ListChannelsFollowed",
+              "value-path": "idPlusName",
+              "value-title": "name",
+              "parameters": {
+                "fields": "uri,name,description,link,created_time"
+              }
+            },
+            "type": "string",
+            "x-ms-test-value": "1157601"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "user,uri,name,description,link,created_time,modified_time"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "string",
+            "default": "added"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": true,
+            "x-ms-visibility": "internal",
+            "type": "integer",
+            "default": 50
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VideoWithChannelId"
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "This flow will run when the selected channel adds a video.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vimeo/#when-a-video-is-added-to-a-channel"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Channel": {
+      "description": "A Vimeo Channel",
+      "type": "object",
+      "properties": {
+        "idPlusName": {
+          "description": "id,name",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the channel",
+          "type": "string",
+          "x-ms-summary": "Channel Name"
+        },
+        "id": {
+          "description": "ID of the given channel",
+          "type": "string",
+          "x-ms-summary": "Channel ID"
+        },
+        "link": {
+          "description": "Link to the channel",
+          "type": "string",
+          "x-ms-summary": "Channel Link"
+        },
+        "description": {
+          "description": "Description of the channel",
+          "type": "string",
+          "x-ms-summary": "Channel Description"
+        },
+        "uri": {
+          "description": "URI of given channel",
+          "type": "string",
+          "x-ms-summary": "Channel URI",
+          "x-ms-visibility": "advanced"
+        },
+        "created_time": {
+          "format": "date-time",
+          "description": "The time the channel was initially uploaded",
+          "type": "string",
+          "x-ms-summary": "Created Time",
+          "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "VideoWithChannelId": {
+      "description": "A Vimeo video",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the video",
+          "type": "string",
+          "x-ms-summary": "Video Name"
+        },
+        "link": {
+          "description": "Link to the video",
+          "type": "string",
+          "x-ms-summary": "Video Link"
+        },
+        "description": {
+          "description": "Description of the uploaded video",
+          "type": "string",
+          "x-ms-summary": "Video Description"
+        },
+        "created_time": {
+          "format": "date-time",
+          "description": "The time the video was initially uploaded",
+          "type": "string",
+          "x-ms-summary": "Created Time",
+          "x-ms-visibility": "advanced"
+        },
+        "modified_time": {
+          "format": "date-time",
+          "description": "The time the video was last modified",
+          "type": "string",
+          "x-ms-summary": "Modified Time",
+          "x-ms-visibility": "advanced"
+        },
+        "channel_id": {
+          "description": "ID of the channel this video was added to",
+          "type": "string",
+          "x-ms-summary": "Channel ID",
+          "x-ms-visibility": "advanced"
+        },
+        "channel_name": {
+          "description": "Name of the channel this video was added to",
+          "type": "string",
+          "x-ms-summary": "Channel Name"
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-ms-summary": "Video Author",
+              "description": "Name of the user who uploaded the video"
+            },
+            "link": {
+              "type": "string",
+              "x-ms-summary": "Video Author Link",
+              "description": "Link to the user who uploaded the video"
+            }
+          }
+        }
+      }
+    },
+    "Video": {
+      "description": "A Vimeo video",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the video",
+          "type": "string",
+          "x-ms-summary": "Video Name"
+        },
+        "link": {
+          "description": "Link to the video",
+          "type": "string",
+          "x-ms-summary": "Video Link"
+        },
+        "description": {
+          "description": "Description of the uploaded video",
+          "type": "string",
+          "x-ms-summary": "Video Description"
+        },
+        "created_time": {
+          "format": "date-time",
+          "description": "The time the video was initially uploaded",
+          "type": "string",
+          "x-ms-summary": "Created Time",
+          "x-ms-visibility": "advanced"
+        },
+        "modified_time": {
+          "format": "date-time",
+          "description": "The time the video was last modified",
+          "type": "string",
+          "x-ms-summary": "Modified Time",
+          "x-ms-visibility": "advanced"
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-ms-summary": "Video Author",
+              "description": "Name of the user who uploaded the video"
+            },
+            "link": {
+              "type": "string",
+              "x-ms-summary": "Video Author Link",
+              "description": "Link to the user who uploaded the video"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://vimeo.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://vimeo.com/privacy"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/vimeo"
+  },
+  "basePath": "/apim/vimeo"
+}

@@ -1,0 +1,885 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "termsOfService": "https://www.venasolutions.com/terms",
+    "contact": {
+      "name": "Vena Customer Support",
+      "url": "https://www.venasolutions.com/contact-support",
+      "email": "support@venacorp.com"
+    },
+    "description": "Vena’s interface pairs the best parts of Excel and the power of a full finance-led planning solution so you can streamline your workflows without upending your processes. Connect to Vena to import data from a file into your cube, or to export data from your cube to a file.",
+    "license": {
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
+      "name": "Apache 2.0"
+    },
+    "title": "Vena Solutions",
+    "version": "1.0.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/vena",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/models": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved models list",
+            "schema": {
+              "$ref": "#/definitions/ModelsList"
+            }
+          }
+        },
+        "description": "Fetch available models",
+        "summary": "Gets all the models you have access to",
+        "operationId": "FetchModels",
+        "x-ms-visibility": "internal",
+        "produces": [
+          "*/*"
+        ],
+        "tags": [
+          "model"
+        ],
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#gets-all-the-models-you-have-access-to"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/templates": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved ETL templates",
+            "schema": {
+              "$ref": "#/definitions/TemplatesList"
+            }
+          }
+        },
+        "description": "Fetch the ETL templates of the selected model",
+        "summary": "Select a data model",
+        "operationId": "FetchTemplates",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "modelIdPath",
+            "type": "string",
+            "in": "path",
+            "description": "Select Model you want templates for",
+            "required": true,
+            "x-ms-summary": "Data Model",
+            "x-ms-dynamic-values": {
+              "operationId": "FetchModels",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "tags": [
+          "etl"
+        ],
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#select-a-data-model"
+        }
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/templates/{templateId}/upload": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ETLJob"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/modelIdPathParam"
+          },
+          {
+            "name": "templateId",
+            "type": "string",
+            "in": "path",
+            "description": "Select an ETL template",
+            "required": true,
+            "x-ms-summary": "ETL template",
+            "x-ms-dynamic-values": {
+              "operationId": "FetchTemplates",
+              "value-path": "id",
+              "value-title": "metadata/name",
+              "parameters": {
+                "modelIdPath": {
+                  "parameter": "modelIdPath"
+                }
+              }
+            }
+          },
+          {
+            "name": "fileName",
+            "type": "string",
+            "in": "query",
+            "description": "Select the file name",
+            "x-ms-summary": "File name",
+            "default": "@triggerOutputs()['headers']['x-ms-file-name']",
+            "x-ms-visibility": "advanced",
+            "required": true
+          },
+          {
+            "name": "file",
+            "type": "string",
+            "in": "formData",
+            "description": "Select the file content to upload",
+            "x-ms-summary": "File content to upload",
+            "default": "@triggerBody()",
+            "x-ms-visibility": "advanced",
+            "required": true
+          },
+          {
+            "name": "fileType",
+            "type": "string",
+            "in": "query",
+            "description": "Select the file type",
+            "x-ms-summary": "File type",
+            "default": "CSV",
+            "enum": [
+              "CSV",
+              "PSV",
+              "TDF"
+            ],
+            "x-ms-visibility": "advanced",
+            "required": true
+          },
+          {
+            "name": "fileEncoding",
+            "type": "string",
+            "in": "query",
+            "description": "Select the file encoding",
+            "x-ms-summary": "File encoding",
+            "default": "UTF-8",
+            "enum": [
+              "UTF-8",
+              "UTF-16",
+              "Cp1252"
+            ],
+            "x-ms-visibility": "advanced",
+            "required": false
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "etl"
+        ],
+        "summary": "Trigger an ETL job to import data into Vena",
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "operationId": "ETLUpload",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Upload hierarchy, intersections, lids, or attributes to a model",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#trigger-an-etl-job-to-import-data-into-vena"
+        }
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/query/attributes": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/modelIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/attributesBodyParam"
+          }
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "tags": [
+          "model"
+        ],
+        "summary": "Export attributes from a model",
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "operationId": "ExportAttributes",
+        "description": "Export attributes from a model",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#export-attributes-from-a-model"
+        }
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/query/hierarchies": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/modelIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/hierarchiesBodyParam"
+          }
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "tags": [
+          "model"
+        ],
+        "summary": "Export hierarchies from a model",
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "operationId": "ExportHierarchies",
+        "description": "Exports hierarchies from a model",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#export-hierarchies-from-a-model"
+        }
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/query/intersections2": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/modelIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/valuesBodyParam"
+          }
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "tags": [
+          "model"
+        ],
+        "summary": "Export values from a model",
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "operationId": "ExportValues",
+        "description": "Export values from a model",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#export-values-from-a-model"
+        }
+      }
+    },
+    "/{connectionId}/models/{modelIdPath}/etl/query/lids2": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/modelIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/lidsBodyParam"
+          }
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "tags": [
+          "model"
+        ],
+        "summary": "Export LIDs from a model",
+        "security": [
+          {
+            "APISecurity": []
+          }
+        ],
+        "operationId": "ExportLIDs",
+        "description": "Export LIDs from a model",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/vena/#export-lids-from-a-model"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "modelIdPathParam": {
+      "name": "modelIdPath",
+      "type": "string",
+      "in": "path",
+      "description": "Select the Vena data model",
+      "required": true,
+      "x-ms-summary": "Data Model",
+      "x-ms-dynamic-values": {
+        "operationId": "FetchModels",
+        "value-path": "id",
+        "value-title": "name"
+      }
+    },
+    "hierarchiesBodyParam": {
+      "name": "hierarchiesBody",
+      "in": "body",
+      "schema": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "properties": {
+          "showHeaders": {
+            "$ref": "#/definitions/showHeaders"
+          },
+          "queryString": {
+            "$ref": "#/definitions/queryString"
+          },
+          "format": {
+            "$ref": "#/definitions/fileFormat"
+          },
+          "encoding": {
+            "$ref": "#/definitions/encoding"
+          },
+          "destination": {
+            "$ref": "#/definitions/destination"
+          },
+          "exportMemberIds": {
+            "type": "boolean",
+            "description": "Include member IDs in the export",
+            "x-ms-summary": "Export Member IDs",
+            "default": false,
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "valuesBodyParam": {
+      "name": "valuesBody",
+      "in": "body",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "properties": {
+          "showHeaders": {
+            "$ref": "#/definitions/showHeaders"
+          },
+          "queryString": {
+            "$ref": "#/definitions/queryString"
+          },
+          "format": {
+            "$ref": "#/definitions/fileFormat"
+          },
+          "encoding": {
+            "$ref": "#/definitions/encoding"
+          },
+          "destination": {
+            "$ref": "#/definitions/destination"
+          },
+          "includeExternalId": {
+            "type": "boolean",
+            "description": "Include the External IDs in the export",
+            "x-ms-summary": "Include External IDs",
+            "default": false,
+            "x-ms-visibility": "advanced"
+          },
+          "isNamedHeader": {
+            "type": "boolean",
+            "description": "Include named dimensions in the header",
+            "x-ms-summary": "Named Dimensions",
+            "default": false,
+            "x-ms-visibility": "advanced"
+          }
+        }
+      }
+    },
+    "attributesBodyParam": {
+      "name": "lidsBody",
+      "in": "body",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "properties": {
+          "showHeaders": {
+            "$ref": "#/definitions/showHeaders"
+          },
+          "queryString": {
+            "$ref": "#/definitions/queryString"
+          },
+          "format": {
+            "$ref": "#/definitions/fileFormat"
+          },
+          "encoding": {
+            "$ref": "#/definitions/encoding"
+          },
+          "destination": {
+            "$ref": "#/definitions/destination"
+          }
+        }
+      }
+    },
+    "lidsBodyParam": {
+      "name": "lidsBody",
+      "in": "body",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "properties": {
+          "showHeaders": {
+            "$ref": "#/definitions/showHeaders"
+          },
+          "queryString": {
+            "$ref": "#/definitions/queryString"
+          },
+          "format": {
+            "$ref": "#/definitions/fileFormat"
+          },
+          "encoding": {
+            "$ref": "#/definitions/encoding"
+          },
+          "destination": {
+            "$ref": "#/definitions/destination"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "showHeaders": {
+      "type": "boolean",
+      "description": "Show headers in the export",
+      "x-ms-summary": "Show Header",
+      "default": false
+    },
+    "queryString": {
+      "type": "string",
+      "description": "MQL Query",
+      "x-ms-summary": "MQL Query String",
+      "x-ms-visibility": "advanced"
+    },
+    "fileFormat": {
+      "type": "string",
+      "description": "Select the file format",
+      "x-ms-summary": "File Format",
+      "default": "CSV",
+      "enum": [
+        "CSV",
+        "PSV",
+        "TDF"
+      ],
+      "x-ms-visibility": "advanced"
+    },
+    "encoding": {
+      "type": "string",
+      "description": "Select the file encoding",
+      "x-ms-summary": "File Encoding",
+      "default": "UTF-8",
+      "enum": [
+        "UTF-8",
+        "UTF-16",
+        "Cp1252"
+      ],
+      "x-ms-visibility": "advanced"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Destination always to file",
+      "default": "ToCSV",
+      "x-ms-visibility": "internal"
+    },
+    "ModelDTO": {
+      "required": [
+        "name",
+        "desc"
+      ],
+      "type": "object",
+      "properties": {
+        "clonedFromId": {
+          "type": "string"
+        },
+        "updateReason": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "scripts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "updatedTimestamp": {
+          "type": "integer"
+        },
+        "updatedEpochSeconds": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "modelFolder": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "example": "A Model",
+          "description": "Name of the model"
+        },
+        "createdTimestamp": {
+          "type": "integer"
+        },
+        "createdEpochSeconds": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "desc": {
+          "type": "string",
+          "example": "Model description",
+          "description": "Description of the model"
+        },
+        "dimensionNumbers": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "TemplateDTO": {
+      "required": [
+        "metadata"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/ETLMetadata"
+        },
+        "hasSchedule": {
+          "default": false,
+          "type": "boolean"
+        },
+        "unsaved": {
+          "default": "true",
+          "type": "string"
+        },
+        "stepType": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "ModelsList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ModelDTO"
+      }
+    },
+    "TemplatesList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TemplateDTO"
+      }
+    },
+    "ETLMetadata": {
+      "required": [
+        "name",
+        "steps"
+      ],
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "default": 2,
+          "type": "integer"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/definitions/ETLStep"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "ETLJob": {
+      "required": [
+        "id"
+      ],
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "pauseRequested": {
+          "default": false,
+          "type": "boolean"
+        },
+        "templateId": {
+          "type": "string"
+        },
+        "errorMessage": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "lockProperty": {
+          "type": "string"
+        },
+        "resumable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "user": {
+          "type": "object"
+        },
+        "createdDate": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "shortMessage": {
+          "type": "string"
+        },
+        "saveJob": {
+          "default": false,
+          "type": "boolean"
+        },
+        "log": {
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          },
+          "type": "array"
+        },
+        "lockId": {
+          "type": "string"
+        },
+        "rollbackRequired": {
+          "default": false,
+          "type": "boolean"
+        },
+        "cancelRequested": {
+          "default": false,
+          "type": "boolean"
+        },
+        "updatedDate": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "boolean"
+        },
+        "validationResults": {
+          "type": "string"
+        },
+        "attributes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "currentStepNumber": {
+          "type": "integer"
+        },
+        "numCalcOverwrite": {
+          "type": "integer"
+        },
+        "metadata": {
+          "$ref": "#/definitions/ETLMetadata"
+        }
+      }
+    },
+    "ETLStep": {
+      "required": [
+        "stepType"
+      ],
+      "type": "object",
+      "properties": {
+        "dataType": {
+          "type": "string"
+        },
+        "stepType": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {},
+  "securityDefinitions": {
+    "APISecurity": {
+      "type": "basic"
+    }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "etl",
+      "description": "ETL API for Vena"
+    },
+    {
+      "name": "model",
+      "description": "Model API for Vena"
+    }
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://venasolutions.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://venasolutions.com/privacy-policy/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Finance"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/vena"
+  }
+}

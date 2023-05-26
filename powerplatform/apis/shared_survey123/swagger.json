@@ -1,0 +1,1191 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "3.16",
+    "title": "Survey123",
+    "description": "ArcGIS Survey123 is a simple and intuitive form-centric data gathering solution that makes creating, sharing, and analyzing surveys possible in just three easy steps: 1) Ask Questions; 2) Get the Answers; 3) Make the best Decisions.",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Survey123",
+      "url": "https://www.esri.com/survey123",
+      "email": "survey123@esri.com"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/survey123",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/api/survey/query": {
+      "get": {
+        "summary": "Get surveys",
+        "description": "This action retrieves a list of surveys owned by the logged in-user",
+        "operationId": "GetOwnedSurveyList",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "isPublished",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "type": "boolean",
+            "default": true,
+            "required": true
+          },
+          {
+            "name": "isQueryAll",
+            "in": "query",
+            "x-ms-visibility": "internal",
+            "type": "boolean",
+            "default": true,
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#get-surveys"
+        }
+      }
+    },
+    "/{connectionId}/api/survey/{surveyId}/webhook/add": {
+      "x-ms-notification-content": {
+        "description": "addData response",
+        "schema": {
+          "$ref": "#/definitions/getWehhookPayloadSchema"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "summary": "When a survey response is submitted",
+        "description": "Triggers a new flow when a survey response is submitted by a user",
+        "operationId": "AddData",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "surveyId",
+            "in": "path",
+            "description": "Survey",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetOwnedSurveyList",
+              "parameters": {
+                "isPublished": true,
+                "isQueryAll": true,
+                "portalUrl": "https://www.arcgis.com"
+              },
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "x-ms-summary": "Survey",
+            "x-ms-url-encoding": "single",
+            "type": "string"
+          },
+          {
+            "name": "addWebhookBody",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "webhook"
+              ],
+              "type": "object",
+              "properties": {
+                "webhook": {
+                  "description": "webhook",
+                  "required": [
+                    "name",
+                    "events",
+                    "url",
+                    "includePortalInfo",
+                    "includeUserInfo",
+                    "includeSurveyInfo",
+                    "includeServiceRequest",
+                    "includeServiceResponse"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "title": "name",
+                      "description": "The webhook name",
+                      "default": "MS-FLOW",
+                      "type": "string",
+                      "x-ms-summary": "name",
+                      "x-ms-visibility": "internal"
+                    },
+                    "events": {
+                      "description": "events",
+                      "default": [
+                        "addData"
+                      ],
+                      "type": "array",
+                      "items": {
+                        "title": "events",
+                        "description": "events",
+                        "default": "addData",
+                        "type": "string",
+                        "x-ms-visibility": "internal"
+                      },
+                      "x-ms-visibility": "internal",
+                      "x-ms-summary": "events"
+                    },
+                    "url": {
+                      "title": "url",
+                      "description": "url",
+                      "type": "string",
+                      "x-ms-summary": "url",
+                      "x-ms-visibility": "internal",
+                      "x-ms-notification-url": true
+                    },
+                    "includePortalInfo": {
+                      "title": "Include portal info",
+                      "description": "Include the portal info in the payload, such as the portal URL.",
+                      "default": true,
+                      "type": "boolean",
+                      "x-ms-summary": "includePortalInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeUserInfo": {
+                      "title": "Include user info",
+                      "description": "Include the user info in the payload, such as the user name, email address, first name and last name.",
+                      "default": true,
+                      "type": "boolean",
+                      "x-ms-summary": "includeUserInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeSurveyInfo": {
+                      "title": "Include survey info",
+                      "description": "Include the survey info in the payload, such as the survey title and survey item id.",
+                      "default": true,
+                      "type": "boolean",
+                      "x-ms-summary": "includeSurveyInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeServiceRequest": {
+                      "title": "Include submitted record",
+                      "description": "Include the submitted record info in the payload, such as attributes and geometry of the feature.",
+                      "default": true,
+                      "type": "boolean",
+                      "x-ms-summary": "includeServiceRequest",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeServiceResponse": {
+                      "title": "Include server response",
+                      "description": "Include the raw server response in the payload.",
+                      "type": "boolean",
+                      "x-ms-summary": "includeServiceResponse",
+                      "x-ms-visibility": "advanced",
+                      "default": true
+                    }
+                  },
+                  "x-ms-summary": ""
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/getWehhookPayloadSchema"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-trigger": "single",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#when-a-survey-response-is-submitted"
+        }
+      }
+    },
+    "/{connectionId}/api/survey/{surveyItemId}/webhook/schema": {
+      "post": {
+        "summary": "get Webhook Payload Schema",
+        "description": "get Webhook Payload Schema",
+        "operationId": "GetWebhookPayloadSchema",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          },
+          {
+            "name": "surveyItemId",
+            "in": "path",
+            "description": "survey item id",
+            "required": true,
+            "x-ms-visibility": "important",
+            "x-ms-url-encoding": "single",
+            "x-ms-dynamic-values": {
+              "operationId": "GetOwnedSurveyList",
+              "value-path": "id",
+              "value-title": "title"
+            },
+            "type": "string"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "default": "swagger",
+            "type": "string",
+            "x-ms-visibiltiy": "internal"
+          },
+          {
+            "name": "webhookSchemaBody",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "webhook": {
+                  "description": "webhook",
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "description": "events",
+                      "default": [
+                        "addData"
+                      ],
+                      "type": "array",
+                      "items": {
+                        "title": "event",
+                        "default": "addData",
+                        "type": "string",
+                        "x-ms-visibility": "internal",
+                        "x-ms-summary": "event"
+                      },
+                      "x-ms-summary": "events",
+                      "x-ms-visibility": "internal"
+                    },
+                    "includePortalInfo": {
+                      "title": "includePortalInfo",
+                      "description": "includePortalInfo",
+                      "default": true,
+                      "type": "boolean",
+                      "x-ms-summary": "includePortalInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeUserInfo": {
+                      "title": "includeUserInfo",
+                      "description": "includeUserInfo",
+                      "default": false,
+                      "type": "boolean",
+                      "x-ms-summary": "includeUserInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeSurveyInfo": {
+                      "title": "includeSurveyInfo",
+                      "description": "includeSurveyInfo",
+                      "default": false,
+                      "type": "boolean",
+                      "x-ms-summary": "includeSurveyInfo",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeServiceResponse": {
+                      "title": "includeServiceResponse",
+                      "description": "includeServiceResponse",
+                      "default": false,
+                      "type": "boolean",
+                      "x-ms-summary": "includeServiceResponse",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "includeServiceRequest": {
+                      "title": "includeServiceRequest",
+                      "description": "includeServiceRequest",
+                      "default": false,
+                      "type": "boolean",
+                      "x-ms-summary": "includeServiceRequest",
+                      "x-ms-visibility": "advanced"
+                    }
+                  },
+                  "x-ms-summary": "webhook",
+                  "required": [
+                    "events"
+                  ]
+                }
+              },
+              "required": [
+                "webhook"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "swagger": {
+                  "description": "dynamicSchema",
+                  "type": "object",
+                  "x-ms-summary": "dynamicSchema"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#get-webhook-payload-schema"
+        }
+      }
+    },
+    "/{connectionId}/api/survey/{surveyItemId}/webhook/{webhookId}": {
+      "delete": {
+        "summary": "remove webhook",
+        "description": "remove webhook",
+        "operationId": "RemoveWebhook",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "surveyItemId",
+            "in": "path",
+            "description": "survey item id",
+            "required": true,
+            "x-ms-summary": "survey item id",
+            "x-ms-visibility": "important",
+            "x-ms-url-encoding": "single",
+            "type": "string"
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "description": "webhook id",
+            "required": true,
+            "x-ms-summary": "webhook id",
+            "x-ms-visibility": "important",
+            "x-ms-url-encoding": "single",
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "description": "success",
+                  "type": "boolean",
+                  "x-ms-summary": "success"
+                },
+                "id": {
+                  "description": "id",
+                  "type": "string",
+                  "x-ms-summary": "id"
+                },
+                "surveyName": {
+                  "description": "surveyName",
+                  "type": "string",
+                  "x-ms-summary": "surveyName"
+                },
+                "webhookId": {
+                  "description": "webhookId",
+                  "type": "string",
+                  "x-ms-summary": "webhookId"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#remove-webhook"
+        }
+      }
+    },
+    "/{connectionId}/api/featureReport/createReport/submitJob": {
+      "post": {
+        "summary": "Create report",
+        "description": "Create report",
+        "operationId": "FeatureReportSubmitJob",
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "createFeatureReportBody",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "surveyItemId",
+                "featureLayerUrl",
+                "templateItemId",
+                "queryParameters",
+                "asyncPattern"
+              ],
+              "properties": {
+                "surveyItemId": {
+                  "description": "Survey",
+                  "x-ms-summary": "Survey",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetOwnedSurveyList",
+                    "parameters": {
+                      "isPublished": true,
+                      "isQueryAll": true,
+                      "portalUrl": "https://www.arcgis.com"
+                    },
+                    "value-path": "id",
+                    "value-title": "title"
+                  }
+                },
+                "featureLayerUrl": {
+                  "description": "Feature layer",
+                  "x-ms-summary": "Feature layer",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetSurveyInfo",
+                    "parameters": {
+                      "surveyItemId": {
+                        "parameter": "surveyItemId"
+                      },
+                      "portalUrl": "https://www.arcgis.com",
+                      "includeFeatureLayerInfos": true
+                    },
+                    "value-path": "url",
+                    "value-title": "name",
+                    "value-collection": "featureLayerInfos"
+                  },
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetSurveyInfo",
+                    "itemValuePath": "url",
+                    "itemTitlePath": "name",
+                    "itemsPath": "featureLayerInfos",
+                    "parameters": {
+                      "portalUrl": {
+                        "value": "https://www.arcgis.com"
+                      },
+                      "includeFeatureLayerInfos": {
+                        "value": true
+                      },
+                      "surveyItemId": {
+                        "parameterReference": "createFeatureReportBody/surveyItemId"
+                      }
+                    }
+                  }
+                },
+                "templateItemId": {
+                  "description": "Report template",
+                  "x-ms-summary": "Report template",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "type": "string",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetSurveyInfo",
+                    "parameters": {
+                      "surveyItemId": {
+                        "parameter": "surveyItemId"
+                      },
+                      "portalUrl": "https://www.arcgis.com"
+                    },
+                    "value-collection": "report/templateItems",
+                    "value-path": "itemId",
+                    "value-title": "title"
+                  },
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetSurveyInfo",
+                    "itemsPath": "report/templateItems",
+                    "itemValuePath": "itemId",
+                    "itemTitlePath": "title",
+                    "parameters": {
+                      "portalUrl": {
+                        "value": "https://www.arcgis.com"
+                      },
+                      "surveyItemId": {
+                        "parameterReference": "createFeatureReportBody/surveyItemId"
+                      }
+                    }
+                  }
+                },
+                "queryParameters": {
+                  "description": "",
+                  "x-ms-summary": "",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "type": "object",
+                  "required": [
+                    "objectIds"
+                  ],
+                  "properties": {
+                    "where": {
+                      "type": "string",
+                      "description": "WHERE clause",
+                      "x-ms-summary": "WHERE clause",
+                      "x-ms-visibility": "advanced"
+                    },
+                    "objectIds": {
+                      "type": "string",
+                      "description": "Feature object ID",
+                      "x-ms-summary": "Feature object ID"
+                    }
+                  }
+                },
+                "utcOffset": {
+                  "description": "Apply an offset for your time zone, e.g. +02:00 or -09:00",
+                  "x-ms-summary": "UTC offset",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-url-encoding": "single",
+                  "type": "string"
+                },
+                "outputReportName": {
+                  "description": "Report name",
+                  "x-ms-summary": "Report name",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "type": "string"
+                },
+                "outputFormat": {
+                  "description": "Format",
+                  "x-ms-summary": "Format",
+                  "x-ms-visibility": "important",
+                  "x-ms-url-encoding": "single",
+                  "default": "docx",
+                  "type": "string",
+                  "enum": [
+                    "docx",
+                    "pdf"
+                  ]
+                },
+                "asyncPattern": {
+                  "description": "Enable async pattern",
+                  "x-ms-summary": "Enable async pattern",
+                  "x-ms-visibility": "internal",
+                  "x-ms-url-encoding": "single",
+                  "default": true,
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "jobId": {
+                  "type": "string",
+                  "description": "jobId"
+                },
+                "jobStatus": {
+                  "type": "string",
+                  "description": "jobStatus"
+                },
+                "submitted": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "submitted"
+                },
+                "completed": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "completed"
+                },
+                "resultInfo": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "title"
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "totalCount"
+                    },
+                    "succeededObjectIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "description": "succeededObjectIds"
+                    },
+                    "failedObjectIds": {
+                      "type": "array",
+                      "items": {},
+                      "description": "failedObjectIds"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {},
+                      "description": "details"
+                    },
+                    "resultFiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "objectIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "description": "objectIds"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "name"
+                          },
+                          "size": {
+                            "type": "integer",
+                            "format": "int32",
+                            "description": "size"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "status"
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "url"
+                          }
+                        }
+                      },
+                      "description": "resultFiles"
+                    },
+                    "resultFile": {
+                      "type": "object",
+                      "description": "the first item in resultFfiles",
+                      "properties": {
+                        "objectIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "format": "int32"
+                          },
+                          "description": "objectIds in the first result file"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name of the first result file"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "size of the first result file"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "status of the first result file"
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "url of the first result file"
+                        }
+                      }
+                    }
+                  },
+                  "description": "resultInfo"
+                },
+                "inputInfo": {
+                  "type": "object",
+                  "properties": {
+                    "jobType": {
+                      "type": "string",
+                      "description": "jobType"
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "featureLayerUrl": {
+                          "type": "string",
+                          "description": "featureLayerUrl"
+                        },
+                        "queryParameters": {
+                          "type": "object",
+                          "properties": {
+                            "objectIds": {
+                              "type": "string",
+                              "description": "objectIds"
+                            }
+                          },
+                          "description": "queryParameters"
+                        },
+                        "templateItemId": {
+                          "type": "string",
+                          "description": "templateItemId"
+                        },
+                        "surveyItemId": {
+                          "type": "string",
+                          "description": "surveyItemId"
+                        },
+                        "portalUrl": {
+                          "type": "string",
+                          "description": "portalUrl"
+                        },
+                        "outputFormat": {
+                          "type": "string",
+                          "description": "outputFormat"
+                        }
+                      },
+                      "description": "parameters"
+                    }
+                  },
+                  "description": "inputInfo"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#create-report"
+        }
+      }
+    },
+    "/{connectionId}/api/featureReport/jobs/{jobId}/status": {
+      "get": {
+        "summary": "get feature report job status",
+        "description": "get feature report job status",
+        "operationId": "FeatureReportJobStatus",
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "feature report job id",
+            "required": true,
+            "x-ms-summary": "feature report job id",
+            "x-ms-visibility": "important",
+            "x-ms-url-encoding": "single",
+            "type": "string"
+          },
+          {
+            "name": "asyncPattern",
+            "in": "query",
+            "description": "enable async pattern",
+            "x-ms-summary": "enable async pattern",
+            "x-ms-visibility": "important",
+            "x-ms-url-encoding": "single",
+            "default": true,
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "jobId": {
+                  "type": "string",
+                  "description": "jobId"
+                },
+                "jobStatus": {
+                  "type": "string",
+                  "description": "jobStatus"
+                },
+                "submitted": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "submitted"
+                },
+                "completed": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "completed"
+                },
+                "resultInfo": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "title"
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "totalCount"
+                    },
+                    "succeededObjectIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "description": "succeededObjectIds"
+                    },
+                    "failedObjectIds": {
+                      "type": "array",
+                      "items": {},
+                      "description": "failedObjectIds"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {},
+                      "description": "details"
+                    },
+                    "resultFiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "objectIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "description": "objectIds"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "name"
+                          },
+                          "size": {
+                            "type": "integer",
+                            "format": "int32",
+                            "description": "size"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "status"
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "url"
+                          }
+                        }
+                      },
+                      "description": "resultFiles"
+                    },
+                    "resultFile": {
+                      "type": "object",
+                      "description": "the first item in resultFfiles",
+                      "properties": {
+                        "objectIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "format": "int32"
+                          },
+                          "description": "objectIds in the first result file"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name of the first result file"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "size of the first result file"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "status of the first result file"
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "url of the first result file"
+                        }
+                      }
+                    }
+                  },
+                  "description": "resultInfo"
+                },
+                "inputInfo": {
+                  "type": "object",
+                  "properties": {
+                    "jobType": {
+                      "type": "string",
+                      "description": "jobType"
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "featureLayerUrl": {
+                          "type": "string",
+                          "description": "featureLayerUrl"
+                        },
+                        "queryParameters": {
+                          "type": "object",
+                          "properties": {
+                            "objectIds": {
+                              "type": "string",
+                              "description": "objectIds"
+                            }
+                          },
+                          "description": "queryParameters"
+                        },
+                        "templateItemId": {
+                          "type": "string",
+                          "description": "templateItemId"
+                        },
+                        "surveyItemId": {
+                          "type": "string",
+                          "description": "surveyItemId"
+                        },
+                        "portalUrl": {
+                          "type": "string",
+                          "description": "portalUrl"
+                        },
+                        "outputFormat": {
+                          "type": "string",
+                          "description": "outputFormat"
+                        }
+                      },
+                      "description": "parameters"
+                    }
+                  },
+                  "description": "inputInfo"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#get-feature-report-job-status"
+        }
+      }
+    },
+    "/{connectionId}/api/survey/{surveyItemId}": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "get survey info",
+        "description": "get survey info",
+        "operationId": "GetSurveyInfo",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "surveyItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "survey item id",
+            "x-ms-summary": "survey item id",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "includeFeatureLayerInfos",
+            "in": "query",
+            "required": true,
+            "type": "boolean",
+            "description": "include feature layer infos",
+            "x-ms-summary": "include feature layer infos",
+            "x-ms-visibility": "internal",
+            "default": true
+          },
+          {
+            "$ref": "#/parameters/portalUrl"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/survey123/#get-survey-info"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "getWehhookPayloadSchema": {
+      "type": "object",
+      "x-ms-dynamic-schema": {
+        "operationId": "GetWebhookPayloadSchema",
+        "parameters": {
+          "surveyItemId": {
+            "parameter": "surveyId"
+          },
+          "webhook.includePortalInfo": {
+            "parameter": "webhook.includePortalInfo"
+          },
+          "webhook.includeUserInfo": {
+            "parameter": "webhook.includeUserInfo"
+          },
+          "webhook.includeSurveyInfo": {
+            "parameter": "webhook.includeSurveyInfo"
+          },
+          "webhook.includeServiceResponse": {
+            "parameter": "webhook.includeServiceResponse"
+          },
+          "webhook.includeServiceRequest": {
+            "parameter": "webhook.includeServiceRequest"
+          },
+          "webhook.events": [
+            "addData"
+          ],
+          "portalUrl": "https://www.arcgis.com"
+        },
+        "value-path": "swagger"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetWebhookPayloadSchema",
+        "parameters": {
+          "surveyItemId": {
+            "parameterReference": "surveyId"
+          },
+          "webhookSchemaBody/webhook/includePortalInfo": {
+            "parameterReference": "addWebhookBody/webhook/includePortalInfo"
+          },
+          "webhookSchemaBody/webhook/includeUserInfo": {
+            "parameterReference": "addWebhookBody/webhook/includeUserInfo"
+          },
+          "webhookSchemaBody/webhook/includeSurveyInfo": {
+            "parameterReference": "addWebhookBody/webhook/includeSurveyInfo"
+          },
+          "webhookSchemaBody/webhook/includeServiceRequest": {
+            "parameterReference": "addWebhookBody/webhook/includeServiceRequest"
+          },
+          "webhookSchemaBody/webhook/includeServiceResponse": {
+            "parameterReference": "addWebhookBody/webhook/includeServiceResponse"
+          },
+          "webhookSchemaBody/webhook/events": {
+            "value": [
+              "addData"
+            ]
+          },
+          "portalUrl": {
+            "value": "https://www.arcgis.com"
+          }
+        },
+        "itemValuePath": "swagger"
+      }
+    }
+  },
+  "parameters": {
+    "portalUrl": {
+      "in": "query",
+      "name": "portalUrl",
+      "type": "string",
+      "description": "Url of ArcGIS Enterprise, https://gis.myserver.com/portalWebAdaptor",
+      "default": "https://www.arcgis.com",
+      "x-ms-visibility": "internal",
+      "required": true,
+      "x-ms-summary": "Url of ArcGIS Enterprise"
+    }
+  },
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://www.arcgis.com/sharing/rest/oauth2/authorize",
+      "tokenUrl": "https://www.arcgis.com/sharing/rest/oauth2/token",
+      "scopes": {
+        "user": "user",
+        "admin": "admin"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "user",
+        "admin"
+      ]
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.esri.com/survey123"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.esri.com/en-us/privacy/overview"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Website;Productivity"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/survey123"
+  }
+}

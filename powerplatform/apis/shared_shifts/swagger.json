@@ -1,0 +1,3751 @@
+{
+  "basePath": "/apim/shifts",
+  "consumes": [],
+  "host": "europe-002.azure-apim.net",
+  "info": {
+    "version": "1.0",
+    "description": "For managers, plan shift schedules, broadcast open and unfilled shifts to your team. For team members, easily view your shifts and make schedule-change requests (swap/offer/time off).",
+    "title": "Shifts for Microsoft Teams",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://support.microsoft.com/teams"
+    }
+  },
+  "parameters": {
+    "teamId__in_path": {
+      "name": "teamId",
+      "in": "path",
+      "required": true,
+      "x-ms-dynamic-values": {
+        "operationId": "GetAllTeams",
+        "value-path": "id",
+        "value-title": "displayName",
+        "value-collection": "value"
+      },
+      "x-ms-summary": "Team",
+      "description": "Add Team ID",
+      "type": "string"
+    }
+  },
+  "paths": {
+    "/{connectionId}/v1.0/me/joinedTeams": {
+      "get": {
+        "summary": "List teams",
+        "description": "This operation retrieves a list of all the Teams (Office 365 Groups) you are a member of.",
+        "operationId": "GetAllTeams",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of one or more Teams you are a part of.",
+                  "type": "array",
+                  "x-ms-summary": "Teams List",
+                  "items": {
+                    "type": "object",
+                    "x-ms-summary": "Team",
+                    "description": "Team Entity",
+                    "properties": {
+                      "description": {
+                        "description": "More information about the Team.",
+                        "type": "string",
+                        "x-ms-summary": "Description",
+                        "x-ms-visibility": "important"
+                      },
+                      "displayName": {
+                        "description": "Brief summary of the Team.",
+                        "type": "string",
+                        "x-ms-summary": "Name",
+                        "x-ms-visibility": "important"
+                      },
+                      "id": {
+                        "description": "Unique ID of the Team (O365 group).",
+                        "type": "string",
+                        "x-ms-summary": "Id",
+                        "x-ms-visibility": "advanced"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-teams"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Get a Schedule's details",
+        "x-ms-summary": "Get Schedule details by ID",
+        "description": "This operation returns details of a Schedule using the Schedule's unique ID.",
+        "operationId": "GetSchedule",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ScheduleResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-schedule%27s-details"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timesoff": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Time Off instances",
+        "x-ms-summary": "List all Time Off instances in a Schedule",
+        "description": "This operation returns all Time Off instances in a Schedule",
+        "operationId": "ListTimesOff",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "x-ms-summary": "From Start Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-23T07:00:00Z"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "x-ms-summary": "To End Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-30T07:00:00Z"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Time Off instances",
+                  "type": "array",
+                  "x-ms-summary": "Time Off Instances List",
+                  "items": {
+                    "$ref": "#/definitions/TimeOffResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-time-off-instances"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timesoff/{timeOffId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get a Time Off instance",
+        "x-ms-summary": "Get a Time Off by ID",
+        "description": "This operation returns details for a Time Off using its unique ID.",
+        "operationId": "GetTimeOff",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "timeOffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Time Off ID",
+            "description": "The unique ID of the Time Off.",
+            "x-ms-test-value": "SHFT_d45edcfe-7888-410c-8a7b-3dbf9e2e6d5b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TimeOffResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-time-off-instance"
+        }
+      },
+      "delete": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Delete a Time Off instance",
+        "x-ms-summary": "Delete Time Off by ID",
+        "description": "This operation deletes a Time Off using its unique ID.",
+        "operationId": "DeleteTimeOff",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "timeOffId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Time Off ID",
+            "description": "The unique ID of the Time Off.",
+            "x-ms-test-value": "SHFT_d45edcfe-7888-410c-8a7b-3dbf9e2e6d5b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Time Off Deleted"
+          },
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#delete-a-time-off-instance"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/shifts": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Shifts",
+        "x-ms-summary": "List all Shifts",
+        "description": "This operation returns all Shifts assigned to members of a team",
+        "operationId": "ListShifts",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "x-ms-summary": "From Start Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-23T07:00:00Z"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "x-ms-summary": "To End Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-30T07:00:00Z"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Shifts",
+                  "type": "array",
+                  "x-ms-summary": "Shifts List",
+                  "items": {
+                    "$ref": "#/definitions/ShiftResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-shifts"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/shifts/{shiftId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get a Shift",
+        "x-ms-summary": "Get Shift by ID",
+        "description": "This operation returns details for a Shift using the Shift's unique ID.",
+        "operationId": "GetShift",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "shiftId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Shift ID",
+            "description": "The unique ID of the Shift.",
+            "x-ms-test-value": "SHFT_d45edcfe-7888-410c-8a7b-3dbf9e2e6d5b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ShiftResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-shift"
+        }
+      },
+      "delete": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Delete a Shift",
+        "x-ms-summary": "Delete Shift by ID",
+        "description": "This operation deletes a Shift using the Shift's unique ID.",
+        "operationId": "DeleteShift",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "shiftId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Shift ID",
+            "description": "The unique ID of the Shift.",
+            "x-ms-test-value": "SHFT_d45edcfe-7888-410c-8a7b-3dbf9e2e6d5b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shift Deleted"
+          },
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#delete-a-shift"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShifts": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Open Shifts",
+        "x-ms-summary": "List all team Open Shifts",
+        "description": "This operation returns all Open Shifts in a team.",
+        "operationId": "ListOpenShifts",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "x-ms-summary": "From Start Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-23T07:00:00Z"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "x-ms-summary": "To End Time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "required": false,
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "format": "date-time",
+            "x-ms-test-value": "2017-07-30T07:00:00Z"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Open Shifts",
+                  "type": "array",
+                  "x-ms-summary": "Open Shifts List",
+                  "items": {
+                    "$ref": "#/definitions/OpenShiftResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-open-shifts"
+        }
+      },
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "operationId": "CreateOpenShift",
+        "summary": "Create a new Open Shift",
+        "x-ms-summary": "Create a new Open Shift",
+        "description": "Create a new Open Shift in a Schedule.",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "x-ms-summary": "Create Open Shift request",
+            "description": "The request to create an Open Shift",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditOpenShiftRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OpenShiftResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#create-a-new-open-shift"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShifts/{openShiftId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get an Open Shift",
+        "x-ms-summary": "Get Open Shift by ID",
+        "description": "This operation returns details for an Open Shift.",
+        "operationId": "GetOpenShift",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Open Shift ID",
+            "description": "The unique ID of the Open Shift.",
+            "x-ms-test-value": "OPNSHFT_577b75d2-a927-48c0-a5d1-dc984894e7b8"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OpenShiftResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-an-open-shift"
+        }
+      },
+      "put": {
+        "tags": [
+          "Shifts"
+        ],
+        "operationId": "UpdateOpenShift",
+        "summary": "Update an Open Shift",
+        "x-ms-summary": "Update an Open Shift",
+        "description": "Update an Open Shift in a Schedule.",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Open Shift ID",
+            "description": "The unique ID of the Open Shift.",
+            "x-ms-test-value": "OPNSHFT_577b75d2-a927-48c0-a5d1-dc984894e7b8"
+          },
+          {
+            "name": "request",
+            "x-ms-summary": "Update Open Shift request",
+            "description": "The request to update an Open Shift.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EditOpenShiftRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OpenShiftResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#update-an-open-shift"
+        }
+      },
+      "delete": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Delete an Open Shift",
+        "x-ms-summary": "Delete Open Shift by ID",
+        "description": "This operation deletes an Open Shift.",
+        "operationId": "DeleteOpenShift",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Open Shift ID",
+            "description": "The unique ID of the Open Shift.",
+            "x-ms-test-value": "OPNSHFT_577b75d2-a927-48c0-a5d1-dc984894e7b8"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Open Shift Deleted"
+          },
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#delete-an-open-shift"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timeOffReasons": {
+      "get": {
+        "tags": [
+          "TimeOffReasons"
+        ],
+        "summary": "List all Time Off Reasons",
+        "x-ms-summary": "List Time Off Reasons",
+        "description": "This operation returns the list of Time Off Reasons associated with a team.",
+        "operationId": "ListTimeOffReasons",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetTimeOffReasonsResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-time-off-reasons"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/schedulinggroups": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Scheduling Groups",
+        "x-ms-summary": "List all Scheduling Groups",
+        "description": "This operation returns all Scheduling Groups in a Schedule.",
+        "operationId": "ListSchedulingGroups",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Scheduling Groups.",
+                  "type": "array",
+                  "x-ms-summary": "Scheduling Groups List",
+                  "items": {
+                    "$ref": "#/definitions/SchedulingGroupResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-scheduling-groups"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/schedulinggroups/{schedulingGroupId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get a Scheduling Group",
+        "x-ms-summary": "Get Scheduling Group by ID",
+        "description": "This operation returns details for a Scheduling Group using its unique ID.",
+        "operationId": "GetSchedulingGroup",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "schedulingGroupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Scheduling Group ID",
+            "description": "The unique ID of the Scheduling Group.",
+            "x-ms-test-value": "TAG_f914d037-00a3-4ba4-b712-ef178cbea263"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SchedulingGroupResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-scheduling-group"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timeOffRequests": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Time Off requests",
+        "x-ms-summary": "Time Off Requests List",
+        "description": "This operation returns all Time Off requests in a Schedule.",
+        "operationId": "ListTimeOffRequests",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Request state filter",
+            "required": false,
+            "x-ms-summary": "Request State",
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "declined"
+            ],
+            "x-ms-enum-values": [
+              {
+                "displayName": "Pending",
+                "value": "pending"
+              },
+              {
+                "displayName": "Approved",
+                "value": "approved"
+              },
+              {
+                "displayName": "Declined",
+                "value": "declined"
+              }
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Time Off requests.",
+                  "type": "array",
+                  "x-ms-summary": "Time Off Requests List",
+                  "items": {
+                    "$ref": "#/definitions/TimeOffRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-time-off-requests"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timeOffRequests/{timeOffRequestId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get a Time Off request",
+        "x-ms-summary": "Get a Time Off request by ID",
+        "description": "This operation returns a Time Off request by ID.",
+        "operationId": "GetTimeOffShiftRequest",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "timeOffRequestId",
+            "in": "path",
+            "x-ms-summary": "Time Off Request ID",
+            "description": "The unique ID of the Time Off request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TimeOffRequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-time-off-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timeOffRequests/{timeOffRequestId}/approve": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Approve a Time Off request",
+        "x-ms-summary": "Approve a Time Off request",
+        "description": "This operation allows managers to approve a Time Off request.",
+        "operationId": "TimeOffRequestApprove",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "timeOffRequestId",
+            "in": "path",
+            "x-ms-summary": "Time Off Request ID",
+            "description": "The unique ID of the Time Off request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Manager approves a Time Off request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Manager",
+                  "description": "A message from the manager to the sender/recipient when a request is accepted.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#approve-a-time-off-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/timeOffRequests/{timeOffRequestId}/decline": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Decline a Time Off request",
+        "x-ms-summary": "Decline a Time Off request",
+        "description": "This operation allows managers to decline a Time Off request.",
+        "operationId": "TimeOffRequestDecline",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "timeOffRequestId",
+            "in": "path",
+            "x-ms-summary": "Time Off Request ID",
+            "description": "The unique ID of the Time Off request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Manager declines a Time Off request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Manager",
+                  "description": "A message from the manager to the sender/recipient when a request is declined.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#decline-a-time-off-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/offerShiftRequests": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Offer Shift requests",
+        "x-ms-summary": "Offer Shift Requests List",
+        "description": "This operation returns all Offer Shift requests in a Schedule.",
+        "operationId": "ListOfferShiftRequests",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Request state filter",
+            "required": false,
+            "x-ms-summary": "Request State",
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "declined"
+            ],
+            "x-ms-enum-values": [
+              {
+                "displayName": "Pending",
+                "value": "pending"
+              },
+              {
+                "displayName": "Approved",
+                "value": "approved"
+              },
+              {
+                "displayName": "Declined",
+                "value": "declined"
+              }
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Offer Shift requests.",
+                  "type": "array",
+                  "x-ms-summary": "Offer Shift Requests List",
+                  "items": {
+                    "$ref": "#/definitions/OfferShiftRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-offer-shift-requests"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/offerShiftRequests/{offerShiftRequestId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get an Offer Shift request",
+        "x-ms-summary": "Get an Offer Shift request by ID",
+        "description": "This operation returns an Offer Shift request by ID.",
+        "operationId": "GetOfferShiftRequest",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "offerShiftRequestId",
+            "in": "path",
+            "x-ms-summary": "Offer Shift Request ID",
+            "description": "The unique ID of the Offer Shift request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OfferShiftRequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-an-offer-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/offerShiftRequests/{offerShiftRequestId}/approve": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Approve an Offer Shift request",
+        "x-ms-summary": "Approve an Offer Shift request",
+        "description": "This operation allows recipients/managers to approve an Offer Shift request.",
+        "operationId": "OfferShiftRequestApprove",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "offerShiftRequestId",
+            "in": "path",
+            "x-ms-summary": "Offer Shift Request ID",
+            "description": "The unique ID of the Offer Shift request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Approve an Offer Shift request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Recipient/Manager",
+                  "description": "A message when a request is accepted.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#approve-an-offer-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/offerShiftRequests/{offerShiftRequestId}/decline": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Decline an Offer Shift request",
+        "x-ms-summary": "Decline an Offer Shift request",
+        "description": "This operation allows users to decline an Offer Shift request.",
+        "operationId": "OfferShiftRequestDecline",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "offerShiftRequestId",
+            "in": "path",
+            "x-ms-summary": "Offer Shift Request ID",
+            "description": "The unique ID of the Offer Shift request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Recipient/Manager declines an Offer Shift request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Recipient/Manager",
+                  "description": "A message when a request is declined.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#decline-an-offer-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/swapShiftsChangeRequests": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Swap Shifts requests",
+        "x-ms-summary": "Swap Shifts Requests List",
+        "description": "This operation returns all Swap Shifts requests in a Schedule.",
+        "operationId": "ListSwapShiftsChangeRequests",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Request state filter",
+            "required": false,
+            "x-ms-summary": "Request State",
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "declined"
+            ],
+            "x-ms-enum-values": [
+              {
+                "displayName": "Pending",
+                "value": "pending"
+              },
+              {
+                "displayName": "Approved",
+                "value": "approved"
+              },
+              {
+                "displayName": "Declined",
+                "value": "declined"
+              }
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Swap Shifts Change Requests.",
+                  "type": "array",
+                  "x-ms-summary": "Swap Shifts Change Requests List",
+                  "items": {
+                    "$ref": "#/definitions/SwapShiftsChangeRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-swap-shifts-requests"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/swapShiftsChangeRequests/{swapShiftsChangeRequestId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get a Swap Shifts request",
+        "x-ms-summary": "Get a Swap Shifts request",
+        "description": "This operation returns a Swap Shifts request by ID.",
+        "operationId": "GetSwapShiftsChangeRequest",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "swapShiftsChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Swap Shifts Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SwapShiftsChangeRequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-a-swap-shifts-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/swapShiftsChangeRequests/{swapShiftsChangeRequestId}/approve": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Approve a Swap Shifts request",
+        "x-ms-summary": "Approve a Swap Shifts request",
+        "description": "This operation allows a user to approve a Swap Shifts request.",
+        "operationId": "SwapShiftsChangeRequestApprove",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "swapShiftsChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Swap Shifts Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Approve a Swap Shifts change request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Recipient/Manager",
+                  "description": "A message when a request is accepted.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#approve-a-swap-shifts-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/swapShiftsChangeRequests/{swapShiftsChangeRequestId}/decline": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Decline a Swap Shifts request",
+        "x-ms-summary": "Decline a Swap Shifts request",
+        "description": "This operation allows users to decline a Swap Shifts request.",
+        "operationId": "SwapShiftsChangeRequestDecline",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "swapShiftsChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Swap Shifts Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Decline a Swap Shifts change request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Recipient/Manager",
+                  "description": "A message when a request is declined.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#decline-a-swap-shifts-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShiftChangeRequests": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "List all Open Shift requests",
+        "x-ms-summary": "Open Shift Requests List",
+        "description": "This operation returns all Open Shift change requests in a Schedule.",
+        "operationId": "ListOpenShiftChangeRequests",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "Items per page (enable Pagination under .../Settings)",
+            "required": false,
+            "x-ms-summary": "Page Size",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Request state filter",
+            "required": false,
+            "x-ms-summary": "Request State",
+            "x-ms-visibility": "advanced",
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "declined"
+            ],
+            "x-ms-enum-values": [
+              {
+                "displayName": "Pending",
+                "value": "pending"
+              },
+              {
+                "displayName": "Approved",
+                "value": "approved"
+              },
+              {
+                "displayName": "Declined",
+                "value": "declined"
+              }
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "x-ms-visibility": "internal"
+                },
+                "value": {
+                  "description": "List of Open Shift Change Requests.",
+                  "type": "array",
+                  "x-ms-summary": "Open Shift Change Requests List",
+                  "items": {
+                    "$ref": "#/definitions/OpenShiftChangeRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#list-all-open-shift-requests"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShiftChangeRequests/{openShiftChangeRequestId}": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Get an Open Shift request",
+        "x-ms-summary": "Get an Open Shift request by ID",
+        "description": "This operation returns an Open Shift change request by ID.",
+        "operationId": "GetOpenShiftChangeRequest",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Open Shift Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OpenShiftChangeRequestResponse"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#get-an-open-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShiftChangeRequests/{openShiftChangeRequestId}/approve": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Approve an Open Shift request",
+        "x-ms-summary": "Approve an Open Shift request",
+        "description": "This operation allows managers to approve an Open Shift request.",
+        "operationId": "OpenShiftChangeRequestApprove",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Open Shift Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Manager approves an Open Shift change request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Manager",
+                  "description": "A message from the manager to the sender/recipient when a request is accepted.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#approve-an-open-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/v1.0/teams/{teamId}/schedule/openShiftChangeRequests/{openShiftChangeRequestId}/decline": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Decline an Open Shift request",
+        "x-ms-summary": "Decline an Open Shift request",
+        "description": "This operation allows managers to decline an Open Shift request.",
+        "operationId": "OpenShiftChangeRequestDecline",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "openShiftChangeRequestId",
+            "in": "path",
+            "x-ms-summary": "Open Shift Change Request ID",
+            "description": "The unique ID of the request",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "description": "Manager declines an Open Shift change request.",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "x-ms-summary": "Message From Manager",
+                  "description": "A message from the manager to the sender/recipient when a request is declined.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#decline-an-open-shift-request"
+        }
+      }
+    },
+    "/{connectionId}/trigger/teams/{teamId}/openshiftchangerequests": {
+      "post": {
+        "tags": [
+          "ShiftRequests"
+        ],
+        "summary": "When an Open Shift request is created, updated or deleted",
+        "x-ms-summary": "When an Open Shift request is created, updated or deleted",
+        "description": "This operation triggers when an Open Shift request is created, updated or deleted.",
+        "operationId": "TriggerForOpenShiftChangeRequests",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebHookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response for a trigger subscription",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create an Open Shift change request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#when-an-open-shift-request-is-created%2c-updated-or-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details of Webhook notification",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/trigger/teams/{teamId}/swapshiftschangerequests": {
+      "post": {
+        "tags": [
+          "ShiftRequests"
+        ],
+        "summary": "When a Swap Shifts request is created, updated or deleted",
+        "x-ms-summary": "When a Swap Shifts request is created, updated or deleted",
+        "description": "This operation triggers when a Swap Shifts request is created, updated or deleted.",
+        "operationId": "TriggerForSwapShiftsChangeRequests",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebHookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response for a trigger subscription",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a Swap Shifts request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#when-a-swap-shifts-request-is-created%2c-updated-or-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details of Webhook notification",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/trigger/teams/{teamId}/offershiftrequests": {
+      "post": {
+        "tags": [
+          "ShiftRequests"
+        ],
+        "summary": "When an Offer Shift request is created, updated or deleted",
+        "x-ms-summary": "When an Offer Shift request is created, updated or deleted",
+        "description": "This operation triggers when an Offer Shift request is created, updated or deleted.",
+        "operationId": "TriggerForOfferShiftRequests",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebHookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response for a trigger subscription",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create an Offer Shift request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#when-an-offer-shift-request-is-created%2c-updated-or-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details of Webhook notification",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/trigger/teams/{teamId}/timeoffrequests": {
+      "post": {
+        "tags": [
+          "ShiftRequests"
+        ],
+        "summary": "When a Time Off request is created, updated or deleted",
+        "x-ms-summary": "When a Time Off request is created, updated or deleted",
+        "description": "This operation triggers when a Time Off request is created, updated or deleted.",
+        "operationId": "TriggerForTimeOffRequests",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebHookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response for a trigger subscription",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a Time Off request.",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#when-a-time-off-request-is-created%2c-updated-or-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details of Webhook notification",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/trigger/teams/{teamId}/shifts": {
+      "post": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "When a Shift is created, updated or deleted",
+        "x-ms-summary": "When a Shift is created, updated or deleted",
+        "description": "This operation triggers when a Shift is created, updated or deleted.",
+        "operationId": "TriggerForShifts",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/teamId__in_path"
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebHookRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response for a trigger subscription",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-trigger": "batch",
+        "x-ms-trigger-hint": "To see it work now, create a Shift.",
+        "x-ms-visibility": "advanced",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#when-a-shift-is-created%2c-updated-or-deleted"
+        }
+      },
+      "x-ms-notification-content": {
+        "description": "Details of Webhook notification",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/beta/subscriptions/{subscriptionId}": {
+      "delete": {
+        "summary": "Delete WebHook Subscription",
+        "x-ms-summary": "Delete WebHook Subscription",
+        "description": "Delete WebHook Subscription",
+        "operationId": "DeleteWebHookSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#delete-webhook-subscription"
+        }
+      },
+      "patch": {
+        "summary": "Update subscription",
+        "x-ms-summary": "Renew WebHook Subscription",
+        "description": "Renew a Microsoft Graph webhook subscription by updating its expiration time.",
+        "operationId": "RenewWebHookSubscription",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "expirationDateTime": {
+                  "type": "string",
+                  "description": "Specify the date and time, in UTC format, of when the Microsoft Graph webhook subscription expires. The maximum expiration time for security alerts is 43200 minutes (under 30 days).",
+                  "title": "Expiration date time",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "AAD": []
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#update-subscription"
+        }
+      }
+    },
+    "/whr": {
+      "post": {
+        "summary": "Proxy endpoint to validate subscriptions and forward notifications",
+        "description": "Proxy endpoint that receives notifications from the GraphAPI and validates subscriptions.",
+        "operationId": "WebhookResponse",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false,
+        "security": [],
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/shifts/#proxy-endpoint-to-validate-subscriptions-and-forward-notifications"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WebHookRequest": {
+      "type": "object",
+      "required": [
+        "notificationUrl"
+      ],
+      "properties": {
+        "notificationUrl": {
+          "type": "string",
+          "description": "Specify a well-formed URL of the endpoint that will receive notifications.",
+          "title": "Notification URL",
+          "x-ms-notification-url": true,
+          "x-ms-visibility": "internal"
+        }
+      }
+    },
+    "WebhookPushResponse": {
+      "description": "Payload from backend containing subscription metadata as well as data",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of values",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WebhookNotificationEntity"
+          }
+        }
+      }
+    },
+    "WebhookNotificationEntity": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "WebHook Subscription Id",
+          "x-ms-summary": "WebHook Subscription Id",
+          "x-ms-visibility": "internal"
+        },
+        "expirationDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "x-ms-summary": "Expiration time for webhook subscription",
+          "x-ms-visibility": "internal"
+        },
+        "changeType": {
+          "type": "string",
+          "x-ms-summary": "Change Type",
+          "description": "Resource change type (created/updated/deleted).",
+          "x-ms-visibility": "advanced"
+        },
+        "resourceData": {
+          "$ref": "#/definitions/WebhookPushResponseResourceEntity"
+        }
+      }
+    },
+    "WebhookPushResponseResourceEntity": {
+      "type": "object",
+      "properties": {
+        "@odata.id": {
+          "type": "string",
+          "description": "Full resource path.",
+          "x-ms-summary": "Resource Path",
+          "x-ms-visibility": "internal"
+        },
+        "@odata.type": {
+          "type": "string",
+          "description": "Resoure Type.",
+          "x-ms-summary": "Resource Type",
+          "x-ms-visibility": "internal"
+        },
+        "id": {
+          "type": "string",
+          "description": "ID of the resource that is updated.",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Resource ID"
+        },
+        "teamId": {
+          "type": "string",
+          "description": "ID of team where the update happened.",
+          "x-ms-visibility": "advanced",
+          "x-ms-summary": "Team ID"
+        }
+      }
+    },
+    "Subscription": {
+      "type": "object",
+      "title": "Subscription",
+      "description": "A single subscription entity returned",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "Unique identifier for the subscription."
+        },
+        "resource": {
+          "type": "string",
+          "title": "Resource",
+          "description": "Specifies the resource that will be monitored for changes."
+        },
+        "applicationId": {
+          "type": "string",
+          "title": "Application Id",
+          "description": "Identifier of the application used to create the subscription."
+        },
+        "changeType": {
+          "type": "string",
+          "title": "Change type",
+          "description": "Indicates the type of change in the subscribed resource that will raise a notification.",
+          "enum": [
+            "created",
+            "updated",
+            "deleted"
+          ]
+        },
+        "clientState": {
+          "type": "string",
+          "title": "Client state",
+          "description": "Specifies the value of the clientState property sent by the service in each notification. The maximum length is 128 characters. The client can check that the notification came from the service by comparing the value of the clientState property sent with the subscription with the value of the clientState property received with each notification."
+        },
+        "notificationUrl": {
+          "type": "string",
+          "title": "Notification URL",
+          "description": "The URL of the endpoint that will receive the notifications. This URL must make use of the HTTPS protocol."
+        },
+        "expirationDateTime": {
+          "type": "string",
+          "title": "Expiration date time",
+          "description": "Specifies the date and time when the webhook subscription expires (UTC)."
+        },
+        "creatorId": {
+          "type": "string",
+          "title": "Creator Id",
+          "description": "Identifier of the user or service principal that created the subscription. If the app used delegated permissions to create the subscription, this field contains the id of the signed-in user the app called on behalf of. If the app used application permissions, this field contains the id of the service principal corresponding to the app."
+        }
+      }
+    },
+    "ScheduleResponse": {
+      "description": "Schedule Entity.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "Schedule ID",
+          "description": "The unique ID of the Schedule.",
+          "type": "string"
+        },
+        "timeZone": {
+          "x-ms-summary": "Schedule Time Zone",
+          "description": "The Time Zone of the Schedule.",
+          "type": "string"
+        },
+        "provisionStatus": {
+          "x-ms-summary": "Schedule Provision Status",
+          "description": "The Provision Status of the Schedule.",
+          "type": "string"
+        },
+        "provisionStatusCode": {
+          "x-ms-summary": "Schedule Provision Status Code",
+          "description": "The Provision Status Code of the Schedule.",
+          "type": "string"
+        }
+      }
+    },
+    "TimeOffResponse": {
+      "x-ms-summary": "Time Off",
+      "description": "Time Off Entity.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Time Off.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "userId": {
+          "x-ms-summary": "Assigned To User ID",
+          "description": "Assigned To User ID.",
+          "type": "string"
+        },
+        "sharedTimeOff": {
+          "$ref": "#/definitions/SharedTimeOff"
+        },
+        "draftTimeOff": {
+          "$ref": "#/definitions/DraftTimeOff"
+        }
+      }
+    },
+    "SharedTimeOff": {
+      "x-ms-summary": "",
+      "description": "Shared version of the Time Off.",
+      "type": "object",
+      "properties": {
+        "timeOffReasonId": {
+          "x-ms-summary": "Time Off Reason ID",
+          "description": "Time Off Reason ID.",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        }
+      }
+    },
+    "DraftTimeOff": {
+      "x-ms-summary": "Draft Changes >",
+      "description": "Preliminary version of the Time Off",
+      "type": "object",
+      "properties": {
+        "timeOffReasonId": {
+          "x-ms-summary": "Time Off Reason ID",
+          "description": "Time Off Reason ID.",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        }
+      }
+    },
+    "ShiftResponse": {
+      "x-ms-summary": "Shift",
+      "description": "Shift Entity.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Shift.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "userId": {
+          "x-ms-summary": "Assigned To User ID",
+          "description": "Assigned To User ID.",
+          "type": "string"
+        },
+        "schedulingGroupId": {
+          "x-ms-summary": "Scheduling Group ID",
+          "description": "Scheduling Group ID.",
+          "type": "string"
+        },
+        "sharedShift": {
+          "$ref": "#/definitions/SharedShift"
+        },
+        "draftShift": {
+          "$ref": "#/definitions/DraftShift"
+        }
+      }
+    },
+    "SharedShift": {
+      "x-ms-summary": "",
+      "description": "Shared version of the Shift.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "x-ms-summary": "Display Name",
+          "description": "Display Name.",
+          "type": "string"
+        },
+        "notes": {
+          "x-ms-summary": "Notes",
+          "description": "Shift Notes.",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        },
+        "activities": {
+          "$ref": "#/definitions/Activities"
+        }
+      }
+    },
+    "DraftShift": {
+      "x-ms-summary": "Draft Changes >",
+      "description": "Preliminary version of the Shift",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "x-ms-summary": "Display Name",
+          "description": "Display Name",
+          "type": "string"
+        },
+        "notes": {
+          "x-ms-summary": "Notes",
+          "description": "Notes",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        },
+        "activities": {
+          "$ref": "#/definitions/Activities"
+        }
+      }
+    },
+    "Theme": {
+      "x-ms-summary": "Theme",
+      "description": "Theme color.",
+      "x-ms-visibility": "advanced",
+      "type": "string",
+      "default": "white",
+      "enum": [
+        "white",
+        "blue",
+        "green",
+        "purple",
+        "pink",
+        "yellow",
+        "gray",
+        "darkblue",
+        "darkgreen",
+        "darkpurple",
+        "darkpink",
+        "darkyellow"
+      ],
+      "x-ms-enum-values": [
+        {
+          "displayName": "White",
+          "value": "white"
+        },
+        {
+          "displayName": "Blue",
+          "value": "blue"
+        },
+        {
+          "displayName": "Green",
+          "value": "green"
+        },
+        {
+          "displayName": "Purple",
+          "value": "purple"
+        },
+        {
+          "displayName": "Pink",
+          "value": "pink"
+        },
+        {
+          "displayName": "Yellow",
+          "value": "yellow"
+        },
+        {
+          "displayName": "Gray",
+          "value": "gray"
+        },
+        {
+          "displayName": "Dark Blue",
+          "value": "darkblue"
+        },
+        {
+          "displayName": "Dark Green",
+          "value": "darkgreen"
+        },
+        {
+          "displayName": "Dark Purple",
+          "value": "darkpurple"
+        },
+        {
+          "displayName": "Dark Pink",
+          "value": "darkpink"
+        },
+        {
+          "displayName": "Dark Yellow",
+          "value": "darkyellow"
+        }
+      ]
+    },
+    "Activities": {
+      "x-ms-summary": "Activities",
+      "description": "Shift activities",
+      "type": "array",
+      "x-ms-visibility": "advanced",
+      "items": {
+        "description": "Shift activity",
+        "type": "object",
+        "x-ms-summary": "Activity",
+        "properties": {
+          "isPaid": {
+            "x-ms-summary": "Is Paid",
+            "description": "Is Paid",
+            "type": "boolean"
+          },
+          "startDateTime": {
+            "x-ms-summary": "Start Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "endDateTime": {
+            "x-ms-summary": "End Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "code": {
+            "x-ms-summary": "Code",
+            "description": "Code",
+            "type": "string"
+          },
+          "displayName": {
+            "x-ms-summary": "Display Name",
+            "description": "Display Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "startDateTime",
+          "endDateTime"
+        ]
+      }
+    },
+    "SchedulingGroupResponse": {
+      "x-ms-summary": "Scheduling Group",
+      "description": "Scheduling Group Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Scheduling Group.",
+          "type": "string"
+        },
+        "displayName": {
+          "x-ms-summary": "Display Name",
+          "description": "The display name for the Scheduling Group.",
+          "type": "string"
+        },
+        "isActive": {
+          "x-ms-summary": "Is Active",
+          "description": "Indicates whether the Scheduling Group can be used when creating new entities or updating existing ones.",
+          "type": "boolean"
+        },
+        "userIds": {
+          "x-ms-summary": "User IDs",
+          "description": "List of IDs of users in the Scheduling Group.",
+          "type": "array",
+          "items": {
+            "description": "The ID of a user in the Scheduling Group",
+            "type": "string",
+            "x-ms-summary": "User ID"
+          }
+        }
+      }
+    },
+    "EditOpenShiftRequest": {
+      "type": "object",
+      "properties": {
+        "schedulingGroupId": {
+          "x-ms-visibility": "important",
+          "description": "Scheduling Group ID",
+          "x-ms-summary": "Scheduling Group ID",
+          "type": "string",
+          "x-ms-dynamic-values": {
+            "value-path": "id",
+            "value-title": "displayName",
+            "operationId": "ListSchedulingGroups",
+            "value-collection": "value",
+            "parameters": {
+              "teamId": {
+                "parameter": "teamId"
+              }
+            }
+          }
+        },
+        "sharedOpenShift": {
+          "x-ms-visibility": "important",
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "x-ms-summary": "Display Name",
+              "description": "Display Name",
+              "x-ms-visibility": "advanced",
+              "type": "string"
+            },
+            "notes": {
+              "x-ms-summary": "Notes",
+              "description": "Notes",
+              "x-ms-visibility": "advanced",
+              "type": "string"
+            },
+            "startDateTime": {
+              "x-ms-summary": "Start Time",
+              "x-ms-visibility": "important",
+              "format": "date-time",
+              "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+              "type": "string"
+            },
+            "endDateTime": {
+              "x-ms-summary": "End Time",
+              "x-ms-visibility": "important",
+              "format": "date-time",
+              "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+              "type": "string"
+            },
+            "theme": {
+              "$ref": "#/definitions/Theme"
+            },
+            "openSlotCount": {
+              "x-ms-summary": "Open Slot Count",
+              "x-ms-visibility": "important",
+              "description": "Open Slot Count",
+              "type": "integer"
+            },
+            "activities": {
+              "$ref": "#/definitions/Activities"
+            }
+          },
+          "required": [
+            "startDateTime",
+            "endDateTime",
+            "openSlotCount"
+          ]
+        }
+      }
+    },
+    "OpenShiftResponse": {
+      "x-ms-summary": "Open Shift",
+      "description": "Open Shift Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Open Shift.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Date Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "schedulingGroupId": {
+          "x-ms-summary": "Scheduling Group ID",
+          "description": "Scheduling Group ID",
+          "type": "string"
+        },
+        "sharedOpenShift": {
+          "$ref": "#/definitions/SharedOpenShift"
+        },
+        "draftOpenShift": {
+          "$ref": "#/definitions/DraftOpenShift"
+        }
+      }
+    },
+    "SharedOpenShift": {
+      "x-ms-summary": "",
+      "description": "Shared version of the Open Shift",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "x-ms-summary": "Display Name",
+          "description": "Display Name",
+          "type": "string"
+        },
+        "notes": {
+          "x-ms-summary": "Notes",
+          "description": "Notes",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        },
+        "openSlotCount": {
+          "x-ms-summary": "Open Slot Count",
+          "description": "Open Slot Count",
+          "type": "integer"
+        },
+        "activities": {
+          "$ref": "#/definitions/Activities"
+        }
+      }
+    },
+    "DraftOpenShift": {
+      "x-ms-summary": "Draft Changes >",
+      "description": "Preliminary version of the Open Shift",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "x-ms-summary": "Display Name",
+          "description": "Display Name",
+          "type": "string"
+        },
+        "notes": {
+          "x-ms-summary": "Notes",
+          "description": "Notes",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/definitions/Theme"
+        },
+        "openSlotCount": {
+          "x-ms-summary": "Open Slot Count",
+          "description": "Open Slot Count",
+          "type": "integer"
+        },
+        "activities": {
+          "$ref": "#/definitions/Activities"
+        }
+      }
+    },
+    "GetTimeOffReasonsResponse": {
+      "description": "The list of Time Off Reasons.",
+      "x-ms-summary": "List of Time Off Reasons associated with a team",
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "x-ms-visibility": "internal"
+        },
+        "value": {
+          "x-ms-summary": "Array containing Time Off Reasons",
+          "description": "The list of Time Off Reasons.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-summary": "Single Time Off Reason.",
+            "description": "Time Off Reason.",
+            "properties": {
+              "id": {
+                "x-ms-summary": "Time Off Reason ID",
+                "description": "The unique ID of the Time Off Reason.",
+                "type": "string"
+              },
+              "createdDateTime": {
+                "x-ms-summary": "Created Time",
+                "format": "date-time",
+                "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+                "type": "string"
+              },
+              "lastModifiedDateTime": {
+                "x-ms-summary": "Modified Date Time",
+                "format": "date-time",
+                "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+                "type": "string"
+              },
+              "displayName": {
+                "x-ms-summary": "Display Name",
+                "description": "Display Name",
+                "type": "string"
+              },
+              "iconType": {
+                "x-ms-summary": "Icon Type",
+                "description": "Icon Type",
+                "type": "string"
+              },
+              "isActive": {
+                "x-ms-summary": "Is Active",
+                "description": "Is Active",
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "TimeOffRequestResponse": {
+      "x-ms-summary": "Time Off Request",
+      "description": "Time Off Request Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Time Off request.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "assignedTo": {
+          "x-ms-summary": "Assigned To",
+          "description": "The person the request is assigned to: 'manager' or 'recipient'",
+          "type": "string",
+          "enum": [
+            "mananger",
+            "recipient"
+          ],
+          "x-ms-enum-values": [
+            {
+              "displayName": "Mananger",
+              "value": "mananger"
+            },
+            {
+              "displayName": "Recipient",
+              "value": "recipient"
+            }
+          ]
+        },
+        "state": {
+          "x-ms-summary": "State",
+          "description": "'approved', 'pending' or 'declined'",
+          "type": "string"
+        },
+        "senderDateTime": {
+          "x-ms-summary": "Sender Time",
+          "format": "date-time",
+          "description": "Time when the request was sent",
+          "type": "string"
+        },
+        "senderMessage": {
+          "x-ms-summary": "Sender Message",
+          "description": "The message from the request sender",
+          "type": "string"
+        },
+        "senderUserId": {
+          "x-ms-summary": "Sender ID",
+          "description": "The ID of the user that sent the request",
+          "type": "string"
+        },
+        "managerActionDateTime": {
+          "x-ms-summary": "Manager Action Time",
+          "format": "date-time",
+          "description": "Time when the manager responded",
+          "type": "string"
+        },
+        "managerActionMessage": {
+          "x-ms-summary": "Manager Message",
+          "description": "The message from the manager",
+          "type": "string"
+        },
+        "managerUserId": {
+          "x-ms-summary": "Manager ID",
+          "description": "The ID of the manager that responded",
+          "type": "string"
+        },
+        "startDateTime": {
+          "x-ms-summary": "Start Time",
+          "format": "date-time",
+          "description": "Start of time requested off",
+          "type": "string"
+        },
+        "endDateTime": {
+          "x-ms-summary": "End Time",
+          "format": "date-time",
+          "description": "End of time requested off",
+          "type": "string"
+        },
+        "timeOffReasonId": {
+          "x-ms-summary": "Time Off Reason ID",
+          "description": "The ID of the Time Off Reason",
+          "type": "string"
+        }
+      }
+    },
+    "OfferShiftRequestResponse": {
+      "x-ms-summary": "Offer Shift Request",
+      "description": "Offer Shift Request Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Offer Shift request.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "assignedTo": {
+          "x-ms-summary": "Assigned To",
+          "description": "The person the request is assigned to: 'manager' or 'recipient'",
+          "type": "string",
+          "enum": [
+            "mananger",
+            "recipient"
+          ],
+          "x-ms-enum-values": [
+            {
+              "displayName": "Mananger",
+              "value": "mananger"
+            },
+            {
+              "displayName": "Recipient",
+              "value": "recipient"
+            }
+          ]
+        },
+        "state": {
+          "x-ms-summary": "State",
+          "description": "'approved', 'pending' or 'declined'",
+          "type": "string"
+        },
+        "senderDateTime": {
+          "x-ms-summary": "Sender Time",
+          "format": "date-time",
+          "description": "Time when the request was sent",
+          "type": "string"
+        },
+        "senderMessage": {
+          "x-ms-summary": "Sender Message",
+          "description": "The message from the request sender",
+          "type": "string"
+        },
+        "senderUserId": {
+          "x-ms-summary": "Sender ID",
+          "description": "The ID of the user that sent the request",
+          "type": "string"
+        },
+        "senderShiftId": {
+          "x-ms-summary": "Sender Shift ID",
+          "description": "The ID of the Shift from the sender",
+          "type": "string"
+        },
+        "recipientActionDateTime": {
+          "x-ms-summary": "Receiver Time",
+          "format": "date-time",
+          "description": "Time when the recipient responded",
+          "type": "string"
+        },
+        "recipientActionMessage": {
+          "x-ms-summary": "Recipient Message",
+          "description": "The message from the recipient",
+          "type": "string"
+        },
+        "recipientUserId": {
+          "x-ms-summary": "Recipient ID",
+          "description": "The ID of the recipient of the request",
+          "type": "string"
+        },
+        "managerActionDateTime": {
+          "x-ms-summary": "Manager Action Time",
+          "format": "date-time",
+          "description": "Time when the manager responded",
+          "type": "string"
+        },
+        "managerActionMessage": {
+          "x-ms-summary": "Manager Message",
+          "description": "The message from the manager",
+          "type": "string"
+        },
+        "managerUserId": {
+          "x-ms-summary": "Manager ID",
+          "description": "The ID of the manager that responded",
+          "type": "string"
+        }
+      }
+    },
+    "SwapShiftsChangeRequestResponse": {
+      "x-ms-summary": "Swap Shift Request",
+      "description": "Swap Shift Request Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Swap Shift request.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "assignedTo": {
+          "x-ms-summary": "Assigned To",
+          "description": "The person the request is assigned to: 'manager' or 'recipient'",
+          "type": "string",
+          "enum": [
+            "mananger",
+            "recipient"
+          ],
+          "x-ms-enum-values": [
+            {
+              "displayName": "Mananger",
+              "value": "mananger"
+            },
+            {
+              "displayName": "Recipient",
+              "value": "recipient"
+            }
+          ]
+        },
+        "state": {
+          "x-ms-summary": "State",
+          "description": "'approved', 'pending' or 'declined'",
+          "type": "string"
+        },
+        "senderDateTime": {
+          "x-ms-summary": "Sender Time",
+          "format": "date-time",
+          "description": "Time when the request was sent",
+          "type": "string"
+        },
+        "senderMessage": {
+          "x-ms-summary": "Sender Message",
+          "description": "The message from the request sender",
+          "type": "string"
+        },
+        "senderUserId": {
+          "x-ms-summary": "Sender ID",
+          "description": "The ID of the user that sent the request",
+          "type": "string"
+        },
+        "senderShiftId": {
+          "x-ms-summary": "Sender Shift ID",
+          "description": "The ID of the Shift from the sender",
+          "type": "string"
+        },
+        "recipientActionDateTime": {
+          "x-ms-summary": "Receiver Time",
+          "format": "date-time",
+          "description": "Time when the recipient responded",
+          "type": "string"
+        },
+        "recipientActionMessage": {
+          "x-ms-summary": "Recipient Message",
+          "description": "The message from the recipient",
+          "type": "string"
+        },
+        "recipientUserId": {
+          "x-ms-summary": "Recipient ID",
+          "description": "The ID of the recipient of the request",
+          "type": "string"
+        },
+        "recipientShiftId": {
+          "x-ms-summary": "Recipient Shift ID",
+          "description": "The ID of the Shift from the recipient",
+          "type": "string"
+        },
+        "managerActionDateTime": {
+          "x-ms-summary": "Manager Action Time",
+          "format": "date-time",
+          "description": "Time when the manager responded",
+          "type": "string"
+        },
+        "managerActionMessage": {
+          "x-ms-summary": "Manager Message",
+          "description": "The message from the manager",
+          "type": "string"
+        },
+        "managerUserId": {
+          "x-ms-summary": "Manager ID",
+          "description": "The ID of the manager that responded",
+          "type": "string"
+        }
+      }
+    },
+    "OpenShiftChangeRequestResponse": {
+      "x-ms-summary": "Open Shift Change Request",
+      "description": "Open Shift Change Request Entity",
+      "type": "object",
+      "properties": {
+        "id": {
+          "x-ms-summary": "ID",
+          "description": "The unique ID of the Open Shift Change request.",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "x-ms-summary": "Created Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "x-ms-summary": "Modified Time",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+          "type": "string"
+        },
+        "assignedTo": {
+          "x-ms-summary": "Assigned To",
+          "description": "The person the request is assigned to: 'manager' or 'recipient'",
+          "type": "string",
+          "enum": [
+            "mananger",
+            "recipient"
+          ],
+          "x-ms-enum-values": [
+            {
+              "displayName": "Mananger",
+              "value": "mananger"
+            },
+            {
+              "displayName": "Recipient",
+              "value": "recipient"
+            }
+          ]
+        },
+        "state": {
+          "x-ms-summary": "State",
+          "description": "'approved', 'pending' or 'declined'",
+          "type": "string"
+        },
+        "senderDateTime": {
+          "x-ms-summary": "Sender Time",
+          "format": "date-time",
+          "description": "Time when the request was sent",
+          "type": "string"
+        },
+        "senderMessage": {
+          "x-ms-summary": "Sender Message",
+          "description": "The message from the request sender",
+          "type": "string"
+        },
+        "senderUserId": {
+          "x-ms-summary": "Sender ID",
+          "description": "The ID of the user that sent the request",
+          "type": "string"
+        },
+        "managerActionDateTime": {
+          "x-ms-summary": "Manager Action Time",
+          "format": "date-time",
+          "description": "Time when the manager responded",
+          "type": "string"
+        },
+        "managerActionMessage": {
+          "x-ms-summary": "Manager Message",
+          "description": "The message from the manager",
+          "type": "string"
+        },
+        "managerUserId": {
+          "x-ms-summary": "Manager ID",
+          "description": "The ID of the manager that responded",
+          "type": "string"
+        },
+        "openShiftId": {
+          "x-ms-summary": "Open Shift ID",
+          "description": "The ID of the Open Shift being requested",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "produces": [],
+  "responses": {},
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://docs.microsoft.com/en-us/microsoftteams/expand-teams-across-your-org/shifts-for-teams-landing-page"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/privacystatement"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/shifts"
+  }
+}
