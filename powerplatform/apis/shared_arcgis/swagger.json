@@ -3,7 +3,7 @@
   "info": {
     "description": "ArcGIS connects your automated workflows to resources from your ArcGIS organization. Access geoenrichment, geocoding, and routing services to add demographics and location information to your data. You can also use ArcGIS to create feature layers and fetch data from existing feature layers in your ArcGIS organization.",
     "title": "ArcGIS",
-    "version": "2022.2.1",
+    "version": "2023.2.0",
     "contact": {
       "name": "Esri Power Automate Support",
       "url": "https://community.esri.com/t5/arcgis-for-power-bi-questions/bd-p/arcgis-for-power-bi-questions",
@@ -20,144 +20,48 @@
   ],
   "consumes": [],
   "produces": [],
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://www.arcgis.com/sharing/rest/oauth2/authorize",
+      "tokenUrl": "https://www.arcgis.com/sharing/rest/oauth2/token/",
+      "scopes": {
+        "admin": "admin"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "admin"
+      ]
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.esri.com/powerbi/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.esri.com/en-us/privacy/privacy-statements/privacy-statement"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "IT Operations; Business Intelligence"
+    }
+  ],
   "paths": {
-    "/{connectionId}/v1/dynamicvalues/coordinatesystems": {
-      "get": {
-        "summary": "Get spatial reference systems",
-        "description": "Coordinate systems",
-        "operationId": "GetSRS",
-        "x-ms-visibility": "internal",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Get SRS",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "x-ms-summary": "Spatial reference system name",
-                    "type": "string",
-                    "description": "name"
-                  },
-                  "id": {
-                    "type": "number",
-                    "description": "Well-known ID"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-spatial-reference-systems"
-        },
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          }
-        ]
-      }
-    },
-    "/{connectionId}/v1/dynamicvalues/layersearchoptions": {
-      "get": {
-        "summary": "Get layer search options",
-        "description": "Layer search options",
-        "operationId": "GetLayerSearchOptions",
-        "x-ms-visibility": "internal",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Layer Search",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-layer-search-options"
-        },
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          }
-        ]
-      }
-    },
-    "/{connectionId}/v1/dynamicvalues/geoenrichment/country": {
-      "get": {
-        "summary": "Get list of countries",
-        "description": "Geoenrichment-countries",
-        "operationId": "GetGeoenrichmentCountries",
-        "x-ms-visibility": "internal",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Country list success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-list-of-countries"
-        },
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          }
-        ]
-      }
-    },
-    "/{connectionId}/v1/dynamicvalues/geoenrichment/datacollection": {
-      "get": {
-        "summary": "Get data collections available for the country",
-        "operationId": "GetGeoenrichmentDataCollections",
-        "produces": [
-          "application/json"
-        ],
-        "x-ms-visibility": "internal",
+    "/{connectionId}/v1/attachment/addattachment": {
+      "post": {
+        "summary": "Add attachment",
+        "description": "Add an attachment to record in a feature layer.",
+        "operationId": "AddAttachment",
+        "x-ms-visibility": "important",
+        "deprecated": false,
         "parameters": [
           {
             "name": "connectionId",
@@ -167,44 +71,82 @@
             "x-ms-visibility": "internal"
           },
           {
-            "$ref": "#/parameters/country"
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "name": "objectId",
+            "in": "query",
+            "type": "number",
+            "description": "Object ID of the record associated with the attachment",
+            "x-ms-summary": "Record ID",
+            "required": true
+          },
+          {
+            "name": "attachmentName",
+            "in": "query",
+            "type": "string",
+            "description": "Name of the file that will be attached",
+            "x-ms-summary": "Attachment name",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "x-ms-summary": "File content",
+            "description": "File content from another action such as 'Get file content' (OneDrive, Share Point)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          {
+            "name": "keywords",
+            "in": "query",
+            "type": "string",
+            "description": "Keywords used to identify the attachment",
+            "x-ms-summary": "Keywords",
+            "required": false,
+            "x-ms-visibility": "advanced"
           }
         ],
         "responses": {
           "200": {
-            "description": "Data collection list success",
+            "description": "Add attachment",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "x-ms-summary": "Data collection name",
-                    "type": "string",
-                    "description": "name"
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "id"
-                  }
+              "type": "object",
+              "properties": {
+                "objectId": {
+                  "type": "number",
+                  "x-ms-summary": "Object ID"
+                },
+                "globalId": {
+                  "type": "string",
+                  "x-ms-summary": "Global ID"
+                },
+                "success": {
+                  "type": "boolean",
+                  "x-ms-summary": "Success"
                 }
               }
             }
           }
         },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-collections-available-for-the-country"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#add-attachment"
         }
       }
     },
-    "/{connectionId}/v1/dynamicvalues/geoenrichment/parameter": {
+    "/{connectionId}/v1/attachment/queryattachments": {
       "get": {
-        "summary": "Get data collections available for the country",
-        "operationId": "GetGeoenrichmentParameters",
-        "produces": [
-          "application/json"
-        ],
-        "x-ms-visibility": "internal",
+        "summary": "Query attachment",
+        "description": "Search for an attachment associated with a record in a feature layer.",
+        "operationId": "QueryAttachment",
+        "x-ms-visibility": "important",
+        "deprecated": false,
         "parameters": [
           {
             "name": "connectionId",
@@ -214,15 +156,376 @@
             "x-ms-visibility": "internal"
           },
           {
-            "$ref": "#/parameters/country"
+            "$ref": "#/parameters/contentFilter"
           },
           {
-            "$ref": "#/parameters/datacollection"
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "name": "objectId",
+            "in": "query",
+            "type": "number",
+            "description": "Object ID of the record associated with the attachment",
+            "x-ms-summary": "Record ID",
+            "required": true
+          },
+          {
+            "name": "keywords",
+            "in": "query",
+            "type": "string",
+            "description": "Keywords used to identify the attachment",
+            "x-ms-summary": "Keywords",
+            "required": false,
+            "x-ms-visibility": "advanced"
           }
         ],
         "responses": {
           "200": {
-            "description": "Parameter list success",
+            "description": "Query attachments",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "x-ms-summary": "Attachment Object ID"
+                  },
+                  "globalId": {
+                    "type": "string",
+                    "x-ms-summary": "Attachment Global ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "x-ms-summary": "Attachment name"
+                  },
+                  "contentType": {
+                    "type": "string",
+                    "x-ms-summary": "Content-type"
+                  },
+                  "size": {
+                    "type": "number",
+                    "x-ms-summary": "Attachment size"
+                  },
+                  "keywords": {
+                    "type": "string",
+                    "x-ms-summary": "Keywords"
+                  },
+                  "url": {
+                    "type": "string",
+                    "x-ms-summary": "Attachment URL"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#query-attachment"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/queryattachments": {
+      "get": {
+        "summary": "Get record attachments",
+        "description": "Query attachments in a record to DynamicValues",
+        "operationId": "GetAttachmentsDynamicValues",
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "name": "objectid",
+            "in": "query",
+            "type": "number",
+            "description": "Object ID of the record",
+            "x-ms-summary": "Record ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachments list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "number",
+                    "description": "Attachment ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-record-attachments"
+        }
+      }
+    },
+    "/{connectionId}/v1/attachment/getattachment": {
+      "post": {
+        "summary": "Get attachment",
+        "description": "Get an attachment from a record in your feature layer.",
+        "operationId": "GetAttachment",
+        "x-ms-visibility": "important",
+        "deprecated": false,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "name": "objectid",
+            "in": "query",
+            "type": "number",
+            "description": "Object ID of the record associated with the attachment",
+            "x-ms-summary": "Object ID",
+            "required": true
+          },
+          {
+            "in": "query",
+            "x-ms-summary": "Attachment",
+            "description": "Select attachment name or enter the attachment ID",
+            "x-ms-dynamic-values": {
+              "operationId": "GetAttachmentsDynamicValues",
+              "value-path": "id",
+              "value-title": "name",
+              "parameters": {
+                "userLayer": {
+                  "parameter": "userLayer"
+                },
+                "objectid": {
+                  "parameter": "objectid"
+                }
+              }
+            },
+            "required": true,
+            "name": "attachmentId",
+            "x-ms-visibility": "important",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment",
+            "schema": {
+              "type": "string",
+              "format": "binary",
+              "x-ms-summary": "Attachment contents",
+              "description": "The content of the attachment."
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-attachment"
+        }
+      },
+      "get": {
+        "summary": "Get attachment from URL",
+        "description": "Get an attachment from a record in your feature layer by using the attachment URL.",
+        "operationId": "GetAttachmentFromUrl",
+        "x-ms-visibility": "important",
+        "deprecated": false,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "attachmentUrl",
+            "in": "query",
+            "type": "string",
+            "x-ms-summary": "Attachment Url",
+            "description": "The URL associated with the attachment in a record in your feature layer.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment",
+            "schema": {
+              "type": "string",
+              "format": "binary",
+              "x-ms-summary": "Attachment contents",
+              "description": "The content of the attachment."
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-attachment-from-url"
+        }
+      }
+    },
+    "/{connectionId}/v1/attachment/deleteAttachments": {
+      "post": {
+        "summary": "Delete attachment",
+        "description": "Delete an attachment from a record in your feature layer.",
+        "operationId": "DeleteAttachment",
+        "x-ms-visibility": "important",
+        "deprecated": false,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "name": "objectid",
+            "in": "query",
+            "type": "number",
+            "description": "Object ID of the record associated with the attachment.",
+            "x-ms-summary": "Record ID",
+            "required": true
+          },
+          {
+            "name": "attachmentId",
+            "in": "query",
+            "type": "number",
+            "description": "The ID of the attachment in a record from your feature layer.",
+            "x-ms-summary": "Attachment ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete attachment",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "objectId": {
+                    "type": "number",
+                    "x-ms-summary": "Object ID"
+                  },
+                  "globalId": {
+                    "type": "string",
+                    "x-ms-summary": "Global ID"
+                  },
+                  "success": {
+                    "type": "boolean",
+                    "x-ms-summary": "Success"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#delete-attachment"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/featureservice/userlayers": {
+      "get": {
+        "summary": "Get feature layers",
+        "operationId": "GetFeatureLayers",
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user's feature layers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "x-ms-summary": "Feature layer name",
+                    "type": "string",
+                    "description": "Feature layer"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Feature layer id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-feature-layers"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/featureservice/getlayerfields": {
+      "get": {
+        "summary": "Get fields",
+        "operationId": "GetFeatureLayerFields",
+        "produces": [
+          "application/json"
+        ],
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success - Fields list",
             "schema": {
               "type": "array",
               "items": {
@@ -243,16 +546,16 @@
           }
         },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-collections-available-for-the-country"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-fields"
         }
       }
     },
-    "/{connectionId}/v1/dynamicschema/geoenrichment": {
+    "/{connectionId}/v1/dynamicschema/featureservice": {
       "get": {
-        "summary": "Retrieve form schema (deprecated)",
-        "description": "Returns the schema for the specified form. (deprecated)",
-        "operationId": "GetGeoenrichmentSchema",
+        "summary": "Retrieve response schema",
+        "operationId": "GetFeatureLayerResponseSchema",
         "x-ms-visibility": "internal",
+        "deprecated": false,
         "produces": [
           "application/json"
         ],
@@ -265,7 +568,10 @@
             "x-ms-visibility": "internal"
           },
           {
-            "$ref": "#/parameters/areatype"
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "$ref": "#/parameters/format"
           }
         ],
         "responses": {
@@ -273,22 +579,397 @@
             "description": "Ok"
           }
         },
-        "deprecated": true,
-        "x-ms-api-annotation": {
-          "family": "Geoenrichment",
-          "revision": 1
+        "description": "Returns the schema for the specified form",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-response-schema"
+        }
+      }
+    },
+    "/{connectionId}/v1/featurelayer/getfeatures": {
+      "get": {
+        "summary": "Get data from feature layer",
+        "description": "Connect to a feature layer in ArcGIS and pull its data and attributes into your existing dataset or create a new one. This data can be used to create new maps in all ArcGIS for Microsoft 365 products.",
+        "operationId": "GetFeatureLayerData",
+        "produces": [
+          "application/json"
+        ],
+        "x-ms-visibility": "important",
+        "deprecated": false,
+        "x-ms-capabilities": {
+          "chunkTransfer": true
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "$ref": "#/parameters/layerField"
+          },
+          {
+            "$ref": "#/parameters/comparison"
+          },
+          {
+            "$ref": "#/parameters/format"
+          },
+          {
+            "in": "query",
+            "name": "parameter",
+            "description": "Enter a value to search",
+            "type": "string",
+            "x-ms-summary": "Search parameter value",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "type": "number",
+            "x-ms-summary": "Starting count",
+            "description": "When batching, this value is the starting point of the query",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "in": "query",
+            "name": "where",
+            "type": "string",
+            "x-ms-summary": "Where",
+            "description": "Input a WHERE clause to filter records in your search",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "in": "query",
+            "name": "returnGeometry",
+            "type": "boolean",
+            "default": "true",
+            "x-ms-summary": "Return geometry",
+            "description": "Return geometry",
+            "x-ms-visibility": "advanced"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parameter list success",
+            "headers": {
+              "hasMoreData": {
+                "type": "string",
+                "x-ms-summary": "Dataset has additional data",
+                "description": "Whether layer has additional data that satisfies the query"
+              },
+              "offset": {
+                "type": "number",
+                "x-ms-summary": "Current offset",
+                "description": "Current offset of the data"
+              }
+            },
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetFeatureLayerResponseSchema",
+                "value-path": "schemas",
+                "parameters": {
+                  "userLayer": {
+                    "parameter": "userLayer"
+                  },
+                  "format": {
+                    "parameter": "format"
+                  }
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-form-schema-(deprecated)-%5bdeprecated%5d"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-from-feature-layer"
         }
       }
     },
-    "/{connectionId}/v2/dynamicschema/geoenrichment": {
+    "/{connectionId}/v1/featurelayer/createfeature": {
+      "post": {
+        "summary": "Create a record in a feature layer",
+        "description": "This action adds a new record to a feature layer.",
+        "operationId": "CreateItemInFeatureLayer",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "in": "body",
+            "name": "data",
+            "required": true,
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
+                "value-path": "schemas",
+                "parameters": {
+                  "parameter": "createfeature",
+                  "userLayer": {
+                    "parameter": "userLayer"
+                  },
+                  "contentFilter": {
+                    "parameter": "contentFilter"
+                  }
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "description": "Create status",
+                  "x-ms-summary": "Create operation success status"
+                },
+                "objectId": {
+                  "type": "number",
+                  "description": "Object ID of the record created",
+                  "x-ms-summary": "Object ID"
+                },
+                "globalId": {
+                  "type": "string",
+                  "description": "Global ID of the record created",
+                  "x-ms-summary": "Global ID"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#create-a-record-in-a-feature-layer"
+        }
+      }
+    },
+    "/{connectionId}/v1/featurelayer/updatefeature": {
+      "post": {
+        "summary": "Update a record in a feature layer",
+        "description": "This action updates an existing record in a feature layer.",
+        "operationId": "UpdateItemInFeatureLayer",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "in": "query",
+            "x-ms-summary": "Unique ID field",
+            "description": "Select an unique ID field in the feature layer",
+            "x-ms-dynamic-values": {
+              "operationId": "GetFeatureLayerFields",
+              "value-path": "id",
+              "value-title": "name",
+              "parameters": {
+                "userLayer": {
+                  "parameter": "userLayer"
+                }
+              }
+            },
+            "required": true,
+            "name": "idField",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "data",
+            "required": true,
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
+                "value-path": "schemas",
+                "parameters": {
+                  "parameter": "updatefeature",
+                  "userLayer": {
+                    "parameter": "userLayer"
+                  },
+                  "idField": {
+                    "parameter": "idField"
+                  },
+                  "contentFilter": {
+                    "parameter": "contentFilter"
+                  }
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "description": "Update status",
+                  "x-ms-summary": "Update operation success status"
+                },
+                "objectId": {
+                  "type": "number",
+                  "description": "Object ID of the record updated",
+                  "x-ms-summary": "Object ID"
+                },
+                "globalId": {
+                  "type": "string",
+                  "description": "Global ID of the updated record",
+                  "x-ms-summary": "Global ID"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#update-a-record-in-a-feature-layer"
+        }
+      }
+    },
+    "/{connectionId}/v1/featurelayer/deletefeature": {
+      "post": {
+        "summary": "Delete a record from feature layer",
+        "description": "This action deletes one or many records from a feature layer using IDs.",
+        "operationId": "DeleteItemInFeatureLayer",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "in": "query",
+            "x-ms-summary": "Unique ID field",
+            "description": "Select an unique ID field in the feature layer",
+            "x-ms-dynamic-values": {
+              "operationId": "GetFeatureLayerFields",
+              "value-path": "id",
+              "value-title": "name",
+              "parameters": {
+                "userLayer": {
+                  "parameter": "userLayer"
+                }
+              }
+            },
+            "required": true,
+            "name": "idField",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deletedIds": {
+                  "type": "string",
+                  "x-ms-summary": "Delete records",
+                  "description": "A list or single value of IDs used to identify the deleted items. The IDs provided must match the IDs used in the feature layer. Multiple IDs can be added and separated by a comma."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "description": "Delete operation success status",
+                    "x-ms-summary": "Delete status"
+                  },
+                  "objectId": {
+                    "type": "number",
+                    "description": "Object ID of the record deleted",
+                    "x-ms-summary": "Object ID"
+                  },
+                  "globalId": {
+                    "type": "string",
+                    "description": "Global ID of the deleted record",
+                    "x-ms-summary": "Global ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#delete-a-record-from-feature-layer"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicschema/crud/{parameter}": {
       "get": {
-        "summary": "Retrieve form schema",
-        "operationId": "GetGeoenrichmentSchema_V2",
+        "summary": "Retrieve response schema",
+        "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
         "x-ms-visibility": "internal",
-        "description": "Returns the schema for the specified form",
+        "deprecated": false,
         "produces": [
           "application/json"
         ],
@@ -301,7 +982,22 @@
             "x-ms-visibility": "internal"
           },
           {
-            "$ref": "#/parameters/buffertype"
+            "in": "path",
+            "name": "parameter",
+            "type": "string",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/contentFilter"
+          },
+          {
+            "$ref": "#/parameters/userLayer"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "idField",
+            "type": "string"
           }
         ],
         "responses": {
@@ -309,21 +1005,50 @@
             "description": "Ok"
           }
         },
+        "description": "Returns the schema for the specified form",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-response-schema"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicschema/featurelayer": {
+      "get": {
+        "summary": "Retrieve form schema",
+        "operationId": "GetFeatureLayersSchema",
+        "x-ms-visibility": "internal",
         "deprecated": false,
-        "x-ms-api-annotation": {
-          "family": "Geoenrichment",
-          "revision": 2
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/locationType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
         },
+        "description": "Returns the schema for the specified form",
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-form-schema"
         }
       }
     },
-    "/{connectionId}/v1/geoenrichment/enrich": {
+    "/{connectionId}/v1/createfeaturelayer": {
       "post": {
-        "summary": "Geoenrichment (deprecated)",
-        "description": "Get facts about a location or area. Using the GeoEnrichment service, you can get information about the people, places, and businesses in a specific area or within a certain distance or drive time from a location. (deprecated)",
-        "operationId": "Geoenrich",
+        "summary": "Create feature layer",
+        "description": "Create a feature layer in ArcGIS using data from an existing source, such as a SharePoint list. A feature layer is a grouping of similar geographic features, for example, buildings, parcels, cities, roads, and earthquake epicenters. Features can be points, lines, or polygons (areas). Feature layers are most appropriate for visualizing data on top of a basemap.",
+        "operationId": "CreateFeatureLayer",
+        "deprecated": false,
         "consumes": [
           "application/json"
         ],
@@ -340,124 +1065,14 @@
           },
           {
             "in": "query",
-            "name": "studyarea",
-            "required": true,
+            "name": "layerTitle",
             "type": "string",
-            "x-ms-summary": "Study area",
-            "description": "Address or geometry"
+            "x-ms-summary": "Title",
+            "description": "Title of the new feature layer",
+            "required": true
           },
           {
-            "$ref": "#/parameters/country"
-          },
-          {
-            "$ref": "#/parameters/datacollection"
-          },
-          {
-            "$ref": "#/parameters/parameter"
-          },
-          {
-            "$ref": "#/parameters/areatype"
-          },
-          {
-            "in": "body",
-            "name": "query",
-            "required": false,
-            "schema": {
-              "x-ms-dynamic-properties": {
-                "itemValuePath": "schemas",
-                "operationId": "GetGeoenrichmentSchema",
-                "parameters": {
-                  "areatype": {
-                    "parameterReference": "areatype"
-                  }
-                }
-              },
-              "x-ms-dynamic-schema": {
-                "operationId": "GetGeoenrichmentSchema",
-                "value-path": "schemas",
-                "parameters": {
-                  "areatype": {
-                    "parameter": "areatype"
-                  }
-                }
-              },
-              "type": "object",
-              "properties": {}
-            }
-          },
-          {
-            "$ref": "#/parameters/srs"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "geoenrichment success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "number",
-                  "description": "Geoenrichment variable value",
-                  "title": "Value of the variable",
-                  "x-ms-summary": "Parameter value"
-                },
-                "parameterName": {
-                  "type": "string",
-                  "description": "The name of the variable that is being analyzed during the geoenrichment process.",
-                  "title": "Name of the variable",
-                  "x-ms-summary": "Parameter name"
-                },
-                "units": {
-                  "type": "string",
-                  "description": "Parameter units",
-                  "title": "Units",
-                  "x-ms-summary": "Units"
-                }
-              }
-            }
-          }
-        },
-        "x-ms-visibility": "important",
-        "deprecated": true,
-        "x-ms-api-annotation": {
-          "family": "Geoenrichment",
-          "revision": 1
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment-(deprecated)-%5bdeprecated%5d"
-        }
-      }
-    },
-    "/{connectionId}/v2/geoenrichment/enrich": {
-      "post": {
-        "summary": "Geoenrichment",
-        "description": "Get facts about a location or area. Using the GeoEnrichment service, you can get information about the people, places, and businesses in a specific area or within a certain distance or drive time from a location.",
-        "operationId": "Geoenrich_V2",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/country"
-          },
-          {
-            "$ref": "#/parameters/datacollection"
-          },
-          {
-            "$ref": "#/parameters/parameter"
-          },
-          {
-            "$ref": "#/parameters/buffertype"
+            "$ref": "#/parameters/locationType"
           },
           {
             "in": "body",
@@ -465,11 +1080,11 @@
             "required": true,
             "schema": {
               "x-ms-dynamic-schema": {
-                "operationId": "GetGeoenrichmentSchema_V2",
+                "operationId": "GetFeatureLayersSchema",
                 "value-path": "schemas",
                 "parameters": {
-                  "buffertype": {
-                    "parameter": "buffertype"
+                  "locationType": {
+                    "parameter": "locationType"
                   }
                 }
               },
@@ -480,40 +1095,57 @@
         ],
         "responses": {
           "200": {
-            "description": "geoenrichment success",
+            "description": "Success",
             "schema": {
               "type": "object",
               "properties": {
-                "value": {
-                  "type": "number",
-                  "description": "Geoenrichment variable value",
-                  "title": "Value of the variable",
-                  "x-ms-summary": "Parameter value"
-                },
-                "parameterName": {
+                "serviceItemId": {
                   "type": "string",
-                  "description": "The name of the variable that is being analyzed during the geoenrichment process.",
-                  "title": "Name of the variable",
-                  "x-ms-summary": "Parameter name"
+                  "description": "Service item ID",
+                  "x-ms-summary": "Service item ID"
                 },
-                "units": {
+                "serviceurl": {
                   "type": "string",
-                  "description": "Parameter units",
-                  "title": "Units",
-                  "x-ms-summary": "Units"
+                  "description": "Service URL",
+                  "x-ms-summary": "Service URL"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Service type created",
+                  "x-ms-summary": "Service type"
+                },
+                "locationType": {
+                  "type": "string",
+                  "description": "Location type used to match location",
+                  "x-ms-summary": "Location type"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string",
+                      "x-ms-summary": "Error message",
+                      "description": "Error message retuned from API"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "x-ms-api-annotation": {
-          "family": "Geoenrichment",
-          "revision": 2
-        },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#create-feature-layer"
         }
       }
     },
@@ -825,12 +1457,151 @@
         }
       }
     },
-    "/{connectionId}/v1/dynamicschema/featurelayer": {
+    "/{connectionId}/v1/dynamicvalues/geoenrichment/country": {
       "get": {
-        "summary": "Retrieve form schema",
-        "operationId": "GetFeatureLayersSchema",
+        "summary": "Get list of countries",
+        "description": "Geoenrichment-countries",
+        "operationId": "GetGeoenrichmentCountries",
         "x-ms-visibility": "internal",
-        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Country list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-list-of-countries"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/geoenrichment/datacollection": {
+      "get": {
+        "summary": "Get data collections available for the country",
+        "operationId": "GetGeoenrichmentDataCollections",
+        "produces": [
+          "application/json"
+        ],
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/country"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data collection list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "x-ms-summary": "Data collection name",
+                    "type": "string",
+                    "description": "name"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-collections-available-for-the-country"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/geoenrichment/parameter": {
+      "get": {
+        "summary": "Get data collections available for the country",
+        "operationId": "GetGeoenrichmentParameters",
+        "produces": [
+          "application/json"
+        ],
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/country"
+          },
+          {
+            "$ref": "#/parameters/datacollection"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parameter list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "x-ms-summary": "Parameter name",
+                    "type": "string",
+                    "description": "name"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-collections-available-for-the-country"
+        }
+      }
+    },
+    "/{connectionId}/v1/dynamicschema/geoenrichment": {
+      "get": {
+        "summary": "Retrieve form schema (deprecated)",
+        "description": "Returns the schema for the specified form. (deprecated)",
+        "operationId": "GetGeoenrichmentSchema",
+        "x-ms-visibility": "internal",
         "produces": [
           "application/json"
         ],
@@ -843,7 +1614,7 @@
             "x-ms-visibility": "internal"
           },
           {
-            "$ref": "#/parameters/locationType"
+            "$ref": "#/parameters/areatype"
           }
         ],
         "responses": {
@@ -851,18 +1622,57 @@
             "description": "Ok"
           }
         },
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "GeoenrichmentDS",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-form-schema-(deprecated)-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/dynamicschema/geoenrichment": {
+      "get": {
+        "summary": "Retrieve form schema",
+        "operationId": "GetGeoenrichmentSchema_V2",
+        "x-ms-visibility": "internal",
         "description": "Returns the schema for the specified form",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/buffertype"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        },
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "family": "GeoenrichmentDS",
+          "revision": 2
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-form-schema"
         }
       }
     },
-    "/{connectionId}/v1/createfeaturelayer": {
+    "/{connectionId}/v1/geoenrichment/enrich": {
       "post": {
-        "summary": "Create feature layer",
-        "description": "Create a feature layer in ArcGIS using data from an existing source, such as a SharePoint list. A feature layer is a grouping of similar geographic features, for example, buildings, parcels, cities, roads, and earthquake epicenters. Features can be points, lines, or polygons (areas). Feature layers are most appropriate for visualizing data on top of a basemap.",
-        "operationId": "CreateFeatureLayer",
-        "deprecated": false,
+        "summary": "Geoenrichment (deprecated)",
+        "description": "Get facts about a location or area. Using the GeoEnrichment service, you can get information about the people, places, and businesses in a specific area or within a certain distance or drive time from a location. (deprecated)",
+        "operationId": "Geoenrich",
         "consumes": [
           "application/json"
         ],
@@ -879,35 +1689,127 @@
           },
           {
             "in": "query",
-            "name": "layerTitle",
+            "name": "studyarea",
+            "required": true,
             "type": "string",
-            "x-ms-summary": "Title",
-            "description": "Title of the new feature layer",
-            "required": true
+            "x-ms-summary": "Study area",
+            "description": "Address or geometry"
           },
           {
-            "$ref": "#/parameters/locationType"
+            "$ref": "#/parameters/country"
+          },
+          {
+            "$ref": "#/parameters/datacollection"
+          },
+          {
+            "$ref": "#/parameters/parameter"
+          },
+          {
+            "$ref": "#/parameters/areatype"
+          },
+          {
+            "in": "body",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GetGeoenrichmentSchema",
+                "value-path": "schemas",
+                "parameters": {
+                  "areatype": {
+                    "parameter": "areatype"
+                  }
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "$ref": "#/parameters/srs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "geoenrichment success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "description": "Geoenrichment variable value",
+                  "title": "Value of the variable",
+                  "x-ms-summary": "Parameter value"
+                },
+                "parameterName": {
+                  "type": "string",
+                  "description": "The name of the variable that is being analyzed during the geoenrichment process.",
+                  "title": "Name of the variable",
+                  "x-ms-summary": "Parameter name"
+                },
+                "units": {
+                  "type": "string",
+                  "description": "Parameter units",
+                  "title": "Units",
+                  "x-ms-summary": "Units"
+                }
+              }
+            }
+          }
+        },
+        "x-ms-visibility": "important",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "Geoenrichment",
+          "revision": 1
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment-(deprecated)-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/geoenrichment/enrich": {
+      "post": {
+        "summary": "Geoenrichment",
+        "description": "Get facts about a location or area. Using the GeoEnrichment service, you can get information about the people, places, and businesses in a specific area or within a certain distance or drive time from a location.",
+        "operationId": "Geoenrich_V2",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/country"
+          },
+          {
+            "$ref": "#/parameters/datacollection"
+          },
+          {
+            "$ref": "#/parameters/parameter"
+          },
+          {
+            "$ref": "#/parameters/buffertype"
           },
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "x-ms-dynamic-properties": {
-                "itemValuePath": "schemas",
-                "operationId": "GetFeatureLayersSchema",
-                "parameters": {
-                  "locationType": {
-                    "parameterReference": "locationType"
-                  }
-                }
-              },
               "x-ms-dynamic-schema": {
-                "operationId": "GetFeatureLayersSchema",
+                "operationId": "GetGeoenrichmentSchema_V2",
                 "value-path": "schemas",
                 "parameters": {
-                  "locationType": {
-                    "parameter": "locationType"
+                  "buffertype": {
+                    "parameter": "buffertype"
                   }
                 }
               },
@@ -918,57 +1820,40 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "geoenrichment success",
             "schema": {
               "type": "object",
               "properties": {
-                "serviceItemId": {
-                  "type": "string",
-                  "description": "Service item ID",
-                  "x-ms-summary": "Service item ID"
+                "value": {
+                  "type": "number",
+                  "description": "Geoenrichment variable value",
+                  "title": "Value of the variable",
+                  "x-ms-summary": "Parameter value"
                 },
-                "serviceurl": {
+                "parameterName": {
                   "type": "string",
-                  "description": "Service URL",
-                  "x-ms-summary": "Service URL"
+                  "description": "The name of the variable that is being analyzed during the geoenrichment process.",
+                  "title": "Name of the variable",
+                  "x-ms-summary": "Parameter name"
                 },
-                "type": {
+                "units": {
                   "type": "string",
-                  "description": "Service type created",
-                  "x-ms-summary": "Service type"
-                },
-                "locationType": {
-                  "type": "string",
-                  "description": "Location type used to match location",
-                  "x-ms-summary": "Location type"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string",
-                      "x-ms-summary": "Error message",
-                      "description": "Error message retuned from API"
-                    }
-                  }
+                  "description": "Parameter units",
+                  "title": "Units",
+                  "x-ms-summary": "Units"
                 }
               }
             }
           }
         },
+        "x-ms-visibility": "important",
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "family": "Geoenrichment",
+          "revision": 2
+        },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#create-feature-layer"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment"
         }
       }
     },
@@ -1227,554 +2112,6 @@
         }
       }
     },
-    "/{connectionId}/v1/dynamicvalues/featureservice/userlayers": {
-      "get": {
-        "summary": "Get feature layers",
-        "operationId": "GetFeatureLayers",
-        "x-ms-visibility": "internal",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Get user's feature layers",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "x-ms-summary": "Feature layer name",
-                    "type": "string",
-                    "description": "Feature layer"
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "Feature layer id"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-feature-layers"
-        }
-      }
-    },
-    "/{connectionId}/v1/dynamicvalues/featureservice/getlayerfields": {
-      "get": {
-        "summary": "Get fields",
-        "operationId": "GetFeatureLayerFields",
-        "produces": [
-          "application/json"
-        ],
-        "x-ms-visibility": "internal",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success - Fields list",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "x-ms-summary": "Parameter name",
-                    "type": "string",
-                    "description": "name"
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "id"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-fields"
-        }
-      }
-    },
-    "/{connectionId}/v1/dynamicschema/featureservice": {
-      "get": {
-        "summary": "Retrieve response schema",
-        "operationId": "GetFeatureLayerResponseSchema",
-        "x-ms-visibility": "internal",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "$ref": "#/parameters/format"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          }
-        },
-        "description": "Returns the schema for the specified form",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-response-schema"
-        }
-      }
-    },
-    "/{connectionId}/v1/featurelayer/getfeatures": {
-      "get": {
-        "summary": "Get data from feature layer",
-        "description": "Connect to a feature layer in ArcGIS and pull its data and attributes into your existing dataset or create a new one. This data can be used to create new maps in all ArcGIS for Microsoft 365 products.",
-        "operationId": "GetFeatureLayerData",
-        "produces": [
-          "application/json"
-        ],
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "x-ms-capabilities": {
-          "chunkTransfer": true
-        },
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "$ref": "#/parameters/layerField"
-          },
-          {
-            "$ref": "#/parameters/comparison"
-          },
-          {
-            "$ref": "#/parameters/format"
-          },
-          {
-            "in": "query",
-            "name": "parameter",
-            "description": "Enter a value to search",
-            "type": "string",
-            "x-ms-summary": "Search parameter value",
-            "required": false
-          },
-          {
-            "in": "query",
-            "name": "offset",
-            "type": "number",
-            "x-ms-summary": "Starting count",
-            "description": "When batching, this value is the starting point of the query",
-            "x-ms-visibility": "advanced"
-          },
-          {
-            "in": "query",
-            "name": "where",
-            "type": "string",
-            "x-ms-summary": "Where",
-            "description": "Input a WHERE clause to filter records in your search",
-            "x-ms-visibility": "advanced"
-          },
-          {
-            "in": "query",
-            "name": "returnGeometry",
-            "type": "boolean",
-            "default": "true",
-            "x-ms-summary": "Return geometry",
-            "description": "Return geometry",
-            "x-ms-visibility": "advanced"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Parameter list success",
-            "headers": {
-              "hasMoreData": {
-                "type": "string",
-                "x-ms-summary": "Dataset has additional data",
-                "description": "Whether layer has additional data that satisfies the query"
-              },
-              "offset": {
-                "type": "number",
-                "x-ms-summary": "Current offset",
-                "description": "Current offset of the data"
-              }
-            },
-            "schema": {
-              "x-ms-dynamic-schema": {
-                "operationId": "GetFeatureLayerResponseSchema",
-                "value-path": "schemas",
-                "parameters": {
-                  "userLayer": {
-                    "parameter": "userLayer"
-                  },
-                  "format": {
-                    "parameter": "format"
-                  }
-                }
-              },
-              "type": "object",
-              "properties": {}
-            }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-data-from-feature-layer"
-        }
-      }
-    },
-    "/{connectionId}/v1/featurelayer/createfeature": {
-      "post": {
-        "summary": "Create a record in a feature layer",
-        "description": "This action adds a new record to a feature layer.",
-        "operationId": "CreateItemInFeatureLayer",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "in": "body",
-            "name": "data",
-            "required": true,
-            "schema": {
-              "x-ms-dynamic-schema": {
-                "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
-                "value-path": "schemas",
-                "parameters": {
-                  "parameter": "createfeature",
-                  "userLayer": {
-                    "parameter": "userLayer"
-                  }
-                }
-              },
-              "type": "object",
-              "properties": {}
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "description": "Create status",
-                  "x-ms-summary": "Create operation success status"
-                },
-                "objectId": {
-                  "type": "number",
-                  "description": "Object ID of the record created",
-                  "x-ms-summary": "Object ID"
-                },
-                "globalId": {
-                  "type": "string",
-                  "description": "Global ID of the record created",
-                  "x-ms-summary": "Global ID"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#create-a-record-in-a-feature-layer"
-        }
-      }
-    },
-    "/{connectionId}/v1/featurelayer/updatefeature": {
-      "post": {
-        "summary": "Update a record in a feature layer",
-        "description": "This action updates an existing record in a feature layer.",
-        "operationId": "UpdateItemInFeatureLayer",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "in": "query",
-            "x-ms-summary": "Unique ID field",
-            "description": "Select an unique ID field in the feature layer",
-            "x-ms-dynamic-values": {
-              "operationId": "GetFeatureLayerFields",
-              "value-path": "id",
-              "value-title": "name",
-              "parameters": {
-                "userLayer": {
-                  "parameter": "userLayer"
-                }
-              }
-            },
-            "required": true,
-            "name": "idField",
-            "x-ms-visibility": "important",
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "data",
-            "required": true,
-            "schema": {
-              "x-ms-dynamic-schema": {
-                "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
-                "value-path": "schemas",
-                "parameters": {
-                  "parameter": "updatefeature",
-                  "userLayer": {
-                    "parameter": "userLayer"
-                  },
-                  "idField": {
-                    "parameter": "idField"
-                  }
-                }
-              },
-              "type": "object",
-              "properties": {}
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "description": "Update status",
-                  "x-ms-summary": "Update operation success status"
-                },
-                "objectId": {
-                  "type": "number",
-                  "description": "Object ID of the record updated",
-                  "x-ms-summary": "Object ID"
-                },
-                "globalId": {
-                  "type": "string",
-                  "description": "Global ID of the updated record",
-                  "x-ms-summary": "Global ID"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#update-a-record-in-a-feature-layer"
-        }
-      }
-    },
-    "/{connectionId}/v1/featurelayer/deletefeature": {
-      "post": {
-        "summary": "Delete a record from feature layer",
-        "description": "This action deletes one or many records from a feature layer using IDs.",
-        "operationId": "DeleteItemInFeatureLayer",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "in": "query",
-            "x-ms-summary": "Unique ID field",
-            "description": "Select an unique ID field in the feature layer",
-            "x-ms-dynamic-values": {
-              "operationId": "GetFeatureLayerFields",
-              "value-path": "id",
-              "value-title": "name",
-              "parameters": {
-                "userLayer": {
-                  "parameter": "userLayer"
-                }
-              }
-            },
-            "required": true,
-            "name": "idField",
-            "x-ms-visibility": "important",
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "data",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "deletedIds": {
-                  "type": "string",
-                  "x-ms-summary": "Delete records",
-                  "description": "A list or single value of IDs used to identify the deleted items. The IDs provided must match the IDs used in the feature layer. Multiple IDs can be added and separated by a comma."
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "success": {
-                    "type": "boolean",
-                    "description": "Delete operation success status",
-                    "x-ms-summary": "Delete status"
-                  },
-                  "objectId": {
-                    "type": "number",
-                    "description": "Object ID of the record deleted",
-                    "x-ms-summary": "Object ID"
-                  },
-                  "globalId": {
-                    "type": "string",
-                    "description": "Global ID of the deleted record",
-                    "x-ms-summary": "Global ID"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#delete-a-record-from-feature-layer"
-        }
-      }
-    },
-    "/{connectionId}/v1/dynamicschema/crud/{parameter}": {
-      "get": {
-        "summary": "Retrieve response schema",
-        "operationId": "GetDynamicSchemaForCreateUpdateFeaturesAction",
-        "x-ms-visibility": "internal",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "in": "path",
-            "name": "parameter",
-            "type": "string",
-            "required": true
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "in": "query",
-            "required": false,
-            "name": "idField",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok"
-          }
-        },
-        "description": "Returns the schema for the specified form",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-response-schema"
-        }
-      }
-    },
     "/{connectionId}/v1/routing": {
       "post": {
         "summary": "Point to point routing",
@@ -1909,6 +2246,93 @@
         }
       }
     },
+    "/{connectionId}/v1/dynamicvalues/coordinatesystems": {
+      "get": {
+        "summary": "Get spatial reference systems",
+        "description": "Coordinate systems",
+        "operationId": "GetSRS",
+        "x-ms-visibility": "internal",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Get SRS",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "x-ms-summary": "Spatial reference system name",
+                    "type": "string",
+                    "description": "name"
+                  },
+                  "id": {
+                    "type": "number",
+                    "description": "Well-known ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-spatial-reference-systems"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/dynamicvalues/layersearchoptions": {
+      "get": {
+        "summary": "Get layer search options",
+        "description": "Layer search options",
+        "operationId": "GetLayerSearchOptions",
+        "x-ms-visibility": "internal",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Layer Search",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-layer-search-options"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
     "/{connectionId}/v1/webhook/createwebhook/featurescreated": {
       "x-ms-notification-content": {
         "schema": {
@@ -2020,12 +2444,6 @@
                   "x-ms-summary": "Name"
                 }
               }
-            }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
             }
           }
         },
@@ -2146,12 +2564,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
-            }
           }
         },
         "externalDocs": {
@@ -2270,12 +2682,6 @@
                   "x-ms-summary": "Name"
                 }
               }
-            }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
             }
           }
         },
@@ -2396,12 +2802,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
-            }
           }
         },
         "externalDocs": {
@@ -2520,12 +2920,6 @@
                   "x-ms-summary": "Name"
                 }
               }
-            }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
             }
           }
         },
@@ -2646,12 +3040,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
-            }
           }
         },
         "externalDocs": {
@@ -2728,12 +3116,6 @@
               "type": "object",
               "properties": {}
             }
-          },
-          "400": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/basicError"
-            }
           }
         },
         "externalDocs": {
@@ -2775,426 +3157,6 @@
           "url": "https://docs.microsoft.com/connectors/arcgis/#retrieve-response-schema"
         }
       }
-    },
-    "/{connectionId}/v1/attachment/addattachment": {
-      "post": {
-        "summary": "Add attachment",
-        "description": "Add an attachment to record in a feature layer.",
-        "operationId": "AddAttachment",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "name": "objectId",
-            "in": "query",
-            "type": "number",
-            "description": "Object ID of the record associated with the attachment",
-            "x-ms-summary": "Record ID",
-            "required": true
-          },
-          {
-            "name": "attachmentName",
-            "in": "query",
-            "type": "string",
-            "description": "Name of the file that will be attached",
-            "x-ms-summary": "Attachment name",
-            "required": true
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "x-ms-summary": "File content",
-            "description": "File content from another action such as 'Get file content' (OneDrive, Share Point)",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "binary"
-            }
-          },
-          {
-            "name": "keywords",
-            "in": "query",
-            "type": "string",
-            "description": "Keywords used to identify the attachment",
-            "x-ms-summary": "Keywords",
-            "required": false,
-            "x-ms-visibility": "advanced"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Add attachment",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "objectId": {
-                  "type": "number",
-                  "x-ms-summary": "Object ID"
-                },
-                "globalId": {
-                  "type": "string",
-                  "x-ms-summary": "Global ID"
-                },
-                "success": {
-                  "type": "boolean",
-                  "x-ms-summary": "Success"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#add-attachment"
-        }
-      }
-    },
-    "/{connectionId}/v1/attachment/queryattachments": {
-      "get": {
-        "summary": "Query attachment",
-        "description": "Search for an attachment associated with a record in a feature layer.",
-        "operationId": "QueryAttachment",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "name": "objectId",
-            "in": "query",
-            "type": "number",
-            "description": "Object ID of the record associated with the attachment",
-            "x-ms-summary": "Record ID",
-            "required": true
-          },
-          {
-            "name": "keywords",
-            "in": "query",
-            "type": "string",
-            "description": "Keywords used to identify the attachment",
-            "x-ms-summary": "Keywords",
-            "required": false,
-            "x-ms-visibility": "advanced"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query attachments",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "x-ms-summary": "Attachment Object ID"
-                  },
-                  "globalId": {
-                    "type": "string",
-                    "x-ms-summary": "Attachment Global ID"
-                  },
-                  "name": {
-                    "type": "string",
-                    "x-ms-summary": "Attachment name"
-                  },
-                  "contentType": {
-                    "type": "string",
-                    "x-ms-summary": "Content-type"
-                  },
-                  "size": {
-                    "type": "number",
-                    "x-ms-summary": "Attachment size"
-                  },
-                  "keywords": {
-                    "type": "string",
-                    "x-ms-summary": "Keywords"
-                  },
-                  "url": {
-                    "type": "string",
-                    "x-ms-summary": "Attachment URL"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#query-attachment"
-        }
-      }
-    },
-    "/{connectionId}/v1/dynamicvalues/queryattachments": {
-      "get": {
-        "summary": "Get record attachments",
-        "description": "Query attachments in a record to DynamicValues",
-        "operationId": "GetAttachmentsDynamicValues",
-        "x-ms-visibility": "internal",
-        "deprecated": false,
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "name": "objectid",
-            "in": "query",
-            "type": "number",
-            "description": "Object ID of the record",
-            "x-ms-summary": "Record ID",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Attachments list success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "id": {
-                    "type": "number",
-                    "description": "Attachment ID"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-record-attachments"
-        }
-      }
-    },
-    "/{connectionId}/v1/attachment/getattachment": {
-      "post": {
-        "summary": "Get attachment",
-        "description": "Get an attachment from a record in your feature layer.",
-        "operationId": "GetAttachment",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "name": "objectid",
-            "in": "query",
-            "type": "number",
-            "description": "Object ID of the record associated with the attachment",
-            "x-ms-summary": "Object ID",
-            "required": true
-          },
-          {
-            "in": "query",
-            "x-ms-summary": "Attachment",
-            "description": "Select attachment name or enter the attachment ID",
-            "x-ms-dynamic-values": {
-              "operationId": "GetAttachmentsDynamicValues",
-              "value-path": "id",
-              "value-title": "name",
-              "parameters": {
-                "userLayer": {
-                  "parameter": "userLayer"
-                },
-                "objectid": {
-                  "parameter": "objectid"
-                }
-              }
-            },
-            "required": true,
-            "name": "attachmentId",
-            "x-ms-visibility": "important",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Attachment",
-            "schema": {
-              "type": "string",
-              "format": "binary",
-              "x-ms-summary": "Attachment contents",
-              "description": "The content of the attachment."
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-attachment"
-        }
-      },
-      "get": {
-        "summary": "Get attachment from URL",
-        "description": "Get an attachment from a record in your feature layer by using the attachment URL.",
-        "operationId": "GetAttachmentFromUrl",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "name": "attachmentUrl",
-            "in": "query",
-            "type": "string",
-            "description": "Attachment Url",
-            "x-ms-summary": "The URL associated with the attachment in a record in your feature layer.",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Attachment",
-            "schema": {
-              "type": "string",
-              "format": "binary",
-              "x-ms-summary": "Attachment contents",
-              "description": "The content of the attachment."
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#get-attachment-from-url"
-        }
-      }
-    },
-    "/{connectionId}/v1/attachment/deleteAttachments": {
-      "post": {
-        "summary": "Delete attachment",
-        "description": "Delete an attachment from a record in your feature layer.",
-        "operationId": "DeleteAttachment",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "$ref": "#/parameters/contentFilter"
-          },
-          {
-            "$ref": "#/parameters/userLayer"
-          },
-          {
-            "name": "objectid",
-            "in": "query",
-            "type": "number",
-            "description": "Object ID of the record associated with the attachment.",
-            "x-ms-summary": "Record ID",
-            "required": true
-          },
-          {
-            "name": "attachmentId",
-            "in": "query",
-            "type": "number",
-            "description": "The ID of the attachment in a record from your feature layer.",
-            "x-ms-summary": "Attachment ID",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Delete attachment",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "objectId": {
-                    "type": "number",
-                    "x-ms-summary": "Object ID"
-                  },
-                  "globalId": {
-                    "type": "string",
-                    "x-ms-summary": "Global ID"
-                  },
-                  "success": {
-                    "type": "boolean",
-                    "x-ms-summary": "Success"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#delete-attachment"
-        }
-      }
-    }
-  },
-  "definitions": {
-    "basicError": {
-      "description": "Error",
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object",
-              "description": "Error stack returned from API"
-            },
-            "message": {
-              "description": "Error message returned from API",
-              "type": "string"
-            }
-          }
-        }
-      }
     }
   },
   "parameters": {
@@ -3228,41 +3190,6 @@
       "x-ms-visibility": "important",
       "required": true
     },
-    "contentFilter": {
-      "x-ms-summary": "Layers in",
-      "description": "When you sign in using your ArcGIS account, you can search for content in your organization, your organization's groups, or public content.",
-      "x-ms-dynamic-values": {
-        "operationId": "GetLayerSearchOptions",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {}
-      },
-      "default": "My content",
-      "required": true,
-      "in": "query",
-      "name": "contentFilter",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "userLayer": {
-      "x-ms-summary": "Feature layer",
-      "x-ms-dynamic-values": {
-        "operationId": "GetFeatureLayers",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {
-          "contentFilter": {
-            "parameter": "contentFilter"
-          }
-        }
-      },
-      "required": true,
-      "in": "query",
-      "name": "userLayer",
-      "description": "Select a feature layer from your ArcGIS content",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
     "layerField": {
       "x-ms-summary": "Available fields",
       "x-ms-dynamic-values": {
@@ -3295,142 +3222,6 @@
       ],
       "default": "Automatic (find in file)",
       "x-ms-visibility": "advanced"
-    },
-    "layer": {
-      "x-ms-summary": "Feature layer",
-      "x-ms-dynamic-values": {
-        "operationId": "GetFLGroupLayers",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {
-          "searchterm": {
-            "parameter": "searchterm"
-          }
-        }
-      },
-      "required": true,
-      "in": "query",
-      "name": "layer",
-      "description": "Select a feature layer",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "field": {
-      "x-ms-summary": "Field",
-      "x-ms-dynamic-values": {
-        "operationId": "GetFLFields",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {
-          "layer": {
-            "parameter": "layer"
-          }
-        }
-      },
-      "required": true,
-      "in": "query",
-      "name": "field",
-      "description": "Select a field",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "country": {
-      "x-ms-summary": "Country",
-      "x-ms-dynamic-values": {
-        "operationId": "GetGeoenrichmentCountries",
-        "value-path": "id",
-        "value-title": "name"
-      },
-      "required": true,
-      "in": "query",
-      "name": "country",
-      "description": "Select a country to see available data collections",
-      "x-ms-visibility": "important",
-      "type": "string",
-      "default": "World"
-    },
-    "sourceCountry": {
-      "x-ms-summary": "Country",
-      "x-ms-dynamic-values": {
-        "operationId": "GetGeoenrichmentCountries",
-        "value-path": "id",
-        "value-title": "name"
-      },
-      "required": false,
-      "in": "query",
-      "name": "sourceCountry",
-      "description": "Select a country",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "searchterm": {
-      "x-ms-summary": "Country",
-      "x-ms-dynamic-values": {
-        "operationId": "GetGeoenrichmentCountries",
-        "value-path": "name",
-        "value-title": "name"
-      },
-      "required": true,
-      "in": "query",
-      "name": "searchterm",
-      "description": "Select a country to see available data collections",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "datacollection": {
-      "x-ms-summary": "Data collection",
-      "x-ms-dynamic-values": {
-        "operationId": "GetGeoenrichmentDataCollections",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {
-          "country": {
-            "parameter": "country"
-          }
-        }
-      },
-      "required": true,
-      "in": "query",
-      "name": "datacollection",
-      "description": "Select a data collection",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "parameter": {
-      "x-ms-summary": "Variable",
-      "x-ms-dynamic-values": {
-        "operationId": "GetGeoenrichmentParameters",
-        "value-path": "id",
-        "value-title": "name",
-        "parameters": {
-          "country": {
-            "parameter": "country"
-          },
-          "datacollection": {
-            "parameter": "datacollection"
-          }
-        }
-      },
-      "required": true,
-      "in": "query",
-      "name": "parameter",
-      "description": "Select a variable from the collection",
-      "x-ms-visibility": "important",
-      "type": "string"
-    },
-    "srs": {
-      "x-ms-summary": "Spatial reference system",
-      "x-ms-dynamic-values": {
-        "operationId": "GetSRS",
-        "value-path": "id",
-        "value-title": "name"
-      },
-      "required": false,
-      "in": "query",
-      "name": "srs",
-      "description": "Select spatial reference system",
-      "x-ms-visibility": "advanced",
-      "type": "string"
     },
     "areatype": {
       "x-ms-summary": "Buffer type",
@@ -3474,42 +3265,165 @@
         "ringbuffer",
         "networkservicearea"
       ]
+    },
+    "country": {
+      "x-ms-summary": "Country",
+      "x-ms-dynamic-values": {
+        "operationId": "GetGeoenrichmentCountries",
+        "value-path": "id",
+        "value-title": "name"
+      },
+      "required": true,
+      "in": "query",
+      "name": "country",
+      "description": "Select a country to see available data collections",
+      "x-ms-visibility": "important",
+      "type": "string",
+      "default": "World"
+    },
+    "datacollection": {
+      "x-ms-summary": "Data collection",
+      "x-ms-dynamic-values": {
+        "operationId": "GetGeoenrichmentDataCollections",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {
+          "country": {
+            "parameter": "country"
+          }
+        }
+      },
+      "required": true,
+      "in": "query",
+      "name": "datacollection",
+      "description": "Select a data collection",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "parameter": {
+      "x-ms-summary": "Variable",
+      "x-ms-dynamic-values": {
+        "operationId": "GetGeoenrichmentParameters",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {
+          "country": {
+            "parameter": "country"
+          },
+          "datacollection": {
+            "parameter": "datacollection"
+          }
+        }
+      },
+      "required": true,
+      "in": "query",
+      "name": "parameter",
+      "description": "Select a variable from the collection",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "field": {
+      "x-ms-summary": "Field",
+      "x-ms-dynamic-values": {
+        "operationId": "GetFLFields",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {
+          "layer": {
+            "parameter": "layer"
+          }
+        }
+      },
+      "required": true,
+      "in": "query",
+      "name": "field",
+      "description": "Select a field",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "layer": {
+      "x-ms-summary": "Feature layer",
+      "x-ms-dynamic-values": {
+        "operationId": "GetFLGroupLayers",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {
+          "searchterm": {
+            "parameter": "searchterm"
+          }
+        }
+      },
+      "required": true,
+      "in": "query",
+      "name": "layer",
+      "description": "Select a feature layer",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "searchterm": {
+      "x-ms-summary": "Country",
+      "x-ms-dynamic-values": {
+        "operationId": "GetGeoenrichmentCountries",
+        "value-path": "name",
+        "value-title": "name"
+      },
+      "required": true,
+      "in": "query",
+      "name": "searchterm",
+      "description": "Select a country to see available data collections",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "srs": {
+      "x-ms-summary": "Spatial reference system",
+      "x-ms-dynamic-values": {
+        "operationId": "GetSRS",
+        "value-path": "id",
+        "value-title": "name"
+      },
+      "required": false,
+      "in": "query",
+      "name": "srs",
+      "description": "Select spatial reference system",
+      "x-ms-visibility": "advanced",
+      "type": "string"
+    },
+    "userLayer": {
+      "x-ms-summary": "Feature layer",
+      "x-ms-dynamic-values": {
+        "operationId": "GetFeatureLayers",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {
+          "contentFilter": {
+            "parameter": "contentFilter"
+          }
+        }
+      },
+      "required": true,
+      "in": "query",
+      "name": "userLayer",
+      "description": "Select a feature layer from your ArcGIS content",
+      "x-ms-visibility": "important",
+      "type": "string"
+    },
+    "contentFilter": {
+      "x-ms-summary": "Layers in",
+      "description": "When you sign in using your ArcGIS account, you can search for content in your organization, your organization's groups, or public content.",
+      "x-ms-dynamic-values": {
+        "operationId": "GetLayerSearchOptions",
+        "value-path": "id",
+        "value-title": "name",
+        "parameters": {}
+      },
+      "default": "My content",
+      "required": true,
+      "in": "query",
+      "name": "contentFilter",
+      "x-ms-visibility": "important",
+      "type": "string"
     }
   },
-  "responses": {},
-  "securityDefinitions": {
-    "oauth2_auth": {
-      "type": "oauth2",
-      "flow": "accessCode",
-      "authorizationUrl": "https://www.arcgis.com/sharing/rest/oauth2/authorize",
-      "tokenUrl": "https://www.arcgis.com/sharing/rest/oauth2/token/",
-      "scopes": {
-        "admin": "admin"
-      }
-    }
-  },
-  "security": [
-    {
-      "oauth2_auth": [
-        "admin"
-      ]
-    }
-  ],
-  "tags": [],
-  "x-ms-connector-metadata": [
-    {
-      "propertyName": "Website",
-      "propertyValue": "https://www.esri.com/powerbi/"
-    },
-    {
-      "propertyName": "Privacy policy",
-      "propertyValue": "https://www.esri.com/en-us/privacy/privacy-statements/privacy-statement"
-    },
-    {
-      "propertyName": "Categories",
-      "propertyValue": "IT Operations; Business Intelligence"
-    }
-  ],
   "externalDocs": {
     "url": "https://docs.microsoft.com/connectors/arcgis"
   }
