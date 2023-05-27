@@ -18,7 +18,7 @@ module.exports = async ({
 
   const gitStatusOutput = await getExecOutput('git', ['status', '--porcelain']);
   if (!gitStatusOutput.stdout) {
-    core.info('No changes detected. Skipping Commit and PR Update/Create');
+    core.info('No changes detected. Skipping commit and push');
     core.setOutput('committed', false);
     return;
   }
