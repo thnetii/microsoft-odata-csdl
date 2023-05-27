@@ -1,0 +1,10 @@
+# CyberProof
+API name: `[object Object]`
+Tier: Premium
+Version: `releases/v1.0.1629\1.0.1629.3253`
+Publisher: **CyberProof Inc.**
+Created: Mon Apr 25 2022 18:45:20 GMT+0000 (Coordinated Universal Time)
+Changed: Fri Apr 14 2023 17:58:15 GMT+0000 (Coordinated Universal Time)
+
+## Description
+> CDC is a next generation incident management and response platform offered by CyberProof, for building Security Operations Centers (SOCs). The platform is a key component of advanced security operations centers - supporting SOC management, orchestration, and incident response. The Connector interacts with CDC, offering a wide range of incident response automation activities including Alert and Incident creation, parsing and manipulation, as well as observable enrichment.
