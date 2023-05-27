@@ -77,15 +77,21 @@ jobs:
           sharepoint-web-url: ${{ secrets.SHAREPOINT_WEBURL }}
           file-path: csdl/sharepoint-v2.1-odata-v4_01.csdl.xml
           api-version: v2.1
-      - id: create-pr
-        name: Commit and create/update PR (if any changes)
-        uses: ./.github/actions/commit-updatecreate-pr
+      - id: commit-push
+        name: Commit and push PR-branch (if any changes)
+        uses: ./.github/actions/commit-push
         with:
           branch-name: csdl-fetcher/sharepoint
           commit-message: >
             SharePoint OData CSDL,
             Microsoft SharePoint Team Services
             version ${{ steps.download-csdl-odata-v4_0.outputs.sharepoint-version }}
+      - id: create-pr
+        if: steps.commit-push.outputs.committed
+        name: Create/update PR
+        uses: ./.github/actions/updatecreate-pr
+        with:
+          branch-name: csdl-fetcher/sharepoint
           pr-title: Update SharePoint OData CSDL
           pr-body: |
             Automatic download of SharePoint API OData CSDL.

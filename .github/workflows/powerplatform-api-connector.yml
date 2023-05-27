@@ -79,37 +79,15 @@ jobs:
           environment: ${{ inputs.environment }}
           api-connector: ${{ matrix.api-connector }}
           api-version: ${{ inputs.api-version }}
-      - id: create-pr
-        name: Commit and create/update PR (if any changes)
-        uses: ./.github/actions/commit-updatecreate-pr
+      - id: commit
+        name: Commit and push (if any changes)
+        uses: ./.github/actions/commit-push
         with:
           branch-name: ${{ env.branch-name }}
           commit-message: Power Platform API Connector ${{ matrix.api-connector }}, ${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}
-          pr-title: >
-            Update Power Platform API Connector: ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
-          pr-body: |
-            Automatic download of Power Platfrom API Connector
-
-            # ${{ fromJson(steps.download-api-connector.outputs.properties).displayName }}
-            API name: `${{ matrix.api-connector }}`
-            Tier: ${{ fromJson(steps.download-api-connector.outputs.properties).tier }}
-            Version: `${{ fromJson(steps.download-api-connector.outputs.properties).metadata.version.current }}`
-            Publisher: **${{ fromJson(steps.download-api-connector.outputs.properties).publisher }}**
-            Created: `${{ fromJson(steps.download-api-connector.outputs.properties).createdTime }}`
-            Changed: `${{ fromJson(steps.download-api-connector.outputs.properties).changedTime }}`
-
-            ## Description
-            > ${{ fromJson(steps.download-api-connector.outputs.properties).description }}
-
-            ## Includes:
-            - Swagger document
-            - API Connector resource information
-      - name: Add Labels to Pull Request
-        if: steps.create-pr.outputs.pr-number
-        uses: ./.github/actions/add-labels-pr
+      - id: merge
+        name: Merge into ${{ github.ref || github.sha }}
+        if: steps.commit.outputs.committed
+        uses: ./.github/actions/merge-branch
         with:
-          pr-number: ${{ steps.create-pr.outputs.pr-number }}
-          labels: |
-            swagger-update
-            powerplatform
-            api-connector
+          branch-name: ${{ env.branch-name }}

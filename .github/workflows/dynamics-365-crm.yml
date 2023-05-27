@@ -63,12 +63,18 @@ jobs:
           d365-instance-url: ${{ secrets.DYNAMICS365CRM_INSTANCEURL }}
           api-version: ${{ env.d365-api-version }}
           file-path: csdl/dynamics365-crm-${{ env.d365-api-version }}.csdl.xml
-      - id: create-pr
-        name: Commit and create/update PR (if any changes)
-        uses: ./.github/actions/commit-updatecreate-pr
+      - id: commit-push
+        name: Commit and push PR-branch (if any changes)
+        uses: ./.github/actions/commit-push
         with:
           branch-name: ${{ env.branch-name }}
           commit-message: Microsoft Dynamics 365 CRM OData CSDL, v${{ steps.download-csdl.outputs.d365-version }}
+      - id: create-pr
+        if: steps.commit-push.outputs.committed
+        name: Create/update PR
+        uses: ./.github/actions/updatecreate-pr
+        with:
+          branch-name: ${{ env.branch-name }}
           pr-title: Update Microsoft Dynamics 365 CRM OData CSDL
           pr-body: |
             Automatic download of Dynamics 365 CRM WebAPI OData CSDL.

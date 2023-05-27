@@ -3,10 +3,8 @@
  *  github: InstanceType<typeof import('@actions/github/lib/utils').GitHub>,
  *  context: import('@actions/github/lib/context').Context,
  *  core: import('@actions/core'),
- *  exec: import('@actions/exec'),
  *  inputs: {
  *    'branch-name': string,
- *    'commit-message': string,
  *    'pr-title': string,
  *    'pr-body': string,
  *  },
@@ -18,38 +16,12 @@ module.exports = async (args, resolve) => {
     github,
     context,
     core,
-    exec: { exec, getExecOutput },
     inputs: {
       'branch-name': branchName,
-      'commit-message': commitMessage,
       'pr-title': prTitle,
       'pr-body': prBody,
     },
   } = args;
-  let gitExitCode = 0;
-
-  gitExitCode = await exec('git', ['add', '.']);
-
-  const gitStatusOutput = await getExecOutput('git', ['status', '--porcelain']);
-  if (!gitStatusOutput.stdout) {
-    core.info('No changes detected. Skipping Commit and PR Update/Create');
-    return;
-  }
-
-  gitExitCode = await exec('git', ['commit', '-m', commitMessage]);
-  if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`);
-  }
-  gitExitCode = await exec('git', [
-    'push',
-    'origin',
-    '--force',
-    `HEAD:${branchName}`,
-  ]);
-  if (gitExitCode) {
-    throw new Error(`git process exited with error code ${gitExitCode}.`);
-  }
-
   const pullsQuery = {
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -57,7 +29,7 @@ module.exports = async (args, resolve) => {
   };
   const pullsDefinition = {
     title: prTitle,
-    body: prBody,
+    body: prBody || '',
     ...pullsQuery,
   };
   let pullNumber;

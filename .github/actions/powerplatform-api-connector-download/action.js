@@ -57,6 +57,21 @@ async function saveApiConnectorProperties(connector) {
   const connectorText =
     JSON.stringify(connector, undefined, 2).replaceAll('\n', EOL) + EOL;
   await fs.writeFile(connectorPath, connectorText, 'utf-8');
+  const readmePath = path.join(connectorFolder, 'README.md');
+  const readmeText =
+    [
+      `# ${props.displayName}`,
+      `API name: \`${{ name }}\``,
+      `Tier: ${props.tier}`,
+      `Version: \`${props.metadata?.version.current}\``,
+      `Publisher: **${props.publisher}**`,
+      `Created: ${new Date(props.createdTime || new Date())}`,
+      `Changed: ${new Date(props.changedTime || new Date(0))}`,
+      '',
+      '## Description',
+      `> ${props.description}`,
+    ].join(EOL) + EOL;
+  await fs.writeFile(readmePath, readmeText, 'utf-8');
 }
 
 async function run() {

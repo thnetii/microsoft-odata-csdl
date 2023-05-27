@@ -66,12 +66,18 @@ jobs:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-version: beta
           file-path: csdl/microsoft-graph-beta.csdl.xml
-      - id: create-pr
-        name: Commit and create/update PR (if any changes)
-        uses: ./.github/actions/commit-updatecreate-pr
+      - id: commit-push
+        name: Commit and push PR-branch (if any changes)
+        uses: ./.github/actions/commit-push
         with:
           branch-name: csdl-fetcher/msgraph
           commit-message: Microsoft Graph OData CSDL
+      - id: create-pr
+        if: steps.commit-push.outputs.committed
+        name: Create/update PR
+        uses: ./.github/actions/updatecreate-pr
+        with:
+          branch-name: csdl-fetcher/msgraph
           pr-title: Update Microsoft Graph OData CSDL
           pr-body: |
             Automatic download of Microsoft Graph API OData CSDL.
