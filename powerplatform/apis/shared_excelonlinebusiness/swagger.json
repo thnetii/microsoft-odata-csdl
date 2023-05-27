@@ -267,6 +267,366 @@
         ]
       }
     },
+    "/{connectionId}/v2/officescripting/api/storage/script": {
+      "get": {
+        "tags": [
+          "officescripting"
+        ],
+        "summary": "Gets one script",
+        "description": "Gets one of the scripts.",
+        "operationId": "GetSingleScriptV2",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "scriptSource",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "script source",
+            "x-ms-summary": "Chosen script source"
+          },
+          {
+            "name": "scriptDrive",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "script drive",
+            "x-ms-summary": "Chosen script drive"
+          },
+          {
+            "name": "scriptId",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Script chosen to use.",
+            "x-ms-summary": "Chosen script"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parameterInfo": {
+                  "type": "object",
+                  "properties": {
+                    "parameterSchema": {
+                      "type": "object"
+                    },
+                    "returnSchema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/excelonlinebusiness/#gets-one-script"
+        }
+      }
+    },
+    "/{connectionId}/v2/officescripting/api/unattended/run/{drive}/{file}/{scriptDrive}/{scriptId}": {
+      "post": {
+        "tags": [
+          "officescripting"
+        ],
+        "summary": "Run script from SharePoint library (preview)",
+        "operationId": "RunScriptProdV2",
+        "description": "Runs an Office Script against an Excel workbook. Use this action when the script is saved outside of the default location.",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Workbook Location",
+            "description": "Select from the drop-down or specify one of the following:\r\n              - \"me\"\r\n              - \"SharePoint Site URL\"\r\n              - \"users/someone's UPN\"\r\n              - \"groups/group Id\"\r\n              - \"sites/SharePoint Site URL:/teams/team name:\" (colons are required).",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSources",
+              "value-path": "id",
+              "value-collection": "value",
+              "value-title": "displayName",
+              "parameters": {
+                "$select": "id,displayName",
+                "$top": "999"
+              }
+            }
+          },
+          {
+            "name": "drive",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Select a document library from the drop-down.",
+            "x-ms-summary": "Workbook Library",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDrives",
+              "value-path": "id",
+              "value-collection": "value",
+              "value-title": "name",
+              "parameters": {
+                "source": {
+                  "parameter": "source"
+                },
+                "$select": "id,name"
+              }
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Select an Excel workbook through File Browse.",
+            "x-ms-url-encoding": "double",
+            "x-ms-summary": "Workbook",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                  "application/vnd.ms-excel.sheet.macroEnabled.12",
+                  "application/vnd.ms-excel.sheet.binary.macroEnabled.12"
+                ],
+                "drive": {
+                  "parameter": "drive"
+                }
+              },
+              "value-path": "id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListRootFolder",
+                "parameters": {
+                  "drive": {
+                    "parameterReference": "drive"
+                  },
+                  "source": {
+                    "parameterReference": "source"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": "(MediaType eq 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or MediaType eq 'application/vnd.ms-excel.sheet.macroEnabled.12' or MediaType eq 'application/vnd.ms-excel.sheet.binary.macroEnabled.12')"
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  },
+                  "drive": {
+                    "parameterReference": "drive"
+                  },
+                  "source": {
+                    "parameterReference": "source"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": "(MediaType eq 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or MediaType eq 'application/vnd.ms-excel.sheet.macroEnabled.12' or MediaType eq 'application/vnd.ms-excel.sheet.binary.macroEnabled.12')"
+              }
+            }
+          },
+          {
+            "name": "scriptSource",
+            "in": "query",
+            "description": "Select from the drop-down or specify one of the following:\r\n            - \"me\"\r\n            - \"SharePoint Site URL\"\r\n            - \"users/someone's UPN\"\r\n            - \"groups/group Id\"\r\n            - \"sites/SharePoint Site URL:/teams/team name:\" (the colons are required).",
+            "required": true,
+            "x-ms-summary": "Script Location",
+            "x-ms-dynamic-values": {
+              "operationId": "GetSources",
+              "parameters": {
+                "$select": "id,displayName",
+                "$top": "999"
+              },
+              "value-collection": "value",
+              "value-path": "id",
+              "value-title": "displayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "scriptDrive",
+            "in": "path",
+            "description": "Select the SharePoint library of your Office Script file (.osts) from the drop-down.",
+            "required": true,
+            "x-ms-summary": "Script Library",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDrives",
+              "parameters": {
+                "source": {
+                  "parameter": "scriptSource"
+                },
+                "$select": "id,name"
+              },
+              "value-collection": "value",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "type": "string"
+          },
+          {
+            "name": "scriptId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Select an Office Script file (.osts) in a SharePoint library from the drop-down.",
+            "x-ms-url-encoding": "double",
+            "x-ms-summary": "Script",
+            "x-ms-dynamic-values": {
+              "capability": "file-picker",
+              "parameters": {
+                "isFolder": false,
+                "fileFilter": [],
+                "drive": {
+                  "parameter": "scriptDrive"
+                }
+              },
+              "value-path": "id"
+            },
+            "x-ms-dynamic-tree": {
+              "settings": {
+                "canSelectParentNodes": false,
+                "canSelectLeafNodes": true
+              },
+              "open": {
+                "operationId": "ListRootFolder",
+                "parameters": {
+                  "drive": {
+                    "parameterReference": "scriptDrive"
+                  },
+                  "source": {
+                    "parameterReference": "scriptSource"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": ""
+              },
+              "browse": {
+                "operationId": "ListFolder",
+                "parameters": {
+                  "id": {
+                    "selectedItemValuePath": "Id"
+                  },
+                  "drive": {
+                    "parameterReference": "scriptDrive"
+                  },
+                  "source": {
+                    "parameterReference": "scriptSource"
+                  }
+                },
+                "itemValuePath": "Id",
+                "itemTitlePath": "DisplayName",
+                "itemFullTitlePath": "Path",
+                "itemIsParent": "(IsFolder eq true)",
+                "selectableFilter": ""
+              }
+            }
+          },
+          {
+            "name": "ScriptParameters",
+            "in": "body",
+            "description": "Provide parameters for the Office Script.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetSingleScriptV2",
+                "parameters": {
+                  "scriptSource": {
+                    "parameter": "scriptSource"
+                  },
+                  "scriptDrive": {
+                    "parameter": "scriptDrive"
+                  },
+                  "scriptId": {
+                    "parameter": "scriptId"
+                  }
+                },
+                "value-path": "parameterInfo/parameterSchema"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "description": "Information about a single script's return schema.",
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetSingleScriptV2",
+                "parameters": {
+                  "scriptSource": {
+                    "parameter": "scriptSource"
+                  },
+                  "scriptDrive": {
+                    "parameter": "scriptDrive"
+                  },
+                  "scriptId": {
+                    "parameter": "scriptId"
+                  }
+                },
+                "value-path": "parameterInfo/returnSchema"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Preview",
+          "family": "RunScriptProd",
+          "revision": 2
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/excelonlinebusiness/#run-script-from-sharepoint-library-(preview)"
+        }
+      }
+    },
     "/{connectionId}/officescripting/api/unattended/run/{drive}/{file}": {
       "post": {
         "tags": [
@@ -274,7 +634,7 @@
         ],
         "summary": "Run script",
         "operationId": "RunScriptProd",
-        "description": "Runs an Office Script against an Excel workbook.",
+        "description": "Runs an Office Script against an Excel workbook. Use this action when the script is saved in the default location.",
         "consumes": [],
         "produces": [],
         "parameters": [
