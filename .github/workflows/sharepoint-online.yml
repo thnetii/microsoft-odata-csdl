@@ -22,8 +22,14 @@ jobs:
     name: Download SharePoint OData CSDL
     runs-on: ubuntu-latest
     steps:
-      - name: Check GitHub API Rate-Limit
+      - id: rate-limit
+        name: Check GitHub API rate limit
         uses: thnetii/.github/actions/gh-actions-ratelimit-check@main
+      - name: Wait until GitHub API rate limit reset
+        if: fromJson(steps.rate-limit.outputs.remaining) < 20
+        uses: thnetii/.github/actions/gh-actions-sleep-until@main
+        with:
+          datetime: ${{ steps.rate-limit.outputs.reset }}
       - name: Chekout ${{ github.repository }}@${{ github.ref }}
         uses: actions/checkout@v3
         with:
