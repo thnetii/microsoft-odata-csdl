@@ -72,32 +72,15 @@ jobs:
           d365-instance-url: ${{ secrets.DYNAMICS365CRM_INSTANCEURL }}
           api-version: ${{ env.d365-api-version }}
           file-path: csdl/dynamics365-crm-${{ env.d365-api-version }}.csdl.xml
-      - id: commit-push
+      - id: commit
         name: Commit and push PR-branch (if any changes)
         uses: ./.github/actions/commit-push
         with:
           branch-name: ${{ env.branch-name }}
           commit-message: Microsoft Dynamics 365 CRM OData CSDL, v${{ steps.download-csdl.outputs.d365-version }}
-      - id: create-pr
-        if: fromJSON(steps.commit-push.outputs.committed)
-        name: Create/update PR
-        uses: ./.github/actions/updatecreate-pr
+      - id: merge
+        name: Merge into ${{ github.ref || github.sha }}
+        if: fromJSON(steps.commit.outputs.committed)
+        uses: ./.github/actions/merge-branch
         with:
-          branch-name: ${{ env.branch-name }}
-          pr-title: Update Microsoft Dynamics 365 CRM OData CSDL
-          pr-body: |
-            Automatic download of Dynamics 365 CRM WebAPI OData CSDL.
-
-            Dynamics 365 CRM version: `${{ steps.download-csdl.outputs.d365-version }}`
-
-            Includes:
-            - Dynamics 365 CRM ${{ env.d365-api-version }} WebAPI for OData-Version 4.0 clients
-      - name: Add Labels to Pull Request
-        if: steps.create-pr.outputs.pr-number
-        uses: ./.github/actions/add-labels-pr
-        with:
-          pr-number: ${{ steps.create-pr.outputs.pr-number }}
-          labels: |
-            csdl-update
-            dynamics365-crm
-            odata-v4
+          branch-name: csdl-fetcher/msgraph
