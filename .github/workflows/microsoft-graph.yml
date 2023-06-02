@@ -75,31 +75,15 @@ jobs:
           access-token: ${{ steps.msidp-workflow-auth.outputs.access-token }}
           api-version: beta
           file-path: csdl/microsoft-graph-beta.csdl.xml
-      - id: commit-push
-        name: Commit and push PR-branch (if any changes)
+      - id: commit
+        name: Commit and push (if any changes)
         uses: ./.github/actions/commit-push
         with:
           branch-name: csdl-fetcher/msgraph
           commit-message: Microsoft Graph OData CSDL
-      - id: create-pr
-        if: fromJSON(steps.commit-push.outputs.committed)
-        name: Create/update PR
-        uses: ./.github/actions/updatecreate-pr
+      - id: merge
+        name: Merge into ${{ github.ref || github.sha }}
+        if: fromJSON(steps.commit.outputs.committed)
+        uses: ./.github/actions/merge-branch
         with:
           branch-name: csdl-fetcher/msgraph
-          pr-title: Update Microsoft Graph OData CSDL
-          pr-body: |
-            Automatic download of Microsoft Graph API OData CSDL.
-
-            Includes:
-            - Microsoft Graph v1.0 OData API for OData-Version 4.0 clients
-            - Microsoft Graph beta OData API for OData-Version 4.0 clients
-      - name: Add Labels to Pull Request
-        if: steps.create-pr.outputs.pr-number
-        uses: ./.github/actions/add-labels-pr
-        with:
-          pr-number: ${{ steps.create-pr.outputs.pr-number }}
-          labels: |
-            csdl-update
-            microsoft-graph
-            odata-v4
