@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23710 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23717 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -3268,6 +3268,15 @@
       <Function Name="SPHSite">
         <ReturnType Type="SP.SPHSite" />
       </Function>
+      <Action Name="AddHomeSite" IsBound="true">
+        <Parameter Name="this" Type="SP.SPHSite" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <Parameter Name="order" Type="Edm.Int32" />
+        <Parameter Name="audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Parameter Name="vivaConnectionsDefaultStart" Type="Edm.Boolean" />
+        <Parameter Name="isInDraftMode" Type="Edm.Boolean" />
+        <ReturnType Type="SP.HomeSitesDetails" />
+      </Action>
       <Function Name="Details" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.SPHSite" />
         <ReturnType Type="SP.SPHSiteReference" />
@@ -6793,6 +6802,7 @@
         <Singleton Name="spsitemanager" Type="Microsoft.SharePoint.Portal.SPSiteManager" />
         <Singleton Name="StructuralNavigationCache" Type="SP.Publishing.Navigation.StructuralNavigationCacheWrapper" />
         <Singleton Name="thememanager" Type="SP.Utilities.ThemeManager" />
+        <Singleton Name="vivasitemanager" Type="Microsoft.SharePoint.Portal.VivaSiteManager" />
         <Singleton Name="web" Type="SP.Web" />
         <EntitySet Name="workitems" EntityType="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem" />
       </EntityContainer>
@@ -10255,6 +10265,9 @@
       <Annotations Target="Microsoft.SharePoint.Portal.SiteIconManager">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Portal.VivaSiteManager">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.WebControls.ModuleLink">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11237,6 +11250,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter.AddUnifiedDlpWorkItem()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter.AddUnifiedDlpWorkItemV2(Collection(Edm.Guid))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.ComplianceFoundation.ComplianceRetentionWorkItemSubmitter.AddHighPriorityRetentionWorkItem()">
@@ -12265,6 +12281,9 @@
       <Annotations Target="Microsoft.SharePoint.Portal.SetSiteLogo(Microsoft.SharePoint.Portal.SiteIconManager, Edm.String, Edm.Int32, Edm.Int32, Edm.Double, Edm.Double, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Portal.EnsureVivaSite(Microsoft.SharePoint.Portal.VivaSiteManager)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.GetSharedWithMeDiagnostics(SP.RequestUserContext, Edm.Int32, Edm.Int32, Edm.String, Edm.Boolean, Edm.Boolean, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -12434,6 +12453,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.TenantCdn.IsFolderUrlsInTenantCdn(Microsoft.SharePoint.TenantCdn.TenantCdnApi, Collection(Edm.String), Edm.Int32)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.AddHomeSite(SP.SPHSite, Edm.String, Edm.Int32, Collection(Edm.Guid), Edm.Boolean, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SPHSite.AddOrgNewsSite(Edm.String)">
@@ -19785,6 +19807,7 @@
       <ComplexType Name="TeamsPublishingStatus">
         <Property Name="AudienceId" Type="Edm.String" />
         <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ErrorMessage" Type="Edm.String" />
         <Property Name="HttpStatusCode" Type="Edm.Int32" Nullable="false" />
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
@@ -22488,6 +22511,7 @@
       <EntityType Name="SPSiteManager" />
       <EntityType Name="SiteIconManager" />
       <EntityType Name="SiteLinkingManager" />
+      <EntityType Name="VivaSiteManager" />
       <EntityType Name="MySiteRecommendations" Abstract="true" />
       <Function Name="GroupService">
         <ReturnType Type="Microsoft.SharePoint.Portal.GroupService" />
@@ -22813,6 +22837,13 @@
         <Parameter Name="this" Type="Microsoft.SharePoint.Portal.SiteLinkingManager" />
         <Parameter Name="groupId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Function Name="VivaSiteManager">
+        <ReturnType Type="Microsoft.SharePoint.Portal.VivaSiteManager" />
+      </Function>
+      <Action Name="EnsureVivaSite" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Portal.VivaSiteManager" />
+        <ReturnType Type="Microsoft.SharePoint.Portal.SPSiteCreationResponse" />
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.ListHome" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -24792,6 +24823,7 @@
         <Property Name="siteIBMode" Type="Edm.String" />
         <Property Name="siteIBSegmentIDs" Type="Collection(Edm.String)" />
         <Property Name="standardRolesModified" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="tenantDisplayName" Type="Edm.String" />
         <Property Name="userIsSharingViaMCS" Type="Edm.String" />
         <Property Name="userPhotoCdnBaseUrl" Type="Edm.String" />
         <Property Name="webTemplateId" Type="Edm.Int32" Nullable="false" />
@@ -30076,6 +30108,15 @@
         <Parameter Name="vivaHomeTitleRegion" Type="SP.VivaHomeTitleRegion" />
       </Action>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Convergence" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="MigrationCompleteStateApi" />
+      <Function Name="MigrationCompleteStateApi">
+        <ReturnType Type="Microsoft.SharePoint.Convergence.MigrationCompleteStateApi" />
+      </Function>
+      <Action Name="AddState" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Convergence.MigrationCompleteStateApi" />
+      </Action>
+    </Schema>
     <Schema Namespace="SP.BusinessData.Infrastructure" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ExternalSubscriptionStore" />
       <Action Name="IndexStore" IsBound="true">
@@ -31194,6 +31235,10 @@
     <Schema Namespace="SP.ComplianceFoundation.ComplianceDlpWorkItemSubmitter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="AddUnifiedDlpWorkItem">
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="AddUnifiedDlpWorkItemV2">
+        <Parameter Name="sitesList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <ReturnType Type="Collection(Edm.Boolean)" Nullable="false" />
       </Action>
     </Schema>
     <Schema Namespace="SP.ComplianceFoundation.ComplianceRetentionWorkItemSubmitter" xmlns="http://docs.oasis-open.org/odata/ns/edm">
