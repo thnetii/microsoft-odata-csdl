@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_microsoftschooldatasync`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1618\1.0.1618.3179`|
+|**Version**|`u/shgogna/globalperconnector-train1\1.0.1639.3312`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Aug 21 2018|
-|**Changed**|Tue Feb 07 2023|
+|**Changed**|Tue Jun 06 2023|
 
 ## Description
 Simplify class management in Office 365. School Data Sync reads rosters from your SIS and creates classes and groups for Microsoft Teams, Intune for Education, and third party applications.
