@@ -199,6 +199,61 @@
         ]
       }
     },
+    "/{connectionId}/types/textSuggestion/subscriptions": {
+      "post": {
+        "operationId": "StartAndWaitForATextSuggestionApproval",
+        "summary": "Start and wait for an approval of text",
+        "description": "Starts an automated text approval process and then waits for it to complete. The approval is cancelable.",
+        "x-ms-api-annotation": {
+          "status": "Production",
+          "family": "StartAndWaitForATextSuggestionApproval",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "WebhookTextSuggestionApprovalCreationInput",
+            "in": "body",
+            "description": "The input to create text approval.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookTextSuggestionApprovalCreationInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/ApprovalCreatedAndWebhookSubscribed"
+          },
+          "default": {
+            "$ref": "#/responses/OperationFailed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/approvals/#start-and-wait-for-an-approval-of-text"
+        }
+      },
+      "x-ms-notification-content": {
+        "schema": {
+          "$ref": "#/definitions/TextSuggestionApprovalCreationOutput"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
     "/{connectionId}/types/{approvalType}": {
       "post": {
         "operationId": "CreateAnApproval",
@@ -877,6 +932,254 @@
           "x-ms-summary": "Approver User Principal Name",
           "x-ms-visibility": "advanced",
           "type": "string"
+        }
+      }
+    },
+    "WebhookTextSuggestionApprovalCreationInput": {
+      "description": "Model for text approval subscription.",
+      "type": "object",
+      "required": [
+        "title",
+        "assignedTo",
+        "NotificationUrl",
+        "suggestedText"
+      ],
+      "properties": {
+        "NotificationUrl": {
+          "description": "Gets or sets callback url to flow engine. It is expected as part of the webhook request.",
+          "x-ms-visibility": "internal",
+          "x-ms-notification-url": true,
+          "type": "string"
+        },
+        "title": {
+          "description": "Create a title of the approval",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "suggestedText": {
+          "description": "Specify suggested text to approve or modify",
+          "x-ms-summary": "Suggested text",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "details": {
+          "description": "Markdown syntax is supported (see https://aka.ms/approvaldetails)",
+          "x-ms-summary": "Details",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "itemLink": {
+          "description": "Add a link to the item to approve.",
+          "x-ms-summary": "Item Link",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "itemLinkDescription": {
+          "description": "Describe the link to the item",
+          "x-ms-summary": "Item Link Description",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "assignedTo": {
+          "description": "Email addresses, separated by a semicolon (;)",
+          "x-ms-summary": "Assigned To",
+          "x-ms-visibility": "important",
+          "x-ms-dynamic-values": {
+            "builtInOperation": "AadGraph.GetUsers",
+            "value-path": "mail",
+            "value-title": "displayName"
+          },
+          "type": "string",
+          "format": "email"
+        },
+        "requestor": {
+          "description": "Add the email of the person generating this request",
+          "x-ms-summary": "Requestor",
+          "x-ms-visibility": "advanced",
+          "x-ms-dynamic-values": {
+            "builtInOperation": "AadGraph.GetUsers",
+            "value-path": "mail",
+            "value-title": "displayName"
+          },
+          "type": "string",
+          "format": "email"
+        },
+        "enableNotifications": {
+          "description": "Enable email, push, and Teams notifications",
+          "x-ms-summary": "Enable notifications",
+          "x-ms-visibility": "advanced",
+          "type": "boolean",
+          "default": true
+        },
+        "enableReassignment": {
+          "description": "Enable reassignment of approval requests",
+          "x-ms-summary": "Enable reassignment",
+          "x-ms-visibility": "advanced",
+          "type": "boolean",
+          "default": true
+        },
+        "attachments": {
+          "description": "The list of attachments",
+          "x-ms-summary": "Attachments",
+          "x-ms-visibility": "advanced",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Attachment name",
+                "x-ms-summary": "Name",
+                "x-ms-visibility": "advanced",
+                "type": "string"
+              },
+              "content": {
+                "description": "Attachment content",
+                "x-ms-summary": "Content",
+                "x-ms-visibility": "advanced",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "TextSuggestionApprovalCreationOutput": {
+      "type": "object",
+      "properties": {
+        "acceptedText": {
+          "description": "The accepted text of the approval",
+          "x-ms-summary": "Accepted text",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the approval",
+          "x-ms-summary": "Approval ID",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the approval",
+          "x-ms-summary": "Title",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "details": {
+          "description": "Additional details about the request",
+          "type": "string",
+          "x-ms-summary": "Details",
+          "x-ms-visibility": "important"
+        },
+        "itemLink": {
+          "description": "A link to the item to approve",
+          "x-ms-summary": "Item Link",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "itemLinkDescription": {
+          "description": "Describe the link to the item",
+          "x-ms-summary": "Item link description",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "requestDate": {
+          "description": "Date the approval request was sent",
+          "x-ms-summary": "Request date",
+          "x-ms-visibility": "important",
+          "type": "string",
+          "format": "date"
+        },
+        "responseSummary": {
+          "description": "A summary of the responses",
+          "x-ms-summary": "Response summary",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "completionDate": {
+          "description": "Date the approval was completed",
+          "x-ms-summary": "Completion date",
+          "x-ms-visibility": "important",
+          "type": "string",
+          "format": "date"
+        },
+        "outcome": {
+          "description": "The outcome of the approval",
+          "x-ms-summary": "Outcome",
+          "x-ms-visibility": "important",
+          "type": "string"
+        },
+        "responses": {
+          "description": "All of the responses",
+          "x-ms-summary": "Responses",
+          "x-ms-visibility": "advanced",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "responder": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "The ID of the approver",
+                    "x-ms-summary": "Approver ID",
+                    "x-ms-visibility": "advanced",
+                    "type": "string"
+                  },
+                  "displayName": {
+                    "description": "The name of the approver",
+                    "x-ms-summary": "Approver name",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  },
+                  "email": {
+                    "description": "The email address of the approver",
+                    "x-ms-summary": "Approver email",
+                    "x-ms-visibility": "important",
+                    "type": "string"
+                  },
+                  "tenantId": {
+                    "description": "The tenant id of the approver",
+                    "x-ms-summary": "Approver tenant ID",
+                    "x-ms-visibility": "advanced",
+                    "type": "string"
+                  },
+                  "userPrincipalName": {
+                    "description": "The principal name of the approver",
+                    "x-ms-summary": "Approver user principal name",
+                    "x-ms-visibility": "advanced",
+                    "type": "string"
+                  }
+                }
+              },
+              "requestDate": {
+                "description": "Date the approval request was sent",
+                "x-ms-summary": "Request date",
+                "x-ms-visibility": "important",
+                "type": "string",
+                "format": "date"
+              },
+              "responseDate": {
+                "description": "Date the approval response was sent",
+                "x-ms-summary": "Response date",
+                "x-ms-visibility": "important",
+                "type": "string",
+                "format": "date"
+              },
+              "approverResponse": {
+                "description": "The response from the approver",
+                "x-ms-summary": "Approver response",
+                "x-ms-visibility": "important",
+                "type": "string"
+              },
+              "comments": {
+                "description": "Comments provided by approver",
+                "x-ms-summary": "Comments",
+                "x-ms-visibility": "important",
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }
