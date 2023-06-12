@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_azurevm`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1567\1.0.1567.2748`|
+|**Version**|`u/shgogna/globalperconnector-train1\1.0.1639.3312`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Apr 21 2020|
-|**Changed**|Mon Apr 04 2022|
+|**Changed**|Tue Jun 06 2023|
 
 ## Description
 Azure VM connector allows you to manage virtual machines.
