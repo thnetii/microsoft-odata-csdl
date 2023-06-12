@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_eventhubs`|
 |**Tier**|Premium|
-|**Version**|`u/v-amism/eventhubs/mi-fix\1.0.1628.3244`|
+|**Version**|`u/shgogna/globalperconnector-train2\1.0.1641.3328`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Fri May 19 2023|
+|**Changed**|Thu Jun 08 2023|
 
 ## Description
 Connect to Azure Event Hubs to send and receive events.
