@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23724 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23731 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -54,6 +54,7 @@
       </ComplexType>
       <ComplexType Name="PortalAndOrgNewsSiteReference">
         <Property Name="IsInDraftMode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsVivaBackend" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
@@ -3282,6 +3283,7 @@
       </Action>
       <Function Name="Details" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.SPHSite" />
+        <Parameter Name="includeVivaSites" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.SPHSiteReference" />
       </Function>
       <Action Name="SetSPHSite" IsBound="true">
@@ -5979,11 +5981,18 @@
         <Parameter Name="sId" Type="Edm.String" />
         <ReturnType Type="SP.ListItem" />
       </Function>
+      <Action Name="DeleteAll" IsBound="true">
+        <Parameter Name="this" Type="Collection(SP.ListItemVersion)" />
+      </Action>
       <Function Name="GetById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(SP.ListItemVersion)" />
         <Parameter Name="versionId" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.ListItemVersion" />
       </Function>
+      <Action Name="RestoreByID" IsBound="true">
+        <Parameter Name="this" Type="Collection(SP.ListItemVersion)" />
+        <Parameter Name="versionId" Type="Edm.Int32" Nullable="false" />
+      </Action>
       <Action Name="DeleteObject" IsBound="true">
         <Parameter Name="this" Type="SP.ListItemVersion" />
       </Action>
@@ -11454,7 +11463,7 @@
       <Annotations Target="SP.Publishing.ResetEndpoint(SP.Publishing.CampaignPublication, SP.Publishing.CampaignPublicationResetEndpointParam)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.SaveMailDraft(SP.Publishing.CampaignPublication)">
+      <Annotations Target="SP.Publishing.SaveMailDraft(SP.Publishing.CampaignPublication, SP.Publishing.CampaignPublicationSaveMailDraftParam)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SendTestEmail(SP.Publishing.CampaignPublication)">
@@ -12501,7 +12510,7 @@
       <Annotations Target="SP.SPHSite.AddSPHomeNavNode(Edm.Guid)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Details(SP.SPHSite)">
+      <Annotations Target="SP.Details(SP.SPHSite, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SPHSite.GetSiteReferenceXgeo(Edm.String)">
@@ -13104,7 +13113,7 @@
       <Annotations Target="SP.eSignInternal.CancelAgreement(Microsoft.SharePoint.ESign.Models.Requests.CancelAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.eSignInternal.CompleteAgreement(Microsoft.SharePoint.ESign.Models.Requests.EndAgreementModel)">
+      <Annotations Target="SP.eSignInternal.CompleteAgreement(Microsoft.SharePoint.ESign.Models.Requests.CompleteAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.eSignInternal.DeclineAgreement(Microsoft.SharePoint.ESign.Models.Requests.DeclineAgreementModel)">
@@ -13387,6 +13396,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Approvals.SetProperties(Edm.String, SP.ApprovalsProperties)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.DeleteAll(Collection(SP.ListItemVersion))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RestoreByID(Collection(SP.ListItemVersion), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharingUtility.GetUserDirectoryInfoByEmail(Edm.String)">
@@ -19965,6 +19980,9 @@
         <Property Name="ResetEndpoint" Type="Collection(Edm.String)" />
         <Property Name="TeamsTranspileContent" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="CampaignPublicationSaveMailDraftParam">
+        <Property Name="IsOpxContentModified" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="CommunicationSiteCreationResponse">
         <Property Name="SiteStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="SiteUrl" Type="Edm.String" />
@@ -20496,6 +20514,7 @@
       </Action>
       <Action Name="SaveMailDraft" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="requestParam" Type="SP.Publishing.CampaignPublicationSaveMailDraftParam" />
         <ReturnType Type="SP.Publishing.CampaignPublicationMailDraftData" />
       </Action>
       <Action Name="SendTestEmail" IsBound="true">
@@ -23934,6 +23953,11 @@
         <Property Name="documentId" Type="Edm.Guid" Nullable="false" />
         <Property Name="reason" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="CompleteAgreementModel">
+        <Property Name="documentId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="originalDocName" Type="Edm.String" />
+        <Property Name="targetFolderUri" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="CreateAgreementModel">
         <Property Name="agreementId" Type="Edm.Guid" Nullable="false" />
         <Property Name="documents" Type="Edm.String" />
@@ -23945,10 +23969,6 @@
         <Property Name="recipientSets" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="DeclineAgreementModel">
-        <Property Name="documentId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="reason" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="EndAgreementModel">
         <Property Name="documentId" Type="Edm.Guid" Nullable="false" />
         <Property Name="reason" Type="Edm.String" />
       </ComplexType>
@@ -25897,10 +25917,13 @@
         <Property Name="Value" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPContainerTypeProperties">
+        <Property Name="AzureSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
         <Property Name="DisplayName" Type="Edm.String" />
         <Property Name="OwningAppId" Type="Edm.Guid" Nullable="false" />
         <Property Name="OwningTenantId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Region" Type="Edm.String" />
+        <Property Name="ResourceGroup" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPListModernUXOff">
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
@@ -26292,6 +26315,7 @@
         <Property Name="EnableMipSiteLabel" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnablePromotedFileHandlers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnableSensitivityLabelForPDF" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -26395,6 +26419,7 @@
         <Property Name="PublicCdnAllowedFileTypes" Type="Edm.String" />
         <Property Name="PublicCdnEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PublicCdnOrigins" Type="Collection(Edm.String)" />
+        <Property Name="RecycleBinRetentionPeriod" Type="Edm.Int32" Nullable="false" />
         <Property Name="ReduceTempTokenLifetimeEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ReduceTempTokenLifetimeValue" Type="Edm.Int32" Nullable="false" />
         <Property Name="RequireAcceptingAccountMatchInvitedAccount" Type="Edm.Boolean" Nullable="false" />
@@ -28988,11 +29013,34 @@
         <Property Name="Reserve" Type="Edm.String" />
       </EntityType>
       <EntityType Name="OnboardingServicesBeta">
+        <NavigationProperty Name="PrioritySiteRenameJobs" Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob)" ContainsTarget="true" />
         <NavigationProperty Name="SiteRenameJobs" Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.Service.SiteRenameJob)" ContainsTarget="true" />
         <NavigationProperty Name="TenantRenameJobs" Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.TenantRename.TenantRenameJob)" ContainsTarget="true" />
       </EntityType>
       <Function Name="OnboardingServicesBeta">
         <ReturnType Type="Microsoft.Online.SharePoint.Onboarding.RestService.OnboardingServicesBeta" />
+      </Function>
+    </Schema>
+    <Schema Namespace="Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="PrioritySiteRenameJobEntityData" BaseType="Microsoft.Online.SharePoint.Onboarding.RestService.JobEntityData">
+        <Property Name="SiteUrl" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="PrioritySiteRenameJob" BaseType="Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJobEntityData">
+        <Property Name="JobId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="PrioritizedSiteCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ResponseMessages" Type="Collection(Edm.String)" />
+      </EntityType>
+      <Action Name="Cancel" IsBound="true">
+        <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob)" />
+        <Parameter Name="url" Type="Edm.String" />
+        <ReturnType Type="Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob" />
+      </Action>
+      <Function Name="Get" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob)" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob)" />
+      </Function>
+      <Function Name="PrioritySiteRenameJob">
+        <ReturnType Type="Microsoft.Online.SharePoint.Onboarding.RestService.PrioritySiteRename.PrioritySiteRenameJob" />
       </Function>
     </Schema>
     <Schema Namespace="Microsoft.Online.SharePoint.Onboarding.RestService.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -30483,6 +30531,7 @@
         <Property Name="PublicCdnAllowedFileTypes" Type="Edm.String" />
         <Property Name="PublicCdnEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PublicCdnOrigins" Type="Collection(Edm.String)" />
+        <Property Name="RecycleBinRetentionPeriod" Type="Edm.Int32" Nullable="false" />
         <Property Name="ReduceTempTokenLifetimeEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ReduceTempTokenLifetimeValue" Type="Edm.Int32" Nullable="false" />
         <Property Name="RequireAcceptingAccountMatchInvitedAccount" Type="Edm.Boolean" Nullable="false" />
@@ -32619,8 +32668,7 @@
         <Parameter Name="cancelAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.CancelAgreementModel" />
       </Action>
       <Action Name="CompleteAgreement">
-        <Parameter Name="endAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.EndAgreementModel" />
-        <ReturnType Type="Edm.String" />
+        <Parameter Name="completeAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.CompleteAgreementModel" />
       </Action>
       <Action Name="DeclineAgreement">
         <Parameter Name="declineAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.DeclineAgreementModel" />
