@@ -1,0 +1,582 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Text to speech",
+    "description": "Azure Text-to-speech allows you to build apps and services that speak naturally with more than 400 voices across 140 languages and dialects.",
+    "version": "1.0",
+    "contact": {
+      "name": "Speech Service Power Platform Team",
+      "url": "https://docs.microsoft.com/azure/cognitive-services/speech-service/support",
+      "email": "speechpowerplatform@microsoft.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/azuretexttospeech",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/cognitiveservices/voices/list": {
+      "get": {
+        "tags": [
+          "Get voices list:"
+        ],
+        "summary": "Get list of voices",
+        "description": "Get a full list of voices for a specific region or endpoint.",
+        "operationId": "GetVoicesList",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "array"
+              }
+            },
+            "examples": {
+              "application/json": "[{\"Name\": \"Microsoft Server Speech Text to Speech Voice (de-DE, ConradNeural)\", \"DisplayName\": \"Conrad\", \"LocalName\": \"Conrad\", \"ShortName\": \"de-DE-ConradNeural\", \"Gender\": \"Male\", \"Locale\": \"de-DE\", \"LocaleName\": \"German (Germany)\", \"StyleList\": [\"cheerful\" ], \"SampleRateHertz\": \"48000\", \"VoiceType\": \"Neural\", \"Status\": \"Preview\", \"WordsPerMinute\": \"128\"}]"
+            }
+          },
+          "401": {
+            "description": "In case the user isn't authorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Unauthorized\", \"message\": \"Authentication is required to access the resource.\"}"
+            }
+          },
+          "403": {
+            "description": "In case authorized user isn't known or doesn't have the required permissions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Forbidden\", \"message\": \"No permission to access this resource.\"}"
+            }
+          },
+          "429": {
+            "description": "In case the rate limit has been exceeded.",
+            "headers": {
+              "Retry-After": {
+                "type": "integer",
+                "description": "The minimum number of seconds to wait before not getting this response anymore."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"TooManyRequests\", \"message\": \"The rate limit has been reached. The timeout in seconds can be found in the Retry-After header.\"}"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuretexttospeech/#get-list-of-voices"
+        }
+      }
+    },
+    "/{connectionId}/cognitiveservices/v1": {
+      "post": {
+        "tags": [
+          "Convert text to speech:"
+        ],
+        "summary": "Convert text to speech",
+        "description": "Convert single text to speech.",
+        "operationId": "ConvertTextToSpeech",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "audioFormat",
+            "description": "The details of the new convert text to speech",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ConverTextToSpeech"
+            }
+          }
+        ],
+        "x-ms-visibility": "advanced",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "items": {
+                "type": "string",
+                "description": "base64"
+              }
+            }
+          },
+          "400": {
+            "description": "In case the operation cannot be performed successfully with the specified values.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"InvalidRequest\", \"message\": \"The base model isn't valid for this operation.\", \"innerError\": {\"code\": \"InvalidBaseModel\", \"message\": \"The base model isn't valid for this operation.\"}}"
+            }
+          },
+          "401": {
+            "description": "In case the user isn't authorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Unauthorized\", \"message\": \"Authentication is required to access the resource.\"}"
+            }
+          },
+          "403": {
+            "description": "In case authorized user isn't known or doesn't have the required permissions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Forbidden\", \"message\": \"No permission to access this resource.\"}"
+            }
+          },
+          "404": {
+            "description": "In case the specified entity doesn't exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"NotFound\", \"message\": \"The specified entity cannot be found.\"}"
+            }
+          },
+          "429": {
+            "description": "In case the rate limit has been exceeded.",
+            "headers": {
+              "Retry-After": {
+                "type": "integer",
+                "description": "The minimum number of seconds to wait before not getting this response anymore."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"TooManyRequests\", \"message\": \"The rate limit has been reached. The timeout in seconds can be found in the Retry-After header.\"}"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuretexttospeech/#convert-text-to-speech"
+        }
+      }
+    },
+    "/{connectionId}/cognitiveservices/v1/ssml": {
+      "post": {
+        "tags": [
+          "Convert text to speech with SSML:"
+        ],
+        "summary": "Convert text to speech with SSML",
+        "description": "Convert text to speech by using Speech Synthesis Markup Language (SSML)",
+        "operationId": "ConvertTextToSpeechWithSSML",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "audioFormat",
+            "description": "Conver text to speech with SSML",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ConverTextToSpeechWithSSML"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "items": {
+                "type": "string",
+                "description": "base64"
+              }
+            }
+          },
+          "400": {
+            "description": "In case the operation cannot be performed successfully with the specified values.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"InvalidRequest\", \"message\": \"The base model isn't valid for this operation.\", \"innerError\": {\"code\": \"InvalidBaseModel\", \"message\": \"The base model isn't valid for this operation.\"}}"
+            }
+          },
+          "401": {
+            "description": "In case the user isn't authorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Unauthorized\", \"message\": \"Authentication is required to access the resource.\"}"
+            }
+          },
+          "403": {
+            "description": "In case authorized user isn't known or doesn't have the required permissions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"Forbidden\", \"message\": \"No permission to access this resource.\"}"
+            }
+          },
+          "404": {
+            "description": "In case the specified entity doesn't exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"NotFound\", \"message\": \"The specified entity cannot be found.\"}"
+            }
+          },
+          "429": {
+            "description": "In case the rate limit has been exceeded.",
+            "headers": {
+              "Retry-After": {
+                "type": "integer",
+                "description": "The minimum number of seconds to wait before not getting this response anymore."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": "{\"code\": \"TooManyRequests\", \"message\": \"The rate limit has been reached. The timeout in seconds can be found in the Retry-After header.\"}"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuretexttospeech/#convert-text-to-speech-with-ssml"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DetailedErrorCode": {
+      "title": "DetailedErrorCode",
+      "description": "Detailed error code enum.",
+      "enum": [
+        "InvalidParameterValue",
+        "InvalidRequestBodyFormat",
+        "EmptyRequest",
+        "UnsupportedLanguageCode",
+        "InvalidParameter",
+        "InvalidPermissions",
+        "Forbidden"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DetailedErrorCode",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "InvalidParameterValue",
+            "description": "Invalid parameter value."
+          },
+          {
+            "value": "InvalidRequestBodyFormat",
+            "description": "Invalid request body format."
+          },
+          {
+            "value": "EmptyRequest",
+            "description": "Empty Request."
+          },
+          {
+            "value": "UnsupportedLanguageCode",
+            "description": "Unsupported language code."
+          },
+          {
+            "value": "InvalidParameter",
+            "description": "Invalid parameter."
+          },
+          {
+            "value": "InvalidPermissions",
+            "description": "Invalid permissions."
+          }
+        ]
+      }
+    },
+    "Error": {
+      "description": "New format which conforms to the new Cognitive Services API guidelines which is available at https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.This contains an outer error with error code, message, details, target and an inner error with more descriptive details.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/ErrorCode"
+        },
+        "details": {
+          "description": "Additional supportive details regarding the error and/or expected policies.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Error"
+          }
+        },
+        "message": {
+          "description": "High level error message.",
+          "type": "string"
+        },
+        "target": {
+          "description": "The source of the error.For example it would be \"documents\" or \"document id\" in case of invalid document.",
+          "type": "string"
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerError"
+        }
+      }
+    },
+    "ErrorCode": {
+      "description": "High level error codes.",
+      "enum": [
+        "InvalidRequest",
+        "InvalidArgument",
+        "InternalServerError",
+        "ServiceUnavailable",
+        "NotFound",
+        "PipelineError",
+        "Conflict",
+        "InternalCommunicationFailed",
+        "Forbidden",
+        "NotAllowed",
+        "Unauthorized",
+        "UnsupportedMediaType",
+        "TooManyRequests",
+        "UnprocessableEntity"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ErrorCode",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "InvalidRequest",
+            "description": "Representing the invalid request error code."
+          },
+          {
+            "value": "InvalidArgument",
+            "description": "Representing the invalid argument error code."
+          },
+          {
+            "value": "InternalServerError",
+            "description": "Representing the internal server error error code."
+          },
+          {
+            "value": "ServiceUnavailable",
+            "description": "Representing the service unavailable error code."
+          },
+          {
+            "value": "NotFound",
+            "description": "Representing the not found error code."
+          },
+          {
+            "value": "PipelineError",
+            "description": "Representing the pipeline error error code."
+          },
+          {
+            "value": "Conflict",
+            "description": "Representing the conflict error code."
+          },
+          {
+            "value": "InternalCommunicationFailed",
+            "description": "Representing the internal communication failed error code."
+          },
+          {
+            "value": "Forbidden",
+            "description": "Representing the forbidden error code."
+          },
+          {
+            "value": "NotAllowed",
+            "description": "Representing the not allowed error code."
+          },
+          {
+            "value": "Unauthorized",
+            "description": "Representing the unauthorized error code."
+          },
+          {
+            "value": "UnsupportedMediaType",
+            "description": "Representing the unsupported media type error code."
+          },
+          {
+            "value": "TooManyRequests",
+            "description": "Representing the too many requests error code."
+          },
+          {
+            "value": "UnprocessableEntity",
+            "description": "Representing the unprocessable entity error code."
+          }
+        ]
+      }
+    },
+    "InnerError": {
+      "description": "New Inner Error format which conforms to Cognitive Services API Guidelines which is available at https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.This contains required properties ErrorCode, message and optional properties target, details(key value pair), inner error(this can be nested).",
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/DetailedErrorCode"
+        },
+        "details": {
+          "description": "Additional supportive details regarding the error and/or expected policies.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "description": "High level error message.",
+          "type": "string"
+        },
+        "target": {
+          "description": "The source of the error.For example it would be \"documents\" or \"document id\" in case of invalid document.",
+          "type": "string"
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerError"
+        }
+      }
+    },
+    "ConverTextToSpeech": {
+      "required": [
+        "voiceName",
+        "locale",
+        "synthesizedText"
+      ],
+      "type": "object",
+      "properties": {
+        "voiceName": {
+          "description": "The voice name output for text to speech. For example: en-US-JennyNeural.",
+          "type": "string",
+          "x-ms-summary": "Voice Name"
+        },
+        "locale": {
+          "description": "The locale of the contained data. For example: en-US.",
+          "type": "string",
+          "x-ms-summary": "Locale"
+        },
+        "synthesizedText": {
+          "description": "The synthesized text that needs to be converted to speech.",
+          "type": "string",
+          "x-ms-summary": "Synthesized Text"
+        },
+        "style": {
+          "description": "The express style of speech. For example: cheerful.",
+          "type": "string",
+          "x-ms-summary": "Style",
+          "x-ms-visibility": "advanced"
+        },
+        "speakingRate": {
+          "description": "The speed rate of speech. For example: -40.00%.",
+          "type": "string",
+          "x-ms-summary": "Speaking Rate",
+          "x-ms-visibility": "advanced"
+        },
+        "audioFormat": {
+          "$ref": "#/definitions/OutputFormat"
+        }
+      }
+    },
+    "ConverTextToSpeechWithSSML": {
+      "required": [
+        "ssmlText"
+      ],
+      "type": "object",
+      "properties": {
+        "ssmlText": {
+          "description": "The text in SSML format (e.g. <speak xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xmlns:emo='http://www.w3.org/2009/10/emotionml' version='1.0' xml:lang='en-US'><voice name='en-US-ChristopherNeural'>power connector</voice></speak>)",
+          "type": "string",
+          "x-ms-summary": "SSML Text"
+        },
+        "audioFormat": {
+          "$ref": "#/definitions/OutputFormat"
+        }
+      }
+    },
+    "OutputFormat": {
+      "type": "object",
+      "properties": {
+        "outputFormat": {
+          "description": "The non-streaming audio formats. Default: riff-24khz-16bit-mono-pcm.",
+          "type": "string",
+          "enum": [
+            "riff-8khz-8bit-mono-alaw",
+            "riff-8khz-8bit-mono-mulaw",
+            "riff-8khz-16bit-mono-pcm",
+            "riff-22050hz-16bit-mono-pcm",
+            "riff-24khz-16bit-mono-pcm",
+            "riff-44100hz-16bit-mono-pcm",
+            "riff-48khz-16bit-mono-pcm"
+          ],
+          "default": "riff-24khz-16bit-mono-pcm",
+          "x-ms-summary": "Output Audio Format"
+        }
+      }
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://docs.microsoft.com/azure/cognitive-services/speech-service/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "AI;Website"
+    }
+  ],
+  "security": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/azuretexttospeech"
+  }
+}
