@@ -3,7 +3,7 @@
   "info": {
     "title": "Autodesk Data Exchange",
     "description": "Unleash your productivity and streamline collaboration by connecting design and make data between Revit and the tools of your choice.",
-    "version": "4.1",
+    "version": "5.0",
     "contact": {
       "name": "Autodesk Data Exchange Team",
       "url": "https://aps.autodesk.com/contact-support",
@@ -989,6 +989,29 @@
             "$ref": "#/parameters/FilePickerSingleReturn"
           },
           {
+            "name": "getlatest",
+            "in": "query",
+            "required": true,
+            "x-ms-summary": "Get all or latest properties",
+            "description": "Get all or latest properties for the selected Data Exchange",
+            "type": "string",
+            "default": "all",
+            "enum": [
+              "all",
+              "latest"
+            ],
+            "x-ms-enum-values": [
+              {
+                "displayName": "All Properties",
+                "value": "all"
+              },
+              {
+                "displayName": "Latest Properties",
+                "value": "latest"
+              }
+            ]
+          },
+          {
             "name": "filterBy",
             "in": "query",
             "required": true,
@@ -1021,7 +1044,7 @@
             "x-ms-summary": "Filter Value",
             "description": "Enter a value",
             "in": "query",
-            "required": true,
+            "required": false,
             "type": "string",
             "x-ms-visibility": "important"
           },
@@ -1029,11 +1052,11 @@
             "name": "selectedUnitType",
             "in": "query",
             "required": false,
-            "x-ms-summary": "Select Unit Type",
-            "description": "Select Unit Type for Length, Area and Volume properties",
+            "x-ms-summary": "Unit Type",
+            "description": "Unit Type for Length, Area and Volume properties",
             "x-ms-visibility": "important",
             "type": "string",
-            "default": "metric",
+            "default": "imperial",
             "enum": [
               "imperial",
               "metric"
@@ -1532,17 +1555,47 @@
             "modifiedTime": {
               "type": "string",
               "description": "Last modified",
-              "title": "Last modified"
+              "title": "Last modified",
+              "x-ms-visibility": "important"
             },
-            "name": {
-              "type": "string",
-              "description": "Name of the Data Exchange",
-              "title": "Data Exchange file name"
+            "hidden": {
+              "type": "boolean",
+              "description": "Is Data Exchange deleted",
+              "title": "Deleted",
+              "x-ms-visibility": "advanced",
+              "enum": [
+                "",
+                "true",
+                "false"
+              ]
             },
-            "modifiedBy": {
-              "type": "string",
-              "description": "Modified by",
-              "title": "Modified by"
+            "custom-metadata": {
+              "type": "object",
+              "properties": {
+                "file_name": {
+                  "type": "string",
+                  "description": "Name of the Data Exchange",
+                  "title": "Data Exchange file name",
+                  "x-ms-visibility": "important"
+                }
+              }
+            },
+            "context": {
+              "type": "object",
+              "properties": {
+                "lineage": {
+                  "type": "object",
+                  "x-ms-visibility": "advanced",
+                  "properties": {
+                    "lastModifiedUserName": {
+                      "type": "string",
+                      "description": "Modified By",
+                      "title": "Modified By",
+                      "x-ms-visibility": "important"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -1585,10 +1638,10 @@
     },
     "UnitsDropDown": {
       "required": false,
-      "x-ms-summary": "Select Unit",
+      "x-ms-summary": "Unit",
       "name": "selectedUnit",
       "in": "query",
-      "description": "Select the Unit for Length, Area and Volume properties",
+      "description": "Unit for Length, Area and Volume properties",
       "type": "string",
       "x-ms-visibility": "important",
       "x-ms-dynamic-values": {
@@ -1597,11 +1650,11 @@
         "value-title": "displayName",
         "value-collection": "data",
         "parameters": {
-          "fileId": {
-            "parameter": "fileId"
-          },
           "selectedUnitType": {
             "parameter": "selectedUnitType"
+          },
+          "fileId": {
+            "parameter": "fileId"
           }
         }
       }
