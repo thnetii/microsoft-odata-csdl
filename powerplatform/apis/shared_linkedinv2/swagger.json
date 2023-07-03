@@ -23,7 +23,7 @@
   "paths": {
     "/{connectionId}/v2/people/shares": {
       "post": {
-        "summary": "Share an article V2",
+        "summary": "Share an article V2 [DEPRECATED]",
         "description": "Post an article using a URL to the content you wish to share. LinkedIn analyzes the included URL and automatically identifies the title, description, image, etc. You can overwrite the auto-identified content by providing the title, description and image directly.",
         "operationId": "ShareUpdateV2",
         "parameters": [
@@ -51,16 +51,16 @@
             }
           }
         },
-        "deprecated": false,
+        "deprecated": true,
         "x-ms-no-generic-test": true,
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/linkedinv2/#share-an-article-v2"
+          "url": "https://docs.microsoft.com/connectors/linkedinv2/#share-an-article-v2-%5bdeprecated%5d-%5bdeprecated%5d"
         }
       }
     },
     "/{connectionId}/v2/companies/shares": {
       "post": {
-        "summary": "Share a company update V2",
+        "summary": "Share a company update V2 [DEPRECATED]",
         "description": "Post a company update (article) using a URL to the content you wish to share. LinkedIn analyzes the included URL and automatically identifies the title, description, image, etc. You can overwrite the auto-identified content by providing the title, description and image directly.",
         "operationId": "ShareCompanyUpdateV2",
         "parameters": [
@@ -88,10 +88,84 @@
             }
           }
         },
+        "deprecated": true,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/linkedinv2/#share-a-company-update-v2-%5bdeprecated%5d-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/company/rest/posts": {
+      "post": {
+        "summary": "Post an article on company page",
+        "description": "Post a company article with posts api.",
+        "operationId": "PostCompanyUpdate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostCompanyUpdate_Request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Share_ResponseV2"
+            }
+          }
+        },
         "deprecated": false,
         "x-ms-no-generic-test": true,
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/linkedinv2/#share-a-company-update-v2"
+          "url": "https://docs.microsoft.com/connectors/linkedinv2/#post-an-article-on-company-page"
+        }
+      }
+    },
+    "/{connectionId}/people/rest/posts": {
+      "post": {
+        "summary": "Post an article",
+        "description": "Post an article using posts api.",
+        "operationId": "PostUpdate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostUpdate_Request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Share_ResponseV2"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/linkedinv2/#post-an-article"
         }
       }
     },
@@ -221,6 +295,205 @@
         },
         "distribution": {
           "visibleToGuest": "true"
+        }
+      }
+    },
+    "PostUpdate_Request": {
+      "type": "object",
+      "required": [
+        "commentary",
+        "lifecycleState",
+        "visibility",
+        "content",
+        "distribution"
+      ],
+      "properties": {
+        "commentary": {
+          "description": "The commentary of the post.",
+          "type": "string",
+          "x-ms-summary": "Commentary",
+          "x-ms-visibility": "important"
+        },
+        "visibility": {
+          "description": "The visibility of the post.",
+          "enum": [
+            "Public",
+            "Connections Only",
+            "Logged in members only"
+          ],
+          "type": "string",
+          "x-ms-summary": "Visibility",
+          "x-ms-visibility": "important"
+        },
+        "lifecycleState": {
+          "description": "The lifecycleState of the post.",
+          "type": "string",
+          "x-ms-summary": "Lifecycle State",
+          "x-ms-visibility": "internal",
+          "default": "PUBLISHED"
+        },
+        "isReshareDisabledByAuthor": {
+          "description": "Indicates whether resharing of the post has been disabled by the author.",
+          "type": "boolean",
+          "x-ms-summary": "Is Reshare Disabled By Author",
+          "default": "false",
+          "x-ms-visibility": "advanced"
+        },
+        "distribution": {
+          "type": "object",
+          "required": [
+            "feedDistribution"
+          ],
+          "properties": {
+            "feedDistribution": {
+              "description": "Specifies the feeds distributed to within LinkedIn.",
+              "type": "string",
+              "x-ms-summary": "Feed Distribution",
+              "x-ms-visibility": "internal",
+              "default": "MAIN_FEED"
+            }
+          }
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "article": {
+              "type": "object",
+              "required": [
+                "source",
+                "title"
+              ],
+              "properties": {
+                "description": {
+                  "description": "The description of the content.",
+                  "type": "string",
+                  "x-ms-summary": "Description",
+                  "maxLength": 4086,
+                  "default": "",
+                  "x-ms-visibility": "advanced"
+                },
+                "source": {
+                  "description": "A fully qualified URL to the article.",
+                  "type": "string",
+                  "maxLength": 8192,
+                  "x-ms-summary": "URL of the article",
+                  "x-ms-visibility": "important"
+                },
+                "title": {
+                  "description": "The title of the article.",
+                  "type": "string",
+                  "x-ms-summary": "Title",
+                  "maxLength": 400,
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "PostCompanyUpdate_Request": {
+      "type": "object",
+      "required": [
+        "author",
+        "commentary",
+        "lifecycleState",
+        "visibility",
+        "content",
+        "distribution"
+      ],
+      "properties": {
+        "author": {
+          "description": "The company, on behalf of which you want to post the share.",
+          "type": "string",
+          "x-ms-summary": "Company",
+          "x-ms-visibility": "important",
+          "x-ms-dynamic-values": {
+            "operationId": "ListCompaniesV2",
+            "value-path": "companyUrn",
+            "value-title": "companyName"
+          }
+        },
+        "commentary": {
+          "description": "The commentary of the post.",
+          "type": "string",
+          "x-ms-summary": "Commentary",
+          "x-ms-visibility": "important"
+        },
+        "visibility": {
+          "description": "The visibility of the post.",
+          "enum": [
+            "Public",
+            "Logged in members only"
+          ],
+          "type": "string",
+          "x-ms-summary": "Visibility",
+          "x-ms-visibility": "important"
+        },
+        "lifecycleState": {
+          "description": "The lifecycleState of the post.",
+          "type": "string",
+          "x-ms-summary": "Lifecycle State",
+          "x-ms-visibility": "internal",
+          "default": "PUBLISHED"
+        },
+        "isReshareDisabledByAuthor": {
+          "description": "Indicates whether resharing of the post has been disabled by the author.",
+          "type": "boolean",
+          "x-ms-summary": "Is Reshare Disabled By Author",
+          "default": "false",
+          "x-ms-visibility": "advanced"
+        },
+        "distribution": {
+          "type": "object",
+          "required": [
+            "feedDistribution"
+          ],
+          "properties": {
+            "feedDistribution": {
+              "description": "Specifies the feeds distributed to within LinkedIn.",
+              "type": "string",
+              "x-ms-summary": "Feed Distribution",
+              "x-ms-visibility": "internal",
+              "default": "MAIN_FEED"
+            }
+          }
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "article": {
+              "type": "object",
+              "required": [
+                "source",
+                "title"
+              ],
+              "properties": {
+                "description": {
+                  "description": "The description of the content.",
+                  "type": "string",
+                  "x-ms-summary": "Description",
+                  "maxLength": 4086,
+                  "default": "",
+                  "x-ms-visibility": "advanced"
+                },
+                "source": {
+                  "description": "A fully qualified URL to the article.",
+                  "type": "string",
+                  "maxLength": 8192,
+                  "x-ms-summary": "URL of the article",
+                  "x-ms-visibility": "important"
+                },
+                "title": {
+                  "description": "The title of the article.",
+                  "type": "string",
+                  "x-ms-summary": "Title",
+                  "maxLength": 400,
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
         }
       }
     },
