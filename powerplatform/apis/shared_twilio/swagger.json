@@ -109,10 +109,10 @@
             "description": "Operation Failed."
           }
         },
-        "deprecated": false,
+        "deprecated": true,
         "x-ms-visibility": "important",
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/twilio/#list-messages"
+          "url": "https://docs.microsoft.com/connectors/twilio/#list-messages-%5bdeprecated%5d"
         }
       },
       "post": {
@@ -169,6 +169,108 @@
         "x-ms-visibility": "important",
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/twilio/#send-text-message-(sms)"
+        }
+      }
+    },
+    "/{connectionId}/v2/Messages.json": {
+      "get": {
+        "tags": [
+          "Twilio"
+        ],
+        "summary": "List Messages V2",
+        "description": "Returns a list of messages associated with your account. This action supports pagination.",
+        "operationId": "ListMessagesV2",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "description": "Only show messages to this phone number.",
+            "required": false,
+            "x-ms-summary": "To Phone Number",
+            "type": "string"
+          },
+          {
+            "name": "From",
+            "in": "query",
+            "description": "Only show messages from this phone number.",
+            "required": false,
+            "x-ms-summary": "From Phone Number",
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "ListIncomingPhoneNumbers",
+              "value-collection": "incoming_phone_numbers",
+              "value-path": "phone_number",
+              "value-title": "friendly_name"
+            }
+          },
+          {
+            "name": "DateSent",
+            "in": "query",
+            "description": "Only show messages sent on this date (in GMT format), given as YYYY-MM-DD. Example: 2009-07-06.",
+            "required": false,
+            "x-ms-summary": "Date Sent",
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "How many resources to return in each list page. Default is 50.",
+            "required": false,
+            "x-ms-summary": "Limit",
+            "x-ms-visibility": "advanced",
+            "type": "integer",
+            "format": "int32",
+            "default": 50
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page number. Default is 0.",
+            "required": false,
+            "x-ms-summary": "Page",
+            "x-ms-visibility": "internal",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation successful",
+            "schema": {
+              "$ref": "#/definitions/MessageListV2"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/twilio/#list-messages-v2"
         }
       }
     },
@@ -1115,6 +1217,26 @@
           "format": "uri",
           "title": "Previous Page URI",
           "x-ms-visibility": "advanced"
+        }
+      }
+    },
+    "MessageListV2": {
+      "x-ms-summary": "Message List V2",
+      "description": "List of one or more messages.",
+      "type": "object",
+      "properties": {
+        "@odata.nextLink": {
+          "description": "Relative URI for the next page.",
+          "type": "string",
+          "x-ms-summary": "@odata.nextLink",
+          "x-ms-visibility": "advanced"
+        },
+        "value": {
+          "description": "List of one or more messages.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Message"
+          }
         }
       }
     },
