@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_tesseronasmbasicdata`|
 |**Tier**|Premium|
-|**Version**|`u/v-sriyen/7NovTrain\1.0.1611.3096`|
+|**Version**|`releases/v1.0.1644\1.0.1644.3342`|
 |**Publisher**|**Luithle + Luithle GmbH**|
 |**Created**|Tue Nov 08 2022|
-|**Changed**|Tue Nov 08 2022|
+|**Changed**|Wed Jul 05 2023|
 
 ## Description
 This connector allows you to create, edit and search enterprises and contacts in your Tesseron ASM Instance.
