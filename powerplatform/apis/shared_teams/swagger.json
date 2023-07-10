@@ -966,6 +966,59 @@
         }
       }
     },
+    "/{connectionId}/v1.0/teams/listmembers/threadType/{threadType}": {
+      "post": {
+        "summary": "List members",
+        "description": "This operation list members based on a threadtype (chat, channel, etc).",
+        "x-ms-visibility": "important",
+        "operationId": "ListMembers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/listMembersThreadType__in_path"
+          },
+          {
+            "name": "body",
+            "x-ms-summary": "List members request",
+            "description": "The list members request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DynamicListMembersSchema"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The list members response",
+            "schema": {
+              "$ref": "#/definitions/ListMembersResponseSchema"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-no-generic-test": true,
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/teams/#list-members"
+        }
+      }
+    },
     "/{connectionId}/v3/beta/teams/{groupId}/channels/{channelId}/messages": {
       "post": {
         "summary": "Post a message (V3)",
@@ -5814,6 +5867,41 @@
         }
       }
     },
+    "/{connectionId}/flowbot/listmembersinputschema/threadType/{threadType}": {
+      "get": {
+        "operationId": "ListMembersInputSchema",
+        "summary": "List members input schema",
+        "description": "Get the schema information for list members input based on thread type",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/threadType__in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ListMembersSchema"
+            }
+          },
+          "default": {
+            "description": "Operation Failed",
+            "schema": {}
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/teams/#list-members-input-schema"
+        }
+      }
+    },
     "/{connectionId}/flowbot/webhookTrigger/inputSchema/threadType/{threadType}": {
       "get": {
         "summary": "Input schema for webhook trigger",
@@ -6099,6 +6187,14 @@
         }
       }
     },
+    "ListMembersSchema": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
     "GetTagsResponseSchema": {
       "type": "object",
       "properties": {
@@ -6247,6 +6343,73 @@
           }
         },
         "value-path": "schema"
+      }
+    },
+    "DynamicListMembersSchema": {
+      "type": "object",
+      "properties": {},
+      "x-ms-dynamic-schema": {
+        "operationId": "ListMembersInputSchema",
+        "parameters": {
+          "threadType": {
+            "parameter": "threadType"
+          }
+        },
+        "value-path": "schema"
+      }
+    },
+    "ListMembersResponseSchema": {
+      "description": "List members response schema",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List members response",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "displayName": {
+                "description": "Display Name of the member",
+                "type": "string",
+                "x-ms-summary": "displayName"
+              },
+              "email": {
+                "description": "Email Address of the member",
+                "type": "string",
+                "x-ms-summary": "email"
+              },
+              "id": {
+                "description": "ID of the member",
+                "type": "string",
+                "x-ms-summary": "ID"
+              },
+              "roles": {
+                "description": "List of roles of the member",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "x-ms-summary": "roles"
+              },
+              "tenantId": {
+                "description": "Tenant Id of the member",
+                "type": "string",
+                "x-ms-summary": "Tenant Id"
+              },
+              "userId": {
+                "description": "User Id of the member",
+                "type": "string",
+                "x-ms-summary": "User Id"
+              },
+              "visibleHistoryStartDateTime": {
+                "description": "The timestamp denoting how far back a conversation's history is shared with the conversation member.",
+                "type": "string",
+                "x-ms-summary": "Conversation Start Time"
+              }
+            }
+          },
+          "x-ms-summary": "List of members"
+        }
       }
     },
     "DynamicUserNotificationRequest": {
@@ -9188,6 +9351,23 @@
           "displayName": "Channel",
           "value": "channel"
         },
+        {
+          "displayName": "Group chat",
+          "value": "groupchat"
+        }
+      ]
+    },
+    "listMembersThreadType__in_path": {
+      "name": "threadType",
+      "in": "path",
+      "description": "Choose message type",
+      "required": true,
+      "x-ms-summary": "Thread type",
+      "type": "string",
+      "enum": [
+        "groupchat"
+      ],
+      "x-ms-enum-values": [
         {
           "displayName": "Group chat",
           "value": "groupchat"
