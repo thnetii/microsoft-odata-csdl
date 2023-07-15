@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23828 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.23905 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -349,6 +349,7 @@
         <NavigationProperty Name="extensions" Type="Collection(oneDrive.extension)" ContainsTarget="true" />
         <NavigationProperty Name="operations" Type="Collection(oneDrive.operation)" ContainsTarget="true" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
+        <NavigationProperty Name="originalContents" Type="Collection(oneDrive.originalContent)" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamAccessRequests" Type="Collection(oneDrive.photoStreamAccessRequest)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamActivities" Type="Collection(oneDrive.photoStreamActivity)" ContainsTarget="true" />
@@ -762,6 +763,9 @@
         <NavigationProperty Name="plannerActivityItems" Type="Collection(oneDrive.plannerActivity)" ContainsTarget="true" />
         <NavigationProperty Name="emailActivityItems" Type="Collection(oneDrive.emailActivity)" ContainsTarget="true" />
         <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" ContainsTarget="true" />
+        <NavigationProperty Name="syntexModels" Type="Collection(oneDrive.syntexModel)" ContainsTarget="true" />
+        <NavigationProperty Name="syntexModelUsages" Type="Collection(oneDrive.syntexModelUsage)" ContainsTarget="true" />
+        <NavigationProperty Name="syntexWorkItems" Type="Collection(oneDrive.syntexWorkItem)" ContainsTarget="true" />
         <NavigationProperty Name="siteReviews" Type="Collection(oneDrive.siteReview)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -861,6 +865,17 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="extensionName" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="originalContent" OpenType="true">
+        <Key>
+          <PropertyRef Name="name" />
+        </Key>
+        <Property Name="content" Type="Edm.Stream" />
+        <Property Name="downloadUrl" Type="Edm.String" />
+        <Property Name="hashes" Type="oneDrive.hashes" />
+        <Property Name="mimeType" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" Nullable="false" />
+        <Property Name="size" Type="Edm.Int64" />
       </EntityType>
       <EntityType Name="photoStreamActivity" OpenType="true">
         <Key>
@@ -1152,6 +1167,7 @@
         <NavigationProperty Name="photoStreamMemberships" Type="Collection(oneDrive.photoStreamMembership)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamLink" Type="oneDrive.photoStreamLink" ContainsTarget="true" />
         <NavigationProperty Name="permission" Type="oneDrive.permission" ContainsTarget="true" />
+        <NavigationProperty Name="root" Type="oneDrive.item" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="HubSite" BaseType="oneDrive.site" OpenType="true">
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -1357,6 +1373,73 @@
         <Property Name="url" Type="Edm.String" />
         <Property Name="subject" Type="Edm.String" />
         <Property Name="sentDateTime" Type="Edm.DateTimeOffset" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="syntexModel" OpenType="true">
+        <Key>
+          <PropertyRef Name="uniqueId" />
+        </Key>
+        <Property Name="contentTypeId" Type="Edm.String" />
+        <Property Name="contentTypeName" Type="Edm.String" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="driveId" Type="Edm.String" />
+        <Property Name="schemas" Type="Edm.String" />
+        <Property Name="explanations" Type="Edm.String" />
+        <Property Name="modelSettings" Type="Edm.String" />
+        <Property Name="type" Type="oneDrive.ModelType" />
+        <Property Name="itemId" Type="Edm.String" />
+        <Property Name="trainingStatus" Type="Edm.String" />
+        <Property Name="uniqueId" Type="Edm.String" Nullable="false" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="syntexModelUsage">
+        <Key>
+          <PropertyRef Name="uniqueId" />
+        </Key>
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="hasTargetSitePermission" Type="Edm.Boolean" />
+        <Property Name="modelId" Type="Edm.String" />
+        <Property Name="modelName" Type="Edm.String" />
+        <Property Name="modelType" Type="oneDrive.ModelType" />
+        <Property Name="modelUniqueId" Type="Edm.String" />
+        <Property Name="modelVersion" Type="Edm.String" />
+        <Property Name="type" Type="oneDrive.ModelUsageType" />
+        <Property Name="targetLibraryId" Type="Edm.String" />
+        <Property Name="targetLibraryName" Type="Edm.String" />
+        <Property Name="isTargetLibraryRemoved" Type="Edm.Boolean" />
+        <Property Name="targetLibraryServerRelativeUrl" Type="Edm.String" />
+        <Property Name="targetLibraryUrl" Type="Edm.String" />
+        <Property Name="targetSiteId" Type="Edm.String" />
+        <Property Name="targetSiteUrl" Type="Edm.String" />
+        <Property Name="targetTableListId" Type="Edm.String" />
+        <Property Name="targetTableListName" Type="Edm.String" />
+        <Property Name="isTargetTableListRemoved" Type="Edm.Boolean" />
+        <Property Name="targetTableListServerRelativeUrl" Type="Edm.String" />
+        <Property Name="targetTableListUrl" Type="Edm.String" />
+        <Property Name="targetWebId" Type="Edm.String" />
+        <Property Name="targetWebServerRelativeUrl" Type="Edm.String" />
+        <Property Name="uniqueId" Type="Edm.String" Nullable="false" />
+        <Property Name="viewOption" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="syntexWorkItem">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="type" Type="oneDrive.WorkItemType" />
+        <Property Name="status" Type="oneDrive.WorkItemStatus" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="deliverDate" Type="Edm.DateTimeOffset" />
+        <Property Name="targetSiteId" Type="Edm.String" />
+        <Property Name="targetWebId" Type="Edm.String" />
+        <Property Name="targetUniqueId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="siteReview" OpenType="true">
@@ -1759,12 +1842,14 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="allowedDomainGuidsForSyncApp" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="amplifyAdminSettings" Type="oneDrive.amplifyAdminSettings" />
         <Property Name="availableManagedPathsForSiteCreation" Type="Collection(Edm.String)" />
         <Property Name="deletedUserPersonalSiteRetentionPeriodInDays" Type="Edm.Int32" />
         <Property Name="excludedFileExtensionsForSyncApp" Type="Collection(Edm.String)" />
         <Property Name="idleSessionSignOut" Type="oneDrive.idleSessionSignOut" />
         <Property Name="imageTaggingOption" Type="oneDrive.ImageTaggingChoice" />
         <Property Name="isCommentingOnSitePagesEnabled" Type="Edm.Boolean" />
+        <Property Name="isAuditLogEnrichmentEnabled" Type="Edm.Boolean" />
         <Property Name="isFileActivityNotificationEnabled" Type="Edm.Boolean" />
         <Property Name="isLegacyAuthProtocolsEnabled" Type="Edm.Boolean" />
         <Property Name="isLoopEnabled" Type="Edm.Boolean" />
@@ -3399,6 +3484,12 @@
       <ComplexType Name="album" OpenType="true">
         <Property Name="coverSourceId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="amplifyAdminSettings" OpenType="true">
+        <Property Name="eapAccessType" Type="oneDrive.AccessType" />
+        <Property Name="eapGroupDetails" Type="Edm.Guid" />
+        <Property Name="campaignCreationAccessType" Type="oneDrive.AccessType" />
+        <Property Name="campaignCreationGroupDetails" Type="Edm.Guid" />
+      </ComplexType>
       <ComplexType Name="archive" OpenType="true">
         <NavigationProperty Name="root" Type="oneDrive.item" ContainsTarget="true" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
@@ -4065,6 +4156,7 @@
         <Property Name="requiresAuthentication" Type="oneDrive.sharingOperationStatus" />
         <Property Name="addressBarLinkPermission" Type="Edm.String" />
         <Property Name="allowEmbed" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="restrictToExistingRelationships" Type="oneDrive.sharingOperationStatus" />
       </ComplexType>
       <ComplexType Name="sharingOperationStatus" OpenType="true">
         <Property Name="enabled" Type="Edm.Boolean" />
@@ -5065,6 +5157,33 @@
         <Member Name="PlanEdits" Value="3" />
         <Member Name="PlanDueTommorow" Value="4" />
       </EnumType>
+      <EnumType Name="ModelType">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="TeachingMethod" Value="1" />
+        <Member Name="LayoutMethod" Value="2" />
+        <Member Name="FreeformSelectionMethod" Value="3" />
+        <Member Name="ContractPrebuilt" Value="4" />
+        <Member Name="InvoicePrebuilt" Value="5" />
+        <Member Name="ReceiptPrebuilt" Value="6" />
+      </EnumType>
+      <EnumType Name="ModelUsageType">
+        <Member Name="None" Value="0" />
+        <Member Name="Library" Value="1" />
+        <Member Name="Site" Value="2" />
+        <Member Name="Tenant" Value="3" />
+      </EnumType>
+      <EnumType Name="WorkItemType">
+        <Member Name="File" Value="0" />
+        <Member Name="Folder" Value="1" />
+      </EnumType>
+      <EnumType Name="WorkItemStatus">
+        <Member Name="None" Value="0" />
+        <Member Name="InProgress" Value="1" />
+        <Member Name="Completed" Value="2" />
+        <Member Name="AutoDeleted" Value="3" />
+        <Member Name="ExponentialBackoff" Value="4" />
+        <Member Name="ThrottledFetch" Value="5" />
+      </EnumType>
       <EnumType Name="ReviewFrequency">
         <Member Name="OnDemand" Value="0" />
       </EnumType>
@@ -5145,6 +5264,11 @@
       <EnumType Name="Relationship">
         <Member Name="pin" Value="0" />
         <Member Name="reuse" Value="1" />
+      </EnumType>
+      <EnumType Name="AccessType">
+        <Member Name="everyone" Value="0" />
+        <Member Name="group" Value="1" />
+        <Member Name="none" Value="2" />
       </EnumType>
       <EnumType Name="ImageTaggingChoice">
         <Member Name="disabled" Value="0" />
@@ -5330,47 +5454,53 @@
       </EnumType>
       <Function Name="fileCount" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticList" />
-        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="name" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.diagnosticFileCount" />
       </Function>
       <Function Name="getByPath" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
-        <Parameter Name="path" Type="Edm.String" Nullable="false" />
+        <Parameter Name="path" Type="Edm.String" />
         <ReturnType Type="oneDrive.diagnosticSite" />
       </Function>
       <Function Name="getByPath" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="path" Type="Edm.String" Nullable="false" />
+        <Parameter Name="path" Type="Edm.String" />
         <ReturnType Type="oneDrive.item" />
       </Function>
       <Function Name="getByPath" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="path" Type="Edm.String" Nullable="false" />
+        <Parameter Name="path" Type="Edm.String" />
         <ReturnType Type="oneDrive.site" />
       </Function>
       <Action Name="subpoena" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
-        <Parameter Name="workItem" Type="oneDrive.workItem" Nullable="false" />
+        <Parameter Name="workItem" Type="oneDrive.workItem" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
       </Action>
       <Action Name="manageItems" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="value" Type="Collection(oneDrive.item)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.item)" />
         <ReturnType Type="Collection(oneDrive.item)" />
       </Action>
       <Action Name="manageItemsAsync" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="value" Type="Collection(oneDrive.item)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.item)" />
         <ReturnType Type="Collection(oneDrive.item)" />
       </Action>
       <Function Name="allPhotos" IsBound="true" EntitySetPath="bindingParameter/items">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.item)" />
       </Function>
       <Function Name="allPhotos" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.item)" />
       </Function>
       <Function Name="listTags" IsBound="true" EntitySetPath="bindingParameter/tagsInfo">
@@ -5383,58 +5513,100 @@
       </Function>
       <Function Name="getActivitiesByInterval" IsBound="true" EntitySetPath="bindingParameter/analytics/itemActivityStats">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="interval" Type="Edm.String" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="aggregateBy" Type="Edm.String" />
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="aggregateBy" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.itemActivityStat)" />
       </Function>
       <Function Name="getActivitiesByInterval" IsBound="true" EntitySetPath="bindingParameter/analytics/itemActivityStats">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
-        <Parameter Name="interval" Type="Edm.String" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.itemActivityStat)" />
       </Function>
       <Function Name="getActivitiesByInterval" IsBound="true" EntitySetPath="bindingParameter/analytics/itemActivityStats">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="interval" Type="Edm.String" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="aggregateBy" Type="Edm.String" />
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="aggregateBy" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.itemActivityStat)" />
       </Function>
       <Function Name="getAnalytics" IsBound="true" EntitySetPath="bindingParameter/analytics">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="interval" Type="Edm.String" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="aggregateBy" Type="Edm.String" />
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="aggregateBy" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.itemAnalytics" />
       </Function>
       <Function Name="getAnalytics" IsBound="true" EntitySetPath="bindingParameter/analytics">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="interval" Type="Edm.String" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="aggregateBy" Type="Edm.String" />
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="aggregateBy" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.itemAnalytics" />
       </Function>
       <Function Name="getByHash" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.item)" />
-        <Parameter Name="hash" Type="Edm.String" Nullable="false" />
+        <Parameter Name="hash" Type="Edm.String" />
         <ReturnType Type="oneDrive.item" />
       </Function>
       <Function Name="getUpgradeOptions" IsBound="true" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.consumerSiteAppConfigs" />
-        <Parameter Name="market" Type="Edm.String" />
+        <Parameter Name="market" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.upgradeOptions" />
       </Function>
       <Action Name="processInviter" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.entitlement" />
-        <Parameter Name="inviteeCid" Type="Edm.String" Nullable="false" />
-        <Parameter Name="inviteeName" Type="Edm.String" />
-        <Parameter Name="entitlementType" Type="Edm.String" Nullable="false" />
+        <Parameter Name="inviteeCid" Type="Edm.String" />
+        <Parameter Name="inviteeName" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="entitlementType" Type="Edm.String" />
         <ReturnType Type="oneDrive.entitlement" />
       </Action>
       <Function Name="socketIo" IsBound="true" EntitySetPath="bindingParameter">
@@ -5464,21 +5636,31 @@
       <Action Name="restoreToDate" IsBound="true" EntitySetPath="bindingParameter/operations">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
         <Parameter Name="restoreTo" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Parameter Name="mostRecentActivityId" Type="Edm.String" />
-        <Parameter Name="anomalyId" Type="Edm.String" />
-        <Parameter Name="restoreType" Type="Edm.String" />
+        <Parameter Name="mostRecentActivityId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="anomalyId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="restoreType" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.operation" />
       </Action>
       <Action Name="restoreToDate" IsBound="true" EntitySetPath="bindingParameter/operations">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="restoreTo" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Parameter Name="mostRecentActivityId" Type="Edm.String" />
-        <Parameter Name="anomalyId" Type="Edm.String" />
+        <Parameter Name="mostRecentActivityId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="anomalyId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.operation" />
       </Action>
       <Action Name="addFavorite" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.item)" />
-        <Parameter Name="value" Type="Collection(oneDrive.item)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.item)" />
         <ReturnType Type="Collection(oneDrive.item)" />
       </Action>
       <Action Name="addFavorite" IsBound="true" EntitySetPath="bindingParameter">
@@ -5487,7 +5669,7 @@
       </Action>
       <Action Name="removeFavorite" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.item)" />
-        <Parameter Name="value" Type="Collection(oneDrive.item)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.item)" />
       </Action>
       <Action Name="follow" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
@@ -5498,36 +5680,40 @@
       </Action>
       <Action Name="add" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.listItemDetails)" />
-        <Parameter Name="value" Type="Collection(oneDrive.sharepointIds)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.sharepointIds)" />
       </Action>
       <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
-        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" />
         <ReturnType Type="Collection(oneDrive.columnDefinition)" />
       </Action>
       <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
-        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" />
         <ReturnType Type="Collection(oneDrive.columnDefinition)" />
       </Action>
       <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.site)" />
         <ReturnType Type="Collection(oneDrive.site)" />
       </Action>
       <Action Name="remove" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.listItemDetails)" />
-        <Parameter Name="value" Type="Collection(oneDrive.sharepointIds)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.sharepointIds)" />
       </Action>
       <Action Name="remove" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="value" Type="Collection(oneDrive.site)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.site)" />
         <ReturnType Type="Collection(oneDrive.site)" />
       </Action>
       <Action Name="restore" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="parentReference" Type="oneDrive.itemReference" />
-        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="parentReference" Type="oneDrive.itemReference">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="name" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.item" />
       </Action>
       <Action Name="restore" IsBound="true">
@@ -5539,12 +5725,18 @@
       </Action>
       <Action Name="copy" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="parentReference" Type="oneDrive.itemReference" />
-        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="parentReference" Type="oneDrive.itemReference">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="name" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
       </Action>
       <Action Name="copy" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.term" />
-        <Parameter Name="copyChildren" Type="Edm.Boolean" />
+        <Parameter Name="copyChildren" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.term" />
       </Action>
       <Action Name="copy" IsBound="true" EntitySetPath="bindingParameter">
@@ -5561,7 +5753,9 @@
       </Function>
       <Function Name="delta" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
-        <Parameter Name="token" Type="Edm.String" />
+        <Parameter Name="token" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.site)" />
       </Function>
       <Function Name="changes" IsBound="true" EntitySetPath="bindingParameter">
@@ -5598,8 +5792,12 @@
       </Action>
       <Action Name="createUploadSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
-        <Parameter Name="deferCommit" Type="Edm.Boolean" />
+        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="deferCommit" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.uploadSession" />
       </Action>
       <Function Name="mediaFeed" IsBound="true" EntitySetPath="bindingParameter/photoStreamPosts" IsComposable="true">
@@ -5607,17 +5805,29 @@
         <ReturnType Type="Collection(oneDrive.item)" />
       </Function>
       <Action Name="getMultiSiteNews">
-        <Parameter Name="sites" Type="Collection(Edm.String)" Nullable="false" />
-        <Parameter Name="filterByAudience" Type="Edm.Boolean" />
-        <Parameter Name="preferredLanguage" Type="Edm.String" />
-        <Parameter Name="filterQuery" Type="Edm.String" />
+        <Parameter Name="sites" Type="Collection(Edm.String)" />
+        <Parameter Name="filterByAudience" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="preferredLanguage" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="filterQuery" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.page)" />
       </Action>
       <Action Name="getMultiHubNews">
-        <Parameter Name="hubs" Type="Collection(Edm.String)" Nullable="false" />
-        <Parameter Name="filterByAudience" Type="Edm.Boolean" />
-        <Parameter Name="preferredLanguage" Type="Edm.String" />
-        <Parameter Name="filterQuery" Type="Edm.String" />
+        <Parameter Name="hubs" Type="Collection(Edm.String)" />
+        <Parameter Name="filterByAudience" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="preferredLanguage" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="filterQuery" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.page)" />
       </Action>
       <Function Name="getNewsFeed">
@@ -5625,144 +5835,288 @@
       </Function>
       <Action Name="joinSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.opStream" />
-        <Parameter Name="guestDisplayName" Type="Edm.String" />
-        <Parameter Name="requestSocketToken" Type="Edm.Boolean" />
+        <Parameter Name="guestDisplayName" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="requestSocketToken" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.session" />
       </Action>
       <Action Name="checkAccess" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="value" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="Collection(oneDrive.recipientAccessDetails)" />
       </Action>
       <Action Name="checkAccess" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.permission" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="Collection(oneDrive.recipientAccessDetails)" />
       </Action>
       <Action Name="checkAccess" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
-        <Parameter Name="value" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="Collection(oneDrive.recipientAccessDetails)" />
       </Action>
       <Action Name="checkAccess" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.list" />
-        <Parameter Name="value" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="Collection(oneDrive.recipientAccessDetails)" />
       </Action>
       <Action Name="createLink" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="type" Type="Edm.String" />
-        <Parameter Name="scope" Type="Edm.String" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="role" Type="Edm.String" />
-        <Parameter Name="variant" Type="Edm.String" />
-        <Parameter Name="nav" Type="Edm.String" />
-        <Parameter Name="sendNotification" Type="Edm.Boolean" />
+        <Parameter Name="type" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="scope" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="variant" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendNotification" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="createLink" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
-        <Parameter Name="type" Type="Edm.String" />
-        <Parameter Name="scope" Type="Edm.String" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="role" Type="Edm.String" />
-        <Parameter Name="variant" Type="Edm.String" />
-        <Parameter Name="nav" Type="Edm.String" />
-        <Parameter Name="sendNotification" Type="Edm.Boolean" />
+        <Parameter Name="type" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="scope" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="variant" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendNotification" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="createLink" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.list" />
-        <Parameter Name="type" Type="Edm.String" />
-        <Parameter Name="scope" Type="Edm.String" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="role" Type="Edm.String" />
-        <Parameter Name="variant" Type="Edm.String" />
-        <Parameter Name="nav" Type="Edm.String" />
-        <Parameter Name="sendNotification" Type="Edm.Boolean" />
+        <Parameter Name="type" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="scope" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="variant" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendNotification" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
-        <Parameter Name="requireSignIn" Type="Edm.Boolean" />
-        <Parameter Name="roles" Type="Collection(Edm.String)" />
-        <Parameter Name="sendInvitation" Type="Edm.Boolean" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="nav" Type="Edm.String" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
+        <Parameter Name="requireSignIn" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="roles" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendInvitation" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
-        <Parameter Name="requireSignIn" Type="Edm.Boolean" />
-        <Parameter Name="roles" Type="Collection(Edm.String)" />
-        <Parameter Name="sendInvitation" Type="Edm.Boolean" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="nav" Type="Edm.String" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
+        <Parameter Name="requireSignIn" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="roles" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendInvitation" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
-        <Parameter Name="requireSignIn" Type="Edm.Boolean" />
-        <Parameter Name="roles" Type="Collection(Edm.String)" />
-        <Parameter Name="sendInvitation" Type="Edm.Boolean" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="nav" Type="Edm.String" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
+        <Parameter Name="requireSignIn" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="roles" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendInvitation" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.list" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
-        <Parameter Name="requireSignIn" Type="Edm.Boolean" />
-        <Parameter Name="roles" Type="Collection(Edm.String)" />
-        <Parameter Name="sendInvitation" Type="Edm.Boolean" />
-        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean" />
-        <Parameter Name="nav" Type="Edm.String" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
+        <Parameter Name="requireSignIn" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="roles" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendInvitation" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="retainInheritedPermissions" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="nav" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
-        <Parameter Name="requireSignIn" Type="Edm.Boolean" />
-        <Parameter Name="roles" Type="Collection(Edm.String)" />
-        <Parameter Name="sendInvitation" Type="Edm.Boolean" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
+        <Parameter Name="requireSignIn" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="roles" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sendInvitation" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.permission)" />
       </Action>
       <Action Name="psInvite" IsBound="true" EntitySetPath="bindingParameter/photoStreamInvitationResult">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="message" Type="Edm.String" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="recipients" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="oneDrive.photoStreamInvitationResult" />
       </Action>
       <Action Name="psGetAnonymousSharingBaseUri" IsBound="true" EntitySetPath="bindingParameter/permissions">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="regenerateLink" Type="Edm.Boolean" />
+        <Parameter Name="regenerateLink" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="psApprove" IsBound="true" EntitySetPath="bindingParameter/photoStreamMembership">
@@ -5785,7 +6139,9 @@
       </Action>
       <Action Name="psRequestAccess" IsBound="true" EntitySetPath="bindingParameter/photoStreamAccessRequest">
         <Parameter Name="bindingParameter" Type="oneDrive.photoStreamLink" />
-        <Parameter Name="message" Type="Edm.String" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.photoStreamAccessRequest" />
       </Action>
       <Function Name="recommendedInvitees" IsBound="true" EntitySetPath="bindingParameter/recommendedInvitees" IsComposable="true">
@@ -5798,13 +6154,13 @@
       </Function>
       <Action Name="proposeBlobWrites" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="datacenter" Type="Edm.String" Nullable="false" />
-        <Parameter Name="lengths" Type="Edm.String" Nullable="false" />
+        <Parameter Name="datacenter" Type="Edm.String" />
+        <Parameter Name="lengths" Type="Edm.String" />
         <ReturnType Type="oneDrive.rawBlobInfo" />
       </Action>
       <Action Name="commitBlobWrites" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="rawBlobInfo" Type="oneDrive.rawBlobInfo" Nullable="false" />
+        <Parameter Name="rawBlobInfo" Type="oneDrive.rawBlobInfo" />
         <ReturnType Type="oneDrive.rawBlobInfo" />
       </Action>
       <Function Name="recent" IsBound="true" EntitySetPath="bindingParameter/items" IsComposable="true">
@@ -5820,22 +6176,28 @@
       </Action>
       <Action Name="delete" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="reportIds" Type="Collection(oneDrive.analyticsReport)" Nullable="false" />
+        <Parameter Name="reportIds" Type="Collection(oneDrive.analyticsReport)" />
         <ReturnType Type="Collection(oneDrive.analyticsReport)" />
       </Action>
       <Action Name="redeemToken" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="token" Type="Edm.String" Nullable="false" />
+        <Parameter Name="token" Type="Edm.String" />
       </Action>
       <Action Name="setBulkReviewDetail" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
-        <Parameter Name="reviewDetail" Type="oneDrive.reviewDetail" />
-        <Parameter Name="itemReferences" Type="Collection(oneDrive.itemReference)" />
+        <Parameter Name="reviewDetail" Type="oneDrive.reviewDetail">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="itemReferences" Type="Collection(oneDrive.itemReference)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.itemResult)" />
       </Action>
       <Action Name="requestAccess" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="message" Type="Edm.String" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.AccessRequest" />
       </Action>
       <Function Name="getSiteInfo" IsBound="true" EntitySetPath="bindingParameter/siteInfo">
@@ -5847,12 +6209,14 @@
       </Action>
       <Function Name="customSize" IsBound="true" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.thumbnailSet" />
-        <Parameter Name="id" Type="Edm.String" Nullable="false" />
+        <Parameter Name="id" Type="Edm.String" />
         <ReturnType Type="oneDrive.thumbnail" />
       </Function>
       <Action Name="createTmrUploadSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
+        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.tmrUploadSession" />
       </Action>
       <Action Name="renewResourceUploadToken" IsBound="true">
@@ -5861,22 +6225,32 @@
       </Action>
       <Action Name="createSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor" />
-        <Parameter Name="deferCommit" Type="Edm.Boolean" />
+        <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="deferCommit" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.uploadSession" />
       </Action>
       <Action Name="validatePermission" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="challengeToken" Type="Edm.String" />
-        <Parameter Name="password" Type="Edm.String" Nullable="false" />
+        <Parameter Name="challengeToken" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="password" Type="Edm.String" />
       </Action>
       <Action Name="unlockVault" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.unlockVaultResponse" />
       </Action>
       <Action Name="unlockVault">
-        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset" />
+        <Parameter Name="expirationDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="lockVault" IsBound="true">
@@ -5886,7 +6260,9 @@
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="createVault">
-        <Parameter Name="vaultName" Type="Edm.String" />
+        <Parameter Name="vaultName" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="disableVault">
@@ -5899,7 +6275,7 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.restorePoint)" />
         <Parameter Name="startDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Parameter Name="endDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Parameter Name="protectedItems" Type="Collection(oneDrive.protectedItem)" Nullable="false" />
+        <Parameter Name="protectedItems" Type="Collection(oneDrive.protectedItem)" />
         <ReturnType Type="Collection(oneDrive.restorePoint)" />
       </Action>
       <Function Name="autoQueueConfig" IsBound="true">
@@ -5908,69 +6284,83 @@
       </Function>
       <Action Name="createLabelReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="format" Type="Edm.String" Nullable="false" />
-        <Parameter Name="type" Type="Edm.String" Nullable="false" />
-        <Parameter Name="labelId" Type="Edm.String" Nullable="false" />
-        <Parameter Name="labelName" Type="Edm.String" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="type" Type="Edm.String" />
+        <Parameter Name="labelId" Type="Edm.String" />
+        <Parameter Name="labelName" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createSharingReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="format" Type="Edm.String" Nullable="false" />
-        <Parameter Name="type" Type="Edm.String" Nullable="false" />
-        <Parameter Name="sharingLinkType" Type="Edm.String" Nullable="false" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="type" Type="Edm.String" />
+        <Parameter Name="sharingLinkType" Type="Edm.String" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createIBComplianceReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="format" Type="Edm.String" Nullable="false" />
+        <Parameter Name="format" Type="Edm.String" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createIBInsightsReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="entity" Type="Edm.String" />
-        <Parameter Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" Nullable="false" />
+        <Parameter Name="entity" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createEEEUReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
-        <Parameter Name="format" Type="Edm.String" Nullable="false" />
-        <Parameter Name="version" Type="Edm.String" Nullable="false" />
-        <Parameter Name="eeeuParameters" Type="oneDrive.eeeuParameters" Nullable="false" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="version" Type="Edm.String" />
+        <Parameter Name="eeeuParameters" Type="oneDrive.eeeuParameters" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="sendNotification" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.card" />
-        <Parameter Name="titleText" Type="oneDrive.itemBody" Nullable="false" />
-        <Parameter Name="previewText" Type="oneDrive.itemBody" Nullable="false" />
-        <Parameter Name="card" Type="oneDrive.notificationCard" Nullable="false" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.sharePointIdentitySet)" Nullable="false" />
+        <Parameter Name="titleText" Type="oneDrive.itemBody" />
+        <Parameter Name="previewText" Type="oneDrive.itemBody" />
+        <Parameter Name="card" Type="oneDrive.notificationCard" />
+        <Parameter Name="recipients" Type="Collection(oneDrive.sharePointIdentitySet)" />
       </Action>
       <Action Name="sendNotificationGraph" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.card" />
-        <Parameter Name="actor" Type="oneDrive.userIdentity" />
-        <Parameter Name="data" Type="graph.Json" />
-        <Parameter Name="dataVersion" Type="Edm.String" />
-        <Parameter Name="previewText" Type="oneDrive.itemBody" Nullable="false" />
-        <Parameter Name="recipients" Type="Collection(oneDrive.userIdentity)" Nullable="false" />
-        <Parameter Name="titleText" Type="oneDrive.itemBody" Nullable="false" />
-        <Parameter Name="topicText" Type="Edm.String" Nullable="false" />
+        <Parameter Name="actor" Type="oneDrive.userIdentity">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="data" Type="graph.Json">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="dataVersion" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="previewText" Type="oneDrive.itemBody" />
+        <Parameter Name="recipients" Type="Collection(oneDrive.userIdentity)" />
+        <Parameter Name="titleText" Type="oneDrive.itemBody" />
+        <Parameter Name="topicText" Type="Edm.String" />
       </Action>
       <Action Name="copyToDefaultContentLocation" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.contentType" />
-        <Parameter Name="sourceFile" Type="oneDrive.itemReference" Nullable="false" />
-        <Parameter Name="destinationFileName" Type="Edm.String" />
+        <Parameter Name="sourceFile" Type="oneDrive.itemReference" />
+        <Parameter Name="destinationFileName" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.contentType" />
       </Action>
       <Action Name="addCopy" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.contentType)" />
-        <Parameter Name="contentType" Type="Edm.String" Nullable="false" />
+        <Parameter Name="contentType" Type="Edm.String" />
         <ReturnType Type="oneDrive.contentType" />
       </Action>
       <Action Name="associateWithHubSites" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.contentType" />
-        <Parameter Name="hubSiteUrls" Type="Collection(Edm.String)" Nullable="false" />
-        <Parameter Name="propagateToExistingLists" Type="Edm.Boolean" />
+        <Parameter Name="hubSiteUrls" Type="Collection(Edm.String)" />
+        <Parameter Name="propagateToExistingLists" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.contentType" />
       </Action>
       <Function Name="speedOfLight">
@@ -5978,27 +6368,35 @@
       </Function>
       <Action Name="revokeGrants" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.permission" />
-        <Parameter Name="grantees" Type="Collection(oneDrive.recipients)" Nullable="false" />
+        <Parameter Name="grantees" Type="Collection(oneDrive.recipients)" />
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Function Name="getAggregatedAnalytics" IsBound="true" EntitySetPath="bindingParameter/allAnalytics">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.aggregatedAnalytics" />
       </Function>
       <Function Name="getAggregatedAnalytics" IsBound="true" EntitySetPath="bindingParameter/allAnalytics">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.aggregatedAnalytics" />
       </Function>
       <Action Name="canOnboard" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
-        <Parameter Name="loadEstimates" Type="Collection(oneDrive.loadEstimateInfo)" Nullable="false" />
+        <Parameter Name="loadEstimates" Type="Collection(oneDrive.loadEstimateInfo)" />
       </Action>
       <Action Name="getItems">
-        <Parameter Name="items" Type="Collection(oneDrive.itemReference)" Nullable="false" />
+        <Parameter Name="items" Type="Collection(oneDrive.itemReference)" />
         <ReturnType Type="Collection(oneDrive.listItem)" />
       </Action>
       <Action Name="processMsaEvent" IsBound="true">
@@ -6030,22 +6428,38 @@
       </Function>
       <Action Name="sendActivities" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.baseSitePage)" />
-        <Parameter Name="value" Type="Collection(oneDrive.pageActivity)" Nullable="false" />
+        <Parameter Name="value" Type="Collection(oneDrive.pageActivity)" />
       </Action>
       <Action Name="setSensitivityLabel" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="id" Type="Edm.String" />
-        <Parameter Name="assignmentMethod" Type="Edm.String" />
-        <Parameter Name="justificationText" Type="Edm.String" />
-        <Parameter Name="ifMatchLabelId" Type="Edm.String" />
-        <Parameter Name="actionSource" Type="Edm.String" />
+        <Parameter Name="id" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="assignmentMethod" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="justificationText" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="ifMatchLabelId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="actionSource" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.sensitivityLabel" />
       </Action>
       <Action Name="assignSensitivityLabel" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="sensitivityLabelId" Type="Edm.String" />
-        <Parameter Name="assignmentMethod" Type="Edm.String" />
-        <Parameter Name="justificationText" Type="Edm.String" />
+        <Parameter Name="sensitivityLabelId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="assignmentMethod" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="justificationText" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
       </Action>
       <Action Name="extractSensitivityLabels" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
@@ -6056,19 +6470,25 @@
         <ReturnType Type="Collection(oneDrive.site)" />
       </Function>
       <Action Name="getSites">
-        <Parameter Name="sites" Type="Collection(Edm.String)" Nullable="false" />
+        <Parameter Name="sites" Type="Collection(Edm.String)" />
         <ReturnType Type="Collection(oneDrive.site)" />
       </Action>
       <Function Name="getApplicableContentTypesForList" IsBound="true" EntitySetPath="bindingParameter/contentTypes" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="listId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="listId" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.contentType)" />
       </Function>
       <Function Name="getVCAggregatedAnalytics" IsBound="true" EntitySetPath="bindingParameter/allAnalytics">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="orderBy" Type="Edm.String" />
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="orderBy" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.aggregatedAnalytics" />
       </Function>
       <Function Name="getInsights" IsBound="true">
@@ -6077,24 +6497,39 @@
       </Function>
       <Function Name="getHubAnalytics" IsBound="true" EntitySetPath="bindingParameter/analytics">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <Parameter Name="startDateTime" Type="Edm.String" Nullable="false" />
-        <Parameter Name="endDateTime" Type="Edm.String" Nullable="false" />
+        <Parameter Name="startDateTime" Type="Edm.String" />
+        <Parameter Name="endDateTime" Type="Edm.String" />
         <ReturnType Type="oneDrive.itemAnalytics" />
       </Function>
       <Function Name="getHubTopSitesByAccessActivities" IsBound="true" EntitySetPath="bindingParameter/sites">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
         <Parameter Name="interval" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="topN" Type="Edm.Int32" Nullable="false" />
-        <Parameter Name="orderByAccess" Type="Edm.String" Nullable="false" />
+        <Parameter Name="orderByAccess" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.site)" />
       </Function>
       <Function Name="getHubTopItemsByAccessActivities" IsBound="true" EntitySetPath="bindingParameter/items">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
         <Parameter Name="interval" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="topN" Type="Edm.Int32" Nullable="false" />
-        <Parameter Name="orderByAccess" Type="Edm.String" Nullable="false" />
+        <Parameter Name="orderByAccess" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.baseItem)" />
       </Function>
+      <Action Name="createSiteReview" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.siteReview)" />
+        <Parameter Name="siteId" Type="Edm.String" />
+        <Parameter Name="cumulativeSourceReportId" Type="Edm.String" />
+        <Parameter Name="detailedSourceReportId" Type="Edm.String" />
+        <Parameter Name="frequency" Type="Edm.String" />
+        <Parameter Name="type" Type="Edm.String" />
+        <Parameter Name="subType" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="adminComment" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.siteReview" />
+      </Action>
       <Action Name="activateStorageContainer" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
       </Action>
@@ -6131,27 +6566,37 @@
       </Function>
       <Action Name="addCopyFromContentTypeHub" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.contentType)" />
-        <Parameter Name="contentTypeId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="contentTypeId" Type="Edm.String" />
         <ReturnType Type="oneDrive.contentType" />
       </Action>
       <Function Name="searchTerm" IsBound="true" EntitySetPath="bindingParameter/termGroups/termSets/terms" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
-        <Parameter Name="label" Type="Edm.String" Nullable="false" />
-        <Parameter Name="setId" Type="Edm.String" />
-        <Parameter Name="parentTermId" Type="Edm.String" />
-        <Parameter Name="languageTag" Type="Edm.String" />
-        <Parameter Name="stringMatchOption" Type="Edm.String" />
+        <Parameter Name="label" Type="Edm.String" />
+        <Parameter Name="setId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="parentTermId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="languageTag" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="stringMatchOption" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Collection(oneDrive.term)" />
       </Function>
       <Action Name="move" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.term" />
-        <Parameter Name="setId" Type="Edm.String" Nullable="false" />
-        <Parameter Name="termId" Type="Edm.String" />
+        <Parameter Name="setId" Type="Edm.String" />
+        <Parameter Name="termId" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.term" />
       </Action>
       <Action Name="move" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.termSet" />
-        <Parameter Name="groupId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="groupId" Type="Edm.String" />
         <ReturnType Type="oneDrive.termSet" />
       </Action>
       <Function Name="getLegacyChildren" IsBound="true" EntitySetPath="bindingParameter/terms" IsComposable="true">
@@ -6164,23 +6609,23 @@
       </Function>
       <Action Name="getChildrenMatches" IsBound="true" EntitySetPath="bindingParameter/terms">
         <Parameter Name="bindingParameter" Type="oneDrive.termSet" />
-        <Parameter Name="kpeSustrateApiResponse" Type="oneDrive.encodedExtractedKeyPhrasesData" Nullable="false" />
+        <Parameter Name="kpeSustrateApiResponse" Type="oneDrive.encodedExtractedKeyPhrasesData" />
         <ReturnType Type="Collection(oneDrive.term)" />
       </Action>
       <Action Name="getChildrenMatches" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.term" />
-        <Parameter Name="kpeSustrateApiResponse" Type="oneDrive.encodedExtractedKeyPhrasesData" Nullable="false" />
+        <Parameter Name="kpeSustrateApiResponse" Type="oneDrive.encodedExtractedKeyPhrasesData" />
         <ReturnType Type="Collection(oneDrive.term)" />
       </Action>
       <Action Name="merge" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.term" />
-        <Parameter Name="targetSetId" Type="Edm.String" Nullable="false" />
-        <Parameter Name="targetTermId" Type="Edm.String" Nullable="false" />
+        <Parameter Name="targetSetId" Type="Edm.String" />
+        <Parameter Name="targetTermId" Type="Edm.String" />
         <ReturnType Type="oneDrive.term" />
       </Action>
       <Action Name="updateSourceSet" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.term" />
-        <Parameter Name="targetSet" Type="oneDrive.termSet" Nullable="false" />
+        <Parameter Name="targetSet" Type="oneDrive.termSet" />
         <ReturnType Type="oneDrive.term" />
       </Action>
       <Action Name="fetchTermsWssIds" IsBound="true">
@@ -6189,12 +6634,12 @@
       </Action>
       <Action Name="createTopicAssociation" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.termSet" />
-        <Parameter Name="termSetTopicAssociationRequest" Type="oneDrive.termSetTopicAssociationRequest" Nullable="false" />
+        <Parameter Name="termSetTopicAssociationRequest" Type="oneDrive.termSetTopicAssociationRequest" />
         <ReturnType Type="oneDrive.termSet" />
       </Action>
       <Action Name="deleteTopicAssociation" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.termSet" />
-        <Parameter Name="termSetTopicAssociationRequest" Type="oneDrive.termSetTopicAssociationRequest" Nullable="false" />
+        <Parameter Name="termSetTopicAssociationRequest" Type="oneDrive.termSetTopicAssociationRequest" />
         <ReturnType Type="oneDrive.termSet" />
       </Action>
       <Function Name="analytics" IsBound="true">
@@ -6207,28 +6652,36 @@
       </Function>
       <Function Name="getOperationsByInterval" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
-        <Parameter Name="startDateTime" Type="Edm.String" />
-        <Parameter Name="endDateTime" Type="Edm.String" />
-        <Parameter Name="interval" Type="Edm.String" />
+        <Parameter Name="startDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="interval" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.termStoreOperationStat" />
       </Function>
       <Function Name="getOperationsDataRaw" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.termStore" />
-        <Parameter Name="startDateTime" Type="Edm.String" Nullable="false" />
-        <Parameter Name="endDateTime" Type="Edm.String" Nullable="false" />
+        <Parameter Name="startDateTime" Type="Edm.String" />
+        <Parameter Name="endDateTime" Type="Edm.String" />
         <ReturnType Type="Collection(oneDrive.change)" />
       </Function>
       <Action Name="getCampaignPreaggregatedAnalyticsReport" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
-        <Parameter Name="campaignIds" Type="Collection(Edm.String)" Nullable="false" />
-        <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" Nullable="false" />
+        <Parameter Name="campaignIds" Type="Collection(Edm.String)" />
+        <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" />
         <ReturnType Type="Collection(oneDrive.campaignReports)" />
       </Action>
       <Action Name="getPublicationPreaggregatedAnalyticsReport" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
-        <Parameter Name="campaignId" Type="Edm.String" Nullable="false" />
-        <Parameter Name="publicationIds" Type="Collection(Edm.String)" />
-        <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" Nullable="false" />
+        <Parameter Name="campaignId" Type="Edm.String" />
+        <Parameter Name="publicationIds" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="reportQueries" Type="Collection(oneDrive.reportQuery)" />
         <ReturnType Type="Collection(oneDrive.publicationReports)" />
       </Action>
       <Function Name="getCampaignCollection" IsBound="true">
@@ -6237,14 +6690,16 @@
       </Function>
       <Action Name="synchronizeCampaignPersonalCache" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.campaign" />
-        <Parameter Name="items" Type="Collection(oneDrive.SynchronizeCampaignPersonalCacheItem)" Nullable="false" />
+        <Parameter Name="items" Type="Collection(oneDrive.SynchronizeCampaignPersonalCacheItem)" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="updateCampaignPersonalCache" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
-        <Parameter Name="userinfo" Type="oneDrive.userinfo" Nullable="false" />
-        <Parameter Name="personalCacheItem" Type="oneDrive.campaignPersonalCacheItem" Nullable="false" />
-        <Parameter Name="isAsync" Type="Edm.Boolean" />
+        <Parameter Name="userinfo" Type="oneDrive.userinfo" />
+        <Parameter Name="personalCacheItem" Type="oneDrive.campaignPersonalCacheItem" />
+        <Parameter Name="isAsync" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="Edm.String" />
       </Action>
       <EntityContainer Name="oneDrive">
