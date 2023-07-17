@@ -1,133 +1,114 @@
 {
+  "host": "europe-002.azure-apim.net",
+  "produces": [
+    "application/json"
+  ],
   "basePath": "/apim/smsapi",
+  "tags": [],
   "consumes": [
     "application/x-www-form-urlencoded",
     "application/json"
   ],
-  "host": "europe-002.azure-apim.net",
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://oauth.smsapi.io/oauth/access",
+      "tokenUrl": "https://oauth.smsapi.io/api/oauth/token",
+      "scopes": {
+        "sms": "sms",
+        "contacts": "contacts"
+      }
+    }
+  },
   "info": {
+    "title": "SMSAPI",
+    "description": "SMSAPI is a global professional SMS provider and a part of industry-leading LINK Mobility Group. We excel at providing easy and powerful tools, and Microsoft Power-Up has become one of them. Use this connector to send SMS messages globaly and manage your SMSAPI.com contact database.\nIn order to use this Power-Up, you need to have an SMSAPI.com account. SMSAPI.com is for professional use only.",
     "contact": {
-      "email": "support@smsapi.com",
       "name": "SMSAPI.com",
+      "email": "support@smsapi.com",
       "url": "https://smsapi.com"
     },
-    "description": "SMSAPI is a global professional SMS provider and a part of industry-leading LINK Mobility Group. We excel at providing easy and powerful tools, and Microsoft Power-Up has become one of them. Use this connector to send SMS messages globaly and manage your SMSAPI.com contact database.\nIn order to use this Power-Up, you need to have an SMSAPI.com account. SMSAPI.com is for professional use only.",
-    "title": "SMSAPI",
     "version": "1.0",
     "x-ms-api-annotation": {
       "status": "Production"
     }
   },
+  "schemes": [
+    "https"
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyValue": "https://smsapi.com",
+      "propertyName": "Website"
+    },
+    {
+      "propertyValue": "https://www.smsapi.com/privacy",
+      "propertyName": "Privacy policy"
+    },
+    {
+      "propertyValue": "Communication;Marketing",
+      "propertyName": "Categories"
+    }
+  ],
+  "swagger": "2.0",
   "paths": {
     "/{connectionId}/sms.do": {
       "post": {
-        "description": "This method allows you to send either single or many sms in one request.",
         "operationId": "send_sms",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "required": true,
-            "schema": {
-              "properties": {
-                "fast": {
-                  "default": 0,
-                  "description": "Setting this parameter to '1' will result in sending message with the highest priority which ensures the quickest possible time of delivery. Fast messages costs 50% more than normal message. Attention! Mass and marketing messages must not be sent with fast parameter.",
-                  "format": "int32",
-                  "title": "fast",
-                  "type": "integer"
-                },
-                "format": {
-                  "default": "json",
-                  "description": "format",
-                  "title": "Type of returned response",
-                  "type": "string",
-                  "x-ms-visibility": "internal"
-                },
-                "from": {
-                  "description": "Name of the sender. As a default the sender name is set to 'Test'. Only verified names are being accepted (&from=active_name). Sender name may be set after logging into Customer Portal.",
-                  "title": "from",
-                  "type": "string"
-                },
-                "group": {
-                  "description": "Name of the group from the contacts database to which message should be sent.",
-                  "title": "group",
-                  "type": "string"
-                },
-                "message": {
-                  "description": "The message text. Content of one message is normally 160 characters per single SMS or 70 in case of using at least one special character (polish characters are considered to be special characters). The maximal message is set to 918 normal characters or 402 if special chars are used and it is being sent as one block of 6 messages joined together and charged as six messages.",
-                  "title": "message",
-                  "type": "string"
-                },
-                "to": {
-                  "description": "Recipient's mobile phone number(s) separated by comma (i.e. 44123456789,44123456788 ).",
-                  "title": "to",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "message",
-                "format"
-              ],
-              "type": "object"
-            }
-          }
-        ],
+        "description": "This method allows you to send either single or many sms in one request.",
+        "summary": "Send SMS",
         "responses": {
           "200": {
             "description": "default",
             "schema": {
               "properties": {
                 "count": {
-                  "description": "count",
                   "format": "int32",
+                  "description": "count",
                   "type": "integer"
                 },
                 "list": {
                   "description": "list",
                   "items": {
                     "properties": {
-                      "date_sent": {
-                        "description": "Date of send",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "error": {
-                        "description": "error",
+                      "status": {
+                        "description": "status",
                         "type": "string"
                       },
                       "id": {
                         "description": "Message's id",
                         "type": "string"
                       },
-                      "idx": {
-                        "description": "IDX if given in request",
-                        "type": "string"
-                      },
                       "number": {
                         "description": "Recipient's number with country prefix",
                         "type": "string"
                       },
-                      "parts": {
-                        "description": "Total number of parts to which message is splitted into",
+                      "error": {
+                        "description": "error",
+                        "type": "string"
+                      },
+                      "encoding": {
+                        "type": "string"
+                      },
+                      "date_sent": {
                         "format": "int32",
+                        "description": "Date of send",
                         "type": "integer"
                       },
                       "points": {
-                        "description": "Price of delivery",
                         "format": "float",
-                        "title": "",
-                        "type": "number"
+                        "description": "Price of delivery",
+                        "type": "number",
+                        "title": ""
                       },
-                      "status": {
-                        "description": "status",
+                      "parts": {
+                        "format": "int32",
+                        "description": "Total number of parts to which message is splitted into",
+                        "type": "integer"
+                      },
+                      "idx": {
+                        "description": "IDX if given in request",
                         "type": "string"
                       },
                       "submitted_number": {
@@ -144,52 +125,82 @@
             }
           }
         },
-        "summary": "Send SMS",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "schema": {
+              "properties": {
+                "message": {
+                  "title": "message",
+                  "description": "The message text. Content of one message is normally 160 characters per single SMS or 70 in case of using at least one special character (polish characters are considered to be special characters). The maximal message is set to 918 normal characters or 402 if special chars are used and it is being sent as one block of 6 messages joined together and charged as six messages.",
+                  "type": "string"
+                },
+                "format": {
+                  "title": "Type of returned response",
+                  "x-ms-visibility": "internal",
+                  "description": "format",
+                  "type": "string",
+                  "default": "json"
+                },
+                "to": {
+                  "title": "to",
+                  "description": "Recipient's mobile phone number(s) separated by comma (i.e. 44123456789,44123456788 ).",
+                  "type": "string"
+                },
+                "from": {
+                  "title": "from",
+                  "description": "Name of the sender. As a default the sender name is set to 'Test'. Only verified names are being accepted (&from=active_name). Sender name may be set after logging into Customer Portal.",
+                  "type": "string"
+                },
+                "encoding": {
+                  "type": "string",
+                  "title": "encoding",
+                  "x-ms-visibility": "internal",
+                  "default": "utf-8"
+                },
+                "group": {
+                  "title": "group",
+                  "description": "Name of the group from the contacts database to which message should be sent.",
+                  "type": "string"
+                },
+                "fast": {
+                  "format": "int32",
+                  "title": "fast",
+                  "description": "Setting this parameter to '1' will result in sending message with the highest priority which ensures the quickest possible time of delivery. Fast messages costs 50% more than normal message. Attention! Mass and marketing messages must not be sent with fast parameter.",
+                  "type": "integer",
+                  "default": 0
+                }
+              },
+              "type": "object",
+              "required": [
+                "message",
+                "format",
+                "encoding"
+              ]
+            },
+            "name": "body",
+            "required": true
+          }
+        ],
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/smsapi/#send-sms"
         }
       }
     }
   },
-  "produces": [
-    "application/json"
-  ],
-  "schemes": [
-    "https"
-  ],
   "security": [
     {
-      "oauth2_auth": [
+      "oauth2-auth": [
         "sms",
         "contacts"
       ]
-    }
-  ],
-  "securityDefinitions": {
-    "oauth2_auth": {
-      "authorizationUrl": "https://ssl.smsapi.com/oauth/access",
-      "flow": "accessCode",
-      "scopes": {
-        "sms": "sms"
-      },
-      "tokenUrl": "https://api.smsapi.com/oauth/token",
-      "type": "oauth2"
-    }
-  },
-  "swagger": "2.0",
-  "tags": [],
-  "x-ms-connector-metadata": [
-    {
-      "propertyName": "Website",
-      "propertyValue": "https://smsapi.com"
-    },
-    {
-      "propertyName": "Privacy policy",
-      "propertyValue": "https://www.smsapi.com/privacy"
-    },
-    {
-      "propertyName": "Categories",
-      "propertyValue": "Communication;Marketing"
     }
   ],
   "externalDocs": {
