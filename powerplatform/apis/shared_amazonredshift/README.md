@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_amazonredshift`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1629\1.0.1629.3253`|
+|**Version**|`releases/v1.0.1646\1.0.1646.3354`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Wed Apr 19 2023|
+|**Changed**|Wed Jul 19 2023|
 
 ## Description
 Amazon Redshift is a fast, fully managed, petabyte-scale data warehouse service from Amazon.  Connect to Amazon Redshift database to read data from tables.
