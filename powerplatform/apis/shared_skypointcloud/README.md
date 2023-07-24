@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_skypointcloud`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1546\1.0.1546.2665`|
+|**Version**|`releases/v1.0.1646\1.0.1646.3354`|
 |**Publisher**|**SkyPoint Cloud**|
 |**Created**|Thu Jan 07 2021|
-|**Changed**|Mon Jan 24 2022|
+|**Changed**|Wed Jul 19 2023|
 
 ## Description
-SkyPoint is a customer data platform that champions privacy and compliance through connected privacy-first customer experiences. SkyPoint Connector provides a set of APIs to work with SkyPoint platform instances and entities.
+SkyPoint Cloud is a Modern Data Stack Platform that allows you to centralize your data and create a single source of truth breaking down data silos and getting more value from your data. SkyPoint connector provides a set of endpoints to work with SkyPoint platform instances and tables.
