@@ -776,6 +776,30 @@
         <Property Name="labelAppliedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="labelAppliedBy" Type="oneDrive.identitySet" />
       </EntityType>
+      <EntityType Name="interactivityAnnotation" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="showOffset" Type="Edm.Duration" />
+        <Property Name="hideOffset" Type="Edm.Duration" />
+        <Property Name="top" Type="Edm.Double" />
+        <Property Name="left" Type="Edm.Double" />
+        <Property Name="height" Type="Edm.Double" />
+        <Property Name="width" Type="Edm.Double" />
+        <Property Name="zOrder" Type="Edm.Int32" />
+        <Property Name="content" Type="Edm.String" />
+        <Property Name="contentType" Type="Edm.String" />
+        <Property Name="backgroundColor" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="interactivityForm" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="formUrl" Type="Edm.String" />
+        <Property Name="showOffset" Type="Edm.Duration" />
+      </EntityType>
       <EntityType Name="comment" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2596,6 +2620,7 @@
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
+        <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="storageContainerType" OpenType="true">
@@ -2775,6 +2800,13 @@
         <Property Name="siteTitle" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="itemStreamProperties" OpenType="true" />
+      <ComplexType Name="interactivity" OpenType="true">
+        <Property Name="version" Type="Edm.String" />
+        <Property Name="isInteractiveContentShown" Type="Edm.Boolean" />
+        <Property Name="firstInteractiveContentOffset" Type="Edm.Duration" />
+        <NavigationProperty Name="annotations" Type="Collection(oneDrive.interactivityAnnotation)" ContainsTarget="true" />
+        <NavigationProperty Name="forms" Type="Collection(oneDrive.interactivityForm)" ContainsTarget="true" />
+      </ComplexType>
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
         <Property Name="error" Type="oneDrive.error" />
@@ -3823,6 +3855,7 @@
         <Property Name="viewpoint" Type="oneDrive.mediaViewpoint" />
         <Property Name="areExtendedFeaturesEnabled" Type="Edm.Boolean" />
         <Property Name="isWatermarkEnabled" Type="Edm.Boolean" />
+        <Property Name="interactivity" Type="oneDrive.interactivity" />
         <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.mediaThumbnailSet)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="timeline" Type="oneDrive.mediaTimeline" ContainsTarget="true" />
@@ -5766,6 +5799,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.deletedStorageContainer" />
         <ReturnType Type="oneDrive.storageContainer" />
       </Action>
+      <Action Name="restore" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
+        <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
+      </Action>
       <Action Name="copy" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="parentReference" Type="oneDrive.itemReference">
@@ -6221,6 +6258,10 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="reportIds" Type="Collection(oneDrive.analyticsReport)" />
         <ReturnType Type="Collection(oneDrive.analyticsReport)" />
+      </Action>
+      <Action Name="delete" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
+        <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
       </Action>
       <Action Name="redeemToken" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
