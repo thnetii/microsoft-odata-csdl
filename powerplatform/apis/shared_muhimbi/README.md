@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_muhimbi`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1631\1.0.1631.3268`|
+|**Version**|`releases/v1.0.1649\1.0.1649.3368`|
 |**Publisher**|**Muhimbi Ltd**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Mon May 01 2023|
+|**Changed**|Wed Aug 02 2023|
 
 ## Description
-Convert, Merge, Watermark, Secure and OCR files.
+Convert, Compress, Merge, Watermark, Secure and OCR files.
