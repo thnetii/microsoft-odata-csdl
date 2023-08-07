@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_powerappsforadmins`|
 |**Tier**|Standard|
-|**Version**|`u/shgogna/globalperconnector-train1\1.0.1639.3312`|
+|**Version**|`releases/v1.0.1650\1.0.1650.3374`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Aug 21 2018|
-|**Changed**|Tue Jun 06 2023|
+|**Changed**|Wed Aug 02 2023|
 
 ## Description
 Power Apps Management Connector for Administrators
