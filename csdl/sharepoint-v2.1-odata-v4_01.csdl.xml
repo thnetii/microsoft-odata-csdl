@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.23926 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24002 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -558,6 +558,7 @@
         <NavigationProperty Name="photoStreams" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="popularItems" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="recent" Type="Collection(oneDrive.item)" ContainsTarget="true" />
+        <NavigationProperty Name="recentSearches" Type="Collection(oneDrive.recentSearch)" ContainsTarget="true" />
         <NavigationProperty Name="recognizedEntities" Type="Collection(oneDrive.recognizedEntity)" ContainsTarget="true" />
         <NavigationProperty Name="recommendedItems" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="root" Type="oneDrive.item" ContainsTarget="true" />
@@ -1274,6 +1275,14 @@
         <Property Name="hasPassword" Type="Edm.Boolean" />
         <Property Name="password" Type="Edm.String" />
         <Property Name="failedRecipientResults" Type="Collection(oneDrive.sharingRecipientResult)" />
+      </EntityType>
+      <EntityType Name="recentSearch" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="searchText" Type="Edm.String" />
+        <Property Name="type" Type="Edm.String" />
       </EntityType>
       <EntityType Name="tagInfo" OpenType="true">
         <Key>
@@ -2175,6 +2184,15 @@
         </NavigationProperty>
         <NavigationProperty Name="users" Type="Collection(oneDrive.unifiedStorageQuota)" ContainsTarget="true" />
       </EntityType>
+      <EntityType Name="siteReviewStatus" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="siteId" Type="Edm.String" />
+        <Property Name="status" Type="oneDrive.ReviewStatus" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="favorites" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2203,6 +2221,7 @@
         <Property Name="version" Type="Edm.String" />
         <Property Name="eeeuParameters" Type="oneDrive.eeeuParameters" />
         <Property Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" />
+        <Property Name="racForSitesParameters" Type="oneDrive.racForSitesParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -2551,6 +2570,25 @@
         <Property Name="innerHtml" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="analyticsReportAccessGroup" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="type" Type="oneDrive.AnalyticsReportAccessGroupType" />
+      </EntityType>
+      <EntityType Name="analyticsReportSiteInfo" OpenType="true">
+        <Key>
+          <PropertyRef Name="siteName" />
+        </Key>
+        <Property Name="siteName" Type="Edm.String" Nullable="false" />
+        <Property Name="siteUrl" Type="Edm.String" />
+        <Property Name="siteSensitivity" Type="Edm.String" />
+        <Property Name="primaryAdmin" Type="Edm.String" />
+        <Property Name="blockDownloadPolicy" Type="Edm.String" />
+        <Property Name="conditionalAccessPolicy" Type="Edm.String" />
+        <NavigationProperty Name="accessGroups" Type="Collection(oneDrive.analyticsReportAccessGroup)" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="employeeExperienceDashboard" OpenType="true">
         <NavigationProperty Name="cards" Type="Collection(oneDrive.card)" ContainsTarget="true" />
       </EntityType>
@@ -2707,7 +2745,7 @@
         <Property Name="currentUserRole" Type="oneDrive.CampaignUserRoleType" />
         <Property Name="primaryTeamsChannelId" Type="Edm.String" />
         <Property Name="approvalsInstalled" Type="Edm.Boolean" />
-        <Property Name="dateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="creationDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="creatorUpn" Type="Edm.String" />
         <Property Name="creatorName" Type="Edm.String" />
       </EntityType>
@@ -2904,6 +2942,10 @@
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
         <Property Name="error" Type="oneDrive.error" />
+      </ComplexType>
+      <ComplexType Name="searchSuggestion" OpenType="true">
+        <Property Name="suggestion" Type="Edm.String" />
+        <Property Name="type" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="sharePointIdentity" BaseType="oneDrive.identity" OpenType="true">
         <Property Name="loginName" Type="Edm.String" />
@@ -3763,6 +3805,7 @@
         <Property Name="meetingOrganizerTenantId" Type="Edm.String" />
         <Property Name="iCalUid" Type="Edm.String" />
         <Property Name="groupId" Type="Edm.String" />
+        <Property Name="supportsTeamsPremiumFeatures" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="driveItemViewpoint" OpenType="true">
         <Property Name="isFavorite" Type="Edm.Boolean" />
@@ -4439,6 +4482,10 @@
       <ComplexType Name="ibInsightsParameters" OpenType="true">
         <Property Name="section" Type="oneDrive.AnalyticsReportIBInsightsSection" />
       </ComplexType>
+      <ComplexType Name="racForSitesParameters" OpenType="true">
+        <Property Name="racEnabledSitesPercentage" Type="Edm.Int32" />
+        <NavigationProperty Name="sitesList" Type="Collection(oneDrive.analyticsReportSiteInfo)" ContainsTarget="true" />
+      </ComplexType>
       <ComplexType Name="format" OpenType="true">
         <Property Name="extensions" Type="Collection(Edm.String)" />
       </ComplexType>
@@ -4587,6 +4634,13 @@
         <Property Name="itemUniqueId" Type="Edm.String" />
         <Property Name="itemType" Type="Edm.String" />
         <Property Name="operation" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="contentReportRequest" OpenType="true">
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="url" Type="Edm.String" Nullable="false" />
+        <Property Name="type" Type="oneDrive.WorkflowType" Nullable="false" />
+        <Property Name="eventTime" Type="Edm.String" Nullable="false" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="storageContainerViewpoint" OpenType="true">
@@ -5352,6 +5406,7 @@
         <Member Name="IBInsightsOneDrive" Value="3" />
         <Member Name="IBInsightsSharePoint" Value="4" />
         <Member Name="EEEU" Value="5" />
+        <Member Name="RACForSites" Value="6" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
@@ -5456,6 +5511,10 @@
         <Member Name="system" Value="1" />
         <Member Name="siteCollection" Value="2" />
       </EnumType>
+      <EnumType Name="AnalyticsReportAccessGroupType">
+        <Member Name="M365Group" Value="0" />
+        <Member Name="SecurityGroup" Value="1" />
+      </EnumType>
       <EnumType Name="DeletedStorageContainerStatus">
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
@@ -5514,6 +5573,15 @@
         <Member Name="Fraud" Value="9" />
         <Member Name="HateSpeech" Value="10" />
         <Member Name="ImminentHarmToPersonsOrProperty" Value="11" />
+      </EnumType>
+      <EnumType Name="WorkflowType">
+        <Member Name="Undefined" Value="0" />
+        <Member Name="ACD" Value="1" />
+        <Member Name="GRO" Value="2" />
+        <Member Name="GRR" Value="3" />
+        <Member Name="InAppRac" Value="4" />
+        <Member Name="WebRac" Value="5" />
+        <Member Name="Appeal" Value="6" />
       </EnumType>
       <EnumType Name="SubpoenaJobStatus">
         <Member Name="None" Value="0" />
