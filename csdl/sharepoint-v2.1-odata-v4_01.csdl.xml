@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24002 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24009 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1117,6 +1117,7 @@
         <Property Name="identity" Type="oneDrive.identitySet" />
         <Property Name="photoCount" Type="Edm.Int32" />
         <Property Name="isHidden" Type="Edm.Boolean" />
+        <Property Name="isPinned" Type="Edm.Boolean" />
         <Property Name="representativeItemId" Type="Edm.String" />
         <Property Name="representativeBoundingBoxLeft" Type="Edm.Int32" />
         <Property Name="representativeBoundingBoxTop" Type="Edm.Int32" />
@@ -2269,6 +2270,9 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="dlpPolicySyncApis" OpenType="true">
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="listItemVersion" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2385,6 +2389,10 @@
         <Property Name="titleArea" Type="oneDrive.titleArea" />
         <NavigationProperty Name="canvasLayout" Type="oneDrive.canvasLayout" ContainsTarget="true" />
         <NavigationProperty Name="webParts" Type="Collection(oneDrive.webPart)" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="privateApis" OpenType="true">
+        <NavigationProperty Name="dlpPolicySync" Type="oneDrive.dlpPolicySyncApis" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="relation" OpenType="true">
@@ -2519,10 +2527,9 @@
         <Property Name="siteCreationDefaultStorageLimitInMb" Type="Edm.Int32" />
         <Property Name="syntexBillingSubscriptionSettings" Type="oneDrive.syntexBillingSubscriptionSettings" />
         <Property Name="tenantDefaultTimezone" Type="Edm.String" />
-        <Property Name="streamPremiumHighResolutionPlaybackSettings" Type="oneDrive.streamSiteSpecificFeatureSettings" />
-        <Property Name="streamPremiumExternalVideoSharingSettings" Type="oneDrive.streamSiteSpecificFeatureSettings" />
-        <Property Name="streamPremiumMediaAnalyticsSettings" Type="oneDrive.streamSiteSpecificFeatureSettings" />
-        <Property Name="streamPremiumPlaybackTranscriptTranslationSettings" Type="oneDrive.streamSiteSpecificFeatureSettings" />
+        <Property Name="syntexHighResolutionPlaybackSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
+        <Property Name="syntexExternalVideoSharingSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
+        <Property Name="syntexPlaybackTranscriptTranslationSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -2932,6 +2939,10 @@
         <Property Name="siteTitle" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="itemStreamProperties" OpenType="true" />
+      <ComplexType Name="mediaHiddenSection" OpenType="true">
+        <Property Name="startFlicks" Type="Edm.Int64" />
+        <Property Name="endFlicks" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="interactivity" OpenType="true">
         <Property Name="version" Type="Edm.String" />
         <Property Name="isInteractiveContentShown" Type="Edm.Boolean" />
@@ -3976,6 +3987,9 @@
         <Property Name="albumItemCount" Type="Edm.Int32" />
         <Property Name="coverImageId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="mediaEdits" OpenType="true">
+        <Property Name="hiddenSections" Type="Collection(oneDrive.mediaHiddenSection)" />
+      </ComplexType>
       <ComplexType Name="media" OpenType="true">
         <Property Name="aboutVisibility" Type="Edm.String" />
         <Property Name="analyticsVisibility" Type="Edm.String" />
@@ -3986,6 +4000,7 @@
         <Property Name="isNoiseSuppressionControlShown" Type="Edm.Boolean" />
         <Property Name="isTranscriptionShown" Type="Edm.Boolean" />
         <Property Name="spokenLanguageTag" Type="Edm.String" />
+        <Property Name="edits" Type="oneDrive.mediaEdits" />
         <Property Name="recordingStartDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="recordingEndDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="mediaSource" Type="oneDrive.mediaSource" />
@@ -4226,6 +4241,7 @@
         <Property Name="purchaseUrl" Type="Edm.String" />
         <Property Name="originalPrice" Type="Edm.String" />
         <Property Name="action" Type="Edm.String" />
+        <Property Name="planType" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="quota" OpenType="true">
         <Property Name="deleted" Type="Edm.Int64" />
@@ -4397,10 +4413,6 @@
       <ComplexType Name="specialFolder" OpenType="true">
         <Property Name="name" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="streamSiteSpecificFeatureSettings" OpenType="true">
-        <Property Name="enabled" Type="Edm.Boolean" />
-        <Property Name="siteList" Type="Collection(Edm.Guid)" Nullable="false" />
-      </ComplexType>
       <ComplexType Name="suboperation" OpenType="true">
         <Property Name="id" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
@@ -4421,6 +4433,10 @@
         <Property Name="azureSubscriptionState" Type="oneDrive.AzureSubscriptionState" />
         <Property Name="activationStatus" Type="oneDrive.SyntexConsumptionBillingActivationStatus" />
         <Property Name="enabledFeatures" Type="oneDrive.SyntexConsumptionBillingEnabledFeatures" />
+      </ComplexType>
+      <ComplexType Name="syntexSiteSpecificFeatureSettings" OpenType="true">
+        <Property Name="status" Type="oneDrive.SyntexSiteSpecificFeatureStatus" />
+        <Property Name="siteList" Type="Collection(Edm.Guid)" Nullable="false" />
       </ComplexType>
       <ComplexType Name="system" OpenType="true" />
       <ComplexType Name="tagBatchOperationStatuses" OpenType="true">
@@ -5505,6 +5521,12 @@
       <EnumType Name="SyntexConsumptionBillingEnabledFeatures" IsFlags="true">
         <Member Name="none" Value="0" />
         <Member Name="documentUnderstanding" Value="1" />
+      </EnumType>
+      <EnumType Name="SyntexSiteSpecificFeatureStatus">
+        <Member Name="disabled" Value="0" />
+        <Member Name="enabled" Value="1" />
+        <Member Name="enabledWithNoSites" Value="2" />
+        <Member Name="disabledWithNoSites" Value="3" />
       </EnumType>
       <EnumType Name="TermGroupScope">
         <Member Name="global" Value="0" />
@@ -6920,6 +6942,7 @@
         <Singleton Name="unifiedStorageQuota" Type="oneDrive.unifiedStorageQuotaRoot" />
         <Singleton Name="favorites" Type="oneDrive.favorites" />
         <Singleton Name="insights" Type="oneDrive.itemInsights" />
+        <Singleton Name="private" Type="oneDrive.privateApis" />
         <Singleton Name="tenant" Type="oneDrive.tenant" />
         <Singleton Name="tenantStore" Type="oneDrive.tenantStore" />
         <Singleton Name="termStore" Type="oneDrive.termStore" />
