@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24009 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24016 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -40,6 +40,12 @@
         <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LogoHash" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="HomeSiteReference">
+        <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="SiteFlags" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="HomeSitesDetails">
         <Property Name="Audiences" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="IsInDraftMode" Type="Edm.Boolean" Nullable="false" />
@@ -74,6 +80,10 @@
         <Property Name="Url" Type="Edm.String" />
         <Property Name="VivaConnectionsDefaultStart" Type="Edm.Boolean" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="VivaConnectionsLicense">
+        <Property Name="IsTenantEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsUserEnabled" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="FileCreationInformation">
         <Property Name="Content" Type="Edm.Binary" />
@@ -5654,6 +5664,7 @@
         <Parameter Name="uploadId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="fileOffset" Type="Edm.Int64" Nullable="false" />
         <Parameter Name="stream" Type="Edm.Stream" />
+        <Parameter Name="sandboxId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="SP.File" />
       </Action>
       <Action Name="FinishUploadWithChecksum" IsBound="true">
@@ -5662,6 +5673,7 @@
         <Parameter Name="fileOffset" Type="Edm.Int64" Nullable="false" />
         <Parameter Name="checksum" Type="Edm.String" />
         <Parameter Name="stream" Type="Edm.Stream" />
+        <Parameter Name="sandboxId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="SP.File" />
       </Action>
       <Action Name="GetFileUserValue" IsBound="true">
@@ -7782,6 +7794,15 @@
       <Annotations Target="SP.TargetedSiteDetails/WebId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.VivaConnectionsLicense">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.VivaConnectionsLicense/IsTenantEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.VivaConnectionsLicense/IsUserEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.News.DataModel.SerializableType">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8778,13 +8799,13 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings/Enabled">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings/SiteList">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings/SiteListFileName">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings/Status">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.AppServices.AppCollection">
@@ -10305,6 +10326,9 @@
       <Annotations Target="SP.Publishing.SitePage/Translations">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SitePage/TranspileContent">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.CampaignPublication">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10968,6 +10992,9 @@
       <Annotations Target="SP.Sharing.SharingInformation/fileExtension">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Sharing.SharingInformation/isConsumerFiles">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Sharing.SharingInformation/isStubFile">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11428,6 +11455,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SetSyntexPoweredColumnPrompts(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SetSyntexPoweredColumns(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.Int32, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.VerifyModelUrls(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Collection(Edm.String))">
@@ -12853,6 +12883,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SPHSite.ValidateHomeSite(Edm.Int32, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SPHSite.ValidateHomeSiteCandidate(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.PinnedItems.AddItem(Microsoft.SharePoint.ListHome.FavoriteListHomeItem)">
@@ -14736,6 +14769,13 @@
         <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
         <Parameter Name="docLibId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="syntexPoweredColumnPrompts" Type="Edm.String" />
+      </Action>
+      <Action Name="SetSyntexPoweredColumns" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
+        <Parameter Name="listId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="itemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="columnIdAndValues" Type="Edm.String" />
+        <ReturnType Type="SP.ListItem" />
       </Action>
       <Action Name="VerifyModelUrls" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
@@ -20507,6 +20547,7 @@
         <Property Name="LayoutWebpartsContent" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="SitePageFlags" Type="Edm.String" />
+        <Property Name="TranspileContent" Type="Edm.String" />
         <NavigationProperty Name="Translations" Type="SP.TranslationStatusCollection" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="CampaignPublication" BaseType="SP.Publishing.SitePage">
@@ -25084,13 +25125,7 @@
         <Property Name="uALNumberOfRecords" Type="Edm.Int64" Nullable="false" />
         <Property Name="users" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="ImpactedAsset">
-        <Property Name="actionPerformedBy" Type="Edm.String" />
-        <Property Name="assetIdentificationId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="assetUrl" Type="Edm.String" />
-        <Property Name="driveId" Type="Edm.String" />
-        <Property Name="siteOwner" Type="Edm.String" />
-      </ComplexType>
+      <ComplexType Name="ImpactedAsset" />
       <ComplexType Name="TeamsSitesActivityDetail">
         <Property Name="LastActivityDate" Type="Edm.DateTimeOffset" />
         <Property Name="TeamId" Type="Edm.Guid" Nullable="false" />
@@ -25575,6 +25610,7 @@
         <Property Name="enforceSPOSearch" Type="Edm.Boolean" Nullable="false" />
         <Property Name="fileExtension" Type="Edm.String" />
         <Property Name="hasUniquePermissions" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isConsumerFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="isStubFile" Type="Edm.Boolean" Nullable="false" />
         <Property Name="itemUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="itemUrl" Type="Edm.String" />
@@ -26681,9 +26717,9 @@
         <Property Name="UpdatedUTC" Type="Edm.DateTimeOffset" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SyntexPremiumFeatureSettings">
-        <Property Name="Enabled" Type="Edm.Boolean" />
         <Property Name="SiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="SiteListFileName" Type="Edm.String" />
+        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="TenantDefaultTimeZoneId">
         <Property Name="IsReadOnly" Type="Edm.Boolean" Nullable="false" />
@@ -27181,14 +27217,14 @@
         <Property Name="StreamLaunchConfig" Type="Edm.Int32" Nullable="false" />
         <Property Name="StreamLaunchConfigLastUpdated" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="StreamLaunchConfigUpdateCount" Type="Edm.Int32" Nullable="false" />
-        <Property Name="StreamPremiumExternalVideoSharingSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumHighResolutionPlaybackSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumMediaAnalyticsSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumPlaybackTranscriptTranslationSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyncPrivacyProfileProperties" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SyntexBillingSubscriptionSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexBillingContext" />
+        <Property Name="SyntexExternalVideoSharingSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
+        <Property Name="SyntexHighResolutionPlaybackSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexInternalFeatureFlags" Type="Collection(SP.KeyValue)" />
+        <Property Name="SyntexMediaAnalyticsSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexPaygFeatureActivations" Type="Collection(SP.KeyValue)" />
+        <Property Name="SyntexPlaybackTranscriptTranslationSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexPowerAppsEnvironmentsContext" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPowerAppsEnvironmentsContext" />
         <Property Name="TaxonomyTaggingEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="TaxonomyTaggingSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
@@ -27761,6 +27797,10 @@
         <Parameter Name="listName" Type="Edm.String" />
         <ReturnType Type="SP.View" />
       </Action>
+      <Function Name="GetVivaConnectionsLicense" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="SP.VivaConnectionsLicense" />
+      </Function>
       <Action Name="GrantHubSiteRightsById" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="hubSiteId" Type="Edm.Guid" Nullable="false" />
@@ -31410,14 +31450,14 @@
         <Property Name="StreamLaunchConfig" Type="Edm.Int32" Nullable="false" />
         <Property Name="StreamLaunchConfigLastUpdated" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="StreamLaunchConfigUpdateCount" Type="Edm.Int32" Nullable="false" />
-        <Property Name="StreamPremiumExternalVideoSharingSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumHighResolutionPlaybackSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumMediaAnalyticsSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
-        <Property Name="StreamPremiumPlaybackTranscriptTranslationSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyncPrivacyProfileProperties" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SyntexBillingSubscriptionSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexBillingContext" />
+        <Property Name="SyntexExternalVideoSharingSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
+        <Property Name="SyntexHighResolutionPlaybackSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexInternalFeatureFlags" Type="Collection(SP.KeyValue)" />
+        <Property Name="SyntexMediaAnalyticsSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexPaygFeatureActivations" Type="Collection(SP.KeyValue)" />
+        <Property Name="SyntexPlaybackTranscriptTranslationSettings" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPremiumFeatureSettings" />
         <Property Name="SyntexPowerAppsEnvironmentsContext" Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexPowerAppsEnvironmentsContext" />
         <Property Name="TaxonomyTaggingEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="TaxonomyTaggingSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
@@ -32964,6 +33004,10 @@
       <Action Name="ValidateHomeSite">
         <Parameter Name="validationActionType" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="siteUrl" Type="Edm.String" />
+      </Action>
+      <Action Name="ValidateHomeSiteCandidate">
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <ReturnType Type="SP.HomeSiteReference" />
       </Action>
     </Schema>
     <Schema Namespace="SP.OrganizationNews" xmlns="http://docs.oasis-open.org/odata/ns/edm">

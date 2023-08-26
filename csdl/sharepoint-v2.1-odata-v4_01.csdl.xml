@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24009 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24016 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1192,6 +1192,7 @@
         <Property Name="formats" Type="oneDrive.commandProperties" />
         <Property Name="officeActivityFeed" Type="oneDrive.officeActivityCapabilities" />
         <Property Name="itemFeed" Type="oneDrive.itemFeedCapabilities" />
+        <Property Name="activityNotificationScenarios" Type="Collection(oneDrive.activityNotificationScenario)" />
         <Property Name="delete" Type="oneDrive.commandProperties" />
         <Property Name="rename" Type="oneDrive.commandProperties" />
         <Property Name="move" Type="oneDrive.commandProperties" />
@@ -1772,6 +1773,8 @@
       <EntityType Name="recycleBinItem" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="deletedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="deletedFromLocation" Type="Edm.String" />
+        <Property Name="deletedBy" Type="oneDrive.identitySet" />
+        <Property Name="title" Type="Edm.String" />
       </EntityType>
       <EntityType Name="richLongRunningOperation" OpenType="true">
         <Key>
@@ -2374,6 +2377,7 @@
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="webId" Type="Edm.String" />
         <Property Name="pinOrder" Type="Edm.Double" />
+        <Property Name="indexId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="page" BaseType="oneDrive.baseSitePage" OpenType="true">
@@ -2575,6 +2579,17 @@
       </EntityType>
       <EntityType Name="textWebPart" BaseType="oneDrive.webPart" OpenType="true">
         <Property Name="innerHtml" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="topicPage" BaseType="oneDrive.baseSitePage" OpenType="true">
+        <Property Name="entityId" Type="Edm.String" />
+        <Property Name="entityInstanceId" Type="Edm.String" />
+        <Property Name="isTranslation" Type="Edm.String" />
+        <Property Name="translationLanguage" Type="Edm.String" />
+        <Property Name="languageTag" Type="Edm.String" />
+        <Property Name="entityRelations" Type="oneDrive.entityRelations" />
+        <Property Name="lockState" Type="oneDrive.LockStateType" />
+        <Property Name="lastPublishedDateTime" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportAccessGroup" OpenType="true">
@@ -3225,6 +3240,14 @@
         <Property Name="correlationTrail" Type="Edm.String" />
         <Property Name="keyPhrases" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="entityRelations" OpenType="true">
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="definition" Type="Edm.String" />
+        <Property Name="relatedPeople" Type="oneDrive.relatedPeople" />
+        <Property Name="relatedResources" Type="oneDrive.relatedResources" />
+        <Property Name="relatedSites" Type="oneDrive.relatedSites" />
+        <Property Name="lastCurator" Type="oneDrive.identity" />
+      </ComplexType>
       <ComplexType Name="exchangeIds" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="id" Type="Edm.String" />
         <Property Name="documentId" Type="Edm.String" />
@@ -3355,6 +3378,32 @@
         <Property Name="versionId" Type="Edm.String" />
         <Property Name="checkedOutBy" Type="oneDrive.identitySet" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="relatedPeople" OpenType="true">
+        <Property Name="curated" Type="Collection(oneDrive.relatedPerson)" />
+        <Property Name="removed" Type="Collection(oneDrive.relatedPerson)" />
+      </ComplexType>
+      <ComplexType Name="relatedPerson" OpenType="true">
+        <Property Name="user" Type="oneDrive.identity" />
+        <Property Name="role" Type="Edm.String" />
+        <Property Name="relationDescription" Type="Edm.String" />
+        <Property Name="isAddedFromSearch" Type="Edm.Boolean" />
+      </ComplexType>
+      <ComplexType Name="relatedResource" OpenType="true">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="siteId" Type="Edm.String" />
+        <Property Name="webId" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="sourceType" Type="oneDrive.ResourceType" />
+      </ComplexType>
+      <ComplexType Name="relatedResources" OpenType="true">
+        <Property Name="curated" Type="Collection(oneDrive.relatedResource)" />
+        <Property Name="removed" Type="Collection(oneDrive.relatedResource)" />
+      </ComplexType>
+      <ComplexType Name="relatedSites" OpenType="true">
+        <NavigationProperty Name="curated" Type="Collection(oneDrive.siteInfo)" ContainsTarget="true" />
+        <NavigationProperty Name="removed" Type="Collection(oneDrive.siteInfo)" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="customOrderInfo" OpenType="true">
         <Property Name="customOrderSupported" Type="Edm.Boolean" />
@@ -5075,6 +5124,13 @@
       <ComplexType Name="formatDetails">
         <Property Name="extensions" Type="Collection(Edm.String)" />
       </ComplexType>
+      <ComplexType Name="activityNotificationScenario">
+        <Property Name="scenarioId" Type="Edm.Int32" />
+        <Property Name="actionIds" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="deliveryMechanism" Type="Edm.Int32" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="optedIn" Type="Edm.Boolean" />
+      </ComplexType>
       <ComplexType Name="generationDetails">
         <Property Name="status" Type="oneDrive.longRunningOperationStatus" />
         <Property Name="requestedDateTime" Type="Edm.DateTimeOffset" />
@@ -5244,7 +5300,8 @@
         <Member Name="microsoftReserved" Value="0" />
         <Member Name="article" Value="1" />
         <Member Name="home" Value="2" />
-        <Member Name="unknownFutureValue" Value="3" />
+        <Member Name="topic" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
       <EnumType Name="NewsType">
         <Member Name="News" Value="0" />
@@ -5262,12 +5319,25 @@
         <Member Name="plain" Value="1" />
         <Member Name="colorBlock" Value="2" />
         <Member Name="overlap" Value="3" />
-        <Member Name="unknownFutureValue" Value="4" />
+        <Member Name="topicPage" Value="4" />
+        <Member Name="unknownFutureValue" Value="5" />
       </EnumType>
       <EnumType Name="TitleAreaTextAlignmentType">
         <Member Name="left" Value="0" />
         <Member Name="center" Value="1" />
         <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
+      <EnumType Name="ResourceType">
+        <Member Name="SHAREPOINT" Value="0" />
+        <Member Name="EXTERNAL" Value="1" />
+        <Member Name="CONNECTOR" Value="2" />
+      </EnumType>
+      <EnumType Name="LockStateType" UnderlyingType="Edm.Byte">
+        <Member Name="Unlocked" Value="0" />
+        <Member Name="LockedNoTopicEditPermissions" Value="1" />
+        <Member Name="LockedCheckedOutToOtherUser" Value="2" />
+        <Member Name="LockedMultiLingual" Value="3" />
+        <Member Name="LockedOtherReason" Value="4" />
       </EnumType>
       <EnumType Name="SensitivityLabelAssignmentMethod">
         <Member Name="standard" Value="0" />
@@ -6610,6 +6680,17 @@
       <Action Name="sendActivities" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.baseSitePage)" />
         <Parameter Name="value" Type="Collection(oneDrive.pageActivity)" />
+      </Action>
+      <Action Name="findTopicPage" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.baseSitePage)" />
+        <Parameter Name="topicPage" Type="oneDrive.topicPage" />
+        <Parameter Name="ancestorIds" Type="Collection(Edm.String)">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="url" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.baseSitePage" />
       </Action>
       <Action Name="setSensitivityLabel" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
