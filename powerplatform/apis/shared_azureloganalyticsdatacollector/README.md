@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_azureloganalyticsdatacollector`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1623\1.0.1623.3210`|
+|**Version**|`releases/v1.0.1652\1.0.1652.3394`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Aug 14 2018|
-|**Changed**|Wed Mar 08 2023|
+|**Changed**|Tue Aug 22 2023|
 
 ## Description
 Azure Log Analytics Data Collector will send data to any Azure Log Analytics workspace.
