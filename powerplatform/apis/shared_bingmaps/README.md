@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_bingmaps`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1636\1.0.1636.3297`|
+|**Version**|`releases/v1.0.1652\1.0.1652.3394`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Thu May 25 2023|
+|**Changed**|Tue Aug 22 2023|
 
 ## Description
 Bing Maps
