@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_logicflows`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1645\1.0.1645.3345`|
+|**Version**|`releases/v1.0.1653\1.0.1653.3403`|
 |**Publisher**|**Microsoft**|
 |**Created**|Sun Sep 16 2018|
-|**Changed**|Thu Jul 13 2023|
+|**Changed**|Tue Aug 22 2023|
 
 ## Description
 Connector for Logic Flows/Apps
