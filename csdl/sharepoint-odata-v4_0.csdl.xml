@@ -155,6 +155,12 @@
         <Property Name="requestedObjectId" Type="Edm.Guid" Nullable="false" />
         <Property Name="result" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="AdditionalAccessStatusResponse">
+        <Property Name="AdditionalAccessRequestStatus" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ErrorMessage" Type="Edm.String" />
+        <Property Name="RoleValue" Type="Edm.Int32" Nullable="false" />
+        <Property Name="StatusCode" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="ApprovalsCreateRequestParameters">
         <Property Name="approvers" Type="Edm.String" />
         <Property Name="awaitAll" Type="Edm.Boolean" />
@@ -173,6 +179,14 @@
         <Property Name="ApproverSourceValue" Type="Edm.String" />
         <Property Name="ProvisioningError" Type="Edm.String" />
         <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="CAAEFieldElement">
+        <Property Name="FieldId" Type="Edm.String" />
+        <Property Name="Version" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CAAESnippetElement">
+        <Property Name="ListItemId" Type="Edm.String" />
+        <Property Name="Version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ColumnTypeInfo">
         <Property Name="PlaceholderId" Type="Edm.String" />
@@ -259,11 +273,14 @@
         <Property Name="AdditionalFieldsData" Type="Edm.String" />
         <Property Name="ColumnId" Type="Edm.String" />
         <Property Name="DataType" Type="Edm.String" />
+        <Property Name="FieldId" Type="Edm.String" />
         <Property Name="Id" Type="Edm.String" />
         <Property Name="IsColumnMappingActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsMandatory" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="QuestionTitle" Type="Edm.String" />
         <Property Name="Source" Type="Edm.String" />
+        <Property Name="Version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="Placeholder">
         <Property Name="DataType" Type="Edm.String" />
@@ -274,6 +291,22 @@
         <Property Name="QuestionTitle" Type="Edm.String" />
         <Property Name="Source" Type="Edm.String" />
         <Property Name="StartPosition" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="PublishModernTemplatePayload">
+        <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
+        <Property Name="Snippets" Type="Collection(SP.Snippet)" />
+        <Property Name="Url" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="Snippet">
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="ListItemId" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
+        <Property Name="Version" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="PublishSnippetPayload">
+        <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
+        <Property Name="Url" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="RecipientLimitsInfo">
         <Property Name="AliasOnly" Type="Edm.Int32" Nullable="false" />
@@ -677,6 +710,11 @@
         <Property Name="BypassSharedLock" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DeleteIfEmpty" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ETagMatch" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="FontPackageCreationParameters">
+        <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="PackageJson" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="GetListItemVersionsParameters">
         <Property Name="ListItemVersionCollectionPosition" Type="SP.ListItemVersionCollectionPosition" />
@@ -2365,6 +2403,7 @@
       </EntityType>
       <EntityType Name="EmployeeEngagement">
         <NavigationProperty Name="AppConfiguration" Type="SP.AppConfiguration" ContainsTarget="true" />
+        <NavigationProperty Name="VivaResources" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="EmployeeExperienceController" />
       <EntityType Name="CampainAnalytics" Abstract="true" />
@@ -2820,6 +2859,12 @@
         <Property Name="SynchronizationStatus" Type="Edm.Int32" Nullable="false" />
       </EntityType>
       <EntityType Name="FolderColoring" />
+      <EntityType Name="FontPackage">
+        <Property Name="ID" Type="Edm.Guid" Nullable="false" />
+        <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="PackageJson" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="HubSite">
         <Property Name="Description" Type="Edm.String" />
         <Property Name="EnablePermissionsSync" Type="Edm.Boolean" Nullable="false" />
@@ -3782,6 +3827,14 @@
         <Parameter Name="visualizationTarget" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.View" />
       </Action>
+      <Action Name="PublishModernTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="publishModernTemplatePayload" Type="SP.PublishModernTemplatePayload" />
+      </Action>
+      <Action Name="PublishSnippet" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="publishSnippetPayload" Type="SP.PublishSnippetPayload" />
+      </Action>
       <Action Name="Recycle" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
@@ -4008,6 +4061,13 @@
       <Action Name="SetExemptFromBlockDownloadOfNonViewableFiles" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="value" Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="SetItemsOrder" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="itemIds" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Parameter Name="lowerOrderItemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="higherOrderItemId" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Collection(Edm.Int32)" Nullable="false" />
       </Action>
       <Action Name="StartDeleteFileVersions" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -4910,6 +4970,10 @@
         <Parameter Name="groupId" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="message" Type="Edm.String" />
         <ReturnType Type="SP.AccessRequestResponse" />
+      </Action>
+      <Action Name="GetAdditionalAccessStatus" IsBound="true">
+        <Parameter Name="this" Type="SP.SecurableObject" />
+        <ReturnType Type="SP.AdditionalAccessStatusResponse" />
       </Action>
       <Action Name="QuickActionChangeRequestStatus" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -5966,6 +6030,17 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="SP.Folder" />
       </Action>
+      <Function Name="FontPackages">
+        <ReturnType Type="Collection(SP.FontPackage)" />
+      </Function>
+      <Function Name="GetById" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Collection(SP.FontPackage)" />
+        <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="SP.FontPackage" />
+      </Function>
+      <Action Name="Delete" IsBound="true">
+        <Parameter Name="this" Type="SP.FontPackage" />
+      </Action>
       <Function Name="GetById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(SP.Form)" />
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
@@ -6923,6 +6998,7 @@
         <Singleton Name="EmployeeExperience" Type="SP.EmployeeExperienceController" />
         <EntitySet Name="files" EntityType="MS.FileServices.FileSystemItem" />
         <Singleton Name="foldercoloring" Type="SP.FolderColoring" />
+        <EntitySet Name="fontpackages" EntityType="SP.FontPackage" />
         <Singleton Name="GroupService" Type="Microsoft.SharePoint.Portal.GroupService" />
         <Singleton Name="groupsitemanager" Type="Microsoft.SharePoint.Portal.GroupSiteManager" />
         <EntitySet Name="hubsites" EntityType="SP.HubSite" />
@@ -7998,6 +8074,9 @@
       <Annotations Target="SP.AccessRequestResponse">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.AdditionalAccessStatusResponse">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.CountByDate">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8239,6 +8318,18 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.FileCollectionAddParameters">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackageCreationParameters">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackageCreationParameters/IsHidden">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackageCreationParameters/PackageJson">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackageCreationParameters/Title">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Hashtag">
@@ -10656,6 +10747,9 @@
       <Annotations Target="SP.EmployeeEngagement">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaResources">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaHome">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10849,6 +10943,21 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.FolderColoring">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage/ID">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage/IsHidden">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage/PackageJson">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage/Title">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.HubSite">
@@ -13080,6 +13189,18 @@
       <Annotations Target="SP.VivaHomeConfiguration(SP.EmployeeEngagement, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.GetLinks(Microsoft.SharePoint.EmployeeEngagement.VivaResources)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.RemoveLink(Microsoft.SharePoint.EmployeeEngagement.VivaResources, Microsoft.SharePoint.ListHome.FavoriteListHomeItem)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.ReorderLink(Microsoft.SharePoint.EmployeeEngagement.VivaResources, Microsoft.SharePoint.ListHome.FavoriteListHomeItem, Microsoft.SharePoint.ListHome.FavoriteListHomeItem, Microsoft.SharePoint.ListHome.FavoriteListHomeItem)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.UpdateLink(Microsoft.SharePoint.EmployeeEngagement.VivaResources, Microsoft.SharePoint.ListHome.FavoriteListHomeItem)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.AddImage(Microsoft.SharePoint.EmployeeEngagement.VivaHome, Edm.String, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13219,6 +13340,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SetExemptFromBlockDownloadOfNonViewableFiles(SP.List, Edm.Boolean)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SetItemsOrder(SP.List, Collection(Edm.Int32), Edm.Int32, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.StartDeleteFileVersions(SP.List, Edm.Int32)">
@@ -13476,6 +13600,9 @@
       <Annotations Target="SP.eSignInternal.CancelAgreement(Microsoft.SharePoint.ESign.Models.Requests.CancelAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.eSignInternal.CleanupAgreement(Edm.Guid)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.eSignInternal.CompleteAgreement(Microsoft.SharePoint.ESign.Models.Requests.CompleteAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13588,6 +13715,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.CreateOrUpdateAccessRequestToWeb(SP.Web, Edm.Int32, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.GetAdditionalAccessStatus(SP.SecurableObject)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.QuickActionChangeRequestStatus(SP.Web, Microsoft.SharePoint.QuickActionMessageCard.SPAccessRequestRefreshStatus)">
@@ -13714,6 +13844,15 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecycleWithParameters(SP.Folder, SP.FolderDeleteParameters)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackages()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.GetById(Collection(SP.FontPackage), Edm.Guid)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackages.Load()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SetUserAsOwner(SP.Group, Edm.Int32)">
@@ -15407,6 +15546,7 @@
       </EntityType>
       <EntityType Name="StorageQuota">
         <Property Name="GeoAllocatedStorageMB" Type="Edm.Int64" Nullable="false" />
+        <Property Name="GeoArchiveUsedStorageMB" Type="Edm.Int64" Nullable="false" />
         <Property Name="GeoAvailableStorageMB" Type="Edm.Int64" Nullable="false" />
         <Property Name="GeoLocation" Type="Edm.String" />
         <Property Name="GeoUsedStorageMB" Type="Edm.Int64" Nullable="false" />
@@ -20445,7 +20585,7 @@
         <Property Name="Important" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Message" Type="Edm.String" />
         <Property Name="PublishOption" Type="Edm.String" />
-        <Property Name="SchedulePublishDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="SchedulePublishDate" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="CampaignPublicationLoadMailDraftParam">
         <Property Name="IsPreview" Type="Edm.Boolean" Nullable="false" />
@@ -20561,6 +20701,7 @@
       <EntityType Name="CanCreatePageResponse">
         <Property Name="CanCreatePage" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CanCreatePromotedPage" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnableModeration" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SiteUrl" Type="Edm.String" />
       </EntityType>
       <EntityType Name="CommunicationSite" />
@@ -26648,6 +26789,10 @@
         <Property Name="IsReadOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Value" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPContainerCollection">
+        <Property Name="ContainerCollection" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPContainerProperties)" />
+        <Property Name="PagingToken" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPContainerProperties">
         <Property Name="ContainerApiUrl" Type="Edm.String" />
         <Property Name="ContainerId" Type="Edm.String" />
@@ -27735,7 +27880,9 @@
       <Action Name="GetSPOContainersByApplicationId" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="owningApplicationId" Type="Edm.Guid" Nullable="false" />
-        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPContainerProperties)" />
+        <Parameter Name="paged" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="pagingToken" Type="Edm.String" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerCollection" />
       </Action>
       <Action Name="GetSPOContainerTypeById" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -28129,6 +28276,11 @@
         <Parameter Name="warnAfter" Type="Edm.Duration" Nullable="false" />
         <Parameter Name="signOutAfter" Type="Edm.Duration" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="SetJitDlpPolicyData" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="markAllFilesAsSensitiveByDefault" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="odbSensitivityRefreshWindowInHours" Type="Edm.Int32" Nullable="false" />
       </Action>
       <Action Name="SetOrgAssetsWithType" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -31139,7 +31291,26 @@
       </Function>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.EmployeeEngagement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="VivaResources" />
       <EntityType Name="VivaHome" />
+      <Function Name="GetLinks" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.ListHome.FavoriteListHomeItem)" />
+      </Function>
+      <Action Name="RemoveLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
+      <Action Name="ReorderLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+        <Parameter Name="itemBefore" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+        <Parameter Name="itemAfter" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
+      <Action Name="UpdateLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
       <Action Name="AddImage" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
         <Parameter Name="fileName" Type="Edm.String" />
@@ -33577,6 +33748,9 @@
       <Action Name="CancelAgreement">
         <Parameter Name="cancelAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.CancelAgreementModel" />
       </Action>
+      <Action Name="CleanupAgreement">
+        <Parameter Name="documentId" Type="Edm.Guid" Nullable="false" />
+      </Action>
       <Action Name="CompleteAgreement">
         <Parameter Name="completeAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.CompleteAgreementModel" />
         <ReturnType Type="Edm.DateTimeOffset" Nullable="false" />
@@ -33954,6 +34128,11 @@
       <Function Name="GetContentVerFromTag" IsComposable="true">
         <Parameter Name="contentTag" Type="Edm.String" />
         <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Function>
+    </Schema>
+    <Schema Namespace="SP.FontPackages" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="Load" IsComposable="true">
+        <ReturnType Type="Collection(SP.FontPackage)" />
       </Function>
     </Schema>
     <Schema Namespace="SP.HubSites" xmlns="http://docs.oasis-open.org/odata/ns/edm">
