@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_powerappsforadmins`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1650\1.0.1650.3374`|
+|**Version**|`releases/v1.0.1652\1.0.1652.3394`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Aug 21 2018|
-|**Changed**|Wed Aug 02 2023|
+|**Changed**|Thu Aug 31 2023|
 
 ## Description
 Power Apps Management Connector for Administrators
