@@ -3,10 +3,10 @@
   "info": {
     "description": "ArcGIS connects your automated workflows to resources from your ArcGIS organization. Access geoenrichment, geocoding, and routing services to add demographics and location information to your data. You can also use ArcGIS to create feature layers and fetch data from existing feature layers in your ArcGIS organization.",
     "title": "ArcGIS",
-    "version": "2023.2.0",
+    "version": "2023.2.3",
     "contact": {
       "name": "Esri Power Automate Support",
-      "url": "https://community.esri.com/t5/arcgis-for-power-bi-questions/bd-p/arcgis-for-power-bi-questions",
+      "url": "https://community.esri.com/t5/arcgis-for-power-automate-questions/bd-p/arcgis-for-power-automate-questions",
       "email": "powerautomate@esri.com"
     },
     "x-ms-api-annotation": {
@@ -1155,7 +1155,419 @@
         "description": "Geocoding-countries",
         "operationId": "GetGeocodingCountries",
         "x-ms-visibility": "internal",
+        "produces": [
+          "application/json"
+        ],
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "GeocodeCountries",
+          "revision": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Country list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Country code"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-list-of-countries-%5bdeprecated%5d"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/v1/findaddresscandidates": {
+      "post": {
+        "summary": "Find address candidate",
+        "description": "Locate a single address using a geocode service resource. This resource provides information about candidates, including the address, location, and match score.  The result of this operation is a list of address candidates.",
+        "operationId": "FindAddressCandidates",
+        "produces": [
+          "application/json"
+        ],
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "FindAddressCandidate",
+          "revision": 1
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "forStorage",
+            "type": "boolean",
+            "required": true,
+            "description": "Specifies whether the results of the operation will be persisted.",
+            "default": true,
+            "x-ms-summary": "Store results?"
+          },
+          {
+            "in": "query",
+            "name": "address",
+            "type": "string",
+            "description": "Address",
+            "x-ms-summary": "Address",
+            "x-ms-visibility": "important"
+          },
+          {
+            "in": "query",
+            "name": "region",
+            "type": "string",
+            "description": "Region",
+            "x-ms-summary": "Region",
+            "x-ms-visibility": "important"
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "type": "string",
+            "description": "City",
+            "x-ms-summary": "City",
+            "x-ms-visibility": "important"
+          },
+          {
+            "in": "query",
+            "name": "postal",
+            "type": "string",
+            "description": "ZIP or postal code",
+            "x-ms-summary": "ZIP or postal code",
+            "x-ms-visibility": "important"
+          },
+          {
+            "in": "query",
+            "name": "country",
+            "x-ms-summary": "Country",
+            "x-ms-dynamic-values": {
+              "operationId": "GetGeocodingCountries",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "required": false,
+            "description": "Select a country",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "locationType",
+            "type": "string",
+            "x-ms-summary": "Match type",
+            "description": "Specifies whether to use rooftop or street entrance location for the geometry output",
+            "enum": [
+              "Rooftop",
+              "Street"
+            ],
+            "x-ms-visibility": "advanced",
+            "default": "Rooftop"
+          },
+          {
+            "$ref": "#/parameters/srs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "request success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "x-ms-summary": "Full address",
+                  "description": "The locations of your data listed either as single line or multi-line results"
+                },
+                "countryCode": {
+                  "type": "string",
+                  "x-ms-summary": "Country code",
+                  "description": "The country where the locations are based"
+                },
+                "city": {
+                  "type": "string",
+                  "x-ms-summary": "City",
+                  "description": "The city where the locations are based"
+                },
+                "Geometry": {
+                  "type": "object",
+                  "description": "Geometry object.",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "Longitude (X)",
+                      "x-ms-summary": "Longitude (X)"
+                    },
+                    "y": {
+                      "type": "number",
+                      "description": "Latitude (Y)",
+                      "x-ms-summary": "Latitude (Y)"
+                    }
+                  }
+                },
+                "score": {
+                  "type": "number",
+                  "x-ms-summary": "Score",
+                  "description": "Match score."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "x-ms-summary": "Error message",
+                      "description": "Error message returned from API"
+                    },
+                    "code": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#find-address-candidate-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v1/geocodeaddresses": {
+      "post": {
+        "summary": "Geocode addresses",
+        "description": "Find multiple (batch) addresses, place-names, and businesses and then display that information on a map. This data can be added to an existing dataset or you can create a new one. This data can be used to create new maps in all ArcGIS for Microsoft 365 products.",
+        "operationId": "GeocodeAddresses",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "GeocodeAddresses",
+          "revision": 1
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "addresses"
+              ],
+              "properties": {
+                "addresses": {
+                  "type": "string",
+                  "description": "Array of addresses with well formed fields",
+                  "x-ms-summary": "Addresses",
+                  "x-ms-visibility": "important",
+                  "required": [
+                    "addresses"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "spatialReference": {
+                  "type": "object",
+                  "properties": {
+                    "wkid": {
+                      "type": "number",
+                      "description": "Well-known ID",
+                      "x-ms-summary": "Spatial reference ID"
+                    }
+                  }
+                },
+                "locations": {
+                  "type": "array",
+                  "description": "Array of geocoded locations",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "x-ms-summary": "Address",
+                        "description": "Full address"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "properties": {
+                          "ResultID": {
+                            "type": "number",
+                            "x-ms-summary": "Address ID",
+                            "description": "This value contains the ID of your geocoding request. Use this value for specifying the item to act on in other actions such as matching Ids in a list."
+                          }
+                        }
+                      },
+                      "location": {
+                        "type": "object",
+                        "description": "Geometry as x and y json",
+                        "properties": {
+                          "x": {
+                            "type": "number",
+                            "x-ms-summary": "Longitude (X)"
+                          },
+                          "y": {
+                            "type": "number",
+                            "x-ms-summary": "Latitude (Y)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#geocode-addresses-%5bdeprecated%5d"
+        }
+      }
+    },
+    "/{connectionId}/v2/geocode/geocodeAddresses": {
+      "post": {
+        "summary": "Geocode addresses",
+        "description": "Find multiple (batch) addresses, place-names, and businesses and then display that information on a map. This data can be added to an existing dataset or you can create a new one. This data can be used to create new maps in all ArcGIS for Microsoft 365 products.",
+        "operationId": "GeocodeAddressesV2",
         "deprecated": false,
+        "x-ms-api-annotation": {
+          "family": "GeocodeAddresses",
+          "revision": 2
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Geocoder",
+            "x-ms-dynamic-values": {
+              "operationId": "GeocodeGetGeocoders",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "required": true,
+            "in": "query",
+            "name": "geocoder",
+            "description": "Select an available geocoder",
+            "type": "string"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "addresses"
+              ],
+              "properties": {
+                "addresses": {
+                  "type": "string",
+                  "description": "Array of addresses with well formed fields",
+                  "x-ms-summary": "Addresses",
+                  "required": [
+                    "addresses"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Find address candidates success",
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GeocodeGetGeocoderFieldsDynamicSchema",
+                "value-path": "schemas",
+                "parameters": {
+                  "geocoder": {
+                    "parameter": "geocoder"
+                  },
+                  "geocoderfieldstype": "candidateFields",
+                  "geocodeOperation": "geocodeaddresses"
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#geocode-addresses"
+        }
+      }
+    },
+    "/{connectionId}/v2/geocode/countries": {
+      "get": {
+        "summary": "Get list of countries",
+        "description": "Geocoding-countries",
+        "operationId": "GetGeocodingCountriesV2",
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "family": "GeocodeCountries",
+          "revision": 2
+        },
         "produces": [
           "application/json"
         ],
@@ -1193,11 +1605,252 @@
         ]
       }
     },
-    "/{connectionId}/v1/findaddresscandidates": {
+    "/{connectionId}/v2/geocode/geocodeServiceList": {
+      "get": {
+        "summary": "Get user geocoders",
+        "description": "Get geocoders as dynamic values.",
+        "operationId": "GeocodeGetGeocoders",
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Geocoders list success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Geocoder URL"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "x-ms-summary": "Error message",
+                      "description": "Error message returned from API"
+                    },
+                    "code": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-user-geocoders"
+        }
+      }
+    },
+    "/{connectionId}/v2/geocode/geocoderFieldsSchema": {
+      "post": {
+        "summary": "Get geocoder fields (Dynamic Schema)",
+        "description": "Get geocoder fields - addressCandidates or candidateFields as dynamic schema.",
+        "operationId": "GeocodeGetGeocoderFieldsDynamicSchema",
+        "x-ms-visibility": "internal",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "geocoder",
+            "type": "string",
+            "required": true,
+            "description": "Geocoder URL.",
+            "x-ms-summary": "Geocoder url"
+          },
+          {
+            "in": "query",
+            "name": "geocoderfieldstype",
+            "type": "string",
+            "required": true,
+            "description": "Type of Dynamic schema required",
+            "default": "addressFields",
+            "x-ms-summary": "Geocoder fields type"
+          },
+          {
+            "in": "query",
+            "name": "geocodeOperation",
+            "type": "string",
+            "required": true,
+            "description": "Action requesting dynamic schema (find address candidates or geocode addresses",
+            "x-ms-summary": "Action type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "request success"
+          },
+          "400": {
+            "description": "error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "x-ms-summary": "Error message",
+                      "description": "Error message returned from API"
+                    },
+                    "code": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#get-geocoder-fields-(dynamic-schema)"
+        }
+      }
+    },
+    "/{connectionId}/v2/geocode/findAddressCandidates": {
+      "post": {
+        "summary": "Find address candidates",
+        "description": "Locate a single address using a geocode service resource. This resource provides information about candidates, including the address, location, and match score.  The result of this operation is a list of address candidates.",
+        "operationId": "FindAddressCandidatesV2",
+        "deprecated": false,
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Geocoder",
+            "x-ms-dynamic-values": {
+              "operationId": "GeocodeGetGeocoders",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "required": true,
+            "in": "query",
+            "name": "geocoder",
+            "description": "Select an available geocoder.",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GeocodeGetGeocoderFieldsDynamicSchema",
+                "value-path": "schemas",
+                "parameters": {
+                  "geocoder": {
+                    "parameter": "geocoder"
+                  },
+                  "geocoderfieldstype": "addressFields",
+                  "geocodeOperation": "findAddressCandidates"
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "in": "query",
+            "name": "locationType",
+            "type": "string",
+            "x-ms-summary": "Match type",
+            "description": "Specifies whether to use rooftop or street entrance location for the geometry output",
+            "enum": [
+              "Rooftop",
+              "Street"
+            ],
+            "x-ms-visibility": "advanced",
+            "default": "Rooftop"
+          },
+          {
+            "$ref": "#/parameters/srs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Find address candidates success",
+            "schema": {
+              "x-ms-dynamic-schema": {
+                "operationId": "GeocodeGetGeocoderFieldsDynamicSchema",
+                "value-path": "schemas",
+                "parameters": {
+                  "geocoder": {
+                    "parameter": "geocoder"
+                  },
+                  "geocoderfieldstype": "candidateFields",
+                  "geocodeOperation": "findAddressCandidates"
+                }
+              },
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/arcgis/#find-address-candidates"
+        }
+      }
+    },
+    "/{connectionId}/v2/geocode/findAddressCandidate": {
       "post": {
         "summary": "Find address candidate",
         "description": "Locate a single address using a geocode service resource. This resource provides information about candidates, including the address, location, and match score.  The result of this operation is a list of address candidates.",
-        "operationId": "FindAddressCandidates",
+        "operationId": "FindAddressCandidate",
+        "deprecated": false,
+        "x-ms-api-annotation": {
+          "family": "FindAddressCandidate",
+          "revision": 2
+        },
         "produces": [
           "application/json"
         ],
@@ -1317,6 +1970,11 @@
                       "x-ms-summary": "Latitude (Y)"
                     }
                   }
+                },
+                "score": {
+                  "type": "number",
+                  "x-ms-summary": "Score",
+                  "description": "Match score."
                 }
               }
             }
@@ -1343,117 +2001,8 @@
             }
           }
         },
-        "x-ms-visibility": "important",
-        "deprecated": false,
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/arcgis/#find-address-candidate"
-        }
-      }
-    },
-    "/{connectionId}/v1/geocodeaddresses": {
-      "post": {
-        "summary": "Geocode addresses",
-        "description": "Find multiple (batch) addresses, place-names, and businesses and then display that information on a map. This data can be added to an existing dataset or you can create a new one. This data can be used to create new maps in all ArcGIS for Microsoft 365 products.",
-        "operationId": "GeocodeAddresses",
-        "x-ms-visibility": "important",
-        "deprecated": false,
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "x-ms-visibility": "internal"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "addresses"
-              ],
-              "properties": {
-                "addresses": {
-                  "type": "string",
-                  "description": "Array of addresses with well formed fields",
-                  "x-ms-summary": "Addresses",
-                  "x-ms-visibility": "important",
-                  "required": [
-                    "addresses"
-                  ]
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "spatialReference": {
-                  "type": "object",
-                  "properties": {
-                    "wkid": {
-                      "type": "number",
-                      "description": "Well-known ID",
-                      "x-ms-summary": "Spatial reference ID"
-                    }
-                  }
-                },
-                "locations": {
-                  "type": "array",
-                  "description": "Array of geocoded locations",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "address": {
-                        "type": "string",
-                        "x-ms-summary": "Address",
-                        "description": "Full address"
-                      },
-                      "attributes": {
-                        "type": "object",
-                        "properties": {
-                          "ResultID": {
-                            "type": "number",
-                            "x-ms-summary": "Address ID",
-                            "description": "This value contains the ID of your geocoding request. Use this value for specifying the item to act on in other actions such as matching Ids in a list."
-                          }
-                        }
-                      },
-                      "location": {
-                        "type": "object",
-                        "description": "Geometry as x and y json",
-                        "properties": {
-                          "x": {
-                            "type": "number",
-                            "x-ms-summary": "Longitude (X)"
-                          },
-                          "y": {
-                            "type": "number",
-                            "x-ms-summary": "Latitude (Y)"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#geocode-addresses"
         }
       }
     },
@@ -1670,9 +2219,14 @@
     },
     "/{connectionId}/v1/geoenrichment/enrich": {
       "post": {
-        "summary": "Geoenrichment (deprecated)",
+        "summary": "Geoenrichment",
         "description": "Get facts about a location or area. Using the GeoEnrichment service, you can get information about the people, places, and businesses in a specific area or within a certain distance or drive time from a location. (deprecated)",
         "operationId": "Geoenrich",
+        "deprecated": true,
+        "x-ms-api-annotation": {
+          "family": "Geoenrichment",
+          "revision": 1
+        },
         "consumes": [
           "application/json"
         ],
@@ -1757,14 +2311,8 @@
             }
           }
         },
-        "x-ms-visibility": "important",
-        "deprecated": true,
-        "x-ms-api-annotation": {
-          "family": "Geoenrichment",
-          "revision": 1
-        },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment-(deprecated)-%5bdeprecated%5d"
+          "url": "https://docs.microsoft.com/connectors/arcgis/#geoenrichment-%5bdeprecated%5d"
         }
       }
     },
@@ -2041,7 +2589,7 @@
               "GEOJSON"
             ],
             "default": "JSON",
-            "x-ms-visibility": "advanced",
+            "x-ms-visibility": "internal",
             "required": false
           },
           {
@@ -3174,7 +3722,8 @@
         "Equal to",
         "Less than or equal to",
         "Less than"
-      ]
+      ],
+      "x-ms-visibility": "advanced"
     },
     "format": {
       "in": "query",
@@ -3206,7 +3755,7 @@
       "in": "query",
       "name": "field",
       "description": "Select an attribute from the ArcGIS feature layer",
-      "x-ms-visibility": "important",
+      "x-ms-visibility": "advanced",
       "type": "string"
     },
     "locationType": {
