@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_keyvault`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1644\1.0.1644.3342`|
+|**Version**|`u/laborbol/partial-builds/ase-v3\1.0.1653.3402`|
 |**Publisher**|**Microsoft**|
 |**Created**|Thu Mar 28 2019|
-|**Changed**|Wed Jul 05 2023|
+|**Changed**|Tue Sep 05 2023|
 
 ## Description
 Azure Key Vault is a service to securely store and access secrets.
