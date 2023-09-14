@@ -30,13 +30,13 @@ function getActionInputs() {
     const [header, body] = accessToken.split('.', 3);
     ghaCore.debug(
       `access-token-header: ${Buffer.from(header || '', 'base64url').toString(
-        'utf-8'
-      )}`
+        'utf-8',
+      )}`,
     );
     ghaCore.debug(
       `access-token-body: ${Buffer.from(body || '', 'base64url').toString(
-        'utf-8'
-      )}`
+        'utf-8',
+      )}`,
     );
   }
   return {
@@ -76,7 +76,7 @@ async function transformAndSaveCsdl(csdlResp, filePath, spoVersion) {
   if (spoVersion) {
     ghaCore.setOutput('sharepoint-version', spoVersion);
     const spoVersionComment = csdlDom.createComment(
-      ` Microsoft SharePoint Team Services v${spoVersion} `
+      ` Microsoft SharePoint Team Services v${spoVersion} `,
     );
     csdlDom.insertBefore(spoVersionComment, csdlDom.documentElement);
   }

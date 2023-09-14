@@ -48,7 +48,7 @@ async function run() {
     const apiCollection = await client.getApis();
     ghaCore.setOutput(
       'api-connector-names',
-      apiCollection.map((api) => api.name)
+      apiCollection.map((api) => api.name),
     );
   } catch (error) {
     if (error instanceof HttpClientError || error instanceof Error) {

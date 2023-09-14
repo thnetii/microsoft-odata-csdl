@@ -50,7 +50,7 @@ function getActionInputs() {
 async function retrieveVersion(httpClient, baseUrl, initialApiVersion) {
   const url = new URL(
     `/api/data/v${initialApiVersion}/RetrieveVersion()`,
-    baseUrl
+    baseUrl,
   );
   /**
    * @type {import('@actions/http-client/lib/interfaces').TypedResponse<
@@ -78,7 +78,7 @@ async function downloadCsdl(httpClient, baseUrl, apiVersion) {
   if (statusCode !== HttpCodes.OK)
     throw new HttpClientError(
       `${url}: ${statusCode} ${statusMessage || ''}`,
-      statusCode || 500
+      statusCode || 500,
     );
   return resp;
 }
@@ -99,7 +99,7 @@ async function transformAndSaveCsdl(csdlResp, filePath, apiVersion) {
     const csdlParser = new DOMParser();
     const csdlDom = csdlParser.parseFromString(csdlText, contentType);
     const d365VersionComment = csdlDom.createComment(
-      `Microsoft Dynamics 365 CRM v${apiVersion}`
+      `Microsoft Dynamics 365 CRM v${apiVersion}`,
     );
     csdlDom.insertBefore(d365VersionComment, csdlDom.documentElement);
     const csdlSerializer = new XMLSerializer();
@@ -130,7 +130,7 @@ async function run() {
     const apiVersion = await retrieveVersion(
       client,
       baseUrl,
-      initialApiVersion
+      initialApiVersion,
     );
     if (apiVersion) {
       ghaCore.setOutput('d365-version', apiVersion);
@@ -138,7 +138,7 @@ async function run() {
     const csdlResp = await downloadCsdl(
       client,
       baseUrl,
-      apiVersion || initialApiVersion
+      apiVersion || initialApiVersion,
     );
     await transformAndSaveCsdl(csdlResp, filePath, apiVersion);
   } catch (error) {

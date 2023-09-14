@@ -59,7 +59,7 @@ async function downloadCsdl(httpClient, apiVersion) {
   if (statusCode !== HttpCodes.OK)
     throw new HttpClientError(
       `${url}: ${statusCode} ${statusMessage || ''}`,
-      statusCode || 500
+      statusCode || 500,
     );
   return resp;
 }
