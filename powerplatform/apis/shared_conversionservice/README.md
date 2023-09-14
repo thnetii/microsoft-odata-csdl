@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_conversionservice`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1649\1.0.1649.3368`|
+|**Version**|`u/henryorsborn/partial-builds/asev3migrations-with-resourceTemplate\1.0.1653.3405`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Tue Aug 01 2023|
+|**Changed**|Wed Sep 13 2023|
 
 ## Description
 A service that allows content to be converted from one format to another.
