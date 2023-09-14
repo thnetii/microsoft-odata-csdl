@@ -64,7 +64,7 @@ module.exports = async (args) => {
           });
           process.exitCode = core.ExitCode.Failure;
         }
-      }
+      },
     );
   } while (apiConnectorNames.length > 0);
 };

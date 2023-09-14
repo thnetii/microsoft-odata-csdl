@@ -52,7 +52,7 @@ class PowerPlatformClient {
     } = this;
     const url = new URL(
       `/providers/Microsoft.Flow/environments/${environment}?api-version=${apiVersion}`,
-      apiEndpoint
+      apiEndpoint,
     );
     /**
      * @type {import('@actions/http-client/lib/interfaces').TypedResponse<
@@ -83,7 +83,7 @@ class PowerPlatformClient {
     } = this;
     const url = new URL(
       `/providers/Microsoft.Flow/environments/${environment}/apis?api-version=${apiVersion}`,
-      apiEndpoint
+      apiEndpoint,
     );
     /**
      * @type {import('@actions/http-client/lib/interfaces').TypedResponse<
@@ -109,7 +109,7 @@ class PowerPlatformClient {
     } = this;
     const url = new URL(
       `/providers/Microsoft.Flow/environments/${environment}/apis/${name}?api-version=${apiVersion}`,
-      apiEndpoint
+      apiEndpoint,
     );
     /**
      * @type {import('@actions/http-client/lib/interfaces').TypedResponse<

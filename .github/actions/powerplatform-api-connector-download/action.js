@@ -68,10 +68,10 @@ async function saveApiConnectorProperties(connector) {
       `|**Version**|\`${props.metadata?.version?.current}\`|`,
       `|**Publisher**|**${props.publisher}**|`,
       `|**Created**|${new Date(
-        props.createdTime || new Date()
+        props.createdTime || new Date(),
       ).toDateString()}|`,
       `|**Changed**|${new Date(
-        props.changedTime || new Date(0)
+        props.changedTime || new Date(0),
       ).toDateString()}|`,
       '',
       '## Description',
