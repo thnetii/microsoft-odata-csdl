@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_dynamicsax`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1639\1.0.1639.3319`|
+|**Version**|`u/laborbol/partial-builds/ase-v3\1.0.1653.3402`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 17 2018|
-|**Changed**|Wed Jun 07 2023|
+|**Changed**|Tue Sep 05 2023|
 
 ## Description
 Fin & Ops Apps (Dynamics 365) connector provides access to data entities.
