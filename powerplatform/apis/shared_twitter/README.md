@@ -1,12 +1,12 @@
-# Twitter
+# X
 | | |
 |-:|-|
 |**API name**|`shared_twitter`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1649\1.0.1649.3368`|
+|**Version**|`u/henryorsborn/releases/v1.0.1654-serviceurl-patch\1.0.1654.3413`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Thu Aug 03 2023|
+|**Changed**|Thu Sep 07 2023|
 
 ## Description
-Twitter is an online social networking service that enables users to send and receive short messages called 'tweets'. Connect to Twitter to manage your tweets. You can perform various actions such as send tweet, search, view followers, etc.
+X, formerly known as Twitter, is an online social networking service that enables users to send and receive short posts. Connect to X to manage your posts. You can perform various actions such as send posts, search, view followers, etc.
