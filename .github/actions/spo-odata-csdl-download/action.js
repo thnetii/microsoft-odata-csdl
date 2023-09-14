@@ -67,7 +67,10 @@ async function transformAndSaveCsdl(csdlResp, filePath, spoVersion) {
   });
   const xpathExpr =
     '/edmx:Edmx/edmx:DataServices/edm:Schema[@Namespace="SP.Data"]';
-  const spDataSelection = selector(xpathExpr, csdlDom);
+  let spDataSelection = selector(xpathExpr, csdlDom) || [];
+  if (!Array.isArray(spDataSelection) && typeof spDataSelection === 'object')
+    spDataSelection = [spDataSelection];
+  else spDataSelection = [];
   for (const csdlNsSelect of spDataSelection) {
     const csdlNsNode = /** @type {Node} */ (csdlNsSelect);
     const { parentNode } = csdlNsNode;
