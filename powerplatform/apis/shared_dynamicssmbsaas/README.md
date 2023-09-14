@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_dynamicssmbsaas`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1644\1.0.1644.3342`|
+|**Version**|`releases/v1.0.1654\1.0.1654.3409`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Oct 23 2018|
-|**Changed**|Thu Jun 29 2023|
+|**Changed**|Wed Sep 13 2023|
 
 ## Description
 Dynamics 365 Business Central is a business management solution for small and mid-sized organizations that automates and streamlines business processes and helps you manage your business.
