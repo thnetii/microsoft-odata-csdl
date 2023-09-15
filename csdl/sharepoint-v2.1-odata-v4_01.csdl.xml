@@ -1140,6 +1140,10 @@
         <Property Name="eventId" Type="Edm.String" Nullable="false" />
         <Property Name="version" Type="Edm.Int16" Nullable="false" />
       </EntityType>
+      <EntityType Name="operatedAlbumItem" BaseType="oneDrive.baseItem" OpenType="true">
+        <Property Name="error" Type="oneDrive.error" />
+        <NavigationProperty Name="copiedItem" Type="oneDrive.item" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="photoStreamLink" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2576,10 +2580,6 @@
         <Property Name="userPrincipalName" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="featureSettings" OpenType="true">
-        <Property Name="featureStatus" Type="oneDrive.FeatureStatus" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
       <EntityType Name="ebar" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2592,16 +2592,21 @@
         <NavigationProperty Name="protectionUnits" Type="Collection(oneDrive.protectionUnit)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="featureSettings" OpenType="true">
+        <Property Name="featureStatus" Type="oneDrive.FeatureStatus" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="restorableSite" OpenType="true">
         <Key>
-          <PropertyRef Name="id" />
+          <PropertyRef Name="SiteId" />
         </Key>
-        <Property Name="id" Type="Edm.Guid" Nullable="false" />
-        <Property Name="state" Type="oneDrive.EbarSiteState" />
-        <Property Name="timeDeleted" Type="Edm.DateTimeOffset" />
-        <Property Name="title" Type="Edm.String" />
-        <Property Name="url" Type="Edm.String" />
-        <Property Name="previousUrl" Type="Edm.String" />
+        <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="State" Type="oneDrive.EbarSiteState" />
+        <Property Name="TimeDeleted" Type="Edm.DateTimeOffset" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+        <Property Name="PreviousUrl" Type="Edm.String" />
+        <Property Name="StorageUsed" Type="Edm.Int64" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="restoreSession" OpenType="true">
@@ -2640,7 +2645,7 @@
         <Property Name="syncStatus" Type="oneDrive.SyncStatus" />
         <Property Name="offboardingStage" Type="oneDrive.OffboardingStages" />
         <Property Name="retentionSettings" Type="oneDrive.retentionSettings" />
-        <Property Name="error" Type="oneDrive.BackupConfigurationSyncError" />
+        <Property Name="error" Type="oneDrive.ebarError" />
         <Property Name="createdDateTimeUtc" Type="Edm.DateTimeOffset" />
         <Property Name="lastModifiedDateTimeUtc" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -4657,15 +4662,15 @@
         <Property Name="id" Type="Edm.Int32" Nullable="false" />
         <Property Name="basePermissions" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="retentionSettings" OpenType="true">
-        <Property Name="backupFrequencyInHours" Type="Edm.Int32" />
-        <Property Name="retentionPeriodInDays" Type="Edm.Int32" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </ComplexType>
       <ComplexType Name="protectedItem" OpenType="true">
         <Property Name="artifactId" Type="Edm.Guid" />
         <Property Name="siteId" Type="Edm.Guid" />
         <Property Name="artifactType" Type="oneDrive.ArtifactType" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="retentionSettings" OpenType="true">
+        <Property Name="backupFrequencyInHours" Type="Edm.Int32" />
+        <Property Name="retentionPeriodInDays" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="restoreDestination" OpenType="true">
@@ -4736,6 +4741,11 @@
         <Property Name="itemType" Type="Edm.String" />
         <Property Name="operation" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="avertActionRequest" OpenType="true">
+        <Property Name="actionId" Type="Edm.String" Nullable="false" />
+        <Property Name="action" Type="oneDrive.TenantAction" Nullable="false" />
+        <Property Name="workflowType" Type="oneDrive.WorkflowType" Nullable="false" />
       </ComplexType>
       <ComplexType Name="contentReportRequest" OpenType="true">
         <Property Name="id" Type="Edm.String" Nullable="false" />
@@ -5173,9 +5183,10 @@
         <Property Name="eras" Type="Collection(Edm.Int32)" Nullable="false" />
         <Property Name="twoDigitYearMax" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="BackupConfigurationSyncError">
-        <Property Name="errorCode" Type="oneDrive.ErrorCode" Nullable="false" />
-        <Property Name="errorMessage" Type="Edm.String" />
+      <ComplexType Name="ebarError">
+        <Property Name="code" Type="Edm.Int32" />
+        <Property Name="message" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <EntityType Name="storageContainerTypeAppPermissions">
         <Key>
@@ -5253,6 +5264,10 @@
         <Member Name="unset" Value="0" />
         <Member Name="skipClassificationOnFileUpdate" Value="1" />
         <Member Name="unknownFutureValue" Value="1073741824" />
+      </EnumType>
+      <EnumType Name="ItemOperation">
+        <Member Name="Copy" Value="0" />
+        <Member Name="Delete" Value="1" />
       </EnumType>
       <EnumType Name="PageLayoutType">
         <Member Name="microsoftReserved" Value="0" />
@@ -5683,13 +5698,6 @@
         <Member Name="Locked" Value="2" />
         <Member Name="Completed" Value="3" />
       </EnumType>
-      <EnumType Name="ErrorCode">
-        <Member Name="None" Value="0" />
-        <Member Name="UnknownError" Value="1000" />
-        <Member Name="SiteNotFound" Value="1001" />
-        <Member Name="SiteNotResolved" Value="1002" />
-        <Member Name="SyncFailed" Value="2000" />
-      </EnumType>
       <EnumType Name="DeletedStorageContainerStatus">
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
@@ -5749,6 +5757,17 @@
         <Member Name="HateSpeech" Value="10" />
         <Member Name="ImminentHarmToPersonsOrProperty" Value="11" />
       </EnumType>
+      <EnumType Name="TenantAction">
+        <Member Name="Undefined" Value="0" />
+        <Member Name="DeleteContent" Value="1" />
+        <Member Name="UndeleteContent" Value="2" />
+        <Member Name="BlockSharingContent" Value="3" />
+        <Member Name="UnblockSharingContent" Value="4" />
+        <Member Name="BlockViewingContent" Value="5" />
+        <Member Name="UnblockViewingContent" Value="6" />
+        <Member Name="SuspendAccount" Value="7" />
+        <Member Name="ReinstateAccount" Value="8" />
+      </EnumType>
       <EnumType Name="WorkflowType">
         <Member Name="Undefined" Value="0" />
         <Member Name="ACD" Value="1" />
@@ -5771,10 +5790,10 @@
         <Member Name="Add" Value="0" />
         <Member Name="Remove" Value="1" />
       </EnumType>
-      <Action Name="manageItems" IsBound="true" EntitySetPath="bindingParameter">
+      <Action Name="manageItems" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="value" Type="Collection(oneDrive.item)" />
-        <ReturnType Type="Collection(oneDrive.item)" />
+        <ReturnType Type="Collection(oneDrive.operatedAlbumItem)" />
       </Action>
       <Action Name="manageItemsAsync" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
@@ -7097,6 +7116,7 @@
         <EntitySet Name="consumerSiteAppConfigs" EntityType="oneDrive.consumerSiteAppConfigs" />
         <EntitySet Name="drives" EntityType="oneDrive.drive" />
         <EntitySet Name="entitlements" EntityType="oneDrive.entitlement" />
+        <EntitySet Name="operatedAlbumItems" EntityType="oneDrive.operatedAlbumItem" />
         <EntitySet Name="shares" EntityType="oneDrive.share" />
         <EntitySet Name="subscriptions" EntityType="oneDrive.subscription" />
         <EntitySet Name="vaultKeys" EntityType="oneDrive.vaultKey" />
