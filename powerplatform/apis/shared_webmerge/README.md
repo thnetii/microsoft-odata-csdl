@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_webmerge`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1590\1.0.1590.2954`|
+|**Version**|`releases/v1.0.1654\1.0.1654.3410`|
 |**Publisher**|**Formstack LLC**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Mon Jul 18 2022|
+|**Changed**|Tue Sep 05 2023|
 
 ## Description
 Automatically populate templates with data from your favorite cloud apps.  Never copy & paste again!
