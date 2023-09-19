@@ -2723,6 +2723,30 @@
         <NavigationProperty Name="applicationPermissions" Type="oneDrive.storageContainerTypeAppPermissions" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="policy" OpenType="true">
+        <Key>
+          <PropertyRef Name="policyID" />
+        </Key>
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="templateID" Type="Edm.Guid" />
+        <Property Name="policyID" Type="Edm.Guid" Nullable="false" />
+        <Property Name="created" Type="Edm.DateTimeOffset" />
+        <Property Name="modified" Type="Edm.DateTimeOffset" />
+        <Property Name="targetID" Type="Edm.Guid" />
+        <Property Name="quotaInGB" Type="Edm.Int32" />
+      </EntityType>
+      <EntityType Name="policyTemplate" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="service" Type="Edm.String" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="unifiedStorageQuotaEligibility" OpenType="true">
+        <Property Name="isEligible" Type="Edm.Boolean" />
+      </EntityType>
       <EntityType Name="unifiedStorageQuotaTopEntities" OpenType="true">
         <NavigationProperty Name="exo" Type="oneDrive.UnifiedQuotaTopEntities_1OfEXOUnifiedQuotaTopEntity" ContainsTarget="true" />
         <NavigationProperty Name="spo" Type="oneDrive.UnifiedQuotaTopEntities_1OfODSPUnifiedQuotaTopEntity" ContainsTarget="true" />
@@ -2739,29 +2763,6 @@
         <Property Name="LastRequestState" Type="Edm.String" />
         <Property Name="ReportDate" Type="Edm.DateTimeOffset" />
         <Property Name="Items" Type="Collection(oneDrive.ODSPUnifiedQuotaTopEntity)" />
-      </EntityType>
-      <EntityType Name="unifiedStorageQuotaEligibility" OpenType="true">
-        <Property Name="isEligible" Type="Edm.Boolean" />
-      </EntityType>
-      <EntityType Name="policy" OpenType="true">
-        <Key>
-          <PropertyRef Name="targetID" />
-        </Key>
-        <Property Name="displayName" Type="Edm.String" />
-        <Property Name="templateID" Type="Edm.Guid" />
-        <Property Name="targetID" Type="Edm.Guid" Nullable="false" />
-        <Property Name="quotaInGB" Type="Edm.Int32" />
-        <Property Name="created" Type="Edm.DateTimeOffset" />
-        <Property Name="modified" Type="Edm.DateTimeOffset" />
-      </EntityType>
-      <EntityType Name="policyTemplate" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.Guid" Nullable="false" />
-        <Property Name="service" Type="Edm.String" />
-        <Property Name="displayName" Type="Edm.String" />
-        <Property Name="description" Type="Edm.String" />
       </EntityType>
       <EntityType Name="campaign" OpenType="true">
         <Key>
@@ -3890,6 +3891,7 @@
       <ComplexType Name="image" OpenType="true">
         <Property Name="height" Type="Edm.Int32" />
         <Property Name="width" Type="Edm.Int32" />
+        <Property Name="cropRegions" Type="Collection(oneDrive.cropRegion)" />
       </ComplexType>
       <ComplexType Name="incompleteData" OpenType="true">
         <Property Name="missingDataBeforeDateTime" Type="Edm.DateTimeOffset" />
@@ -4744,7 +4746,7 @@
       </ComplexType>
       <ComplexType Name="avertActionRequest" OpenType="true">
         <Property Name="actionId" Type="Edm.String" Nullable="false" />
-        <Property Name="action" Type="oneDrive.TenantAction" Nullable="false" />
+        <Property Name="action" Type="oneDrive.TenantActionType" Nullable="false" />
         <Property Name="workflowType" Type="oneDrive.WorkflowType" Nullable="false" />
       </ComplexType>
       <ComplexType Name="contentReportRequest" OpenType="true">
@@ -5757,16 +5759,15 @@
         <Member Name="HateSpeech" Value="10" />
         <Member Name="ImminentHarmToPersonsOrProperty" Value="11" />
       </EnumType>
-      <EnumType Name="TenantAction">
+      <EnumType Name="TenantActionType">
         <Member Name="Undefined" Value="0" />
-        <Member Name="DeleteContent" Value="1" />
-        <Member Name="UndeleteContent" Value="2" />
-        <Member Name="BlockSharingContent" Value="3" />
-        <Member Name="UnblockSharingContent" Value="4" />
-        <Member Name="BlockViewingContent" Value="5" />
-        <Member Name="UnblockViewingContent" Value="6" />
-        <Member Name="SuspendAccount" Value="7" />
-        <Member Name="ReinstateAccount" Value="8" />
+        <Member Name="PermanentDeleteContent" Value="1" />
+        <Member Name="SoftDeleteContent" Value="2" />
+        <Member Name="UndeleteContent" Value="3" />
+        <Member Name="BlockContent" Value="4" />
+        <Member Name="UnblockContent" Value="5" />
+        <Member Name="SuspendAccount" Value="6" />
+        <Member Name="ReinstateAccount" Value="7" />
       </EnumType>
       <EnumType Name="WorkflowType">
         <Member Name="Undefined" Value="0" />
@@ -7138,6 +7139,7 @@
         <EntitySet Name="storageContainers" EntityType="oneDrive.storageContainer" />
         <EntitySet Name="storagecontainertypes" EntityType="oneDrive.storageContainerType" />
         <EntitySet Name="usqPolicies" EntityType="oneDrive.policy" />
+        <EntitySet Name="unifiedStoragePolicies" EntityType="oneDrive.policy" />
         <EntitySet Name="usqPolicyTemplates" EntityType="oneDrive.policyTemplate" />
         <EntitySet Name="campaign" EntityType="oneDrive.campaign" />
         <Singleton Name="drive" Type="oneDrive.drive" />
@@ -7157,8 +7159,8 @@
         <Singleton Name="restoreSession" Type="oneDrive.restoreSession" />
         <Singleton Name="restorePoint" Type="oneDrive.restorePoint" />
         <Singleton Name="protectionUnit" Type="oneDrive.protectionUnit" />
-        <Singleton Name="topEntities" Type="oneDrive.unifiedStorageQuotaTopEntities" />
         <Singleton Name="unifiedStorageQuotaEligible" Type="oneDrive.unifiedStorageQuotaEligibility" />
+        <Singleton Name="topEntities" Type="oneDrive.unifiedStorageQuotaTopEntities" />
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
