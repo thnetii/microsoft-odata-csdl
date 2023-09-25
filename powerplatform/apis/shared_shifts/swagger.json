@@ -9,6 +9,10 @@
     "x-ms-api-annotation": {
       "status": "Production"
     },
+    "x-ms-keywords": [
+      "shifts",
+      "time off"
+    ],
     "contact": {
       "name": "Microsoft",
       "url": "https://support.microsoft.com/teams"
@@ -224,7 +228,29 @@
         },
         "deprecated": false,
         "x-ms-openai-data": {
-          "openai-enabled": true
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "ListTimesOff",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "description": "List of Time Off instances",
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/x-ms-openai-data/static-schema/BaseTimeOffResponse"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/shifts/#list-all-time-off-instances"
@@ -460,7 +486,29 @@
         },
         "deprecated": false,
         "x-ms-openai-data": {
-          "openai-enabled": true
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "ListShifts",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "description": "List of Shifts",
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/x-ms-openai-data/static-schema/BaseShiftResponse"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/shifts/#list-all-shifts"
@@ -696,7 +744,29 @@
         },
         "deprecated": false,
         "x-ms-openai-data": {
-          "openai-enabled": true
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "ListOpenShifts",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "description": "List of Shifts",
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/x-ms-openai-data/static-schema/BaseShiftResponse"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/shifts/#list-all-open-shifts"
@@ -943,7 +1013,21 @@
         },
         "deprecated": false,
         "x-ms-openai-data": {
-          "openai-enabled": true
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "ListTimeOffReasons",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "description": "Response when getting time off reasons",
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
         },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/shifts/#list-all-time-off-reasons"
@@ -1276,6 +1360,15 @@
         },
         "deprecated": false,
         "x-ms-no-generic-test": true,
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "TimeOffRequestApprove",
+              "x-ms-require-user-confirmation": true
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/shifts/#approve-a-time-off-request"
         }
@@ -3900,6 +3993,106 @@
       "propertyValue": "Productivity"
     }
   ],
+  "x-ms-openai-data": {
+    "static-schema": {
+      "BaseShiftResponse": {
+        "description": "Shift Entity",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique ID of the Shift.",
+            "type": "string"
+          },
+          "createdDateTime": {
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "lastModifiedDateTime": {
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "schedulingGroupId": {
+            "description": "Scheduling Group ID",
+            "type": "string"
+          },
+          "sharedOpenShift": {
+            "description": "Shared version of the Shift",
+            "type": "object"
+          },
+          "draftOpenShift": {
+            "description": "Shared version of the Shift",
+            "type": "object"
+          }
+        }
+      },
+      "BaseTimeOffResponse": {
+        "x-ms-summary": "Time Off",
+        "description": "Time Off Entity.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-ms-summary": "ID",
+            "description": "The unique ID of the Time Off.",
+            "type": "string"
+          },
+          "createdDateTime": {
+            "x-ms-summary": "Created Date Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "lastModifiedDateTime": {
+            "x-ms-summary": "Modified Date Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "userId": {
+            "x-ms-summary": "Assigned To User ID",
+            "description": "Assigned To User ID.",
+            "type": "string"
+          },
+          "sharedTimeOff": {
+            "$ref": "#/x-ms-openai-data/static-schema/SimpleTimeOff"
+          },
+          "draftTimeOff": {
+            "$ref": "#/x-ms-openai-data/static-schema/SimpleTimeOff"
+          }
+        }
+      },
+      "SimpleTimeOff": {
+        "x-ms-summary": "",
+        "description": "Time Off data.",
+        "type": "object",
+        "properties": {
+          "timeOffReasonId": {
+            "x-ms-summary": "Time Off Reason ID",
+            "description": "Time Off Reason ID.",
+            "type": "string"
+          },
+          "startDateTime": {
+            "x-ms-summary": "Start Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "endDateTime": {
+            "x-ms-summary": "End Time",
+            "format": "date-time",
+            "description": "yyyy-MM-ddTHH:mm:ss.fffZ (UTC format)",
+            "type": "string"
+          },
+          "theme": {
+            "description": "Theme color.",
+            "type": "string",
+            "default": "white"
+          }
+        }
+      }
+    }
+  },
   "externalDocs": {
     "url": "https://docs.microsoft.com/connectors/shifts"
   }
