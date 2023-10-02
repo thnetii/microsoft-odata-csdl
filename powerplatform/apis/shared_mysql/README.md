@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_mysql`|
 |**Tier**|Premium|
-|**Version**|`u/laborbol/partial-builds/ase-v3\1.0.1653.3402`|
+|**Version**|`releases/v1.0.1654\1.0.1654.3414`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Tue Sep 05 2023|
+|**Changed**|Wed Sep 27 2023|
 
 ## Description
 MySQL is an open-source relational database management system. Connect to on-premise MySQL database to read and write data.
