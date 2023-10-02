@@ -4,7 +4,7 @@
   "type": "/providers/Microsoft.PowerApps/apis",
   "properties": {
     "displayName": "Azure Monitor Logs",
-    "iconUri": "https://connectoricons-prod.azureedge.net/u/henryorsborn/partial-builds/azuremonitorlogs-az-migrations-fix/1.0.1645.3352/azuremonitorlogs/icon.png",
+    "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1656/1.0.1656.3432/azuremonitorlogs/icon.png",
     "purpose": "NotSpecified",
     "connectionParameters": {
       "token": {
@@ -138,7 +138,9 @@
                   "IsOnbehalfofLoginSupported": true
                 },
                 "customParameters": {
-                  "tenantId": {},
+                  "grantType": {
+                    "value": "code"
+                  },
                   "resourceUri": {
                     "value": "https://management.core.windows.net/"
                   },
@@ -149,16 +151,77 @@
                     "value": "https://login.windows.net"
                   }
                 }
+              },
+              "uiDefinition": {
+                "displayName": "Login your Credentials",
+                "description": "Sign in with your Azure Active Directory credentials",
+                "tooltip": "Provide Azure Active Directory credentials",
+                "constraints": {
+                  "required": "true",
+                  "hidden": "false"
+                }
+              }
+            }
+          },
+          "metadata": {
+            "allowSharing": false
+          }
+        },
+        {
+          "name": "oauthServicePrincipal",
+          "uiDefinition": {
+            "displayName": "Service principal authentication",
+            "description": "Use your own Azure Active Directory app for service principal authentication."
+          },
+          "parameters": {
+            "token": {
+              "type": "oauthSetting",
+              "oAuthSettings": {
+                "identityProvider": "aad",
+                "scopes": [],
+                "redirectMode": "GlobalPerConnector",
+                "redirectUrl": "https://global.consent.azure-apim.net/redirect/azuremonitorlogs",
+                "properties": {
+                  "IsFirstParty": "False",
+                  "AzureActiveDirectoryResourceId": "https://management.core.windows.net/",
+                  "IsOnbehalfofLoginSupported": true
+                },
+                "customParameters": {
+                  "grantType": {
+                    "value": "client_credentials"
+                  },
+                  "resourceUri": {
+                    "value": "https://management.core.windows.net/"
+                  },
+                  "loginUri": {
+                    "value": "https://login.windows.net"
+                  },
+                  "loginUriAAD": {
+                    "value": "https://login.windows.net"
+                  }
+                }
+              },
+              "uiDefinition": {
+                "displayName": "Login your Credentials",
+                "description": "Login your Credentials",
+                "tooltip": "Provide your Credentials",
+                "constraints": {
+                  "required": "false",
+                  "hidden": "true"
+                }
               }
             },
             "token:clientId": {
               "type": "string",
               "uiDefinition": {
                 "displayName": "Client ID",
-                "description": "Client (or Application) ID of the Azure Active Directory application.",
+                "schema": {
+                  "type": "string",
+                  "description": "Client (or Application) ID of your AAD application."
+                },
                 "constraints": {
-                  "required": "false",
-                  "hidden": "true"
+                  "required": "true",
+                  "hidden": "false"
                 }
               }
             },
@@ -166,64 +229,27 @@
               "type": "securestring",
               "uiDefinition": {
                 "displayName": "Client Secret",
-                "description": "Client secret of the Azure Active Directory application.",
+                "schema": {
+                  "type": "securestring",
+                  "description": "Client secret of your Azure Active Directory application."
+                },
                 "constraints": {
-                  "required": "false",
-                  "hidden": "true"
+                  "required": "true",
+                  "hidden": "false"
                 }
               }
             },
             "token:TenantId": {
               "type": "string",
-              "metadata": {
-                "sourceType": "AzureActiveDirectoryTenant"
-              },
               "uiDefinition": {
-                "displayName": "Tenant",
-                "description": "The tenant ID of the Azure Active Directory application.",
-                "constraints": {
-                  "required": "false",
-                  "hidden": "true"
-                }
-              }
-            },
-            "token:resourceUri": {
-              "type": "string",
-              "uiDefinition": {
-                "displayName": "ResourceUri",
-                "description": "The resource you are requesting authorization to use.",
-                "constraints": {
-                  "required": "false",
-                  "hidden": "true"
-                }
-              }
-            },
-            "token:grantType": {
-              "type": "string",
-              "allowedValues": [
-                {
-                  "value": "code"
+                "schema": {
+                  "description": "The tenant ID of for the Azure Active Directory application",
+                  "type": "string"
                 },
-                {
-                  "value": "client_credentials"
-                }
-              ],
-              "uiDefinition": {
-                "displayName": "Grant Type",
-                "description": "Grant type",
+                "displayName": "Tenant",
                 "constraints": {
-                  "required": "false",
-                  "hidden": "true",
-                  "allowedValues": [
-                    {
-                      "text": "Code",
-                      "value": "code"
-                    },
-                    {
-                      "text": "Client Credentials",
-                      "value": "client_credentials"
-                    }
-                  ]
+                  "required": "true",
+                  "hidden": "false"
                 }
               }
             }
@@ -243,8 +269,8 @@
       "brandColor": "#0072C6",
       "useNewApimVersion": "true",
       "version": {
-        "previous": "releases/v1.0.1645\\1.0.1645.3345",
-        "current": "u/henryorsborn/partial-builds/azuremonitorlogs-az-migrations-fix\\1.0.1645.3352"
+        "previous": "u/henryorsborn/partial-builds/azuremonitorlogs-az-migrations-fix\\1.0.1645.3352",
+        "current": "releases/v1.0.1656\\1.0.1656.3432"
       }
     },
     "capabilities": [
@@ -254,7 +280,7 @@
     "isCustomApi": false,
     "description": "Use this connector to query your Azure Monitor Logs across Log Analytics workspace and Application Insights component, to list or visualize results.",
     "createdTime": "2019-09-09T16:44:50.4890583Z",
-    "changedTime": "2023-09-05T23:32:08.6713808Z",
+    "changedTime": "2023-09-25T22:10:36.4967877Z",
     "publisher": "Microsoft"
   }
 }
