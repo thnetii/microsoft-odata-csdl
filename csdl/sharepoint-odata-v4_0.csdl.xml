@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24016 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24127 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -102,6 +102,7 @@
         <Property Name="IsVivaHomeOptedOut" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NavConfig" Type="SP.HomeSiteNavConfiguration" />
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Theme" Type="Edm.String" />
         <Property Name="VivaExperienceType" Type="Edm.Int32" Nullable="false" />
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
@@ -163,6 +164,7 @@
       </ComplexType>
       <ComplexType Name="ApprovalsCreateRequestParameters">
         <Property Name="approvers" Type="Edm.String" />
+        <Property Name="approversInSteps" Type="Collection(Edm.String)" />
         <Property Name="awaitAll" Type="Edm.Boolean" />
         <Property Name="details" Type="Edm.String" />
         <Property Name="itemId" Type="Edm.String" />
@@ -181,12 +183,18 @@
         <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="CAAEFieldElement">
-        <Property Name="FieldId" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.String" />
         <Property Name="Version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CAAESnippetElement">
-        <Property Name="ListItemId" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.String" />
         <Property Name="Version" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CAFieldValue">
+        <Property Name="DataType" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Value" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ColumnTypeInfo">
         <Property Name="PlaceholderId" Type="Edm.String" />
@@ -249,6 +257,10 @@
       <ComplexType Name="EncryptionOption">
         <Property Name="AES256CBCKey" Type="Edm.Binary" />
       </ComplexType>
+      <ComplexType Name="FieldValuesWithUrl">
+        <Property Name="FieldValues" Type="Collection(SP.CAFieldValue)" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="HTMLFieldSecuritySetting">
         <Property Name="allowedDomains" Type="Collection(Edm.String)" />
         <Property Name="allowEmbedding" Type="Edm.Int16" Nullable="false" />
@@ -273,14 +285,14 @@
         <Property Name="AdditionalFieldsData" Type="Edm.String" />
         <Property Name="ColumnId" Type="Edm.String" />
         <Property Name="DataType" Type="Edm.String" />
-        <Property Name="FieldId" Type="Edm.String" />
+        <Property Name="FieldLibraryMappedId" Type="Edm.String" />
+        <Property Name="FieldLibraryMappedVersion" Type="Edm.String" />
         <Property Name="Id" Type="Edm.String" />
         <Property Name="IsColumnMappingActive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMandatory" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="QuestionTitle" Type="Edm.String" />
         <Property Name="Source" Type="Edm.String" />
-        <Property Name="Version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="Placeholder">
         <Property Name="DataType" Type="Edm.String" />
@@ -299,10 +311,10 @@
       </ComplexType>
       <ComplexType Name="Snippet">
         <Property Name="Id" Type="Edm.String" />
-        <Property Name="ListItemId" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
-        <Property Name="Version" Type="Edm.String" />
+        <Property Name="SnippetLibraryMappedId" Type="Edm.String" />
+        <Property Name="SnippetLibraryMappedVersion" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="PublishSnippetPayload">
         <Property Name="Placeholders" Type="Collection(SP.PlaceholderV2)" />
@@ -1840,6 +1852,7 @@
         <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
         <Property Name="EnableAssignToEmail" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableAttachments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnabledQueryableColumnsDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="EnableFolderCreation" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableMinorVersions" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableModeration" Type="Edm.Boolean" Nullable="false" />
@@ -2456,10 +2469,12 @@
         <Property Name="AllowResubmit" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Approvers" Type="Edm.String" />
         <Property Name="AwaitAll" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CurrentStepNumber" Type="Edm.Int32" Nullable="false" />
         <Property Name="Details" Type="Edm.String" />
         <Property Name="Id" Type="Edm.String" Nullable="false" />
         <Property Name="PartnerMetadata" Type="Edm.String" />
         <Property Name="Priority" Type="Edm.Int32" Nullable="false" />
+        <Property Name="RequestType" Type="Edm.String" />
         <Property Name="Responses" Type="Edm.String" />
         <Property Name="Status" Type="Edm.Int32" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
@@ -3432,6 +3447,10 @@
         <Parameter Name="oobContentChoice" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Edm.String" />
       </Function>
+      <Function Name="FullDashboardContent" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.EmployeeEngagement" />
+        <ReturnType Type="Microsoft.SharePoint.EmployeeEngagement.DashboardConfiguration" />
+      </Function>
       <Function Name="GetDashboardPersonalization" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.EmployeeEngagement" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -3628,6 +3647,12 @@
         <Parameter Name="documentGenerationInfo" Type="SP.DocumentGenerationInfo" />
         <ReturnType Type="SP.ContentAssemblyFileInfo" />
       </Action>
+      <Action Name="CreateDocumentFromContentAssemblyTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="TemplateUrl" Type="Edm.String" />
+        <Parameter Name="documentGenerationInfo" Type="SP.DocumentGenerationInfo" />
+        <ReturnType Type="SP.ContentAssemblyFileInfo" />
+      </Action>
       <Action Name="CreateDocumentWithDefaultName" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="folderPath" Type="Edm.String" />
@@ -3680,6 +3705,9 @@
       <Action Name="DeleteRule" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="ruleId" Type="Edm.String" />
+      </Action>
+      <Action Name="EnableQueryableColumns" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
       </Action>
       <Action Name="EnqueueAsyncActionTaskById" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -3742,6 +3770,16 @@
       <Function Name="GetCheckedOutFiles" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.List" />
         <ReturnType Type="Collection(SP.CheckedOutFile)" />
+      </Function>
+      <Function Name="GetContentAssemblyDocumentFieldValues" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="DocumentUrl" Type="Edm.String" />
+        <ReturnType Type="SP.FieldValuesWithUrl" />
+      </Function>
+      <Function Name="GetContentAssemblyTemplateFields" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="TemplateUrl" Type="Edm.String" />
+        <ReturnType Type="Collection(SP.PlaceholderV2)" />
       </Function>
       <Function Name="GetItemById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.List" />
@@ -4128,6 +4166,12 @@
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="Id" Type="Edm.String" />
         <Parameter Name="updateTemplateInfo" Type="SP.UpdateTemplateInfoV2" />
+      </Action>
+      <Action Name="UpdateContentAssemblyDocument" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="TemplateUrl" Type="Edm.String" />
+        <Parameter Name="contentAssemblyFormAnswers" Type="Collection(SP.ContentAssemblyFormAnswer)" />
+        <ReturnType Type="SP.ContentAssemblyFileInfo" />
       </Action>
       <Action Name="UpdateFormProcessingModelRetentionLabel" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -7447,6 +7491,9 @@
       <Annotations Target="SP.Publishing.TopicPageFieldsData/VerifiedTopicAllowedEditors">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Publishing.PageCopyWithAssets.PageDeepCopyWarning">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.ChannelInfoCollection">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7948,6 +7995,24 @@
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesign/title">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures/isContextNotAvailable">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures/isDisabledByTenantAdmin">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures/isEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures/isFlightDeactivated">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures/isNotAHomeSite">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Internal.AppRenderInfo">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7999,6 +8064,12 @@
       <Annotations Target="SP.ResourcePath/DecodedUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.DashboardConfiguration">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.ClientSideComponent.SPClientSideComponentQueryResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.DashboardItemInfo">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8014,6 +8085,9 @@
       <Annotations Target="SP.VivaHomeTitleRegion">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaResourceLink">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Deployment.ShortcutInformation">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8021,9 +8095,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Comments.Client.Identity">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.SharePoint.ClientSideComponent.SPClientSideComponentQueryResult">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Campaigns.CampaignCommunicationEntity">
@@ -8651,6 +8722,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingAbilities/anyoneLinkAbilities">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Sharing.SharingAbilities/canStopSharing">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingEntityResultSettingPolicyReason">
@@ -9368,6 +9442,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningPublicationEntityData/ModelUniqueId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningPublicationEntityData/RemoveSitePromotionEnabled">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningPublicationEntityData/TargetLibraryServerRelativeUrl">
@@ -10096,6 +10173,9 @@
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesigns">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesigns/Features">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.TenantCorporateCatalogAccessor/CardDesigns">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10711,6 +10791,9 @@
       <Annotations Target="Microsoft.SharePoint.TenantCdn.TenantCdnApi">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.SPStart.SPStartUtilitiesProxy">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.SmartCache.SmartCacheItem">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10751,6 +10834,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaHome">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaResourceGetEndpoint">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Comments.comment">
@@ -11090,6 +11176,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingInformation/addressBarLinkSettings">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Sharing.SharingInformation/ageGroup">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingInformation/enforceIBSegmentFiltering">
@@ -12943,6 +13032,9 @@
       <Annotations Target="Microsoft.SharePoint.TenantCdn.IsFolderUrlsInTenantCdn(Microsoft.SharePoint.TenantCdn.TenantCdnApi, Collection(Edm.String), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.SPStart.SPStartUtilitiesProxy.GetSerializedSPStartContext(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.SectionDesignIdeas.SectionDesignIdeasApi()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13289,6 +13381,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.DeleteRule(SP.List, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.EnableQueryableColumns(SP.List)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.EnqueueAsyncActionTaskById(SP.List, Edm.Guid, Collection(SP.KeyValue))">
@@ -14646,6 +14741,7 @@
       </ComplexType>
       <ComplexType Name="SPMachineLearningPublicationEntityData">
         <Property Name="ModelUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="RemoveSitePromotionEnabled" Type="Edm.Boolean" />
         <Property Name="TargetLibraryServerRelativeUrl" Type="Edm.String" />
         <Property Name="TargetSiteUrl" Type="Edm.String" />
         <Property Name="TargetTableListServerRelativeUrl" Type="Edm.String" />
@@ -15850,6 +15946,7 @@
       </Function>
       <Function Name="RestoreWorkflowCount" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.MultiGeoServicesBeta" />
+        <Parameter Name="isCrossTenant" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.RestoreWorkflowCount" />
       </Function>
       <Function Name="UserMnAODMoveValidationResult" IsBound="true" IsComposable="true">
@@ -15885,6 +15982,7 @@
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.OrgRelationVerification" />
       </Function>
       <Function Name="RestoreWorkflowCount">
+        <Parameter Name="isCrossTenant" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.RestoreWorkflowCount" />
       </Function>
       <Function Name="GetByUrl" IsBound="true" IsComposable="true">
@@ -20781,6 +20879,7 @@
         <Property Name="NewPageUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="NewPageUrl" Type="Edm.String" />
         <Property Name="TotalAssetsToMove" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Warnings" Type="Collection(Microsoft.SharePoint.Publishing.PageCopyWithAssets.PageDeepCopyWarning)" />
         <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
       </EntityType>
       <EntityType Name="PersonMagazine" Abstract="true" />
@@ -22427,6 +22526,28 @@
         <ReturnType Type="SP.Publishing.PortalLaunch.PortalLaunchWaveSetup" />
       </Action>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Publishing.PageCopyWithAssets" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="PageDeepCopyWarning">
+        <Property Name="WarningMessage" Type="Edm.String" />
+        <Property Name="WarningType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <EntityType Name="PageCopyResponse">
+        <Property Name="CanvasString" Type="Edm.String" />
+        <Property Name="CompletedAssets" Type="Collection(Edm.String)" />
+        <Property Name="CopyToStatusAPI" Type="Edm.String" />
+        <Property Name="ErrorMessage" Type="Edm.String" />
+        <Property Name="ErrorType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="JobState" Type="Edm.Int32" Nullable="false" />
+        <Property Name="NewPageUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="NewPageUrl" Type="Edm.String" />
+        <Property Name="TotalAssetsToCopy" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Warnings" Type="Collection(Microsoft.SharePoint.Publishing.PageCopyWithAssets.PageDeepCopyWarning)" />
+        <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <Function Name="PageCopyResponse">
+        <ReturnType Type="Microsoft.SharePoint.Publishing.PageCopyWithAssets.PageCopyResponse" />
+      </Function>
+    </Schema>
     <Schema Namespace="SP.Publishing.Navigation" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="StructuralNavigationCacheState">
         <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -23732,6 +23853,7 @@
         <Property Name="ModifiedDateTimeUTC" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="OfficeBundleGenerate" Type="Edm.String" />
         <Property Name="OfficeBundleGetFragment" Type="Edm.String" />
+        <Property Name="Owner" Type="Microsoft.SharePoint.Portal.UserProfiles.SharedWithMeDocumentUser" />
         <Property Name="ParentId" Type="Edm.String" />
         <Property Name="ParentLink" Type="Edm.String" />
         <Property Name="PdfConversionUrl" Type="Edm.String" />
@@ -24362,6 +24484,13 @@
         <Property Name="showInToolbox" Type="Edm.Boolean" Nullable="false" />
         <Property Name="title" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="CardDesignFeatures">
+        <Property Name="isContextNotAvailable" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isDisabledByTenantAdmin" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isFlightDeactivated" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isNotAHomeSite" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="SPFailToTriggerUninstallAddinJobResponse">
         <Property Name="appInstanceId" Type="Edm.Guid" Nullable="false" />
         <Property Name="errorMessage" Type="Edm.String" />
@@ -24459,7 +24588,9 @@
         <NavigationProperty Name="SiteCollectionAppCatalogsSites" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.SiteCollectionAppCatalogAllowedItem)" ContainsTarget="true" />
         <NavigationProperty Name="StoreApps" Type="Collection(Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CorporateCatalogAppMetadata)" ContainsTarget="true" />
       </EntityType>
-      <EntityType Name="CardDesigns" />
+      <EntityType Name="CardDesigns">
+        <Property Name="Features" Type="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.CardDesignFeatures" />
+      </EntityType>
       <EntityType Name="SiteCollectionAppCatalogAllowedItem">
         <Property Name="AbsoluteUrl" Type="Edm.String" />
         <Property Name="ErrorMessage" Type="Edm.String" />
@@ -24782,6 +24913,119 @@
         <Property Name="shouldRemoveEntry" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.EmployeeEngagement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="DashboardConfiguration">
+        <Property Name="canvasContent" Type="Edm.String" />
+        <Property Name="dashboardUrl" Type="Edm.String" />
+        <Property Name="extraComponents" Type="Collection(Microsoft.SharePoint.ClientSideComponent.SPClientSideComponentQueryResult)" />
+      </ComplexType>
+      <ComplexType Name="VivaResourceLink">
+        <Property Name="icon" Type="Edm.String" />
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="order" Type="Edm.Int64" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
+      </ComplexType>
+      <EntityType Name="VivaResources" />
+      <EntityType Name="VivaHome" />
+      <EntityType Name="VivaResourceGetEndpoint">
+        <Property Name="CompanyLinks" Type="Collection(Microsoft.SharePoint.EmployeeEngagement.VivaResourceLink)" />
+      </EntityType>
+      <Function Name="GetLinks" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <ReturnType Type="Microsoft.SharePoint.EmployeeEngagement.VivaResourceGetEndpoint" />
+      </Function>
+      <Action Name="RemoveLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
+      <Action Name="ReorderLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+        <Parameter Name="itemBefore" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+        <Parameter Name="itemAfter" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
+      <Action Name="UpdateLink" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
+        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
+      </Action>
+      <Action Name="AddImage" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
+        <Parameter Name="fileName" Type="Edm.String" />
+        <Parameter Name="imageStream" Type="Edm.Stream" />
+        <ReturnType Type="SP.File" />
+      </Action>
+      <Action Name="AddImageFromExternalUrl" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
+        <Parameter Name="fileName" Type="Edm.String" />
+        <Parameter Name="externalUrl" Type="Edm.String" />
+        <ReturnType Type="SP.File" />
+      </Action>
+      <Action Name="TitleRegion" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
+        <Parameter Name="vivaHomeTitleRegion" Type="SP.VivaHomeTitleRegion" />
+      </Action>
+      <Function Name="VivaResourceGetEndpoint">
+        <Parameter Name="links" Type="Collection(Microsoft.SharePoint.EmployeeEngagement.VivaResourceLink)" />
+        <ReturnType Type="Microsoft.SharePoint.EmployeeEngagement.VivaResourceGetEndpoint" />
+      </Function>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.ClientSideComponent" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="SPClientSideComponentQueryResult">
+        <Property Name="ComponentType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="Manifest" Type="Edm.String" />
+        <Property Name="ManifestActivatedTime" Type="Edm.DateTimeOffset" />
+        <Property Name="ManifestType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="SPClientSideComponentIdentifier">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="version" Type="Edm.String" />
+      </ComplexType>
+      <EntityType Name="HostedAppsManager" />
+      <EntityType Name="Spfx3rdPartyCustomPrincipalInfo">
+        <Property Name="AppId" Type="Edm.String" />
+        <Property Name="AppUri" Type="Edm.String" />
+        <Property Name="ClientSecret" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="HostedAppAddResponse">
+        <Property Name="itemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="shareLinkUrl" Type="Edm.String" />
+        <Property Name="shareWebPath" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="HostedApp" />
+      <EntityType Name="StorageEntity">
+        <Property Name="Comment" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="Value" Type="Edm.String" />
+      </EntityType>
+      <Action Name="Delete" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
+      </Action>
+      <Action Name="UpdateWebPartData" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
+        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
+      </Action>
+      <Action Name="Add" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
+        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
+        <Parameter Name="hostType" Type="Edm.String" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="AddEx" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
+        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
+        <Parameter Name="hostType" Type="Edm.String" />
+        <ReturnType Type="Microsoft.SharePoint.ClientSideComponent.HostedAppAddResponse" />
+      </Action>
+      <Function Name="GetById" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
+        <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
+      </Function>
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.EmployeeEngagement.Experience" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="AnnouncementAction">
         <Property Name="Type" Type="Edm.String" />
@@ -24859,62 +25103,6 @@
         <Property Name="loginName" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
       </ComplexType>
-    </Schema>
-    <Schema Namespace="Microsoft.SharePoint.ClientSideComponent" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <ComplexType Name="SPClientSideComponentIdentifier">
-        <Property Name="id" Type="Edm.String" />
-        <Property Name="version" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="SPClientSideComponentQueryResult">
-        <Property Name="ComponentType" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Id" Type="Edm.String" />
-        <Property Name="Manifest" Type="Edm.String" />
-        <Property Name="ManifestActivatedTime" Type="Edm.DateTimeOffset" />
-        <Property Name="ManifestType" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Name" Type="Edm.String" />
-        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
-      </ComplexType>
-      <EntityType Name="HostedAppsManager" />
-      <EntityType Name="Spfx3rdPartyCustomPrincipalInfo">
-        <Property Name="AppId" Type="Edm.String" />
-        <Property Name="AppUri" Type="Edm.String" />
-        <Property Name="ClientSecret" Type="Edm.String" />
-      </EntityType>
-      <EntityType Name="HostedAppAddResponse">
-        <Property Name="itemId" Type="Edm.Int32" Nullable="false" />
-        <Property Name="shareLinkUrl" Type="Edm.String" />
-        <Property Name="shareWebPath" Type="Edm.String" />
-      </EntityType>
-      <EntityType Name="HostedApp" />
-      <EntityType Name="StorageEntity">
-        <Property Name="Comment" Type="Edm.String" />
-        <Property Name="Description" Type="Edm.String" />
-        <Property Name="Value" Type="Edm.String" />
-      </EntityType>
-      <Action Name="Delete" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
-      </Action>
-      <Action Name="UpdateWebPartData" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
-        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
-      </Action>
-      <Action Name="Add" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
-        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
-        <Parameter Name="hostType" Type="Edm.String" />
-        <ReturnType Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="AddEx" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
-        <Parameter Name="webPartDataAsJson" Type="Edm.String" />
-        <Parameter Name="hostType" Type="Edm.String" />
-        <ReturnType Type="Microsoft.SharePoint.ClientSideComponent.HostedAppAddResponse" />
-      </Action>
-      <Function Name="GetById" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.ClientSideComponent.HostedAppsManager" />
-        <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="Microsoft.SharePoint.ClientSideComponent.HostedApp" />
-      </Function>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Campaigns" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="CampaignCommunicationEntity">
@@ -25203,7 +25391,6 @@
         <Property Name="fileCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="filesSharedExternally" Type="Edm.Int32" Nullable="false" />
         <Property Name="filesSharedInternally" Type="Edm.Int32" Nullable="false" />
-        <Property Name="sensitivityLabel" Type="Edm.Guid" Nullable="false" />
         <Property Name="totalFilesShared" Type="Edm.Int32" Nullable="false" />
         <Property Name="userDisplayName" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
@@ -25241,11 +25428,17 @@
         <Property Name="activityId" Type="Edm.Guid" Nullable="false" />
         <Property Name="category" Type="Edm.Int32" Nullable="false" />
         <Property Name="detectionSource" Type="Edm.String" />
+        <Property Name="driveId" Type="Edm.String" />
         <Property Name="firstActivity" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="impactedAssetLocation" Type="Edm.String" />
+        <Property Name="impactedSiteType" Type="Edm.Int32" Nullable="false" />
         <Property Name="lastActivity" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="siteLabelId" Type="Edm.String" />
+        <Property Name="siteLabelName" Type="Edm.String" />
         <Property Name="siteOwner" Type="Edm.String" />
         <Property Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="siteType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="siteUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="RecentAdminActionReport">
         <Property Name="actions" Type="Edm.String" />
@@ -25258,6 +25451,7 @@
         <Property Name="progressPercentage" Type="Edm.Double" Nullable="false" />
         <Property Name="queryEndDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="queryStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="reportType" Type="Edm.Int32" Nullable="false" />
         <Property Name="requestId" Type="Edm.Guid" Nullable="false" />
         <Property Name="sites" Type="Edm.String" />
         <Property Name="sPOCorrelationId" Type="Edm.Guid" Nullable="false" />
@@ -25300,6 +25494,15 @@
         <Property Name="reportCreationTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="reportUpdationTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="TenantAdminRansomwareActivitiesOverview">
+        <Property Name="impactedAssetsCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="lastActivityTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="oneDriveActivityCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="sharePointActivityCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="totalActivitiesCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="unresolvedActivitiesCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="usersCount" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="TenantAdminRansomwareActivity">
         <Property Name="activityGeneratedOn" Type="Edm.DateTimeOffset" />
         <Property Name="activityId" Type="Edm.Guid" Nullable="false" />
@@ -25308,20 +25511,29 @@
         <Property Name="classification" Type="Edm.Int32" Nullable="false" />
         <Property Name="createdTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="detectionSource" Type="Edm.String" />
+        <Property Name="driveId" Type="Edm.String" />
         <Property Name="eventId" Type="Edm.Guid" Nullable="false" />
         <Property Name="firstActivity" Type="Edm.DateTimeOffset" />
         <Property Name="impactedAssetLocation" Type="Edm.String" />
         <Property Name="impactedAssets" Type="Edm.String" />
         <Property Name="impactedAssetsCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="impactedAssetsUserCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="investigationState" Type="Edm.Int32" Nullable="false" />
         <Property Name="lastActivity" Type="Edm.DateTimeOffset" />
         <Property Name="lastUpdatedTime" Type="Edm.DateTimeOffset" />
+        <Property Name="siteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="siteOwner" Type="Edm.String" />
         <Property Name="siteType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="siteUrl" Type="Edm.String" />
         <Property Name="status" Type="Edm.Int32" Nullable="false" />
         <Property Name="syncStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="tagId" Type="Edm.String" />
         <Property Name="updatedBy" Type="Edm.String" />
+        <Property Name="webId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="TenantAdminRansomwareEventsOverview">
+        <Property Name="activeEventsCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="openEventsCount" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="TenantAdminRansomwareEvent">
         <Property Name="assignedTo" Type="Edm.String" />
@@ -25418,7 +25630,6 @@
       </ComplexType>
       <ComplexType Name="PlacesUserEntity">
         <Property Name="email" Type="Edm.String" />
-        <Property Name="id" Type="Edm.Int32" Nullable="false" />
         <Property Name="loginName" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
       </ComplexType>
@@ -25590,6 +25801,7 @@
       <ComplexType Name="SharingAbilities">
         <Property Name="anonymousLinkAbilities" Type="SP.Sharing.SharingLinkAbilities" />
         <Property Name="anyoneLinkAbilities" Type="SP.Sharing.SharingLinkAbilities" />
+        <Property Name="canStopSharing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="directSharingAbilities" Type="SP.Sharing.DirectSharingAbilities" />
         <Property Name="organizationLinkAbilities" Type="SP.Sharing.SharingLinkAbilities" />
         <Property Name="peopleSharingLinkAbilities" Type="SP.Sharing.SharingLinkAbilities" />
@@ -25730,6 +25942,7 @@
       <EntityType Name="SharingInformation">
         <Property Name="accessRequestSettings" Type="SP.Sharing.AccessRequestSettings" />
         <Property Name="addressBarLinkSettings" Type="SP.Sharing.AddressBarLinkSettings" />
+        <Property Name="ageGroup" Type="Edm.Int32" Nullable="false" />
         <Property Name="anonymousLinkExpirationRestrictionDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="anyoneLinkTrackUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="blockPeoplePickerAndSharing" Type="Edm.Boolean" Nullable="false" />
@@ -26669,6 +26882,7 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="queryEndDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="queryStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="reportType" Type="Edm.Int32" Nullable="false" />
         <Property Name="sites" Type="Edm.String" />
         <Property Name="users" Type="Edm.String" />
       </ComplexType>
@@ -26972,6 +27186,7 @@
         <Property Name="BlockDownloadMicrosoft365GroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="BlockDownloadPolicy" Type="Edm.Boolean" Nullable="false" />
         <Property Name="BlockGuestsAsSiteAdmin" Type="Edm.Int32" Nullable="false" />
+        <Property Name="BonusDiskQuota" Type="Edm.Int64" Nullable="false" />
         <Property Name="ClearRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CompatibilityLevel" Type="Edm.Int32" Nullable="false" />
@@ -27158,6 +27373,8 @@
         <Property Name="BlockUserInfoVisibility" Type="Edm.String" />
         <Property Name="BlockUserInfoVisibilityInOneDrive" Type="Edm.Int32" Nullable="false" />
         <Property Name="BlockUserInfoVisibilityInSharePoint" Type="Edm.Int32" Nullable="false" />
+        <Property Name="BonusStorageQuotaMB" Type="Edm.Int64" Nullable="false" />
+        <Property Name="BusinessConnectivityServiceDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnFilesDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnListItemsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -27187,6 +27404,7 @@
         <Property Name="DefaultODBMode" Type="Edm.String" />
         <Property Name="DefaultSharingLinkType" Type="Edm.Int32" Nullable="false" />
         <Property Name="DenySelectSecurityGroupsInSPSitesList" Type="Collection(Edm.String)" />
+        <Property Name="DenySelectSGsInODBListInTenant" Type="Collection(Edm.String)" />
         <Property Name="DisableAddToOneDrive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableBackToClassic" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableCustomAppAuthentication" Type="Edm.Boolean" Nullable="false" />
@@ -27264,6 +27482,7 @@
         <Property Name="IsMultiGeo" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultipleHomeSitesFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultipleVivaConnectionsFlightEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsRansomwareProtectionEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientRestrictionFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaHomeFlightEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -27607,6 +27826,11 @@
       <Function Name="Tenant">
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Function>
+      <Action Name="AddBrandFontPackage" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="creationInformation" Type="SP.FontPackageCreationParameters" />
+        <ReturnType Type="SP.FontPackage" />
+      </Action>
       <Action Name="AddHomeSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="homeSiteUrl" Type="Edm.String" />
@@ -27673,6 +27897,9 @@
         <Parameter Name="licenses" Type="Collection(Edm.String)" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="ClearRestrictedAccessControlOneDrive" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+      </Action>
       <Action Name="ClearRestrictedAccessControlSharePoint" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
@@ -27726,6 +27953,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.View)" />
       </Function>
+      <Function Name="GetBrandFontPackages" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Collection(SP.FontPackage)" />
+      </Function>
       <Action Name="GetChatGptResponse" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="requestOptions" Type="Microsoft.SharePoint.Internal.ChatGptRequestOptions" />
@@ -27778,6 +28009,10 @@
         <Parameter Name="queryMode" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.OneDriveSiteSharingInsights)" />
       </Function>
+      <Function Name="GetOrgAssetBrandNames" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Collection(Edm.String)" />
+      </Function>
       <Function Name="GetOrgAssets" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
@@ -27797,10 +28032,19 @@
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
         <ReturnType Type="Edm.Stream" />
       </Action>
+      <Action Name="GetRansomwareActivitiesOverview" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="eventId" Type="Edm.String" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.TenantAdminRansomwareActivitiesOverview" />
+      </Action>
       <Action Name="GetRansomwareEvents" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
         <ReturnType Type="Edm.Stream" />
+      </Action>
+      <Action Name="GetRansomwareEventsOverview" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.TenantAdminRansomwareEventsOverview" />
       </Action>
       <Function Name="GetSharePointSiteSharingInsights" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -27964,6 +28208,16 @@
         <Parameter Name="containerTypeProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties" />
       </Action>
+      <Action Name="PurgeSPODeletedContainerByContainerId" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="containerId" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="PurgeSPODeletedContainerByContainerSiteUrl" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="containerSiteUrl" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Function Name="RecentAdminActionReportIsAuditEnabled" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -28029,6 +28283,12 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewId" Type="Edm.String" />
       </Action>
+      <Function Name="RenderActiveContainers" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
+        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
       <Action Name="RenderAdminListData" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
@@ -28188,6 +28448,13 @@
         <Parameter Name="parameters" Type="SP.RenderListFilterDataParameters" />
         <ReturnType Type="Edm.Stream" />
       </Function>
+      <Function Name="RenderOrgAssetListDataAsStream" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="listUrl" Type="Edm.String" />
+        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
+        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
       <Action Name="RenderPolicyDefinitionList" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
@@ -28239,6 +28506,16 @@
         <Parameter Name="siteUrl" Type="Edm.String" />
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SpoOperation" />
+      </Action>
+      <Action Name="RestoreSPODeletedContainerByContainerId" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="containerId" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="RestoreSPODeletedContainerByContainerSiteUrl" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="containerSiteUrl" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="RevokeHubSiteRightsById" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -28412,6 +28689,12 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewId" Type="Edm.String" />
         <Parameter Name="viewXml" Type="Edm.String" />
+      </Action>
+      <Action Name="UploadOrgAssetBrandFontFile" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="fileName" Type="Edm.String" />
+        <Parameter Name="stream" Type="Edm.Stream" />
+        <ReturnType Type="SP.ListItem" />
       </Action>
       <Action Name="ValidateHomeSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -30526,23 +30809,6 @@
         <Property Name="Value" Type="Edm.String" />
       </EntityType>
     </Schema>
-    <Schema Namespace="Microsoft.SharePoint.Publishing.PageCopyWithAssets" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <EntityType Name="PageCopyResponse">
-        <Property Name="CanvasString" Type="Edm.String" />
-        <Property Name="CompletedAssets" Type="Collection(Edm.String)" />
-        <Property Name="CopyToStatusAPI" Type="Edm.String" />
-        <Property Name="ErrorMessage" Type="Edm.String" />
-        <Property Name="ErrorType" Type="Edm.Int32" Nullable="false" />
-        <Property Name="JobState" Type="Edm.Int32" Nullable="false" />
-        <Property Name="NewPageUniqueId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="NewPageUrl" Type="Edm.String" />
-        <Property Name="TotalAssetsToCopy" Type="Edm.Int32" Nullable="false" />
-        <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
-      </EntityType>
-      <Function Name="PageCopyResponse">
-        <ReturnType Type="Microsoft.SharePoint.Publishing.PageCopyWithAssets.PageCopyResponse" />
-      </Function>
-    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Client.Search.Administration" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="DocumentCrawlLog" />
       <EntityType Name="SiteContentProcessingInfoProvider" />
@@ -31068,6 +31334,9 @@
         <Property Name="ScenarioMapping" Type="Collection(SP.KeyValue)" />
       </EntityType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.SPStart" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="SPStartUtilitiesProxy" Abstract="true" />
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.SmartCache" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="SmartCacheItem">
         <Property Name="accessUrl" Type="Edm.String" />
@@ -31290,44 +31559,6 @@
         <ReturnType Type="Collection(Edm.String)" />
       </Function>
     </Schema>
-    <Schema Namespace="Microsoft.SharePoint.EmployeeEngagement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <EntityType Name="VivaResources" />
-      <EntityType Name="VivaHome" />
-      <Function Name="GetLinks" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
-        <ReturnType Type="Collection(Microsoft.SharePoint.ListHome.FavoriteListHomeItem)" />
-      </Function>
-      <Action Name="RemoveLink" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
-        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
-      </Action>
-      <Action Name="ReorderLink" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
-        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
-        <Parameter Name="itemBefore" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
-        <Parameter Name="itemAfter" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
-      </Action>
-      <Action Name="UpdateLink" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaResources" />
-        <Parameter Name="item" Type="Microsoft.SharePoint.ListHome.FavoriteListHomeItem" />
-      </Action>
-      <Action Name="AddImage" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
-        <Parameter Name="fileName" Type="Edm.String" />
-        <Parameter Name="imageStream" Type="Edm.Stream" />
-        <ReturnType Type="SP.File" />
-      </Action>
-      <Action Name="AddImageFromExternalUrl" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
-        <Parameter Name="fileName" Type="Edm.String" />
-        <Parameter Name="externalUrl" Type="Edm.String" />
-        <ReturnType Type="SP.File" />
-      </Action>
-      <Action Name="TitleRegion" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.EmployeeEngagement.VivaHome" />
-        <Parameter Name="vivaHomeTitleRegion" Type="SP.VivaHomeTitleRegion" />
-      </Action>
-    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Convergence" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ConsumerPermissions" />
       <EntityType Name="MigrationCompleteStateApi" />
@@ -31464,6 +31695,7 @@
         <Property Name="BlockUserInfoVisibility" Type="Edm.String" />
         <Property Name="BlockUserInfoVisibilityInOneDrive" Type="Edm.Int32" Nullable="false" />
         <Property Name="BlockUserInfoVisibilityInSharePoint" Type="Edm.Int32" Nullable="false" />
+        <Property Name="BusinessConnectivityServiceDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnFilesDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnListItemsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -31492,6 +31724,7 @@
         <Property Name="DefaultODBMode" Type="Edm.String" />
         <Property Name="DefaultSharingLinkType" Type="Edm.Int32" Nullable="false" />
         <Property Name="DenySelectSecurityGroupsInSPSitesList" Type="Collection(Edm.String)" />
+        <Property Name="DenySelectSGsInODBList" Type="Collection(Edm.String)" />
         <Property Name="DisableAddToOneDrive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableBackToClassic" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableCustomAppAuthentication" Type="Edm.Boolean" Nullable="false" />
@@ -32385,6 +32618,10 @@
         <Parameter Name="siteId" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Function>
+      <Function Name="GetTenantAndSiteHoldsApplicableForSite" IsComposable="true">
+        <Parameter Name="siteId" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Function>
       <Function Name="IsSiteDeletable" IsComposable="true">
         <Parameter Name="siteUrl" Type="Edm.String" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -33128,6 +33365,12 @@
       </Action>
       <Action Name="ValidatePendingWebTemplateExtension">
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.SPStart.SPStartUtilitiesProxy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="GetSerializedSPStartContext">
+        <Parameter Name="mySiteUrl" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
       </Action>
     </Schema>
     <Schema Namespace="SP.SPHSite" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -34703,6 +34946,1811 @@
         <Parameter Name="list" Type="Edm.String" />
         <Parameter Name="addressesToEmail" Type="Collection(Edm.String)" />
       </Action>
+    </Schema>
+    <Schema Namespace="SP.Data" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="OData__x005f_catalogs_x002f_appdataItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="Attachments" Type="Edm.Boolean" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="LinkTitleNoMenu" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="LinkTitle2" Type="Edm.String" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="UserInfoItem">
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="EMail" Type="Edm.String" />
+        <Property Name="OtherMail" Type="Edm.String" />
+        <Property Name="UserExpiration" Type="Edm.DateTimeOffset" />
+        <Property Name="UserLastDeletionTime" Type="Edm.DateTimeOffset" />
+        <Property Name="MobilePhone" Type="Edm.String" />
+        <Property Name="Notes" Type="Edm.String" />
+        <Property Name="SipAddress" Type="Edm.String" />
+        <Property Name="Locale" Type="Edm.Int32" />
+        <Property Name="CalendarType" Type="Edm.Int32" />
+        <Property Name="AdjustHijriDays" Type="Edm.Int32" />
+        <Property Name="TimeZone" Type="Edm.Int32" />
+        <Property Name="Time24" Type="Edm.Boolean" />
+        <Property Name="AltCalendarType" Type="Edm.Int32" />
+        <Property Name="CalendarViewOptions" Type="Edm.Int32" />
+        <Property Name="WorkDays" Type="Edm.Int32" />
+        <Property Name="WorkDayStartHour" Type="Edm.Int32" />
+        <Property Name="WorkDayEndHour" Type="Edm.Int32" />
+        <Property Name="MUILanguages" Type="Edm.String" />
+        <Property Name="ContentLanguages" Type="Edm.String" />
+        <Property Name="IsSiteAdmin" Type="Edm.Boolean" />
+        <Property Name="Deleted" Type="Edm.Boolean" />
+        <Property Name="UserInfoHidden" Type="Edm.Boolean" />
+        <Property Name="Picture" Type="SP.FieldUrlValue" />
+        <Property Name="Department" Type="Edm.String" />
+        <Property Name="JobTitle" Type="Edm.String" />
+        <Property Name="IsActive" Type="Edm.Boolean" />
+        <Property Name="FirstName" Type="Edm.String" />
+        <Property Name="LastName" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="LinkTitle2" Type="Edm.String" />
+        <Property Name="WorkPhone" Type="Edm.String" />
+        <Property Name="UserName" Type="Edm.String" />
+        <Property Name="WebSite" Type="SP.FieldUrlValue" />
+        <Property Name="SPSResponsibility" Type="Edm.String" />
+        <Property Name="Office" Type="Edm.String" />
+        <Property Name="SPSPictureTimestamp" Type="Edm.String" />
+        <Property Name="SPSPicturePlaceholderState" Type="Edm.Int32" />
+        <Property Name="SPSPictureExchangeSyncState" Type="Edm.Int32" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="Attachments" Type="Edm.Boolean" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="LinkTitleNoMenu" Type="Edm.String" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="GroupLink" Type="Edm.String" />
+        <Property Name="GroupEdit" Type="Edm.String" />
+        <Property Name="ImnName" Type="Edm.String" />
+        <Property Name="PictureDisp" Type="Edm.String" />
+        <Property Name="PictureOnly_Size_36px" Type="Edm.String" />
+        <Property Name="PictureOnly_Size_48px" Type="Edm.String" />
+        <Property Name="PictureOnly_Size_72px" Type="Edm.String" />
+        <Property Name="NameWithPicture" Type="Edm.String" />
+        <Property Name="NameWithPictureAndDetails" Type="Edm.String" />
+        <Property Name="EditUser" Type="Edm.String" />
+        <Property Name="UserSelection" Type="Edm.String" />
+        <Property Name="ContentTypeDisp" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_appfilesItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_designItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="Attachments" Type="Edm.Boolean" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="LinkTitleNoMenu" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="LinkTitle2" Type="Edm.String" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="MasterPageUrl" Type="SP.FieldUrlValue" />
+        <Property Name="ThemeUrl" Type="SP.FieldUrlValue" />
+        <Property Name="ImageUrl" Type="SP.FieldUrlValue" />
+        <Property Name="FontSchemeUrl" Type="SP.FieldUrlValue" />
+        <Property Name="DisplayOrder" Type="Edm.Double" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="IWConvertedFormsItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="TemplateId" Type="Edm.String" />
+        <Property Name="FormRelativeUrl" Type="Edm.String" />
+        <Property Name="FormVersion" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="Shared_x0020_DocumentsItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="TemplateUrl" Type="Edm.String" />
+        <Property Name="xd_ProgID" Type="Edm.String" />
+        <Property Name="xd_Signature" Type="Edm.Boolean" />
+        <Property Name="Combine" Type="Edm.String" />
+        <Property Name="RepairDocument" Type="Edm.String" />
+        <Property Name="PolicyDisabledUICapabilities" Type="Edm.String" />
+        <Property Name="OData__EffectiveIpLabelDisplayName" Type="Edm.String" />
+        <Property Name="OData__ShortcutUrl" Type="SP.FieldUrlValue" />
+        <Property Name="OData__ShortcutSiteId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutWebId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutUniqueId" Type="Edm.Guid" />
+        <Property Name="OData__ExtendedDescription" Type="Edm.String" />
+        <Property Name="TriggerFlowInfo" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="EventsListItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="Attachments" Type="Edm.Boolean" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="LinkTitleNoMenu" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="LinkTitle2" Type="Edm.String" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Location" Type="Edm.String" />
+        <Property Name="Geolocation" Type="SP.FieldGeolocationValue" />
+        <Property Name="EventDate" Type="Edm.DateTimeOffset" />
+        <Property Name="EndDate" Type="Edm.DateTimeOffset" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="fAllDayEvent" Type="Edm.Boolean" />
+        <Property Name="fRecurrence" Type="Edm.Boolean" />
+        <Property Name="WorkspaceLink" Type="Edm.Boolean" />
+        <Property Name="EventType" Type="Edm.Int32" />
+        <Property Name="UID" Type="Edm.Guid" />
+        <Property Name="RecurrenceID" Type="Edm.DateTimeOffset" />
+        <Property Name="EventCanceled" Type="Edm.Boolean" />
+        <Property Name="Duration" Type="Edm.Int32" />
+        <Property Name="RecurrenceData" Type="Edm.String" />
+        <Property Name="TimeZone" Type="Edm.Int32" />
+        <Property Name="XMLTZone" Type="Edm.String" />
+        <Property Name="MasterSeriesItemID" Type="Edm.Int32" />
+        <Property Name="Workspace" Type="SP.FieldUrlValue" />
+        <Property Name="ParticipantsPickerId" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="ParticipantsPickerStringId" Type="Collection(Edm.String)" />
+        <Property Name="Category" Type="Edm.String" />
+        <Property Name="Facilities" Type="Collection(SP.FieldLookupValue)" />
+        <Property Name="FreeBusy" Type="Edm.String" />
+        <Property Name="Overbook" Type="Edm.String" />
+        <Property Name="Participants" Type="Edm.String" />
+        <Property Name="BannerUrl" Type="SP.FieldUrlValue" />
+        <Property Name="BannerImageUrl" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="ParticipantsPicker" Type="Collection(SP.Data.UserInfoItem)" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="FormServerTemplatesItem">
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="TemplateUrl" Type="Edm.String" />
+        <Property Name="xd_ProgID" Type="Edm.String" />
+        <Property Name="xd_Signature" Type="Edm.Boolean" />
+        <Property Name="OData__ShortcutUrl" Type="SP.FieldUrlValue" />
+        <Property Name="OData__ShortcutSiteId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutWebId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutUniqueId" Type="Edm.Guid" />
+        <Property Name="OData__ExtendedDescription" Type="Edm.String" />
+        <Property Name="TriggerFlowInfo" Type="Edm.String" />
+        <Property Name="FormName" Type="Edm.String" />
+        <Property Name="FormCategory" Type="Edm.String" />
+        <Property Name="FormVersion" Type="Edm.String" />
+        <Property Name="FormId" Type="Edm.String" />
+        <Property Name="FormLocale" Type="Edm.String" />
+        <Property Name="FormDescription" Type="Edm.String" />
+        <Property Name="CustomContentTypeId" Type="Edm.String" />
+        <Property Name="ShowInCatalog" Type="Edm.Boolean" />
+        <Property Name="LinkTemplateName" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="Combine" Type="Edm.String" />
+        <Property Name="RepairDocument" Type="Edm.String" />
+        <Property Name="PolicyDisabledUICapabilities" Type="Edm.String" />
+        <Property Name="OData__EffectiveIpLabelDisplayName" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_ltItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="TemplateTitle" Type="Edm.String" />
+        <Property Name="TemplateDescription" Type="Edm.String" />
+        <Property Name="TemplateID" Type="Edm.String" />
+        <Property Name="Language" Type="Edm.Int32" />
+        <Property Name="TemplateType" Type="Edm.Int32" />
+        <Property Name="BaseType" Type="Edm.Int32" />
+        <Property Name="SubType" Type="Edm.Int32" />
+        <Property Name="Hidden" Type="Edm.Boolean" />
+        <Property Name="MajorVersion" Type="Edm.Double" />
+        <Property Name="FeatureID" Type="Edm.Guid" />
+        <Property Name="LanguageDisplay" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_MaintenanceLogsItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_masterpageItem">
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="MasterPageDescription" Type="Edm.String" />
+        <Property Name="UIVersion" Type="Collection(Edm.String)" />
+        <Property Name="DefaultCssFile" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSTemplateHidden" Type="Edm.Boolean" />
+        <Property Name="DisplayTemplateJSTargetControlType" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSIconUrl" Type="SP.FieldUrlValue" />
+        <Property Name="DisplayTemplateJSTemplateType" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSTargetScope" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSTargetListTemplate" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSTargetContentType" Type="Edm.String" />
+        <Property Name="DisplayTemplateJSConfigurationUrl" Type="SP.FieldUrlValue" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="TemplateHidden" Type="Edm.Boolean" />
+        <Property Name="TargetControlType" Type="Collection(Edm.String)" />
+        <Property Name="CrawlerXSLFile" Type="SP.FieldUrlValue" />
+        <Property Name="DisplayTemplateLevel" Type="Edm.String" />
+        <Property Name="ManagedPropertyMapping" Type="Edm.String" />
+        <Property Name="CompatibleSearchDataTypes" Type="Collection(Edm.String)" />
+        <Property Name="CompatibleManagedProperties" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FilenameMenuNoLink" Type="Edm.String" />
+        <Property Name="MasterPageIcon" Type="Edm.String" />
+        <Property Name="FilenameNoLink" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="SitePagesItem">
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="WikiField" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="ClientSideApplicationId" Type="Edm.Guid" />
+        <Property Name="PageLayoutType" Type="Edm.String" />
+        <Property Name="CanvasContent1" Type="Edm.String" />
+        <Property Name="BannerImageUrl" Type="SP.FieldUrlValue" />
+        <Property Name="BannerImageOffset" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="PromotedState" Type="Edm.Double" />
+        <Property Name="FirstPublishedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="LayoutWebpartsContent" Type="Edm.String" />
+        <Property Name="OData__AuthorBylineId" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="_AuthorBylineStringId" Type="Collection(Edm.String)" />
+        <Property Name="OData__TopicHeader" Type="Edm.String" />
+        <Property Name="OData__SPSitePageFlags" Type="Collection(Edm.String)" />
+        <Property Name="OData__SPAssetFolderId" Type="Edm.Double" />
+        <Property Name="OData__SPCallToAction" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="OData__OriginalSourceUrl" Type="Edm.String" />
+        <Property Name="OData__OriginalSourceSiteId" Type="Edm.Guid" />
+        <Property Name="OData__OriginalSourceWebId" Type="Edm.Guid" />
+        <Property Name="OData__OriginalSourceListId" Type="Edm.Guid" />
+        <Property Name="OData__OriginalSourceItemId" Type="Edm.Guid" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="OData__AuthorByline" Type="Collection(SP.Data.UserInfoItem)" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_solutionsItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="SolutionId" Type="Edm.Guid" />
+        <Property Name="SolutionTitle" Type="Edm.String" />
+        <Property Name="SolutionDescription" Type="Edm.String" />
+        <Property Name="SolutionHash" Type="Edm.String" />
+        <Property Name="ComputedStatus" Type="Edm.String" />
+        <Property Name="ComputedQuota" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="Style_x0020_LibraryItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="TemplateUrl" Type="Edm.String" />
+        <Property Name="xd_ProgID" Type="Edm.String" />
+        <Property Name="xd_Signature" Type="Edm.Boolean" />
+        <Property Name="Combine" Type="Edm.String" />
+        <Property Name="RepairDocument" Type="Edm.String" />
+        <Property Name="PolicyDisabledUICapabilities" Type="Edm.String" />
+        <Property Name="OData__EffectiveIpLabelDisplayName" Type="Edm.String" />
+        <Property Name="OData__ShortcutUrl" Type="SP.FieldUrlValue" />
+        <Property Name="OData__ShortcutSiteId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutWebId" Type="Edm.Guid" />
+        <Property Name="OData__ShortcutUniqueId" Type="Edm.Guid" />
+        <Property Name="OData__ExtendedDescription" Type="Edm.String" />
+        <Property Name="TriggerFlowInfo" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="TaxonomyHiddenListListItem">
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="IdForTermStore" Type="Edm.String" />
+        <Property Name="IdForTerm" Type="Edm.String" />
+        <Property Name="IdForTermSet" Type="Edm.String" />
+        <Property Name="Term" Type="Edm.String" />
+        <Property Name="Path" Type="Edm.String" />
+        <Property Name="CatchAllData" Type="Edm.String" />
+        <Property Name="CatchAllDataLabel" Type="Edm.String" />
+        <Property Name="Term1031" Type="Edm.String" />
+        <Property Name="Path1031" Type="Edm.String" />
+        <Property Name="Term1036" Type="Edm.String" />
+        <Property Name="Path1036" Type="Edm.String" />
+        <Property Name="Term2108" Type="Edm.String" />
+        <Property Name="Path2108" Type="Edm.String" />
+        <Property Name="Term1057" Type="Edm.String" />
+        <Property Name="Path1057" Type="Edm.String" />
+        <Property Name="Term1044" Type="Edm.String" />
+        <Property Name="Path1044" Type="Edm.String" />
+        <Property Name="Term1049" Type="Edm.String" />
+        <Property Name="Path1049" Type="Edm.String" />
+        <Property Name="Term2052" Type="Edm.String" />
+        <Property Name="Path2052" Type="Edm.String" />
+        <Property Name="Term1028" Type="Edm.String" />
+        <Property Name="Path1028" Type="Edm.String" />
+        <Property Name="Term1081" Type="Edm.String" />
+        <Property Name="Path1081" Type="Edm.String" />
+        <Property Name="Term1086" Type="Edm.String" />
+        <Property Name="Path1086" Type="Edm.String" />
+        <Property Name="Term1060" Type="Edm.String" />
+        <Property Name="Path1060" Type="Edm.String" />
+        <Property Name="Term1030" Type="Edm.String" />
+        <Property Name="Path1030" Type="Edm.String" />
+        <Property Name="Term1069" Type="Edm.String" />
+        <Property Name="Path1069" Type="Edm.String" />
+        <Property Name="Term1035" Type="Edm.String" />
+        <Property Name="Path1035" Type="Edm.String" />
+        <Property Name="Term1043" Type="Edm.String" />
+        <Property Name="Path1043" Type="Edm.String" />
+        <Property Name="Term1051" Type="Edm.String" />
+        <Property Name="Path1051" Type="Edm.String" />
+        <Property Name="Term1068" Type="Edm.String" />
+        <Property Name="Path1068" Type="Edm.String" />
+        <Property Name="Term1026" Type="Edm.String" />
+        <Property Name="Path1026" Type="Edm.String" />
+        <Property Name="Term1110" Type="Edm.String" />
+        <Property Name="Path1110" Type="Edm.String" />
+        <Property Name="Term1055" Type="Edm.String" />
+        <Property Name="Path1055" Type="Edm.String" />
+        <Property Name="Term1106" Type="Edm.String" />
+        <Property Name="Path1106" Type="Edm.String" />
+        <Property Name="Term1050" Type="Edm.String" />
+        <Property Name="Path1050" Type="Edm.String" />
+        <Property Name="Term1038" Type="Edm.String" />
+        <Property Name="Path1038" Type="Edm.String" />
+        <Property Name="Term1042" Type="Edm.String" />
+        <Property Name="Path1042" Type="Edm.String" />
+        <Property Name="Term1063" Type="Edm.String" />
+        <Property Name="Path1063" Type="Edm.String" />
+        <Property Name="Term1071" Type="Edm.String" />
+        <Property Name="Path1071" Type="Edm.String" />
+        <Property Name="Term1033" Type="Edm.String" />
+        <Property Name="Path1033" Type="Edm.String" />
+        <Property Name="Term1025" Type="Edm.String" />
+        <Property Name="Path1025" Type="Edm.String" />
+        <Property Name="Term1041" Type="Edm.String" />
+        <Property Name="Path1041" Type="Edm.String" />
+        <Property Name="Term1062" Type="Edm.String" />
+        <Property Name="Path1062" Type="Edm.String" />
+        <Property Name="Term1164" Type="Edm.String" />
+        <Property Name="Path1164" Type="Edm.String" />
+        <Property Name="Term1046" Type="Edm.String" />
+        <Property Name="Path1046" Type="Edm.String" />
+        <Property Name="Term2070" Type="Edm.String" />
+        <Property Name="Path2070" Type="Edm.String" />
+        <Property Name="Term9242" Type="Edm.String" />
+        <Property Name="Path9242" Type="Edm.String" />
+        <Property Name="Term1054" Type="Edm.String" />
+        <Property Name="Path1054" Type="Edm.String" />
+        <Property Name="Term5146" Type="Edm.String" />
+        <Property Name="Path5146" Type="Edm.String" />
+        <Property Name="Term1029" Type="Edm.String" />
+        <Property Name="Path1029" Type="Edm.String" />
+        <Property Name="Term3082" Type="Edm.String" />
+        <Property Name="Path3082" Type="Edm.String" />
+        <Property Name="Term1037" Type="Edm.String" />
+        <Property Name="Path1037" Type="Edm.String" />
+        <Property Name="Term1045" Type="Edm.String" />
+        <Property Name="Path1045" Type="Edm.String" />
+        <Property Name="Term10266" Type="Edm.String" />
+        <Property Name="Path10266" Type="Edm.String" />
+        <Property Name="Term2074" Type="Edm.String" />
+        <Property Name="Path2074" Type="Edm.String" />
+        <Property Name="Term1058" Type="Edm.String" />
+        <Property Name="Path1058" Type="Edm.String" />
+        <Property Name="Term1032" Type="Edm.String" />
+        <Property Name="Path1032" Type="Edm.String" />
+        <Property Name="Term1061" Type="Edm.String" />
+        <Property Name="Path1061" Type="Edm.String" />
+        <Property Name="Term1040" Type="Edm.String" />
+        <Property Name="Path1040" Type="Edm.String" />
+        <Property Name="Term1087" Type="Edm.String" />
+        <Property Name="Path1087" Type="Edm.String" />
+        <Property Name="Term1053" Type="Edm.String" />
+        <Property Name="Path1053" Type="Edm.String" />
+        <Property Name="Term1066" Type="Edm.String" />
+        <Property Name="Path1066" Type="Edm.String" />
+        <Property Name="Term1027" Type="Edm.String" />
+        <Property Name="Path1027" Type="Edm.String" />
+        <Property Name="Term1048" Type="Edm.String" />
+        <Property Name="Path1048" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="Attachments" Type="Edm.Boolean" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="LinkTitleNoMenu" Type="Edm.String" />
+        <Property Name="LinkTitle" Type="Edm.String" />
+        <Property Name="LinkTitle2" Type="Edm.String" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_themeItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="ThemeDescription" Type="Edm.String" />
+        <Property Name="OData__ThemePreviewJson" Type="Edm.String" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="OData__x005f_catalogs_x002f_wpItem">
+        <Property Name="ID" Type="Edm.Int32" />
+        <Property Name="ContentTypeId" Type="Edm.String" />
+        <Property Name="Created" Type="Edm.DateTimeOffset" />
+        <Property Name="AuthorId" Type="Edm.Int32" />
+        <Property Name="Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="EditorId" Type="Edm.Int32" />
+        <Property Name="OData__HasCopyDestinations" Type="Edm.Boolean" />
+        <Property Name="OData__CopySource" Type="Edm.String" />
+        <Property Name="OData__ModerationStatus" Type="Edm.Int32" />
+        <Property Name="OData__ModerationComments" Type="Edm.String" />
+        <Property Name="FileRef" Type="Edm.String" />
+        <Property Name="FileDirRef" Type="Edm.String" />
+        <Property Name="Last_x0020_Modified" Type="Edm.DateTimeOffset" />
+        <Property Name="Created_x0020_Date" Type="Edm.DateTimeOffset" />
+        <Property Name="FSObjType" Type="Edm.Int32" />
+        <Property Name="PermMask" Type="Edm.String" />
+        <Property Name="PrincipalCount" Type="Edm.String" />
+        <Property Name="CheckoutUserId" Type="Edm.Int32" />
+        <Property Name="FileLeafRef" Type="Edm.String" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="OData__CheckinComment" Type="Edm.String" />
+        <Property Name="LinkCheckedOutTitle" Type="Edm.String" />
+        <Property Name="Modified_x0020_By" Type="Edm.String" />
+        <Property Name="Created_x0020_By" Type="Edm.String" />
+        <Property Name="File_x0020_Type" Type="Edm.String" />
+        <Property Name="HTML_x0020_File_x0020_Type" Type="Edm.String" />
+        <Property Name="OData__SourceUrl" Type="Edm.String" />
+        <Property Name="OData__SharedFileIndex" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableStart2" Type="Edm.String" />
+        <Property Name="OData__EditMenuTableEnd" Type="Edm.String" />
+        <Property Name="LinkFilenameNoMenu" Type="Edm.String" />
+        <Property Name="LinkFilename" Type="Edm.String" />
+        <Property Name="LinkFilename2" Type="Edm.String" />
+        <Property Name="DocIcon" Type="Edm.String" />
+        <Property Name="ServerUrl" Type="Edm.String" />
+        <Property Name="EncodedAbsUrl" Type="Edm.String" />
+        <Property Name="BaseName" Type="Edm.String" />
+        <Property Name="FileSizeDisplay" Type="Edm.String" />
+        <Property Name="OData__Level" Type="Edm.Int32" />
+        <Property Name="OData__IsCurrentVersion" Type="Edm.Boolean" />
+        <Property Name="OData__IsRecord" Type="Edm.String" />
+        <Property Name="OData__DisplayName" Type="Edm.String" />
+        <Property Name="OData__ColorHex" Type="Edm.String" />
+        <Property Name="OData__ColorTag" Type="Edm.String" />
+        <Property Name="OData__Emoji" Type="Edm.String" />
+        <Property Name="AppAuthorId" Type="Edm.Int32" />
+        <Property Name="AppEditorId" Type="Edm.Int32" />
+        <Property Name="SelectTitle" Type="Edm.String" />
+        <Property Name="SelectFilename" Type="Edm.String" />
+        <Property Name="Edit" Type="Edm.String" />
+        <Property Name="owshiddenversion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersion" Type="Edm.Int32" />
+        <Property Name="OData__UIVersionString" Type="Edm.String" />
+        <Property Name="InstanceID" Type="Edm.Int32" />
+        <Property Name="Order" Type="Edm.Double" />
+        <Property Name="GUID" Type="Edm.Guid" />
+        <Property Name="WorkflowVersion" Type="Edm.Int32" />
+        <Property Name="WorkflowInstanceID" Type="Edm.Guid" />
+        <Property Name="ComplianceAssetId" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="WebPartDescription" Type="Edm.String" />
+        <Property Name="WebPartAssembly" Type="Edm.String" />
+        <Property Name="WebPartTypeName" Type="Edm.String" />
+        <Property Name="WebPartPartImageLarge" Type="Edm.String" />
+        <Property Name="LinkWebPart" Type="Edm.String" />
+        <Property Name="WebPartIcon" Type="Edm.String" />
+        <Property Name="Group" Type="Edm.String" />
+        <Property Name="QuickAddGroups" Type="Collection(Edm.String)" />
+        <Property Name="Author" Type="SP.Data.UserInfoItem" />
+        <Property Name="Editor" Type="SP.Data.UserInfoItem" />
+        <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
+        <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
+        <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
+        <Property Name="ContentType" Type="SP.ContentType" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="GetDlpPolicyTip" Type="SP.DlpPolicyTip" />
+        <Property Name="EffectiveBasePermissions" Type="SP.BasePermissions" />
+        <Property Name="EffectiveBasePermissionsForUI" Type="SP.BasePermissions" />
+        <Property Name="FieldValuesAsHtml" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesAsText" Type="SP.FieldStringValues" />
+        <Property Name="FieldValuesForEdit" Type="SP.FieldStringValues" />
+        <Property Name="File" Type="SP.File" />
+        <Property Name="FileSystemObjectType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Folder" Type="SP.Folder" />
+        <Property Name="IconOverlay" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LikedByInformation" Type="Microsoft.SharePoint.Likes.likedByInformation" />
+        <Property Name="ParentList" Type="SP.List" />
+        <Property Name="Properties" Type="SP.PropertyValues" />
+        <Property Name="ServerRedirectedEmbedUri" Type="Edm.String" />
+        <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
+        <Property Name="Client_Title" Type="Edm.String" />
+      </EntityType>
     </Schema>
   </edmx:DataServices>
 </edmx:Edmx>
