@@ -1119,12 +1119,14 @@
         <Property Name="archive" Type="oneDrive.archive" />
         <Property Name="archiveItem" Type="oneDrive.archiveItem" />
         <Property Name="audio" Type="oneDrive.audio" />
+        <Property Name="breadcrumb" Type="Collection(oneDrive.breadcrumbItem)" />
         <Property Name="bundle" Type="oneDrive.bundle" />
         <Property Name="commentSettings" Type="oneDrive.commentSettingsFacet" />
         <Property Name="content" Type="Edm.Stream" />
         <Property Name="coverImage" Type="oneDrive.coverImage" />
         <Property Name="cTag" Type="Edm.String" />
         <Property Name="customFilterAttributes" Type="oneDrive.custom" />
+        <Property Name="decorator" Type="oneDrive.itemDecorator" />
         <Property Name="deleted" Type="oneDrive.deleted" />
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="excelSurvey" Type="oneDrive.excelSurvey" />
@@ -1448,6 +1450,11 @@
         <Property Name="getAccessStatus" Type="oneDrive.commandProperties" />
         <Property Name="createFolder" Type="oneDrive.commandProperties" />
         <Property Name="addToOneDrive" Type="oneDrive.commandProperties" />
+        <Property Name="applicationRedirectUrl" Type="Edm.String" />
+        <Property Name="isDiscoverabilityDisabled" Type="Edm.Boolean" />
+        <Property Name="userSearchExperienceRequired" Type="Edm.Boolean" />
+        <Property Name="isMoveDisabled" Type="Edm.Boolean" />
+        <Property Name="isRenameDisabled" Type="Edm.Boolean" />
         <Property Name="restoreToDate" Type="oneDrive.commandProperties" />
         <Property Name="fileRestore" Type="oneDrive.commandProperties" />
         <Property Name="anomalyRecovery" Type="oneDrive.commandProperties" />
@@ -1668,6 +1675,7 @@
       </EntityType>
       <EntityType Name="listItem" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="contentType" Type="oneDrive.contentTypeReference" />
+        <Property Name="decorator" Type="oneDrive.itemDecorator" />
         <Property Name="deleted" Type="oneDrive.deleted" />
         <Property Name="folder" Type="oneDrive.folder" />
         <Property Name="followed" Type="oneDrive.followed" />
@@ -2149,6 +2157,7 @@
       <EntityType Name="list" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="color" Type="Edm.String" />
+        <Property Name="decorator" Type="oneDrive.listDecorator" />
         <Property Name="icon" Type="Edm.String" />
         <Property Name="itemCount" Type="Edm.Int32" />
         <Property Name="list" Type="oneDrive.listInfo" />
@@ -2601,6 +2610,12 @@
         <Property Name="webId" Type="Edm.String" />
         <Property Name="pinOrder" Type="Edm.Double" />
         <Property Name="indexId" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="newsLinkPage" BaseType="oneDrive.baseSitePage" OpenType="true">
+        <Property Name="thumbnailWebUrl" Type="Edm.String" />
+        <Property Name="newsWebUrl" Type="Edm.String" />
+        <Property Name="newsSharepointIds" Type="oneDrive.sharepointIds" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="page" BaseType="oneDrive.baseSitePage" OpenType="true">
@@ -4124,6 +4139,10 @@
         <Property Name="op" Type="oneDrive.json" />
         <Property Name="sequenceNumber" Type="Edm.Int64" />
       </ComplexType>
+      <ComplexType Name="breadcrumbItem" OpenType="true">
+        <Property Name="friendlyName" Type="Edm.String" />
+        <Property Name="appUrl" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="builtIn" OpenType="true" />
       <ComplexType Name="bundle" OpenType="true">
         <Property Name="childCount" Type="Edm.Int32" />
@@ -5232,6 +5251,10 @@
         <Property Name="OwnerEmail" Type="Edm.String" />
         <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="itemDecorator">
+        <Property Name="iconColor" Type="oneDrive.ItemIconColor" />
+        <Property Name="emoji" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="dataRequest">
         <Property Name="upload" Type="oneDrive.uploadRequest" />
       </ComplexType>
@@ -5255,6 +5278,10 @@
         <Property Name="requestGrantAccess" Type="oneDrive.sharingOperationStatus" />
         <Property Name="addExistingExternalUsers" Type="oneDrive.sharingOperationStatus" />
         <Property Name="addInternalUsers" Type="oneDrive.sharingOperationStatus" />
+      </ComplexType>
+      <ComplexType Name="listDecorator">
+        <Property Name="color" Type="oneDrive.ListColor" />
+        <Property Name="icon" Type="oneDrive.ListIcon" />
       </ComplexType>
       <ComplexType Name="commandProperties">
         <Property Name="defaultScope" Type="Edm.String" />
@@ -5464,6 +5491,25 @@
         <Member Name="Quarter" Value="90" />
         <Member Name="UnknownFutureValue" Value="-1" />
       </EnumType>
+      <EnumType Name="ItemIconColor">
+        <Member Name="yellow" Value="0" />
+        <Member Name="darkRed" Value="1" />
+        <Member Name="darkOrange" Value="2" />
+        <Member Name="darkGreen" Value="3" />
+        <Member Name="darkTeal" Value="4" />
+        <Member Name="darkBlue" Value="5" />
+        <Member Name="darkPurple" Value="6" />
+        <Member Name="darkPink" Value="7" />
+        <Member Name="gray" Value="8" />
+        <Member Name="lightRed" Value="9" />
+        <Member Name="lightOrange" Value="10" />
+        <Member Name="lightGreen" Value="11" />
+        <Member Name="lightTeal" Value="12" />
+        <Member Name="lightBlue" Value="13" />
+        <Member Name="lightPurple" Value="14" />
+        <Member Name="lightPink" Value="15" />
+        <Member Name="unknownFutureValue" Value="16" />
+      </EnumType>
       <EnumType Name="MachineLearningModelType">
         <Member Name="none" Value="0" />
         <Member Name="aiBuilder" Value="1" />
@@ -5486,7 +5532,8 @@
         <Member Name="article" Value="1" />
         <Member Name="home" Value="2" />
         <Member Name="topic" Value="3" />
-        <Member Name="unknownFutureValue" Value="4" />
+        <Member Name="newsLink" Value="4" />
+        <Member Name="unknownFutureValue" Value="5" />
       </EnumType>
       <EnumType Name="NewsType">
         <Member Name="News" Value="0" />
@@ -5523,6 +5570,43 @@
         <Member Name="LockedCheckedOutToOtherUser" Value="2" />
         <Member Name="LockedMultiLingual" Value="3" />
         <Member Name="LockedOtherReason" Value="4" />
+      </EnumType>
+      <EnumType Name="ListColor">
+        <Member Name="darkRed" Value="0" />
+        <Member Name="red" Value="1" />
+        <Member Name="orange" Value="2" />
+        <Member Name="green" Value="3" />
+        <Member Name="darkGreen" Value="4" />
+        <Member Name="teal" Value="5" />
+        <Member Name="blue" Value="6" />
+        <Member Name="navyBlue" Value="7" />
+        <Member Name="bluePurple" Value="8" />
+        <Member Name="darkBlue" Value="9" />
+        <Member Name="lavender" Value="10" />
+        <Member Name="pink" Value="11" />
+        <Member Name="unknownFutureValue" Value="12" />
+      </EnumType>
+      <EnumType Name="ListIcon">
+        <Member Name="bug" Value="0" />
+        <Member Name="calendar" Value="1" />
+        <Member Name="target" Value="2" />
+        <Member Name="clipboardList" Value="3" />
+        <Member Name="airplane" Value="4" />
+        <Member Name="rocket" Value="5" />
+        <Member Name="colorPalette" Value="6" />
+        <Member Name="lightBulb" Value="7" />
+        <Member Name="cube" Value="8" />
+        <Member Name="beaker" Value="9" />
+        <Member Name="robot" Value="10" />
+        <Member Name="piggyBank" Value="11" />
+        <Member Name="playlist" Value="12" />
+        <Member Name="hospital" Value="13" />
+        <Member Name="bank" Value="14" />
+        <Member Name="mapPin" Value="15" />
+        <Member Name="coffeeCup" Value="16" />
+        <Member Name="shoppingCart" Value="17" />
+        <Member Name="birthdayCake" Value="18" />
+        <Member Name="unknownFutureValue" Value="19" />
       </EnumType>
       <EnumType Name="SensitivityLabelAssignmentMethod">
         <Member Name="standard" Value="0" />
@@ -5965,6 +6049,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
         <ReturnType Type="oneDrive.analyticsReportsAutoQueueConfig" />
       </Function>
+      <Function Name="topRecordsRACForSite" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.analyticsReport" />
+        <ReturnType Type="oneDrive.analyticsReport" />
+      </Function>
       <Action Name="createLabelReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="format" Type="Edm.String" />
@@ -5993,6 +6081,14 @@
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
         <Parameter Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" />
+        <ReturnType Type="oneDrive.analyticsReport" />
+      </Action>
+      <Action Name="createRACForSitesReport" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="version" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createEEEUReport" IsBound="true" EntitySetPath="bindingParameter">
@@ -6662,6 +6758,10 @@
       </Function>
       <Action Name="activateStorageContainer" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
+      </Action>
+      <Action Name="requestIt" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="Edm.Stream" />
       </Action>
       <Function Name="getPositionOfWebPart" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.webPart" />
