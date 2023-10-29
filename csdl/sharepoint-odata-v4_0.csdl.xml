@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24211 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24218 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -98,6 +98,7 @@
       </ComplexType>
       <ComplexType Name="ConfigurationData">
         <Property Name="BridgeAbsolutePath" Type="SP.ResourcePath" />
+        <Property Name="IsCustomizedThemeEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsPersonalizationEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaHomeOptedOut" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NavConfig" Type="SP.HomeSiteNavConfiguration" />
@@ -2877,6 +2878,7 @@
       <EntityType Name="FontPackage">
         <Property Name="ID" Type="Edm.Guid" Nullable="false" />
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsValid" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PackageJson" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
       </EntityType>
@@ -6085,6 +6087,9 @@
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="SP.FontPackage" />
       </Function>
+      <Action Name="Apply" IsBound="true">
+        <Parameter Name="this" Type="SP.FontPackage" />
+      </Action>
       <Action Name="Delete" IsBound="true">
         <Parameter Name="this" Type="SP.FontPackage" />
       </Action>
@@ -11075,6 +11080,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.FontPackage/IsHidden">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FontPackage/IsValid">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.FontPackage/PackageJson">
@@ -25161,6 +25169,31 @@
         <Property Name="TimeLastModified" Type="Edm.DateTimeOffset" Nullable="false" />
       </ComplexType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Containers" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="SPActiveContainerCollection">
+        <Property Name="ContainerCollection" Type="Collection(Microsoft.SharePoint.Containers.SPActiveContainerProperties)" />
+        <Property Name="PagingToken" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SPActiveContainerProperties">
+        <Property Name="ApplicationName" Type="Edm.String" />
+        <Property Name="ContainerApiUrl" Type="Edm.String" />
+        <Property Name="ContainerId" Type="Edm.String" />
+        <Property Name="ContainerName" Type="Edm.String" />
+        <Property Name="ContainerSiteUrl" Type="Edm.String" />
+        <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="CreatedOn" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="Owners" Type="Collection(Microsoft.SharePoint.Containers.SPActiveContainerMemberProperties)" />
+        <Property Name="OwningApplicationId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Readers" Type="Collection(Microsoft.SharePoint.Containers.SPActiveContainerMemberProperties)" />
+        <Property Name="SensitivityLabel" Type="Edm.String" />
+        <Property Name="Status" Type="Edm.String" />
+        <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Writers" Type="Collection(Microsoft.SharePoint.Containers.SPActiveContainerMemberProperties)" />
+      </ComplexType>
+      <ComplexType Name="SPActiveContainerMemberProperties" />
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Comments" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="CommentInformation">
         <Property Name="mentions" Type="Collection(Microsoft.SharePoint.Comments.Client.Identity)" />
@@ -25534,11 +25567,13 @@
         <Property Name="driveId" Type="Edm.String" />
         <Property Name="firstActivity" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="impactedAssetLocation" Type="Edm.String" />
+        <Property Name="impactedDocLibName" Type="Edm.String" />
         <Property Name="impactedSiteType" Type="Edm.Int32" Nullable="false" />
         <Property Name="lastActivity" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="siteLabelId" Type="Edm.String" />
         <Property Name="siteLabelName" Type="Edm.String" />
         <Property Name="siteOwner" Type="Edm.String" />
+        <Property Name="siteOwnerName" Type="Edm.String" />
         <Property Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="siteType" Type="Edm.Int32" Nullable="false" />
         <Property Name="siteUrl" Type="Edm.String" />
@@ -25598,6 +25633,7 @@
         <Property Name="reportUpdationTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="TenantAdminRansomwareActivitiesOverview">
+        <Property Name="firstActivityTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="impactedAssetsCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="lastActivityTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="oneDriveActivityCount" Type="Edm.Int32" Nullable="false" />
@@ -27716,6 +27752,10 @@
         <Property Name="TaxonomyTaggingSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="TaxonomyTaggingSiteListFileName" Type="Edm.String" />
         <Property Name="TlsTokenBindingPolicyValue" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TranslationEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="TranslationSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
+        <Property Name="TranslationSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="TranslationSiteListFileName" Type="Edm.String" />
         <Property Name="UseFindPeopleInPeoplePicker" Type="Edm.Boolean" Nullable="false" />
         <Property Name="UsePersistentCookiesForExplorerView" Type="Edm.Boolean" Nullable="false" />
         <Property Name="UserVoiceForFeedbackEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -27948,6 +27988,9 @@
       <Function Name="Tenant">
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Function>
+      <Action Name="AcceptSyntexRepositoryTermsOfService" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+      </Action>
       <Action Name="AddBrandFontPackage" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="creationInformation" Type="SP.FontPackageCreationParameters" />
@@ -28125,6 +28168,13 @@
       </Action>
       <Action Name="GetIdleSessionSignOutForUnmanagedDevices" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetInsightsSummary" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="insightsScenario" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="dataFileName" Type="Edm.String" />
+        <Parameter Name="content" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Function Name="GetOneDriveSiteSharingInsights" IsBound="true" IsComposable="true">
@@ -28330,6 +28380,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Function Name="IsSyntexRepositoryTermsOfServiceAccepted" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Function>
       <Action Name="NewSPOContainerType" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="containerTypeProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeProperties" />
@@ -28410,12 +28464,12 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewId" Type="Edm.String" />
       </Action>
-      <Function Name="RenderActiveContainers" IsBound="true" IsComposable="true">
+      <Action Name="RenderActiveContainers" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="parameters" Type="SP.RenderListDataParameters" />
-        <Parameter Name="overrideParameters" Type="SP.RenderListDataOverrideParameters" />
+        <Parameter Name="containerId" Type="Edm.String" />
+        <Parameter Name="viewXml" Type="Edm.String" />
         <ReturnType Type="Edm.Stream" />
-      </Function>
+      </Action>
       <Action Name="RenderAdminListData" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="parameters" Type="SP.RenderListDataParameters" />

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24211 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24218 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -811,7 +811,7 @@
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="owners" Type="Collection(oneDrive.identity)" />
-        <Property Name="storageUsedInBytes" Type="Edm.Int32" />
+        <Property Name="storageUsedInBytes" Type="Edm.Int64" />
         <Property Name="assignedSensitivityLabel" Type="oneDrive.assignedSensitivityLabel" />
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
@@ -1084,6 +1084,7 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="image" Type="oneDrive.image" />
         <Property Name="large" Type="oneDrive.thumbnail" />
         <Property Name="largeSquare" Type="oneDrive.thumbnail" />
         <Property Name="medium" Type="oneDrive.thumbnail" />
@@ -3009,6 +3010,8 @@
         <Property Name="actionId" Type="Edm.String" Nullable="false" />
         <Property Name="action" Type="oneDrive.TenantActionType" Nullable="false" />
         <Property Name="workflowType" Type="oneDrive.WorkflowType" Nullable="false" />
+        <Property Name="justification" Type="Edm.String" Nullable="false" />
+        <Property Name="harms" Type="Collection(Edm.String)" />
       </ComplexType>
       <ComplexType Name="contentReportRequest" OpenType="true">
         <Property Name="id" Type="Edm.String" Nullable="false" />
@@ -3264,6 +3267,7 @@
         <Property Name="parentHierarchy" Type="Collection(oneDrive.itemReferenceNode)" />
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="listId" Type="Edm.String" />
+        <Property Name="containerTypeId" Type="Edm.String" />
         <Property Name="driveId" Type="Edm.String" />
         <Property Name="driveType" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" />
@@ -4539,7 +4543,7 @@
         <Property Name="runtimeTenantId" Type="Edm.String" />
         <Property Name="snapshotStorageUrl" Type="Edm.String" />
         <Property Name="socketToken" Type="Edm.String" />
-        <Property Name="storageToken" Type="Edm.String" />
+        <Property Name="labels" Type="oneDrive.extractSensitivityLabelsResult" />
       </ComplexType>
       <ComplexType Name="organizationAssets" OpenType="true">
         <Property Name="thumbnailUrl" Type="Edm.String" />
@@ -5307,6 +5311,7 @@
       </ComplexType>
       <ComplexType Name="activityNotificationScenario">
         <Property Name="scenarioId" Type="Edm.Int32" />
+        <Property Name="scenarioName" Type="Edm.String" />
         <Property Name="actionIds" Type="Collection(Edm.Int32)" Nullable="false" />
         <Property Name="deliveryMechanism" Type="Edm.Int32" />
         <Property Name="displayName" Type="Edm.String" />
@@ -5491,6 +5496,11 @@
         <Member Name="Quarter" Value="90" />
         <Member Name="UnknownFutureValue" Value="-1" />
       </EnumType>
+      <EnumType Name="SensitivityLabelAssignmentMethod">
+        <Member Name="standard" Value="0" />
+        <Member Name="privileged" Value="1" />
+        <Member Name="auto" Value="2" />
+      </EnumType>
       <EnumType Name="ItemIconColor">
         <Member Name="yellow" Value="0" />
         <Member Name="darkRed" Value="1" />
@@ -5607,11 +5617,6 @@
         <Member Name="shoppingCart" Value="17" />
         <Member Name="birthdayCake" Value="18" />
         <Member Name="unknownFutureValue" Value="19" />
-      </EnumType>
-      <EnumType Name="SensitivityLabelAssignmentMethod">
-        <Member Name="standard" Value="0" />
-        <Member Name="privileged" Value="1" />
-        <Member Name="auto" Value="2" />
       </EnumType>
       <EnumType Name="SharingCapabilities">
         <Member Name="disabled" Value="0" />
@@ -6565,6 +6570,9 @@
       <Action Name="processConsumerPurchaseEvent" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
       </Action>
+      <Action Name="updateStorageContainerReference" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+      </Action>
       <Action Name="processConsumerBusinessPurchase" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
       </Action>
@@ -6578,6 +6586,9 @@
       </Function>
       <Action Name="publish" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.page" />
+      </Action>
+      <Action Name="publish" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.newsLinkPage" />
       </Action>
       <Action Name="publish" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.contentType" />
@@ -6963,15 +6974,6 @@
       <Action Name="synchronizeCampaignPersonalCache" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.campaign" />
         <Parameter Name="items" Type="Collection(oneDrive.SynchronizeCampaignPersonalCacheItem)" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="updateCampaignPersonalCache" IsBound="true">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
-        <Parameter Name="userinfo" Type="oneDrive.userinfo" />
-        <Parameter Name="personalCacheItem" Type="oneDrive.campaignPersonalCacheItem" />
-        <Parameter Name="isAsync" Type="Edm.Boolean">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="manageItems" IsBound="true">
