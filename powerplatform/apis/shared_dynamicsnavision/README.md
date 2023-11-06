@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_dynamicsnavision`|
 |**Tier**|Premium|
-|**Version**|`u/laborbol/partial-builds/ase-v3\1.0.1653.3402`|
+|**Version**|`releases/v1.0.1664\1.0.1664.3477`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Tue Sep 05 2023|
+|**Changed**|Tue Oct 31 2023|
 
 ## Description
 Dynamics NAV is a business management solution for small and mid-sized organizations that automates and streamlines business processes and helps you manage your business. You can use this connector with Dynamics NAV 2017 or later.
