@@ -87,6 +87,104 @@
         ]
       }
     },
+    "/{connectionId}/$metadata.json/datasets/{server},{database}/procedures/{procedure}": {
+      "get": {
+        "tags": [
+          "AzureMySqlProcedureMetadata"
+        ],
+        "summary": "Get metadata of a Procedure",
+        "description": "Get metadata of a Procedure.",
+        "operationId": "GetProcedureMetadata",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "Name of MySQL server.",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "Database name.",
+            "required": true,
+            "x-ms-summary": "Database name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Procedure name.",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetStoredProcedures",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                },
+                "database": {
+                  "parameter": "database"
+                }
+              },
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProcedureMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuremysql/#get-metadata-of-a-procedure"
+        }
+      }
+    },
     "/{connectionId}/$metadata.json/datasets/{server},{database}/tables/{table}": {
       "get": {
         "tags": [
@@ -326,6 +424,95 @@
         }
       }
     },
+    "/{connectionId}/$metadata.json/datasets/{server},{database}/query/mysql": {
+      "post": {
+        "tags": [
+          "AzureMySqlPassThroughNativeQueryMetadata"
+        ],
+        "summary": "Get pass-through native MySQL query metadata",
+        "description": "Retrieves metadata for a pass-through native MySQL query.",
+        "operationId": "GetNativeQueryMetadata",
+        "consumes": [
+          "application/json",
+          "text/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "Name of MySQL server.",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "Database name.",
+            "required": true,
+            "x-ms-summary": "Database name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query text.",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/AzureMySqlPassThroughNativeQueryBody"
+            },
+            "x-ms-summary": "query text"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PassThroughNativeQueryMetadata"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuremysql/#get-pass-through-native-mysql-query-metadata"
+        }
+      }
+    },
     "/{connectionId}/databases": {
       "get": {
         "tags": [
@@ -459,6 +646,237 @@
             "x-ms-visibility": "internal"
           }
         ]
+      }
+    },
+    "/{connectionId}/datasets/{server},{database}/procedures": {
+      "get": {
+        "tags": [
+          "AzureMySqlStoredProcedure"
+        ],
+        "summary": "Get Stored Procedures",
+        "description": "This operation gets stored procedures for a database.",
+        "operationId": "GetStoredProcedures",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "Name of MySQL server",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "Database name",
+            "required": true,
+            "x-ms-summary": "Database name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProceduresList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuremysql/#get-stored-procedures"
+        }
+      }
+    },
+    "/{connectionId}/datasets/{server},{database}/procedures/{procedure}": {
+      "post": {
+        "tags": [
+          "AzureMySqlStoredProcedure"
+        ],
+        "summary": "Execute Stored Procedure",
+        "description": "This operation runs a stored procedure.",
+        "operationId": "ExecuteProcedure",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "Name of MySQL server",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "Database name",
+            "required": true,
+            "x-ms-summary": "Database name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "description": "Name of stored procedure",
+            "required": true,
+            "x-ms-summary": "Procedure name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetStoredProcedures",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                },
+                "database": {
+                  "parameter": "database"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "parameters",
+            "in": "body",
+            "description": "Input parameters to the stored procedure",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedureMetadata",
+                "parameters": {
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  },
+                  "procedure": {
+                    "parameter": "procedure"
+                  }
+                },
+                "value-path": "Schema/InputParameters"
+              }
+            },
+            "x-ms-summary": "Parameters list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/ProcedureResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetProcedureMetadata",
+                "parameters": {
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  },
+                  "procedure": {
+                    "parameter": "procedure"
+                  }
+                },
+                "value-path": "schema/procedureresultschema"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuremysql/#execute-stored-procedure"
+        }
       }
     },
     "/{connectionId}/datasets/{server},{database}/tables": {
@@ -1643,6 +2061,133 @@
           "url": "https://docs.microsoft.com/connectors/azuremysql/#when-an-item-is-modified"
         }
       }
+    },
+    "/{connectionId}/datasets/{server},{database}/query/mysql": {
+      "post": {
+        "tags": [
+          "AzureMySqlPassThroughNativeQuery"
+        ],
+        "summary": "Execute a MySQL query",
+        "description": "Execute a MySQL query",
+        "operationId": "ExecutePassThroughNativeQuery",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "server",
+            "in": "path",
+            "description": "Name of MySQL server",
+            "required": true,
+            "x-ms-summary": "Server name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetServers",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "database",
+            "in": "path",
+            "description": "Database name",
+            "required": true,
+            "x-ms-summary": "Database name",
+            "x-ms-url-encoding": "double",
+            "x-ms-dynamic-values": {
+              "operationId": "GetDatabases",
+              "parameters": {
+                "server": {
+                  "parameter": "server"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "Name",
+              "value-title": "DisplayName"
+            },
+            "type": "string"
+          },
+          {
+            "name": "query",
+            "in": "body",
+            "description": "query body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AzureMySqlPassThroughNativeQueryBody"
+            },
+            "x-ms-summary": "Query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/AzureMySqlNativeQueryResult"
+              },
+              "x-ms-dynamic-schema": {
+                "operationId": "GetNativeQueryMetadata",
+                "parameters": {
+                  "server": {
+                    "parameter": "server"
+                  },
+                  "database": {
+                    "parameter": "database"
+                  },
+                  "formalParameters": {
+                    "parameter": "formalParameters"
+                  },
+                  "query": {
+                    "parameter": "query"
+                  }
+                },
+                "value-path": "schema/queryresults"
+              },
+              "x-ms-dynamic-properties": {
+                "operationId": "GetNativeQueryMetadata",
+                "parameters": {
+                  "server": {
+                    "parameterReference": "server"
+                  },
+                  "database": {
+                    "parameterReference": "database"
+                  },
+                  "query/formalParameters": {
+                    "parameterReference": "query/formalParameters"
+                  },
+                  "query/query": {
+                    "parameterReference": "query/query"
+                  }
+                },
+                "itemValuePath": "schema/queryresults"
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/azuremysql/#execute-a-mysql-query"
+        }
+      }
     }
   },
   "definitions": {
@@ -1655,6 +2200,139 @@
         },
         "blob": {
           "$ref": "#/definitions/BlobDataSetsMetadata"
+        }
+      }
+    },
+    "AzureMySqlPassThroughNativeQueryBody": {
+      "description": "Input body to execute Pass-through Native Query",
+      "type": "object",
+      "properties": {
+        "actualParameters": {
+          "description": "Actual parameters",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "x-ms-dynamic-schema": {
+            "operationId": "GetNativeQueryMetadata",
+            "parameters": {
+              "server": {
+                "parameter": "server"
+              },
+              "database": {
+                "parameter": "database"
+              },
+              "formalParameters": {
+                "parameter": "formalParameters"
+              }
+            },
+            "value-path": "schema/actualparameters"
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetNativeQueryMetadata",
+            "parameters": {
+              "server": {
+                "parameterReference": "server"
+              },
+              "database": {
+                "parameterReference": "database"
+              },
+              "query/formalParameters": {
+                "parameterReference": "query/formalParameters"
+              }
+            },
+            "itemValuePath": "schema/actualparameters"
+          }
+        },
+        "query": {
+          "description": "Query Text",
+          "type": "string"
+        },
+        "formalParameters": {
+          "description": "Formal Parameters",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ms-editor": "dictionary"
+        }
+      }
+    },
+    "AzureMySqlNativeQueryResult": {
+      "description": "All results of the query",
+      "type": "object",
+      "properties": {
+        "ResultSets": {
+          "description": "Collection of all result sets",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              }
+            }
+          },
+          "readOnly": true
+        },
+        "OutputParameters": {
+          "description": "Output parameter values",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/Object"
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetNativeQueryMetadata",
+        "parameters": {
+          "server": {
+            "parameter": "server"
+          },
+          "database": {
+            "parameter": "database"
+          },
+          "query": {
+            "parameter": "query"
+          }
+        },
+        "value-path": "schema/queryresults"
+      },
+      "x-ms-dynamic-properties": {
+        "operationId": "GetNativeQueryMetadata",
+        "parameters": {
+          "server": {
+            "parameterReference": "server"
+          },
+          "database": {
+            "parameterReference": "database"
+          },
+          "query/query": {
+            "parameterReference": "query/query"
+          }
+        },
+        "itemValuePath": "schema/queryresults"
+      }
+    },
+    "PassThroughNativeQueryMetadata": {
+      "description": "Represents the metadata for a pass-through native query",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Query name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Query title",
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
         }
       }
     },
@@ -1981,6 +2659,96 @@
           "description": "Dataset display name",
           "type": "string"
         }
+      }
+    },
+    "Procedure": {
+      "description": "Procedure.",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Procedure name.",
+          "type": "string"
+        },
+        "DisplayName": {
+          "description": "Procedure display name.",
+          "type": "string"
+        }
+      }
+    },
+    "ProcedureMetadata": {
+      "description": "Procedure metadata",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Procedure name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Procedure title",
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
+    "ProceduresList": {
+      "description": "Represents a list of procedures.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of Procedures.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Procedure"
+          }
+        }
+      }
+    },
+    "ProcedureResult": {
+      "description": "Result of a procedure execution.",
+      "type": "object",
+      "properties": {
+        "OutputParameters": {
+          "description": "Output parameter values. The schema is dynamic based on the procedure.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Object"
+          },
+          "readOnly": true
+        },
+        "ResultSets": {
+          "description": "Result sets returned by a procedure. The schema is dynamic based on the procedure.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Object"
+              }
+            }
+          },
+          "readOnly": true
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/Object"
+      },
+      "x-ms-dynamic-schema": {
+        "operationId": "GetProcedureMetadata",
+        "parameters": {
+          "server": {
+            "parameter": "server"
+          },
+          "database": {
+            "parameter": "database"
+          },
+          "procedure": {
+            "parameter": "procedure"
+          }
+        },
+        "value-path": "schema/procedureresultschema"
       }
     },
     "Table": {
