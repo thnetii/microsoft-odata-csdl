@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24225 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24301 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -813,6 +813,7 @@
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="deletedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="expiryDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="status" Type="oneDrive.DeletedStorageContainerStatus" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -2509,6 +2510,7 @@
         <Property Name="eeeuParameters" Type="oneDrive.eeeuParameters" />
         <Property Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" />
         <Property Name="racForSitesParameters" Type="oneDrive.racForSitesParameters" />
+        <Property Name="aiBasedPolicyReportParameters" Type="oneDrive.aiBasedPolicyReportParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -2919,6 +2921,7 @@
         <Property Name="batchId" Type="Edm.Guid" />
         <Property Name="createOrchestrationJob" Type="Edm.Boolean" />
         <Property Name="tenantGeos" Type="Collection(oneDrive.tenantGeo)" />
+        <Property Name="requestStartTime" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="diagnosticFileCount" OpenType="true">
@@ -3060,7 +3063,6 @@
         <Property Name="actionId" Type="Edm.String" Nullable="false" />
         <Property Name="action" Type="oneDrive.TenantActionType" Nullable="false" />
         <Property Name="workflowType" Type="oneDrive.WorkflowType" Nullable="false" />
-        <Property Name="justification" Type="Edm.String" Nullable="false" />
         <Property Name="harms" Type="Collection(Edm.String)" />
       </ComplexType>
       <ComplexType Name="contentReportRequest" OpenType="true">
@@ -3080,6 +3082,7 @@
         <Property Name="ContentItemId" Type="Edm.String" />
         <Property Name="ExternalId" Type="Edm.String" />
         <Property Name="Traits" Type="Collection(oneDrive.avertReviewTrait)" />
+        <Property Name="ActionsUrl" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="avertReviewPolicy" OpenType="true">
@@ -3986,6 +3989,7 @@
       </ComplexType>
       <ComplexType Name="wacSession" OpenType="true">
         <Property Name="preSeededSessionKey" Type="Edm.String" />
+        <Property Name="preSeededWacSessionId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="webPartData" OpenType="true">
@@ -4927,6 +4931,15 @@
         <Property Name="modelType" Type="oneDrive.MachineLearningModelType" />
         <Property Name="additionalModelInfo" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="aiBasedPolicyReportParameters" OpenType="true">
+        <Property Name="reportName" Type="Edm.String" />
+        <Property Name="reportDescription" Type="Edm.String" />
+        <Property Name="scope" Type="Edm.String" />
+        <Property Name="sitesList" Type="Collection(oneDrive.analyticsReportSiteInfo)" />
+        <Property Name="scopeLabels" Type="Collection(oneDrive.sensitivityLabel)" />
+        <Property Name="siteTemplates" Type="Collection(Edm.String)" />
+        <Property Name="creationSources" Type="Collection(Edm.String)" />
+      </ComplexType>
       <ComplexType Name="eeeuParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
         <Property Name="privacySetting" Type="Collection(Edm.String)" />
@@ -4947,6 +4960,7 @@
         <Property Name="type" Type="oneDrive.AnalyticsReportAccessGroupType" />
       </ComplexType>
       <ComplexType Name="analyticsReportSiteInfo" OpenType="true">
+        <Property Name="siteId" Type="Edm.String" />
         <Property Name="siteName" Type="Edm.String" />
         <Property Name="siteUrl" Type="Edm.String" />
         <Property Name="siteSensitivity" Type="Edm.String" />
@@ -5846,6 +5860,7 @@
         <Member Name="IBInsightsSharePoint" Value="4" />
         <Member Name="EEEU" Value="5" />
         <Member Name="RACForSites" Value="6" />
+        <Member Name="AIBasedPolicy" Value="7" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
@@ -6066,7 +6081,7 @@
       </Action>
       <Action Name="restore" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
-        <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Parameter Name="ids" Type="Collection(Edm.String)" />
       </Action>
       <Action Name="restore" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
@@ -6080,7 +6095,7 @@
       </Action>
       <Action Name="restore" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
-        <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Parameter Name="ids" Type="Collection(Edm.String)" />
       </Action>
       <Action Name="lookupLatestInDateRange" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.restorePoint)" />
