@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_office365`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1659\1.0.1659.3460`|
+|**Version**|`releases/v1.0.1664\1.0.1664.3477`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Jul 10 2018|
-|**Changed**|Thu Oct 26 2023|
+|**Changed**|Tue Oct 31 2023|
 
 ## Description
 Microsoft Office 365 is a cloud-based service that is designed to help meet your organization's needs for robust security, reliability, and user productivity.
