@@ -9,7 +9,18 @@
     },
     "contact": {
       "name": "Microsoft"
-    }
+    },
+    "x-ms-keywords": [
+      "github",
+      "pull request",
+      "pull requests",
+      "repository",
+      "repositories",
+      "repo",
+      "repos",
+      "issue",
+      "issues"
+    ]
   },
   "host": "europe-002.azure-apim.net",
   "basePath": "/apim/github",
@@ -233,6 +244,22 @@
         },
         "deprecated": false,
         "x-ms-visibility": "important",
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetIssues",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#get-all-issues-of-a-repository"
         }
@@ -817,6 +844,22 @@
         "x-ms-api-annotation": {
           "status": "Preview"
         },
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetPullRequest",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#get-a-pull-request"
         }
@@ -1038,6 +1081,74 @@
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#request-reviewers-for-a-pull-request"
         }
+      },
+      "delete": {
+        "tags": [
+          "GitHub"
+        ],
+        "summary": "Remove requested reviewers from a pull request",
+        "description": "Remove requested reviewers from a pull request from a given set of users and/or teams.",
+        "operationId": "RemoveReviewersPullRequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/repositoryOwner"
+          },
+          {
+            "$ref": "#/parameters/repositoryName"
+          },
+          {
+            "$ref": "#/parameters/pullNumber"
+          },
+          {
+            "$ref": "#/parameters/defaultAcceptHeader"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RequestReviewersBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/github/#remove-requested-reviewers-from-a-pull-request"
+        }
       }
     },
     "/{connectionId}/repos/{repositoryOwner}/{repositoryName}/pulls": {
@@ -1233,6 +1344,22 @@
         },
         "deprecated": false,
         "x-ms-visibility": "important",
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetPullRequests",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#get-all-pull-requests-of-a-repository"
         }
@@ -1837,6 +1964,22 @@
         },
         "deprecated": false,
         "x-ms-visibility": "important",
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetIssueNum",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#get-a-particular-issue-of-a-repository"
         }
@@ -2187,6 +2330,137 @@
         }
       }
     },
+    "/{connectionId}/repos/{repositoryOwner}/{repositoryName}/collaborators": {
+      "get": {
+        "tags": [
+          "GitHub"
+        ],
+        "summary": "List repository collaborators",
+        "description": "List repository collaborators.",
+        "operationId": "ListCollaborators",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/repositoryOwner"
+          },
+          {
+            "$ref": "#/parameters/repositoryName"
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results per page.",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "per_page"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to display.",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MultipleFetchModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/github/#list-repository-collaborators"
+        }
+      }
+    },
+    "/{connectionId}/repos/{repositoryOwner}/{repositoryName}/collaborators/{userName}": {
+      "get": {
+        "tags": [
+          "GitHub"
+        ],
+        "summary": "Check if a user is a repository collaborator",
+        "description": "Check if a user is a repository collaborator.",
+        "operationId": "checkCollaborator",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/repositoryOwner"
+          },
+          {
+            "$ref": "#/parameters/repositoryName"
+          },
+          {
+            "$ref": "#/parameters/userName"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GeneralAPIModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error. Unknown error occurred"
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "important",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/github/#check-if-a-user-is-a-repository-collaborator"
+        }
+      }
+    },
     "/{connectionId}/repos/{repositoryOwner}/{repositoryName}/milestones": {
       "get": {
         "tags": [
@@ -2524,6 +2798,22 @@
         },
         "deprecated": false,
         "x-ms-visibility": "important",
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetRepos",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#lists-all-public-repositories-for-a-user"
         }
@@ -2617,6 +2907,22 @@
         },
         "deprecated": false,
         "x-ms-visibility": "important",
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "GetOrgRepos",
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ]
+        },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/github/#lists-all-public-repositories-for-an-organization"
         }
@@ -5751,6 +6057,14 @@
       "description": "Name of the repository.",
       "required": true,
       "x-ms-summary": "Repository Name",
+      "type": "string"
+    },
+    "userName": {
+      "name": "userName",
+      "in": "path",
+      "description": "The handle for the GitHub user account.",
+      "required": true,
+      "x-ms-summary": "user Name",
       "type": "string"
     },
     "issueNumber": {
