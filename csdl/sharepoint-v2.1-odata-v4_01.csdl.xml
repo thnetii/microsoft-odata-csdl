@@ -2058,6 +2058,7 @@
         <Property Name="deletedFromLocation" Type="Edm.String" />
         <Property Name="deletedBy" Type="oneDrive.identitySet" />
         <Property Name="title" Type="Edm.String" />
+        <Property Name="driveItemId" Type="Edm.String" />
       </EntityType>
       <EntityType Name="richLongRunningOperation" OpenType="true">
         <Key>
@@ -2666,7 +2667,7 @@
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="newsLinkPage" BaseType="oneDrive.baseSitePage" OpenType="true">
-        <Property Name="thumbnailWebUrl" Type="Edm.String" />
+        <Property Name="bannerImageWebUrl" Type="Edm.String" />
         <Property Name="newsWebUrl" Type="Edm.String" />
         <Property Name="newsSharepointIds" Type="oneDrive.sharepointIds" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -3206,6 +3207,7 @@
       <ComplexType Name="campaignPersonalCacheItem" OpenType="true">
         <Property Name="CampaignId" Type="Edm.String" />
         <Property Name="CampaignWebId" Type="Edm.String" />
+        <Property Name="CampaignSiteAadGroupId" Type="Edm.Guid" />
         <Property Name="CampaignUrl" Type="Edm.String" />
         <Property Name="CampaignTitle" Type="Edm.String" />
         <Property Name="Color" Type="Edm.String" />
@@ -5406,6 +5408,8 @@
         <Property Name="photoStreamReaction" Type="Edm.Boolean" />
         <Property Name="photoStreamComment" Type="Edm.Boolean" />
         <Property Name="documentDigestEmail" Type="Edm.Boolean" />
+        <Property Name="comment" Type="Edm.Boolean" />
+        <Property Name="commentReply" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="documentPreferences">
         <Property Name="eTag" Type="Edm.String" />
@@ -6174,6 +6178,13 @@
         <Parameter Name="format" Type="Edm.String" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
+      <Action Name="createAIPolicyReport" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <Parameter Name="labelId" Type="Edm.String" />
+        <Parameter Name="labelName" Type="Edm.String" />
+        <Parameter Name="aiBasedPolicyReportParameters" Type="oneDrive.aiBasedPolicyReportParameters" />
+        <ReturnType Type="oneDrive.analyticsReport" />
+      </Action>
       <Action Name="createIBInsightsReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="entity" Type="Edm.String">
@@ -6475,6 +6486,9 @@
         <Parameter Name="sendNotification" Type="Edm.Boolean">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.permission" />
       </Action>
       <Action Name="invite" IsBound="true" EntitySetPath="bindingParameter/permissions">
@@ -6620,6 +6634,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
         <Parameter Name="loadEstimates" Type="Collection(oneDrive.loadEstimateInfo)" />
       </Action>
+      <Function Name="delta" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
+        <ReturnType Type="Collection(oneDrive.listItem)" />
+      </Function>
       <Function Name="delta" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.listItem)" />
         <ReturnType Type="Collection(oneDrive.listItem)" />
@@ -7315,6 +7333,9 @@
       <Function Name="getConfirmations">
         <ReturnType Type="Collection(oneDrive.recognizedEntityConfirmationInfo)" />
       </Function>
+      <Action Name="deleteAll" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
+      </Action>
       <Action Name="redeemToken" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="token" Type="Edm.String" />
