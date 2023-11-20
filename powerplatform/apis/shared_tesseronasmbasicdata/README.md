@@ -1,12 +1,12 @@
-# Tesseron ASM Basic Data
+# Tesseron Basic Data
 | | |
 |-:|-|
 |**API name**|`shared_tesseronasmbasicdata`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1644\1.0.1644.3342`|
+|**Version**|`releases/v1.0.1667\1.0.1667.3505`|
 |**Publisher**|**Luithle + Luithle GmbH**|
 |**Created**|Tue Nov 08 2022|
-|**Changed**|Wed Jul 05 2023|
+|**Changed**|Mon Nov 13 2023|
 
 ## Description
-This connector allows you to create, edit and search enterprises and contacts in your Tesseron ASM Instance.
+This connector allows you to create, edit and search enterprises and contacts in your Tesseron Instance.
