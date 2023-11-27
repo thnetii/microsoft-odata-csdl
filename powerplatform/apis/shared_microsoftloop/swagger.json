@@ -1,0 +1,204 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Microsoft Loop",
+    "description": "Microsoft Loop Connector for Loop Business Process Automation Rules",
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://support.microsoft.com/en-us/contactus/"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/en-us/privacystatement"
+    },
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://loop.microsoft.com/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Collaboration;Productivity"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/microsoftloop",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {},
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/webhooks/register": {
+      "x-ms-notification-content": {
+        "description": "Details for registering the Webhook",
+        "schema": {
+          "$ref": "#/definitions/WebhookPushResponse"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "description": "Register the webhook for the rule in Loop",
+        "summary": "Triggers when a rule in Loop gets triggered",
+        "operationId": "webhook-trigger",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of webhook",
+            "in": "body",
+            "description": "This is the request body of the Webhook",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WebhookRequestBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftloop/#triggers-when-a-rule-in-loop-gets-triggered"
+        }
+      }
+    },
+    "/{connectionId}/webhooks/deregister/${driveId}/${itemId}/${ruleId}": {
+      "delete": {
+        "description": "De-register the webhook",
+        "summary": "De-register the webhook",
+        "operationId": "webhook-deregistration",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "driveId",
+            "in": "path",
+            "description": "DriveId of the Loop file",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "DriveId of the Loop while in which the rule is present"
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "ItemId of the Loop file",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "ItemId of the Loop while in which the rule is present"
+          },
+          {
+            "name": "ruleId",
+            "in": "path",
+            "description": "RuleId for which the webhook needs to be deleted",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "RuleId for which the webhook needs to be deleted"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftloop/#de-register-the-webhook"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WebhookPushResponse": {
+      "type": "object",
+      "properties": {
+        "custom_body": {
+          "type": "string",
+          "description": "Custom Message Body to be used in further actions",
+          "x-ms-summary": "Custom Message Body to be used in further actions"
+        }
+      }
+    },
+    "WebhookRequestBody": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "callback_url": {
+              "type": "string",
+              "description": "The callback URL",
+              "title": "callback URL",
+              "x-ms-notification-url": true,
+              "x-ms-visibility": "internal",
+              "default": "localhost"
+            },
+            "rule_id": {
+              "type": "string",
+              "description": "Rule Id",
+              "title": "Rule Id",
+              "x-ms-summary": "Rule Id",
+              "x-ms-visibility": "advanced"
+            },
+            "drive_id": {
+              "type": "string",
+              "description": "The Drive Id of the Loop File",
+              "title": "Drive Id",
+              "x-ms-summary": "Drive Id",
+              "x-ms-visibility": "advanced"
+            },
+            "item_id": {
+              "type": "string",
+              "description": "The Item Id of the Loop File",
+              "title": "Item Id",
+              "x-ms-summary": "Item Id",
+              "x-ms-visibility": "advanced"
+            }
+          },
+          "required": [
+            "callback_url",
+            "rule_id",
+            "drive_id",
+            "item_id"
+          ]
+        }
+      },
+      "required": [
+        "config"
+      ]
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/microsoftloop"
+  }
+}
