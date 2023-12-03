@@ -149,12 +149,12 @@
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SiteUrl" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="ContentTypeId">
-        <Property Name="StringValue" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="FieldLookupValue">
         <Property Name="LookupId" Type="Edm.Int32" Nullable="false" />
         <Property Name="LookupValue" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ContentTypeId">
+        <Property Name="StringValue" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="FieldUserValue" BaseType="SP.FieldLookupValue">
         <Property Name="Email" Type="Edm.String" />
@@ -1887,6 +1887,7 @@
         <Property Name="IrmReject" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsApplicationList" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsCatalog" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsContributorOwnerEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsDefaultDocumentLibrary" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsEnterpriseGalleryLibrary" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsPredictionModelApplied" Type="Edm.Boolean" Nullable="false" />
@@ -2939,6 +2940,10 @@
         <Property Name="RedirectUrl" Type="Edm.String" />
       </EntityType>
       <EntityType Name="MoveCopyUtil" Abstract="true" />
+      <EntityType Name="SPPlaylist" Abstract="true" />
+      <EntityType Name="SPPlaylist_Subscriber">
+        <Property Name="isUserSubscribed" Type="Edm.Boolean" Nullable="false" />
+      </EntityType>
       <EntityType Name="RelatedField">
         <Property Name="FieldId" Type="Edm.Guid" Nullable="false" />
         <Property Name="ListId" Type="Edm.Guid" Nullable="false" />
@@ -3522,6 +3527,9 @@
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="SP.BrandCenterConfiguration" />
       </Function>
+      <Action Name="EnsureBrandFontsLibraryFeature" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+      </Action>
       <Function Name="OrgAssets" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
@@ -6114,6 +6122,9 @@
       <Action Name="Delete" IsBound="true">
         <Parameter Name="this" Type="SP.FontPackage" />
       </Action>
+      <Action Name="Update" IsBound="true">
+        <Parameter Name="this" Type="SP.FontPackage" />
+      </Action>
       <Function Name="GetById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(SP.Form)" />
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
@@ -6242,6 +6253,9 @@
         <Parameter Name="this" Type="SP.ObjectSharingInformation" />
         <ReturnType Type="Collection(SP.ObjectSharingInformationUser)" />
       </Action>
+      <Function Name="SPPlaylist_Subscriber">
+        <ReturnType Type="SP.SPPlaylist_Subscriber" />
+      </Function>
       <Function Name="GetByStoreId" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(SP.PushNotificationSubscriber)" />
         <Parameter Name="id" Type="Edm.String" />
@@ -7325,6 +7339,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/AuthorByline">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/AuthoringMetadata">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/BannerImageUrl">
@@ -10012,6 +10029,9 @@
       <Annotations Target="SP.InformationRightsManagementSettings/TemplateId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.List/IsContributorOwnerEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.List/IsDefaultDocumentLibrary">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11415,6 +11435,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints/O365MessageCenterEndpoint">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminEndpoints/SPMigrationToolUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminSettingsService">
@@ -13493,6 +13516,9 @@
       <Annotations Target="SP.Configuration(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.EnsureBrandFontsLibraryFeature(SP.BrandCenter)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.OrgAssets(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14180,6 +14206,15 @@
       <Annotations Target="SP.RestoreByID(Collection(SP.ListItemVersion), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.SPPlaylist.GetSubscriberInfo(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SPPlaylist.Subscribe(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SPPlaylist.Unsubscribe(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.SharingUtility.GetUserDirectoryInfoByEmail(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14303,6 +14338,9 @@
       <Annotations Target="SP.TeamChannelManager.SaveConversations(Edm.String, Edm.Int32, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.TeamChannelManager.StampLWGIdOnPrivateChannelSite(Edm.Guid)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.TeamChannelManager.SyncTeamSiteSettings()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14310,6 +14348,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.TeamChannelManager.UnarchiveTeamChannelByPath(SP.ResourcePath)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.TeamChannelManager.UnstampLWGIdOnPrivateChannelSite()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SetId(SP.TimeZone, Edm.Int32)">
@@ -20501,6 +20542,10 @@
         <Property Name="Color" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SitePageAuthoringMetadata">
+        <Property Name="SequenceId" Type="Edm.Int64" Nullable="false" />
+        <Property Name="SessionId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="BoostFieldsData">
         <Property Name="BoostOrderType" Type="Edm.Int32" Nullable="false" />
         <Property Name="BoostUntilSeen" Type="Edm.Boolean" />
@@ -20513,6 +20558,7 @@
       </ComplexType>
       <ComplexType Name="SitePageFieldsData">
         <Property Name="AuthorByline" Type="Collection(Edm.String)" />
+        <Property Name="AuthoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
         <Property Name="BannerImageUrl" Type="Edm.String" />
         <Property Name="CallToAction" Type="Edm.String" />
         <Property Name="CanvasContent1" Type="Edm.String" />
@@ -20972,10 +21018,6 @@
         <Property Name="OrgAssets" Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </ComplexType>
       <EntityType Name="AnnouncementsController" />
-      <EntityType Name="SitePageAuthoringMetadata">
-        <Property Name="SequenceId" Type="Edm.String" />
-        <Property Name="SessionId" Type="Edm.String" />
-      </EntityType>
       <EntityType Name="SitePageMetadata">
         <Key>
           <PropertyRef Name="Id" />
@@ -21027,6 +21069,7 @@
       </EntityType>
       <EntityType Name="SitePage" BaseType="SP.Publishing.SitePageMetadata">
         <Property Name="AlternativeUrlMap" Type="Edm.String" />
+        <Property Name="AuthoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
         <Property Name="CanvasContent1" Type="Edm.String" />
         <Property Name="CanvasJson1" Type="Edm.String" />
         <Property Name="CheckIn" Type="Edm.Boolean" Nullable="false" />
@@ -21039,7 +21082,6 @@
         <Property Name="Name" Type="Edm.String" />
         <Property Name="SitePageFlags" Type="Edm.String" />
         <Property Name="TranspileContent" Type="Edm.String" />
-        <NavigationProperty Name="AuthoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" ContainsTarget="true" />
         <NavigationProperty Name="Translations" Type="SP.TranslationStatusCollection" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="CampaignPublication" BaseType="SP.Publishing.SitePage">
@@ -25369,6 +25411,7 @@
         <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
         <Property Name="CreatedBy" Type="Edm.String" />
         <Property Name="CreatedOn" Type="Edm.String" />
+        <Property Name="DeletedOn" Type="Edm.String" />
         <Property Name="Description" Type="Edm.String" />
         <Property Name="Owners" Type="Collection(Microsoft.SharePoint.Containers.SPActiveContainerMemberProperties)" />
         <Property Name="OwningApplicationId" Type="Edm.Guid" Nullable="false" />
@@ -25736,6 +25779,15 @@
       <ComplexType Name="GroupSitesActivityDetail">
         <Property Name="GroupId" Type="Edm.Guid" Nullable="false" />
         <Property Name="LastActivityDate" Type="Edm.DateTimeOffset" />
+      </ComplexType>
+      <ComplexType Name="InactiveSitePolicyResourceStorage">
+        <Property Name="createdOn" Type="Edm.DateTimeOffset" />
+        <Property Name="lastScopedOn" Type="Edm.DateTimeOffset" />
+        <Property Name="lookupSiteId" Type="SP.FieldLookupValue" />
+        <Property Name="resourceId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="resourceStatus" Type="Edm.Int32" Nullable="false" />
+        <Property Name="resourceType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="updatedOn" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="PageResponse">
         <Property Name="ContinuationToken" Type="Edm.String" />
@@ -27379,6 +27431,7 @@
       </ComplexType>
       <ComplexType Name="SPContainerTypeConfigurationProperties">
         <Property Name="ApplicationRedirectUrl" Type="Edm.String" />
+        <Property Name="Classification" Type="Edm.Int32" Nullable="false" />
         <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
         <Property Name="ContainerTypeName" Type="Edm.String" />
         <Property Name="IsDiscoverablilityDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -27405,6 +27458,9 @@
         <Property Name="ContainerName" Type="Edm.String" />
         <Property Name="CreatedOn" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="DeletedOn" Type="Edm.DateTimeOffset" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="SPDeletedContainerTypeProperties">
+        <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SPListModernUXOff">
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
@@ -27674,6 +27730,7 @@
         <Property Name="MiniMavenEndpoint" Type="Edm.String" />
         <Property Name="O365AdminCenterEndpoint" Type="Edm.String" />
         <Property Name="O365MessageCenterEndpoint" Type="Edm.String" />
+        <Property Name="SPMigrationToolUrl" Type="Edm.String" />
       </EntityType>
       <EntityType Name="TenantAdminSettingsService">
         <Property Name="AutoQuotaEnabled" Type="Microsoft.Online.SharePoint.TenantAdministration.AutoQuotaEnabled" />
@@ -27727,6 +27784,7 @@
         <Property Name="AnyoneLinkTrackUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AppBypassInformationBarriers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ApplyAppEnforcedRestrictionsToAdHocRecipients" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AppOnlyBypassPeoplePickerPolicies" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ArchiveRedirectUrl" Type="Edm.String" />
         <Property Name="AuthContextResilienceMode" Type="Edm.Int32" Nullable="false" />
         <Property Name="BccExternalSharingInvitations" Type="Edm.Boolean" Nullable="false" />
@@ -27811,6 +27869,7 @@
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSensitivityLabelForPDF" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSiteArchive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnableTenantRestrictionsInsights" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -27983,6 +28042,7 @@
         <Property Name="Workflow2010Disabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Workflows2013State" Type="Edm.Int32" Nullable="false" />
         <NavigationProperty Name="Sites" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteProperties)" ContainsTarget="true" />
+        <NavigationProperty Name="TotalTenantArchiveFileSizeAggregation" Type="Microsoft.SharePoint.Administration.Archiving.ArchiveFileSizeMetric" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="TopFilesSharingInsights">
         <Property Name="Anyone" Type="Edm.Int64" Nullable="false" />
@@ -28330,7 +28390,7 @@
       <Action Name="EnableCollaborationInsightsDataCollection" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
-      <Action Name="EnsureBrandCenterSiteFeature" IsBound="true">
+      <Action Name="EnsureBrandCenterFeature" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
       <Action Name="ExportAdminListToCSV" IsBound="true">
@@ -28352,6 +28412,10 @@
       <Function Name="GetAdminListViews" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.View)" />
+      </Function>
+      <Function Name="GetBrandCenterConfiguration" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="SP.BrandCenterConfiguration" />
       </Function>
       <Function Name="GetBrandFontPackages" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -28694,6 +28758,10 @@
       <Action Name="RemoveSPOContainerByContainerSiteUrl" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="containerSiteUrl" Type="Edm.String" />
+      </Action>
+      <Action Name="RemoveSPOContainerType" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="spDeletedContainerTypeProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPDeletedContainerTypeProperties" />
       </Action>
       <Action Name="RemoveTargetedSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -32087,6 +32155,15 @@
     <Schema Namespace="SP.Analytics" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="AnalyticsUsageEntry" />
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.Archiving" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="ArchiveFileSizeMetric">
+        <Property Name="ActiveStorageInGB" Type="Edm.Double" Nullable="false" />
+        <Property Name="ArchivedStorageInGB" Type="Edm.Double" Nullable="false" />
+        <Property Name="InactiveStorageInGB" Type="Edm.Double" Nullable="false" />
+        <Property Name="LastRefreshOn" Type="Edm.DateTimeOffset" />
+        <Property Name="UnsupportedStorageInGB" Type="Edm.Double" Nullable="false" />
+      </EntityType>
+    </Schema>
     <Schema Namespace="Microsoft.Online.SharePoint.TenantManagement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ExternalUser">
         <Property Name="AcceptedAs" Type="Edm.String" />
@@ -32134,6 +32211,7 @@
         <Property Name="AnyoneLinkTrackUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AppBypassInformationBarriers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ApplyAppEnforcedRestrictionsToAdHocRecipients" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AppOnlyBypassPeoplePickerPolicies" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AuthContextResilienceMode" Type="Edm.Int32" Nullable="false" />
         <Property Name="BccExternalSharingInvitations" Type="Edm.Boolean" Nullable="false" />
         <Property Name="BccExternalSharingInvitationsList" Type="Edm.String" />
@@ -34980,6 +35058,18 @@
         <ReturnType Type="SP.ObjectSharingInformation" />
       </Action>
     </Schema>
+    <Schema Namespace="SP.SPPlaylist" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="GetSubscriberInfo">
+        <Parameter Name="listId" Type="Edm.String" />
+        <ReturnType Type="SP.SPPlaylist_Subscriber" />
+      </Action>
+      <Action Name="Subscribe">
+        <Parameter Name="listId" Type="Edm.String" />
+      </Action>
+      <Action Name="Unsubscribe">
+        <Parameter Name="listId" Type="Edm.String" />
+      </Action>
+    </Schema>
     <Schema Namespace="SP.RequestUserContext" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="Current">
         <ReturnType Type="SP.RequestUserContext" />
@@ -35065,6 +35155,10 @@
         <Parameter Name="listItemId" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="updatedConversationsObject" Type="Edm.String" />
       </Action>
+      <Action Name="StampLWGIdOnPrivateChannelSite">
+        <Parameter Name="idLWG" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="SyncTeamSiteSettings">
         <ReturnType Type="SP.TeamSiteData" />
       </Action>
@@ -35074,6 +35168,9 @@
       </Action>
       <Action Name="UnarchiveTeamChannelByPath">
         <Parameter Name="folderPath" Type="SP.ResourcePath" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="UnstampLWGIdOnPrivateChannelSite">
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
     </Schema>
