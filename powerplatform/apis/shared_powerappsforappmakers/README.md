@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_powerappsforappmakers`|
 |**Tier**|Standard|
-|**Version**|`u/shgogna/globalperconnector-train1\1.0.1639.3312`|
+|**Version**|`releases/v1.0.1669\1.0.1669.3520`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Aug 21 2018|
-|**Changed**|Tue Jun 06 2023|
+|**Changed**|Wed Nov 29 2023|
 
 ## Description
 Power Apps Management Connector for Makers
