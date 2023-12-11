@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_docparser`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1559\1.0.1559.2723`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Docparser**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Mon Mar 14 2022|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 Extract data from PDF files & automate your workflow with our reliable document parsing software.
