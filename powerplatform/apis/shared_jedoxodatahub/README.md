@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_jedoxodatahub`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1630\1.0.1630.3261`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Jedox**|
 |**Created**|Fri Apr 01 2022|
-|**Changed**|Mon Apr 24 2023|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Connect to your Jedox OData Hub. Fetch data from the Olap server, stream data from the Integrator server or execute loads and jobs.
