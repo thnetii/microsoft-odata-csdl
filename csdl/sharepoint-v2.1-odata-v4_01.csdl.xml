@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24322 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24329 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1043,6 +1043,7 @@
         <NavigationProperty Name="exo" Type="oneDrive.UnifiedQuotaTopEntities_1OfEXOUnifiedQuotaTopEntity" ContainsTarget="true" />
         <NavigationProperty Name="spo" Type="oneDrive.UnifiedQuotaTopEntities_1OfODSPUnifiedQuotaTopEntity" ContainsTarget="true" />
         <NavigationProperty Name="odb" Type="oneDrive.UnifiedQuotaTopEntities_1OfODSPUnifiedQuotaTopEntity" ContainsTarget="true" />
+        <NavigationProperty Name="inactiveUsers" Type="oneDrive.UnifiedQuotaTopEntities_1OfInactiveUsersUnifiedQuotaTopEntity" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="UnifiedQuotaTopEntities_1OfEXOUnifiedQuotaTopEntity">
         <Property Name="LastRequestDate" Type="Edm.DateTimeOffset" />
@@ -1055,6 +1056,12 @@
         <Property Name="LastRequestState" Type="Edm.String" />
         <Property Name="ReportDate" Type="Edm.DateTimeOffset" />
         <Property Name="Items" Type="Collection(oneDrive.ODSPUnifiedQuotaTopEntity)" />
+      </EntityType>
+      <EntityType Name="UnifiedQuotaTopEntities_1OfInactiveUsersUnifiedQuotaTopEntity">
+        <Property Name="LastRequestDate" Type="Edm.DateTimeOffset" />
+        <Property Name="LastRequestState" Type="Edm.String" />
+        <Property Name="ReportDate" Type="Edm.DateTimeOffset" />
+        <Property Name="Items" Type="Collection(oneDrive.InactiveUsersUnifiedQuotaTopEntity)" />
       </EntityType>
       <EntityType Name="campaign" OpenType="true">
         <Key>
@@ -2614,6 +2621,7 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="triggerDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="labelId" Type="Edm.String" />
         <Property Name="entity" Type="oneDrive.AnalyticsReportEntity" />
         <Property Name="format" Type="oneDrive.AnalyticsReportFormat" />
@@ -5094,6 +5102,7 @@
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="siteName" Type="Edm.String" />
         <Property Name="siteUrl" Type="Edm.String" />
+        <Property Name="siteType" Type="oneDrive.AnalyticsReportSiteType" />
         <Property Name="siteSensitivity" Type="Edm.String" />
         <Property Name="primaryAdmin" Type="Edm.String" />
         <Property Name="blockDownloadPolicy" Type="Edm.String" />
@@ -5102,6 +5111,8 @@
       </ComplexType>
       <ComplexType Name="racForSitesParameters" OpenType="true">
         <Property Name="racEnabledSitesPercentage" Type="Edm.Int32" />
+        <Property Name="totalSitesCount" Type="Edm.Int32" />
+        <Property Name="restrictedAccessControlProtectedSitesCount" Type="Edm.Int32" />
         <Property Name="sitesList" Type="Collection(oneDrive.analyticsReportSiteInfo)" />
       </ComplexType>
       <ComplexType Name="format" OpenType="true">
@@ -5451,6 +5462,13 @@
         <Property Name="OwnerEmail" Type="Edm.String" />
         <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="InactiveUsersUnifiedQuotaTopEntity">
+        <Property Name="UserPrincipalName" Type="Edm.String" />
+        <Property Name="LastLogin" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ExoUsage" Type="Edm.Int64" />
+        <Property Name="OdbUsage" Type="Edm.Int64" />
+        <Property Name="SpoUsage" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="itemDecorator">
         <Property Name="iconColor" Type="oneDrive.ItemIconColor" />
         <Property Name="emoji" Type="Edm.String" />
@@ -5466,6 +5484,7 @@
         <Property Name="url" Type="Edm.String" />
         <Property Name="fatalError" Type="Edm.Boolean" />
         <Property Name="errorInfo" Type="Edm.String" />
+        <Property Name="bundleStaleness" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="samsungMotionPhoto" />
       <ComplexType Name="wacHostFlightStatus">
@@ -6047,6 +6066,13 @@
         <Member Name="Open" Value="3" />
         <Member Name="OwnerModerated" Value="4" />
         <Member Name="ModeDistribution" Value="5" />
+      </EnumType>
+      <EnumType Name="AnalyticsReportSiteType">
+        <Member Name="GroupSite" Value="0" />
+        <Member Name="NonGroupChannelSite" Value="1" />
+        <Member Name="NonGroupOneDrives" Value="2" />
+        <Member Name="NonGroupCommunicationSites" Value="3" />
+        <Member Name="NonGroupClassic" Value="4" />
       </EnumType>
       <EnumType Name="AnalyticsReportAccessGroupType">
         <Member Name="M365Group" Value="0" />
