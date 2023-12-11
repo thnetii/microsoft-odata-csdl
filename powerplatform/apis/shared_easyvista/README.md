@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_easyvista`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1527\1.0.1527.2580`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Easyvista**|
 |**Created**|Mon Apr 15 2019|
-|**Changed**|Tue Oct 12 2021|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 EasyVista Service Manager
