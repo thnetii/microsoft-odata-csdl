@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_crmbot`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1583\1.0.1583.2865`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**CRM Bot Ltd**|
 |**Created**|Tue Oct 06 2020|
-|**Changed**|Mon Jun 06 2022|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 Create powerful conversation experience for your customers right from your CRM system.
