@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_assentlyesign`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1583\1.0.1583.2865`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Assently AB**|
 |**Created**|Tue Jul 27 2021|
-|**Changed**|Mon Jun 06 2022|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 Assently E-Sign is a premium SaaS for e-signatures and smart contracts allowing full digitalization for your document workflows.
