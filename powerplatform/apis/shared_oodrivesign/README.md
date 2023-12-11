@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_oodrivesign`|
 |**Tier**|Premium|
-|**Version**|`u/v-sriyen/FastrackTrainFeb10\1.0.1623.3201`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Oodrive Sign**|
 |**Created**|Tue Jan 10 2023|
-|**Changed**|Fri Feb 24 2023|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Connect and consume Oodrive sign's service through your workflows.
