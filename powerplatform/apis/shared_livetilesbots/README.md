@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_livetilesbots`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1534\1.0.1534.2605`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**LiveTiles Pty Ltd.**|
 |**Created**|Mon Jul 15 2019|
-|**Changed**|Thu Nov 04 2021|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Let people focus on the work that matters most. Automate mundane, repetitive tasks. Create personal, team, enterprise and external assistants with a range of abilities.
