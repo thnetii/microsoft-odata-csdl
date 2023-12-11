@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_powerassist`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1607\1.0.1607.3068`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Elevate Digital**|
 |**Created**|Wed Sep 14 2022|
-|**Changed**|Mon Oct 31 2022|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Power Assist provides a wide variety of utility and data manipulation actions to accelerate and empower your Power Platform development.
