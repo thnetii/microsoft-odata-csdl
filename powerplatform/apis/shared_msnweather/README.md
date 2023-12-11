@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_msnweather`|
 |**Tier**|Standard|
-|**Version**|`u/jayawan/releases/v1.0.1655\1.0.1655.3424`|
+|**Version**|`releases/v1.0.1669\1.0.1669.3522`|
 |**Publisher**|**Microsoft**|
 |**Created**|Wed Sep 12 2018|
-|**Changed**|Tue Sep 19 2023|
+|**Changed**|Tue Dec 05 2023|
 
 ## Description
 MSN Weather gets you the very latest weather forecast, including temperature, humidity, precipitation for your location.
