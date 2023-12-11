@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_knowledgeonerecfind6`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1602\1.0.1602.3056`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Knowledgeone Corporation**|
 |**Created**|Tue Mar 29 2022|
-|**Changed**|Mon Oct 24 2022|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Knowledgeone RecFind6 provides table query and file upload services from external system to RecFind 6 databases.
