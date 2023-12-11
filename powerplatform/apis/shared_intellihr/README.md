@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_intellihr`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1629\1.0.1629.3253`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**intelliHR**|
 |**Created**|Tue Apr 20 2021|
-|**Changed**|Mon Apr 17 2023|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 intelliHR is a cloud-based people management platform with advanced analytics capabilities.  Connect to your intelliHR tenant to automate people-oriented workflows (such as onboarding) and data export.
