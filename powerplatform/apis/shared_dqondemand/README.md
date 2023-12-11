@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_dqondemand`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1613\1.0.1613.3125`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**DQ Global**|
 |**Created**|Tue Sep 06 2022|
-|**Changed**|Tue Dec 06 2022|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 DQ on Demand is a Data Quality as a Service (DQaaS) Data Quality Improvement Platform that is designed to make the task of data management simpler.
