@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_iaconnectsapgui`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1624\1.0.1624.3221`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Ultima Labs**|
 |**Created**|Thu Sep 16 2021|
-|**Changed**|Mon Mar 13 2023|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 IA-Connect is a Robotic Process Automation (RPA) platform which adds RPA functionality from the Cloud to on-premises virtual machines or over Citrix or Microsoft Remote Desktop (RDS) connections. This is the module for automating the SAP GUI application.
