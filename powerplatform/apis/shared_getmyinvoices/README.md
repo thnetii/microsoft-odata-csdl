@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_getmyinvoices`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1529\1.0.1529.2589`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**GetMyInvoices**|
 |**Created**|Tue Aug 25 2020|
-|**Changed**|Tue Oct 19 2021|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 GetMyInvoices is a digital invoice management software that simplifies and speeds up preparatory accounting.
