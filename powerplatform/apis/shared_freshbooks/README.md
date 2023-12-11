@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_freshbooks`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1528\1.0.1528.2589`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Thu Oct 14 2021|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 FreshBooks is a cloud based small business accounting software. Send invoices, track time, manage receipts and expenses.
