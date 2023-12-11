@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_nunify`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1608\1.0.1608.3079`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**nunify**|
 |**Created**|Fri Apr 01 2022|
-|**Changed**|Mon Nov 07 2022|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 An event tech platform to run any type of event - virtual events, hybrid events, webinars, in-person events & meetings. This platform provides all tools  for registrations, onsite check-in, networking, audience engagement, gamification, live stream, event apps, sponsorships.
