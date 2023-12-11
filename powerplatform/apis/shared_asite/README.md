@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_asite`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1622\1.0.1622.3199`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**Asite Solutions Pvt Ltd**|
 |**Created**|Tue Apr 13 2021|
-|**Changed**|Tue Feb 28 2023|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 Transform how your teams work together with the Asite connector, the ultimate collaboration solution to build connections between business systems.
