@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_elasticocr`|
 |**Tier**|Standard|
-|**Version**|`releases/v1.0.1528\1.0.1528.2589`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**ElasticOCR**|
 |**Created**|Tue Sep 18 2018|
-|**Changed**|Thu Oct 14 2021|
+|**Changed**|Thu Dec 07 2023|
 
 ## Description
 The new, modern way to OCR your documents.
