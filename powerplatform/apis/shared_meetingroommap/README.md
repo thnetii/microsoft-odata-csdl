@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_meetingroommap`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1582\1.0.1582.2855`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**TNS Holding ApS**|
 |**Created**|Thu Aug 20 2020|
-|**Changed**|Wed Jun 08 2022|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Search and display images for locations.
