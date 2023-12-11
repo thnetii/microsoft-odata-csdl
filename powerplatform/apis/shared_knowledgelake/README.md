@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_knowledgelake`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1532\1.0.1532.2598`|
+|**Version**|`u/shgogna/version-mismatches-special-train\1.0.1670.3520`|
 |**Publisher**|**KnowledgeLake**|
 |**Created**|Mon Nov 18 2019|
-|**Changed**|Thu Oct 28 2021|
+|**Changed**|Fri Dec 08 2023|
 
 ## Description
 Integration with the KnowledgeLake Intelligent Content Automation Platform
