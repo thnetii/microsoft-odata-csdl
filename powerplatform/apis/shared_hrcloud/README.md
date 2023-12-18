@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_hrcloud`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1577\1.0.1577.2796`|
+|**Version**|`releases/v1.0.1670\1.0.1670.3526`|
 |**Publisher**|**HR Cloud**|
 |**Created**|Mon Jul 12 2021|
-|**Changed**|Mon May 09 2022|
+|**Changed**|Mon Dec 11 2023|
 
 ## Description
 HR Cloud is a powerful and globally recognized HRMS software for the entire employee lifecycle.
