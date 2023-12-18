@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_commondataserviceforapps`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1664\1.0.1664.3477`|
+|**Version**|`releases/v1.0.1673\1.0.1673.3557`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Mar 19 2019|
-|**Changed**|Wed Oct 18 2023|
+|**Changed**|Tue Dec 12 2023|
 
 ## Description
-Provides access to the org-based database on Microsoft Dataverse in current environment.
+Provides access to Microsoft Dataverse actions and triggers for Power Platform environments.
