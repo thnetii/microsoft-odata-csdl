@@ -2619,14 +2619,7 @@
     },
     "ApiVersion_V30": {
       "description": "API version.",
-      "type": "string",
-      "enum": [
-        "2022-08-31"
-      ],
-      "x-ms-enum": {
-        "name": "ApiVersion",
-        "modelAsString": true
-      }
+      "type": "string"
     },
     "AnalyzeResultOperation_V30": {
       "description": "Status and result of the analyze operation.",
@@ -2842,6 +2835,20 @@
           "items": {
             "$ref": "#/definitions/DocumentLine_V30"
           }
+        },
+        "barcodes": {
+          "description": "Extracted barcodes from the page.",
+          "items": {
+            "$ref": "#/definitions/DocumentBarcode_V31"
+          },
+          "type": "array"
+        },
+        "formulas": {
+          "description": "Extracted formulas from the page.",
+          "items": {
+            "$ref": "#/definitions/DocumentFormula_V31"
+          },
+          "type": "array"
         }
       }
     },
@@ -2937,9 +2944,70 @@
         "confidence"
       ],
       "properties": {
+        "backgroundColor": {
+          "description": "Background color in #rrggbb hexadecimal format..",
+          "pattern": "^#[0-9a-f]{6}$",
+          "type": "string"
+        },
+        "color": {
+          "description": "Foreground color in #rrggbb hexadecimal format.",
+          "pattern": "^#[0-9a-f]{6}$",
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/definitions/Confidence_V30"
+        },
+        "fontStyle": {
+          "description": "Font style.",
+          "enum": [
+            "normal",
+            "italic"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "modelAsString": true,
+            "name": "FontStyle",
+            "values": [
+              {
+                "description": "Characters are represented normally.",
+                "value": "normal"
+              },
+              {
+                "description": "Characters are visually slanted to the right.",
+                "value": "italic"
+              }
+            ]
+          }
+        },
+        "fontWeight": {
+          "description": "Font weight.",
+          "enum": [
+            "normal",
+            "bold"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "modelAsString": true,
+            "name": "FontWeight",
+            "values": [
+              {
+                "description": "Characters are represented normally.",
+                "value": "normal"
+              },
+              {
+                "description": "Characters are represented with thicker strokes.",
+                "value": "bold"
+              }
+            ]
+          }
+        },
         "isHandwritten": {
           "description": "Is content handwritten.",
           "type": "boolean"
+        },
+        "similarFontFamily": {
+          "description": "Visually most similar font from among the set of supported font families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').",
+          "type": "string"
         },
         "spans": {
           "description": "Location of the text elements in the concatenated content the style applies to.",
@@ -2947,9 +3015,6 @@
           "items": {
             "$ref": "#/definitions/DocumentSpan_V30"
           }
-        },
-        "confidence": {
-          "$ref": "#/definitions/Confidence_V30"
         }
       }
     },
@@ -3019,7 +3084,8 @@
             "pageNumber",
             "title",
             "sectionHeading",
-            "footnote"
+            "footnote",
+            "formulaBlock"
           ],
           "x-ms-enum": {
             "name": "ParagraphRole",
@@ -3314,6 +3380,181 @@
           "$ref": "#/definitions/Confidence_V30"
         }
       }
+    },
+    "DocumentBarcode_V31": {
+      "description": "A barcode object.",
+      "properties": {
+        "confidence": {
+          "$ref": "#/definitions/Confidence_V30",
+          "description": "Confidence of correctly extracting the barcode."
+        },
+        "kind": {
+          "description": "Barcode kind.",
+          "enum": [
+            "QRCode",
+            "PDF417",
+            "UPCA",
+            "UPCE",
+            "Code39",
+            "Code128",
+            "EAN8",
+            "EAN13",
+            "DataBar",
+            "Code93",
+            "Codabar",
+            "DataBarExpanded",
+            "ITF",
+            "MicroQRCode",
+            "Aztec",
+            "DataMatrix",
+            "MaxiCode"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "modelAsString": true,
+            "name": "DocumentBarcodeKind",
+            "values": [
+              {
+                "description": "QR code, as defined in ISO/IEC 18004:2015.",
+                "value": "QRCode"
+              },
+              {
+                "description": "PDF417, as defined in ISO 15438.",
+                "value": "PDF417"
+              },
+              {
+                "description": "GS1 12-digit Universal Product Code.",
+                "value": "UPCA"
+              },
+              {
+                "description": "GS1 6-digit Universal Product Code.",
+                "value": "UPCE"
+              },
+              {
+                "description": "Code 39 barcode, as defined in ISO/IEC 16388:2007.",
+                "value": "Code39"
+              },
+              {
+                "description": "Code 128 barcode, as defined in ISO/IEC 15417:2007.",
+                "value": "Code128"
+              },
+              {
+                "description": "GS1 8-digit International Article Number (European Article Number).",
+                "value": "EAN8"
+              },
+              {
+                "description": "GS1 13-digit International Article Number (European Article Number).",
+                "value": "EAN13"
+              },
+              {
+                "description": "GS1 DataBar barcode.",
+                "value": "DataBar"
+              },
+              {
+                "description": "Code 93 barcode, as defined in ANSI/AIM BC5-1995.",
+                "value": "Code93"
+              },
+              {
+                "description": "Codabar barcode, as defined in ANSI/AIM BC3-1995.",
+                "value": "Codabar"
+              },
+              {
+                "description": "GS1 DataBar Expanded barcode.",
+                "value": "DataBarExpanded"
+              },
+              {
+                "description": "Interleaved 2 of 5 barcode, as defined in ANSI/AIM BC2-1995.",
+                "value": "ITF"
+              },
+              {
+                "description": "Micro QR code, as defined in ISO/IEC 23941:2022.",
+                "value": "MicroQRCode"
+              },
+              {
+                "description": "Aztec code, as defined in ISO/IEC 24778:2008.",
+                "value": "Aztec"
+              },
+              {
+                "description": "Data matrix code, as defined in ISO/IEC 16022:2006.",
+                "value": "DataMatrix"
+              },
+              {
+                "description": "MaxiCode, as defined in ISO/IEC 16023:2000.",
+                "value": "MaxiCode"
+              }
+            ]
+          }
+        },
+        "polygon": {
+          "$ref": "#/definitions/BoundingPolygon_V30",
+          "description": "Bounding polygon of the barcode."
+        },
+        "span": {
+          "$ref": "#/definitions/DocumentSpan_V30",
+          "description": "Location of the barcode in the reading order concatenated content."
+        },
+        "value": {
+          "description": "Barcode value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "span",
+        "confidence"
+      ],
+      "type": "object"
+    },
+    "DocumentFormula_V31": {
+      "description": "A formula object.",
+      "properties": {
+        "confidence": {
+          "$ref": "#/definitions/Confidence_V30",
+          "description": "Confidence of correctly extracting the formula."
+        },
+        "kind": {
+          "description": "Formula kind.",
+          "enum": [
+            "inline",
+            "display"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "modelAsString": true,
+            "name": "DocumentFormulaKind",
+            "values": [
+              {
+                "description": "A formula embedded within the content of a paragraph.",
+                "value": "inline"
+              },
+              {
+                "description": "A formula in display mode that takes up an entire line.",
+                "value": "display"
+              }
+            ]
+          }
+        },
+        "polygon": {
+          "$ref": "#/definitions/BoundingPolygon_V30",
+          "description": "Bounding polygon of the formula."
+        },
+        "span": {
+          "$ref": "#/definitions/DocumentSpan_V30",
+          "description": "Location of the formula in the reading order concatenated content."
+        },
+        "value": {
+          "description": "LaTex expression describing the formula.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "span",
+        "confidence"
+      ],
+      "type": "object"
     },
     "Document_V30": {
       "description": "An object describing the location and semantic content of a document.",
@@ -3640,6 +3881,10 @@
           "type": "number",
           "format": "double"
         },
+        "currencyCode": {
+          "description": "Resolved currency code (ISO 4217), if any.",
+          "type": "string"
+        },
         "currencySymbol": {
           "description": "Currency symbol label, if any.",
           "type": "string"
@@ -3680,6 +3925,30 @@
         },
         "streetAddress": {
           "description": "Street-level address, excluding city, state, countryRegion, and postalCode.",
+          "type": "string"
+        },
+        "cityDistrict": {
+          "description": "Districts or boroughs within a city, such as Brooklyn in New York City or City of Westminster in London.",
+          "type": "string"
+        },
+        "house": {
+          "description": "Build name, such as World Trade Center.",
+          "type": "string"
+        },
+        "level": {
+          "description": "Floor number, such as 3F.",
+          "type": "string"
+        },
+        "stateDistrict": {
+          "description": "Second-level administrative division used in certain locales.",
+          "type": "string"
+        },
+        "suburb": {
+          "description": "Unofficial neighborhood name, like Chinatown.",
+          "type": "string"
+        },
+        "unit": {
+          "description": "Apartment or office number.",
           "type": "string"
         }
       }
@@ -5018,9 +5287,9 @@
     },
     "/{connectionId}/documentModels/{modelId}:analyze": {
       "post": {
-        "description": "Extract key-value pairs, tables, and semantic values from a given document (v3.0 API).",
+        "description": "Extract key-value pairs, tables, and semantic values from a given document (v3.x API).",
         "operationId": "AnalyzeDocumentV30",
-        "summary": "Analyze Document for Prebuilt or Custom models (v3.0 API)",
+        "summary": "Analyze Document for Prebuilt or Custom models (v3.x API)",
         "parameters": [
           {
             "name": "connectionId",
@@ -5035,9 +5304,27 @@
             "description": "Form Recognizer API version.",
             "required": true,
             "type": "string",
-            "default": "2022-08-31",
-            "x-ms-summary": "Form Recognizer API Version",
-            "x-ms-visibility": "internal"
+            "default": "2023-07-31",
+            "enum": [
+              "2023-07-31",
+              "2022-08-31"
+            ],
+            "x-ms-summary": "Form Recognizer API version",
+            "x-ms-visibility": "important",
+            "x-ms-enum": {
+              "modelAsString": true,
+              "name": "ApiVersionParameter",
+              "values": [
+                {
+                  "description": "3.1 version, 2023-07-31",
+                  "value": "2023-07-31"
+                },
+                {
+                  "description": "3.0 version, 2022-08-31",
+                  "value": "2022-08-31"
+                }
+              ]
+            }
           },
           {
             "name": "modelId",
@@ -5052,6 +5339,305 @@
             "name": "pages",
             "in": "query",
             "description": "The page selection for multi-page PDF and TIFF documents, to extract Invoice information from individual pages and a range of pages (like page 2, and pages 5-7) by entering the page numbers and ranges separated by commas (e.g. '2, 5-7'). If not set, all pages will be processed.",
+            "type": "string",
+            "x-ms-summary": "Pages",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Locale hint for text recognition and document analysis.  Value may contain only the language code (ex. \"en\", \"fr\") or BCP 47 language tag (ex. \"en-US\").",
+            "type": "string",
+            "x-ms-summary": "Locale",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "stringIndexType",
+            "in": "query",
+            "description": "Method used to compute string offset and length. Supported options: textElements, unicodeCodePoint, utf16CodeUnit.",
+            "type": "string",
+            "enum": [
+              "textElements",
+              "unicodeCodePoint",
+              "utf16CodeUnit"
+            ],
+            "x-ms-summary": "String Index Type",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "features",
+            "in": "query",
+            "description": "List of optional analysis features ( such as ocrHighResolution, languages, barcodes, formulas, keyValuePairs and styleFont).",
+            "type": "array",
+            "items": {
+              "enum": [
+                "ocrHighResolution",
+                "languages",
+                "barcodes",
+                "formulas",
+                "keyValuePairs",
+                "styleFont"
+              ],
+              "type": "string",
+              "x-ms-enum": {
+                "modelAsString": true,
+                "name": "DocumentAnalysisFeature",
+                "values": [
+                  {
+                    "description": "Perform OCR at a higher resolution to handle documents with fine print.",
+                    "value": "ocrHighResolution"
+                  },
+                  {
+                    "description": "Enable the detection of the text content language.",
+                    "value": "languages"
+                  },
+                  {
+                    "description": "Enable the detection of barcodes in the document.",
+                    "value": "barcodes"
+                  },
+                  {
+                    "description": "Enable the detection of mathematical expressions in the document.",
+                    "value": "formulas"
+                  },
+                  {
+                    "description": "Enable the detection of general key value pairs (form fields) in the document.",
+                    "value": "keyValuePairs"
+                  },
+                  {
+                    "description": "Enable the recognition of various font styles.",
+                    "value": "styleFont"
+                  }
+                ]
+              }
+            },
+            "x-ms-summary": "Optional and Premium features",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "in": "body",
+            "name": "inputFileContent",
+            "required": false,
+            "schema": {
+              "format": "binary",
+              "type": "string"
+            },
+            "description": "A PDF document or image (JPG, PNG, BMP, TIFF) file to analyze.",
+            "x-ms-summary": "Document/Image File Content",
+            "x-ms-visibility": "important"
+          },
+          {
+            "in": "header",
+            "name": "inputFileUrl",
+            "required": false,
+            "type": "string",
+            "description": "Url path for input file. Alternative to Document/Image File Content.",
+            "x-ms-summary": "Document/Image URL",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "consumes": [
+          "application/json",
+          "application/octet-stream",
+          "application/pdf",
+          "image/jpeg",
+          "image/png",
+          "image/tiff",
+          "image/bmp",
+          "text/html",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON fields in the response body.",
+            "schema": {
+              "$ref": "#/definitions/AnalyzeResultOperation_V30"
+            }
+          },
+          "202": {
+            "description": "The service has accepted the request and will start processing soon.  The client can query the operation status and result using the URL specified in the 'Operation-Location' response header.  The URL expires in 24 hours.",
+            "headers": {
+              "Operation-Location": {
+                "type": "string",
+                "description": "URL containing the resultId used to track the progress and obtain the result of the analyze operation."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/AnalyzeResultOperation_V30"
+            }
+          },
+          "400": {
+            "description": "Bad request error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "404": {
+            "description": "Model not found.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "415": {
+            "description": "Unsupported media type error. 'Content-Type' does not match the POST content.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "503": {
+            "description": "Transient fault.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/formrecognizer/#analyze-document-for-prebuilt-or-custom-models-(v3.x-api)"
+        }
+      }
+    },
+    "/{connectionId}/documentModels/{modelId}/analyzeResults/{resultId}": {
+      "get": {
+        "description": "Obtain current status and the result of the analyze document operation (v3.x API).",
+        "operationId": "GetAnalyzeDocumentResultV30",
+        "x-ms-visibility": "internal",
+        "summary": "Get Analyze Document Results for Prebuilt or Custom models (v3.x API)",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "Form Recognizer API version.",
+            "required": true,
+            "type": "string",
+            "default": "2023-07-31",
+            "enum": [
+              "2023-07-31",
+              "2022-08-31"
+            ],
+            "x-ms-summary": "Form Recognizer API version",
+            "x-ms-visibility": "important",
+            "x-ms-enum": {
+              "modelAsString": true,
+              "name": "ApiVersionParameter",
+              "values": [
+                {
+                  "description": "3.1 version, 2023-07-31",
+                  "value": "2023-07-31"
+                },
+                {
+                  "description": "3.0 version, 2022-08-31",
+                  "value": "2022-08-31"
+                }
+              ]
+            }
+          },
+          {
+            "name": "modelId",
+            "in": "path",
+            "description": "Prebuilt modelIds: prebuilt-read, prebuilt-layout, prebuilt-document, prebuilt-businessCard, prebuilt-idDocument, prebuilt-invoice, prebuilt-receipt, prebuilt-tax.us.w2, prebuilt-vaccinationCard, prebuilt-healthInsuranceCard.us, and only in 3.1 version: prebuilt-tax.us.1098, prebuilt-tax.us.1098E, prebuilt-tax.us.1098T, prebuilt-contract. Custom modelId: uuid Model identifier.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Model Identifier",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "resultId",
+            "in": "path",
+            "description": "Format - uuid. Analyze operation result identifier.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON fields in the response body.",
+            "schema": {
+              "$ref": "#/definitions/AnalyzeResultOperation_V30"
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Invalid or expired result identifier.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          },
+          "503": {
+            "description": "Transient fault.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse_V30"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/formrecognizer/#get-analyze-document-results-for-prebuilt-or-custom-models-(v3.x-api)"
+        }
+      }
+    },
+    "/{connectionId}/documentClassifiers/{classifierId}:analyze": {
+      "post": {
+        "description": "Classify document with document classifier (v3.1 API).",
+        "operationId": "ClassifyDocumentV31",
+        "summary": "Classify document with document classifier (v3.1 API)",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "Form Recognizer API version.",
+            "required": true,
+            "type": "string",
+            "default": "2023-07-31",
+            "x-ms-summary": "Form Recognizer API Version",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "classifierId",
+            "in": "path",
+            "description": "Format - [a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}. Unique classifier name.",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Classifier Identifier",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "pages",
+            "in": "query",
+            "description": "The page selection for multi-page PDF and TIFF documents, to extract information from individual pages and a range of pages (like page 2, and pages 5-7) by entering the page numbers and ranges separated by commas (e.g. '2, 5-7'). If not set, all pages will be processed.",
             "type": "string",
             "x-ms-summary": "Pages",
             "x-ms-visibility": "advanced"
@@ -5166,16 +5752,16 @@
           }
         },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/formrecognizer/#analyze-document-for-prebuilt-or-custom-models-(v3.0-api)"
+          "url": "https://docs.microsoft.com/connectors/formrecognizer/#classify-document-with-document-classifier-(v3.1-api)"
         }
       }
     },
-    "/{connectionId}/documentModels/{modelId}/analyzeResults/{resultId}": {
+    "/{connectionId}/documentClassifiers/{classifierId}/analyzeResults/{resultId}": {
       "get": {
-        "description": "Obtain current status and the result of the analyze document operation (v3.0 API).",
-        "operationId": "GetAnalyzeDocumentResultV30",
+        "description": "Obtain current status and the result of the classify document operation (v3.1 API).",
+        "operationId": "GetClassifyDocumentResultV31",
         "x-ms-visibility": "internal",
-        "summary": "Get Analyze Document Results for Prebuilt or Custom models (v3.0 API)",
+        "summary": "Get Classify Document Results (v3.1 API)",
         "parameters": [
           {
             "name": "connectionId",
@@ -5190,17 +5776,17 @@
             "description": "Form Recognizer API version.",
             "type": "string",
             "required": true,
-            "default": "2022-08-31",
+            "default": "2023-07-31",
             "x-ms-summary": "Form Recognizer API Version",
             "x-ms-visibility": "internal"
           },
           {
-            "name": "modelId",
+            "name": "classifierId",
             "in": "path",
-            "description": "Prebuilt modelIds: prebuilt-read, prebuilt-layout, prebuilt-document, prebuilt-businessCard, prebuilt-idDocument, prebuilt-invoice, prebuilt-receipt, prebuilt-tax.us.w2, prebuilt-vaccinationCard, prebuilt-healthInsuranceCard.us. Custom modelId: uuid Model identifier.",
+            "description": "Format - [a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}. Unique classifier name.",
             "required": true,
             "type": "string",
-            "x-ms-summary": "Model Identifier",
+            "x-ms-summary": "Classifier Identifier",
             "x-ms-visibility": "important"
           },
           {
@@ -5244,7 +5830,7 @@
           }
         },
         "externalDocs": {
-          "url": "https://docs.microsoft.com/connectors/formrecognizer/#get-analyze-document-results-for-prebuilt-or-custom-models-(v3.0-api)"
+          "url": "https://docs.microsoft.com/connectors/formrecognizer/#get-classify-document-results-(v3.1-api)"
         }
       }
     }
