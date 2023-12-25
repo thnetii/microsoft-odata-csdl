@@ -1,0 +1,671 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "FHIRlink",
+    "description": "Microsoft FHIRlink creates a direct connection between healthcare apps built on Microsoft Azure services and FHIR’s servers, bypassing the need to duplicate data from Microsoft Dataverse.",
+    "version": "1.1",
+    "contact": {
+      "email": "microsoftcloudforhealthcare@service.microsoft.com",
+      "name": "Microsoft Cloud for Healthcare",
+      "url": "https://www.microsoft.com/en-us/industry/health/microsoft-cloud-for-healthcare"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/fhirlink",
+  "schemes": [
+    "https"
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.microsoft.com/en-us/industry/health/microsoft-cloud-for-healthcare"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/en-us/privacystatement"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Data"
+    }
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/metadata": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "title": "Resource type",
+                "description": "An resource type supported by the FHIR server"
+              }
+            }
+          }
+        },
+        "operationId": "GetResourceTypes",
+        "summary": "Get a list of supported resource types",
+        "description": "Uses FHIR metadata endpoint to list all resource types supported by the FHIR server instance",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#get-a-list-of-supported-resource-types"
+        }
+      }
+    },
+    "/{connectionId}/bundle-schema": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/UntypedObject"
+            }
+          }
+        },
+        "operationId": "GetBundleResourceSchema",
+        "summary": "Get a bundle resource schema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#get-a-bundle-resource-schema"
+        }
+      }
+    },
+    "/{connectionId}/single-resource-schema": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/UntypedObject"
+            }
+          }
+        },
+        "operationId": "GetSingleResourceSchema",
+        "summary": "Get a single resource schema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#get-a-single-resource-schema"
+        }
+      }
+    },
+    "/{connectionId}/operation-outcome-schema": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/UntypedObject"
+            }
+          }
+        },
+        "operationId": "GetOperationOutcomeSchema",
+        "summary": "Get an operation outcome schema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#get-an-operation-outcome-schema"
+        }
+      }
+    },
+    "/{connectionId}/{resourceType}": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/BundleResourceSuccess"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        },
+        "operationId": "ListResources",
+        "summary": "List resources by type",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "name": "_id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_id",
+            "description": "Specify the resource ID to search for."
+          },
+          {
+            "name": "_elements",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_elements",
+            "description": "Comma-separated list of element names to be returned as part of a resource."
+          },
+          {
+            "name": "_sort",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_sort",
+            "description": "Specify which order results should be returned in."
+          },
+          {
+            "name": "_count",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "x-ms-summary": "_count",
+            "description": "Number to limit the match results per page of response."
+          },
+          {
+            "name": "_include",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_include",
+            "description": "Include additional resources, based on following links forward across references."
+          },
+          {
+            "name": "_revinclude",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_revinclude",
+            "description": "Include additional resources, based on following reverse links across references."
+          },
+          {
+            "name": "_total",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_total",
+            "description": "Specify the precision for the total number of results for a request.",
+            "enum": [
+              "none",
+              "estimate",
+              "accurate"
+            ]
+          },
+          {
+            "name": "_summary",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "_summary",
+            "description": "Return only portions of resources, based on pre-defined levels.",
+            "enum": [
+              "true",
+              "text",
+              "data",
+              "count",
+              "false"
+            ]
+          },
+          {
+            "name": "additionalParameters",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Additional parameters",
+            "description": "Provide additional FHIR query parameters represented as a query string, this can include page token and advanced search filters. Examples: `ct=<value>` for Azure page token; `_pageToken=<value>` for Google page token; `probability=gt0.5&family:contains=son&subject=Patient/{guid}` for search filters."
+          }
+        ],
+        "description": "List resource entries for the specified resource type.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#list-resources-by-type"
+        }
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "$ref": "#/responses/SingleResourceSuccess"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/BadRequest"
+          }
+        },
+        "operationId": "PostResource",
+        "summary": "Create a resource",
+        "consumes": [
+          "text/plain"
+        ],
+        "description": "Create a new resource of the specified type",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-ms-summary": "FHIR Resource JSON",
+            "description": "Payload containing the FHIR resource JSON data."
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#create-a-resource"
+        }
+      }
+    },
+    "/{connectionId}/{resourceType}/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SingleResourceSuccess"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        },
+        "operationId": "GetResource",
+        "summary": "Get a resource",
+        "description": "Get a resource by ID",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "$ref": "#/parameters/ResourceId"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#get-a-resource"
+        }
+      },
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {}
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        },
+        "operationId": "DeleteResource",
+        "summary": "Delete a resource",
+        "description": "Delete a resource by ID",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "$ref": "#/parameters/ResourceId"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#delete-a-resource"
+        }
+      },
+      "patch": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SingleResourceSuccess"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/BadRequest"
+          }
+        },
+        "operationId": "PatchResource",
+        "summary": "Patch a resource",
+        "description": "Patch a resource by ID",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "$ref": "#/parameters/ResourceId"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "Content type",
+            "description": "Payload content type",
+            "enum": [
+              "application/json-patch+json",
+              "application/fhir+json"
+            ]
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "title": "Parameters resource",
+              "properties": {
+                "resourceType": {
+                  "type": "string",
+                  "title": "Patch resource type",
+                  "description": "Resource type of the FHIR Patch resource.",
+                  "enum": [
+                    "Parameters"
+                  ]
+                },
+                "parameter": {
+                  "title": "Operations list",
+                  "description": "A list of operations to perform on the specified resource."
+                }
+              }
+            },
+            "x-ms-summary": "Patch payload",
+            "description": "Payload containing the FHIR Patch resource JSON data."
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#patch-a-resource"
+        }
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SingleResourceSuccess"
+          },
+          "201": {
+            "$ref": "#/responses/SingleResourceSuccess"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/BadRequest"
+          }
+        },
+        "operationId": "PutResource",
+        "summary": "Update or create a resource",
+        "description": "Update or create a resource of the specified type",
+        "consumes": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/ResourceType"
+          },
+          {
+            "$ref": "#/parameters/ResourceId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-ms-summary": "FHIR Resource JSON",
+            "description": "Payload containing the FHIR resource JSON data."
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#update-or-create-a-resource"
+        }
+      }
+    },
+    "/{connectionId}/Patient/{patientId}/$everything": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/BundleResourceSuccess"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Unauthorized"
+          }
+        },
+        "operationId": "PatientEverything",
+        "summary": "Retrieve all patient information",
+        "description": "Retrieve all information related to a patient",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "single",
+            "x-ms-summary": "Patient ID",
+            "description": "ID of the Patient resource for which you want to retrieve information."
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/fhirlink/#retrieve-all-patient-information"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UntypedObject": {
+      "type": "object",
+      "additionalProperties": {},
+      "properties": {},
+      "description": "An untyped response schema."
+    }
+  },
+  "parameters": {
+    "ResourceType": {
+      "name": "resourceType",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-url-encoding": "single",
+      "x-ms-dynamic-values": {
+        "operationId": "GetResourceTypes"
+      },
+      "x-ms-summary": "Resource type",
+      "description": "A type of resource exposed via the restful interface."
+    },
+    "ResourceId": {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-url-encoding": "single",
+      "x-ms-summary": "Resource ID",
+      "description": "Resource ID to execute operation with"
+    }
+  },
+  "responses": {
+    "SingleResourceSuccess": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "x-ms-dynamic-schema": {
+          "operationId": "GetSingleResourceSchema",
+          "parameters": {}
+        }
+      }
+    },
+    "BundleResourceSuccess": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "x-ms-dynamic-schema": {
+          "operationId": "GetBundleResourceSchema",
+          "parameters": {}
+        }
+      }
+    },
+    "Unauthorized": {
+      "description": "Unauthorized to perform this operation",
+      "schema": {
+        "type": "object",
+        "x-ms-dynamic-schema": {
+          "operationId": "GetOperationOutcomeSchema",
+          "parameters": {}
+        }
+      }
+    },
+    "NotFound": {
+      "description": "The resource could not be found",
+      "schema": {
+        "type": "object",
+        "x-ms-dynamic-schema": {
+          "operationId": "GetOperationOutcomeSchema",
+          "parameters": {}
+        }
+      }
+    },
+    "BadRequest": {
+      "description": "Check your operation parameters",
+      "schema": {
+        "type": "object",
+        "x-ms-dynamic-schema": {
+          "operationId": "GetOperationOutcomeSchema",
+          "parameters": {}
+        }
+      }
+    }
+  },
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/fhirlink"
+  }
+}
