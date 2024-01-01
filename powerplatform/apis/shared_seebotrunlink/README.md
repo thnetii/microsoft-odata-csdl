@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_seebotrunlink`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1588\1.0.1588.2938`|
+|**Version**|`releases/v1.0.1670\1.0.1670.3526`|
 |**Publisher**|**SeeBotRun**|
 |**Created**|Thu Aug 19 2021|
-|**Changed**|Mon Jul 18 2022|
+|**Changed**|Mon Dec 18 2023|
 
 ## Description
 Create links dynamically for your SeeBotRun Link account.
