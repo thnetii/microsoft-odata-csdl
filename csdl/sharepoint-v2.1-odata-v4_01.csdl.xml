@@ -202,6 +202,7 @@
         <Property Name="disableFlows" Type="Edm.Boolean" />
         <Property Name="enableMinimalDownload" Type="Edm.Boolean" />
         <Property Name="evalSiteId" Type="Edm.Guid" />
+        <Property Name="eventReceivers" Type="Collection(oneDrive.eventreceiver)" />
         <Property Name="excludeFromOfflineClient" Type="Edm.Boolean" />
         <Property Name="expirationDate" Type="Edm.DateTimeOffset" />
         <Property Name="externalSharingTipsEnabled" Type="Edm.Boolean" />
@@ -283,6 +284,7 @@
         <Property Name="userCodeEnabled" Type="Edm.Boolean" />
         <Property Name="userDefinedWorkflowsEnabled" Type="Edm.Boolean" />
         <Property Name="userProducts" Type="Edm.String" />
+        <Property Name="userSolutions" Type="Collection(oneDrive.userSolution)" />
         <Property Name="warningNotificationSent" Type="Edm.Boolean" />
         <Property Name="webUrl" Type="Edm.String" />
         <Property Name="welcomePage" Type="Edm.String" />
@@ -2211,11 +2213,38 @@
       <EntityType Name="share" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="owner" Type="oneDrive.identitySet" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
+        <NavigationProperty Name="list" Type="oneDrive.list" ContainsTarget="true">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </NavigationProperty>
+        <NavigationProperty Name="lists" Type="Collection(oneDrive.list)" ContainsTarget="true" />
+        <NavigationProperty Name="listItem" Type="oneDrive.listItem" ContainsTarget="true">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </NavigationProperty>
+        <NavigationProperty Name="listItems" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
         <NavigationProperty Name="photoStream" Type="oneDrive.item" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamMemberships" Type="Collection(oneDrive.photoStreamMembership)" ContainsTarget="true" />
         <NavigationProperty Name="photoStreamLink" Type="oneDrive.photoStreamLink" ContainsTarget="true" />
         <NavigationProperty Name="permission" Type="oneDrive.permission" ContainsTarget="true" />
         <NavigationProperty Name="root" Type="oneDrive.item" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="list" BaseType="oneDrive.baseItem" OpenType="true">
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="color" Type="Edm.String" />
+        <Property Name="decorator" Type="oneDrive.listDecorator" />
+        <Property Name="icon" Type="Edm.String" />
+        <Property Name="itemCount" Type="Edm.Int32" />
+        <Property Name="list" Type="oneDrive.listInfo" />
+        <Property Name="schemaVersion" Type="Edm.Int32" />
+        <Property Name="system" Type="oneDrive.system" />
+        <Property Name="validation" Type="oneDrive.listItemValidation" />
+        <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
+        <NavigationProperty Name="contentTypes" Type="Collection(oneDrive.contentType)" ContainsTarget="true" />
+        <NavigationProperty Name="items" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
+        <NavigationProperty Name="operations" Type="Collection(oneDrive.richLongRunningOperation)" ContainsTarget="true" />
+        <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
+        <NavigationProperty Name="subscriptions" Type="Collection(oneDrive.subscription)" ContainsTarget="true" />
+        <NavigationProperty Name="views" Type="Collection(oneDrive.view)" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="HubSite" BaseType="oneDrive.site" OpenType="true">
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -2328,25 +2357,6 @@
         <NavigationProperty Name="columnLinks" Type="Collection(oneDrive.columnLink)" ContainsTarget="true" />
         <NavigationProperty Name="columnPositions" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
         <NavigationProperty Name="derivedTypes" Type="Collection(oneDrive.contentType)" ContainsTarget="true" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
-      <EntityType Name="list" BaseType="oneDrive.baseItem" OpenType="true">
-        <Property Name="displayName" Type="Edm.String" />
-        <Property Name="color" Type="Edm.String" />
-        <Property Name="decorator" Type="oneDrive.listDecorator" />
-        <Property Name="icon" Type="Edm.String" />
-        <Property Name="itemCount" Type="Edm.Int32" />
-        <Property Name="list" Type="oneDrive.listInfo" />
-        <Property Name="schemaVersion" Type="Edm.Int32" />
-        <Property Name="system" Type="oneDrive.system" />
-        <Property Name="validation" Type="oneDrive.listItemValidation" />
-        <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
-        <NavigationProperty Name="contentTypes" Type="Collection(oneDrive.contentType)" ContainsTarget="true" />
-        <NavigationProperty Name="items" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
-        <NavigationProperty Name="operations" Type="Collection(oneDrive.richLongRunningOperation)" ContainsTarget="true" />
-        <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
-        <NavigationProperty Name="subscriptions" Type="Collection(oneDrive.subscription)" ContainsTarget="true" />
-        <NavigationProperty Name="views" Type="Collection(oneDrive.view)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="baseSitePage" BaseType="oneDrive.baseItem" OpenType="true">
@@ -2636,6 +2646,7 @@
         <Property Name="ibInsightsParameters" Type="oneDrive.ibInsightsParameters" />
         <Property Name="racForSitesParameters" Type="oneDrive.racForSitesParameters" />
         <Property Name="aiBasedPolicyReportParameters" Type="oneDrive.aiBasedPolicyReportParameters" />
+        <Property Name="appInsightsParameters" Type="oneDrive.appInsightsParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -3046,7 +3057,7 @@
         <Property Name="batchId" Type="Edm.Guid" />
         <Property Name="createOrchestrationJob" Type="Edm.Boolean" />
         <Property Name="tenantGeos" Type="Collection(oneDrive.tenantGeo)" />
-        <Property Name="requestStartTime" Type="Edm.DateTimeOffset" />
+        <Property Name="requestStartTimeUtcTicks" Type="Edm.Int64" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="diagnosticFileCount" OpenType="true">
@@ -3083,6 +3094,7 @@
       </ComplexType>
       <ComplexType Name="DiagnosticPermissionInfoFacet" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="permissions" Type="Edm.String" />
+        <Property Name="effectiveBasePermissions" Type="Edm.String" />
         <Property Name="roleAssignments" Type="Collection(oneDrive.DiagnosticRoleAssignmentFacet)" />
       </ComplexType>
       <ComplexType Name="DiagnosticRoleAssignmentFacet" BaseType="oneDrive.custom" OpenType="true">
@@ -3094,9 +3106,64 @@
       <ComplexType Name="DiagnosticRoleDefinitionFacet" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="id" Type="Edm.Int32" Nullable="false" />
         <Property Name="basePermissions" Type="Edm.String" />
+        <Property Name="basePermissionList" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="eventreceiver" OpenType="true">
+        <Property Name="assembly" Type="Edm.String" />
+        <Property Name="class" Type="Edm.String" />
+        <Property Name="contextCollectionId" Type="Edm.String" />
+        <Property Name="contextEventType" Type="Edm.String" />
+        <Property Name="contextId" Type="Edm.String" />
+        <Property Name="contextItemId" Type="Edm.Int32" />
+        <Property Name="contextItemUrl" Type="Edm.String" />
+        <Property Name="contextObjectId" Type="Edm.String" />
+        <Property Name="contextType" Type="Edm.String" />
+        <Property Name="credential" Type="Edm.Int32" />
+        <Property Name="data" Type="Edm.String" />
+        <Property Name="eventReceiverId" Type="Edm.String" />
+        <Property Name="filter" Type="Edm.String" />
+        <Property Name="hostId" Type="Edm.String" />
+        <Property Name="hostType" Type="oneDrive.SPEventHostType" />
+        <Property Name="parentHostId" Type="Edm.String" />
+        <Property Name="parentHostType" Type="oneDrive.SPEventHostType" />
+        <Property Name="sequenceNumber" Type="Edm.Int32" />
+        <Property Name="siteId" Type="Edm.String" />
+        <Property Name="synchronization" Type="oneDrive.SPEventReceiverSynchronization" />
+        <Property Name="type" Type="oneDrive.SPEventReceiverType" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="webId" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="feature" OpenType="true">
+        <Property Name="activateOnDefault" Type="Edm.Boolean" />
+        <Property Name="activateOnSiteMaster" Type="oneDrive.SPActivateFeatureOnSiteMaster" />
+        <Property Name="alwaysForceInstall" Type="Edm.Boolean" />
+        <Property Name="autoActivateInCentralAdmin" Type="Edm.Boolean" />
+        <Property Name="compatibilityLevel" Type="Edm.Int32" />
+        <Property Name="defaultResourceFile" Type="Edm.String" />
         <Property Name="definitionId" Type="Edm.String" />
+        <Property Name="deploymentLocked" Type="Edm.Boolean" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="hidden" Type="Edm.Boolean" />
+        <Property Name="receiverAssembly" Type="Edm.String" />
+        <Property Name="receiverClass" Type="Edm.String" />
+        <Property Name="requireResources" Type="Edm.Boolean" />
+        <Property Name="rootDirectory" Type="Edm.String" />
+        <Property Name="scope" Type="oneDrive.SPFeatureScope" />
+        <Property Name="solutionId" Type="Edm.String" />
+        <Property Name="status" Type="oneDrive.SPObjectStatus" />
+        <Property Name="timeActivated" Type="Edm.DateTimeOffset" />
+        <Property Name="uiVersion" Type="Edm.String" />
+        <Property Name="upgradeReceiverAssembly" Type="Edm.String" />
+        <Property Name="upgradeReceiverClass" Type="Edm.String" />
+        <Property Name="version" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="userSolution" OpenType="true">
+        <Property Name="hasAssemblies" Type="Edm.Boolean" />
+        <Property Name="solutionId" Type="Edm.String" />
+        <Property Name="solutionSignature" Type="Edm.String" />
+        <Property Name="status" Type="oneDrive.SPUserSolutionStatus" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="artifactTypeFacet" OpenType="true">
@@ -5079,6 +5146,18 @@
         <Property Name="siteTemplates" Type="Collection(Edm.String)" />
         <Property Name="creationSources" Type="Collection(Edm.String)" />
       </ComplexType>
+      <ComplexType Name="analyticsReportAppsData" OpenType="true">
+        <Property Name="appId" Type="Edm.String" />
+        <Property Name="appName" Type="Edm.String" />
+        <Property Name="siteUrl" Type="Edm.String" />
+        <Property Name="siteSensitivityLabel" Type="Edm.String" />
+        <Property Name="scopes" Type="Edm.String" />
+        <Property Name="countOfCalls" Type="Edm.Int32" />
+      </ComplexType>
+      <ComplexType Name="appInsightsParameters" OpenType="true">
+        <Property Name="reportDuration" Type="Edm.Int32" />
+        <Property Name="appsData" Type="Collection(oneDrive.analyticsReportAppsData)" />
+      </ComplexType>
       <ComplexType Name="eeeuParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
         <Property Name="privacySetting" Type="Collection(Edm.String)" />
@@ -5612,6 +5691,128 @@
         <Member Name="files" Value="1" />
         <Member Name="common" Value="2" />
       </EnumType>
+      <EnumType Name="SPEventHostType">
+        <Member Name="Site" Value="0" />
+        <Member Name="Web" Value="1" />
+        <Member Name="List" Value="2" />
+        <Member Name="ListItem" Value="3" />
+        <Member Name="ContentType" Value="4" />
+        <Member Name="Workflow" Value="5" />
+        <Member Name="Feature" Value="6" />
+        <Member Name="WorkflowList" Value="7" />
+        <Member Name="Invalid" Value="-1" />
+      </EnumType>
+      <EnumType Name="SPEventReceiverSynchronization">
+        <Member Name="Default" Value="0" />
+        <Member Name="Synchronous" Value="1" />
+        <Member Name="Asynchronous" Value="2" />
+      </EnumType>
+      <EnumType Name="SPEventReceiverType">
+        <Member Name="ItemAdding" Value="1" />
+        <Member Name="ItemUpdating" Value="2" />
+        <Member Name="ItemDeleting" Value="3" />
+        <Member Name="ItemCheckingIn" Value="4" />
+        <Member Name="ItemCheckingOut" Value="5" />
+        <Member Name="ItemUncheckingOut" Value="6" />
+        <Member Name="ItemAttachmentAdding" Value="7" />
+        <Member Name="ItemAttachmentDeleting" Value="8" />
+        <Member Name="ItemFileMoving" Value="9" />
+        <Member Name="ItemVersionDeleting" Value="11" />
+        <Member Name="FieldAdding" Value="101" />
+        <Member Name="FieldUpdating" Value="102" />
+        <Member Name="FieldDeleting" Value="103" />
+        <Member Name="ListAdding" Value="104" />
+        <Member Name="ListDeleting" Value="105" />
+        <Member Name="SiteDeleting" Value="201" />
+        <Member Name="WebDeleting" Value="202" />
+        <Member Name="WebMoving" Value="203" />
+        <Member Name="WebAdding" Value="204" />
+        <Member Name="SiteMovingFromGeoLocation" Value="206" />
+        <Member Name="GroupAdding" Value="301" />
+        <Member Name="GroupUpdating" Value="302" />
+        <Member Name="GroupDeleting" Value="303" />
+        <Member Name="GroupUserAdding" Value="304" />
+        <Member Name="GroupUserDeleting" Value="305" />
+        <Member Name="RoleDefinitionAdding" Value="306" />
+        <Member Name="RoleDefinitionUpdating" Value="307" />
+        <Member Name="RoleDefinitionDeleting" Value="308" />
+        <Member Name="RoleAssignmentAdding" Value="309" />
+        <Member Name="RoleAssignmentDeleting" Value="310" />
+        <Member Name="InheritanceBreaking" Value="311" />
+        <Member Name="InheritanceResetting" Value="312" />
+        <Member Name="WorkflowStarting" Value="501" />
+        <Member Name="StartOfAfterEvents" Value="10000" />
+        <Member Name="ItemAdded" Value="10001" />
+        <Member Name="ItemUpdated" Value="10002" />
+        <Member Name="ItemDeleted" Value="10003" />
+        <Member Name="ItemCheckedIn" Value="10004" />
+        <Member Name="ItemCheckedOut" Value="10005" />
+        <Member Name="ItemUncheckedOut" Value="10006" />
+        <Member Name="ItemAttachmentAdded" Value="10007" />
+        <Member Name="ItemAttachmentDeleted" Value="10008" />
+        <Member Name="ItemFileMoved" Value="10009" />
+        <Member Name="ItemFileConverted" Value="10010" />
+        <Member Name="ItemVersionDeleted" Value="10011" />
+        <Member Name="ItemQuotaExceeded" Value="10012" />
+        <Member Name="FieldAdded" Value="10101" />
+        <Member Name="FieldUpdated" Value="10102" />
+        <Member Name="FieldDeleted" Value="10103" />
+        <Member Name="ListAdded" Value="10104" />
+        <Member Name="ListDeleted" Value="10105" />
+        <Member Name="ListRestored" Value="10106" />
+        <Member Name="SiteDeleted" Value="10201" />
+        <Member Name="WebDeleted" Value="10202" />
+        <Member Name="WebMoved" Value="10203" />
+        <Member Name="WebProvisioned" Value="10204" />
+        <Member Name="WebRestored" Value="10205" />
+        <Member Name="GroupAdded" Value="10301" />
+        <Member Name="GroupUpdated" Value="10302" />
+        <Member Name="GroupDeleted" Value="10303" />
+        <Member Name="GroupUserAdded" Value="10304" />
+        <Member Name="GroupUserDeleted" Value="10305" />
+        <Member Name="RoleDefinitionAdded" Value="10306" />
+        <Member Name="RoleDefinitionUpdated" Value="10307" />
+        <Member Name="RoleDefinitionDeleted" Value="10308" />
+        <Member Name="RoleAssignmentAdded" Value="10309" />
+        <Member Name="RoleAssignmentDeleted" Value="10310" />
+        <Member Name="InheritanceBroken" Value="10311" />
+        <Member Name="InheritanceReset" Value="10312" />
+        <Member Name="WorkflowStarted" Value="10501" />
+        <Member Name="WorkflowPostponed" Value="10502" />
+        <Member Name="WorkflowCompleted" Value="10503" />
+        <Member Name="EntityInstanceAdded" Value="10601" />
+        <Member Name="EntityInstanceUpdated" Value="10602" />
+        <Member Name="EntityInstanceDeleted" Value="10603" />
+        <Member Name="AppInstalled" Value="10701" />
+        <Member Name="AppUpgraded" Value="10702" />
+        <Member Name="AppUninstalling" Value="10703" />
+        <Member Name="EmailReceived" Value="20000" />
+        <Member Name="ContextEvent" Value="32766" />
+        <Member Name="InvalidReceiver" Value="-1" />
+      </EnumType>
+      <EnumType Name="SPActivateFeatureOnSiteMaster">
+        <Member Name="False" Value="0" />
+        <Member Name="True" Value="1" />
+        <Member Name="Partial" Value="2" />
+        <Member Name="Async" Value="3" />
+        <Member Name="AsyncOrPartial" Value="4" />
+      </EnumType>
+      <EnumType Name="SPFeatureScope">
+        <Member Name="Farm" Value="0" />
+        <Member Name="WebApplication" Value="1" />
+        <Member Name="Site" Value="2" />
+        <Member Name="Web" Value="3" />
+        <Member Name="ScopeInvalid" Value="-1" />
+      </EnumType>
+      <EnumType Name="SPObjectStatus">
+        <Member Name="Online" Value="0" />
+        <Member Name="Disabled" Value="1" />
+        <Member Name="Offline" Value="2" />
+        <Member Name="Unprovisioning" Value="3" />
+        <Member Name="Provisioning" Value="4" />
+        <Member Name="Upgrading" Value="5" />
+        <Member Name="Patching" Value="6" />
+      </EnumType>
       <EnumType Name="SPIpLabelCacheSettings" UnderlyingType="Edm.Int64" IsFlags="true">
         <Member Name="ProtectSite_AllowFullAccess" Value="1" />
         <Member Name="ProtectSite_AllowLimitedAccess" Value="2" />
@@ -5639,6 +5840,12 @@
         <Member Name="Check" Value="1" />
         <Member Name="Disabled" Value="2" />
         <Member Name="Enabled" Value="3" />
+      </EnumType>
+      <EnumType Name="SPUserSolutionStatus">
+        <Member Name="Deactivated" Value="0" />
+        <Member Name="Activated" Value="1" />
+        <Member Name="Disabled" Value="2" />
+        <Member Name="Installing" Value="3" />
       </EnumType>
       <EnumType Name="SpodsMode">
         <Member Name="ADOnly" Value="0" />
@@ -6031,6 +6238,7 @@
         <Member Name="EEEU" Value="5" />
         <Member Name="RACForSites" Value="6" />
         <Member Name="AIBasedPolicy" Value="7" />
+        <Member Name="AppInsights" Value="8" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
