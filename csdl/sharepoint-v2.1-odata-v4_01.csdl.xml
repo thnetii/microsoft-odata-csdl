@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24406 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24503 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1693,6 +1693,7 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="associatedItemCount" Type="Edm.Int32" />
         <NavigationProperty Name="tag" Type="oneDrive.tag" ContainsTarget="true" />
         <NavigationProperty Name="previewThumbnails" Type="Collection(oneDrive.thumbnailSet)" ContainsTarget="true" />
       </EntityType>
@@ -2184,6 +2185,7 @@
         <Property Name="deletedBy" Type="oneDrive.identitySet" />
         <Property Name="title" Type="Edm.String" />
         <Property Name="driveItemId" Type="Edm.String" />
+        <Property Name="itemType" Type="oneDrive.ItemType" />
       </EntityType>
       <EntityType Name="richLongRunningOperation" OpenType="true">
         <Key>
@@ -2647,6 +2649,7 @@
         <Property Name="racForSitesParameters" Type="oneDrive.racForSitesParameters" />
         <Property Name="aiBasedPolicyReportParameters" Type="oneDrive.aiBasedPolicyReportParameters" />
         <Property Name="appInsightsParameters" Type="oneDrive.appInsightsParameters" />
+        <Property Name="ibComplianceParameters" Type="oneDrive.ibComplianceParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -2883,14 +2886,6 @@
         <NavigationProperty Name="relations" Type="Collection(oneDrive.relation)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="siteReviewRecord" OpenType="true">
-        <Property Name="attachedBy" Type="Edm.String" />
-        <Property Name="attachedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="eeeuFilesOrFoldersFields" Type="oneDrive.eeeuFilesOrFoldersFields" />
-        <Property Name="eeeuGroupFields" Type="oneDrive.eeeuGroupFields" />
-        <Property Name="error" Type="oneDrive.error" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
       <EntityType Name="standardWebPart" BaseType="oneDrive.webPart" OpenType="true">
         <Property Name="webPartType" Type="Edm.String" />
         <Property Name="data" Type="oneDrive.webPartData" />
@@ -3017,6 +3012,12 @@
         <Property Name="entityRelations" Type="oneDrive.entityRelations" />
         <Property Name="lockState" Type="oneDrive.LockStateType" />
         <Property Name="lastPublishedDateTime" Type="Edm.DateTimeOffset" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="videoNewsLinkPage" BaseType="oneDrive.baseSitePage" OpenType="true">
+        <Property Name="bannerImageWebUrl" Type="Edm.String" />
+        <Property Name="newsWebUrl" Type="Edm.String" />
+        <Property Name="newsSharepointIds" Type="oneDrive.sharepointIds" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="employeeExperienceDashboard" OpenType="true">
@@ -3725,6 +3726,26 @@
         <Property Name="tenantId" Type="Edm.String" />
         <Property Name="assignmentMethod" Type="oneDrive.SensitivityLabelAssignmentMethod" />
       </ComplexType>
+      <ComplexType Name="siteReviewDetails" OpenType="true">
+        <Property Name="startDate" Type="Edm.DateTimeOffset" />
+        <Property Name="endDate" Type="Edm.DateTimeOffset" />
+        <Property Name="frequency" Type="oneDrive.ReviewFrequency" />
+        <Property Name="type" Type="oneDrive.ReviewType" />
+        <Property Name="subType" Type="oneDrive.ReviewSubType" />
+        <Property Name="status" Type="oneDrive.ReviewStatus" />
+        <Property Name="reviewer" Type="Edm.String" />
+        <Property Name="records" Type="Collection(oneDrive.siteReviewRecord)" />
+        <Property Name="error" Type="oneDrive.error" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="siteReviewRecord" OpenType="true">
+        <Property Name="attachedBy" Type="Edm.String" />
+        <Property Name="attachedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="filesOrFolders" Type="oneDrive.siteReviewFilesOrFolders" />
+        <Property Name="groups" Type="oneDrive.siteReviewGroups" />
+        <Property Name="error" Type="oneDrive.error" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="siteSettings" OpenType="true">
         <Property Name="adjustmentForHijri" Type="Edm.Int32" />
         <Property Name="calendarIdentifier" Type="Edm.Int32" />
@@ -4086,12 +4107,13 @@
         <Property Name="cumulativeSourceReportId" Type="Edm.String" />
         <Property Name="detailedSourceReportId" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="eeeuFilesOrFoldersFields" OpenType="true">
-        <Property Name="fileOrFolderName" Type="Edm.String" />
-        <Property Name="fileOrFolderPath" Type="Edm.String" />
+      <ComplexType Name="siteReviewFilesOrFolders" OpenType="true">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="path" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="eeeuGroupFields" OpenType="true">
-        <Property Name="groupName" Type="Edm.String" />
+      <ComplexType Name="siteReviewGroups" OpenType="true">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="siteTemplate" OpenType="true">
         <Property Name="definitionName" Type="Edm.String" />
@@ -4885,6 +4907,7 @@
         <Property Name="quotaBytes" Type="Edm.Int64" />
         <Property Name="currency" Type="Edm.String" />
         <Property Name="purchaseActions" Type="Collection(oneDrive.purchaseAction)" />
+        <Property Name="inDunning" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="purchaseAction" OpenType="true">
         <Property Name="price" Type="Edm.String" />
@@ -5168,6 +5191,9 @@
         <Property Name="eeeuKey" Type="Edm.String" />
         <Property Name="eeeuType" Type="oneDrive.AnalyticsReportEEEUType" />
         <Property Name="sitesCount" Type="Edm.Int32" />
+      </ComplexType>
+      <ComplexType Name="ibComplianceParameters" OpenType="true">
+        <Property Name="updateOneDriveSegments" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="ibInsightsParameters" OpenType="true">
         <Property Name="section" Type="oneDrive.AnalyticsReportIBInsightsSection" />
@@ -5539,6 +5565,7 @@
         <Property Name="OwnerLogin" Type="Edm.String" />
         <Property Name="OwnerName" Type="Edm.String" />
         <Property Name="OwnerEmail" Type="Edm.String" />
+        <Property Name="StorageState" Type="Edm.String" />
         <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
       </ComplexType>
       <ComplexType Name="InactiveUsersUnifiedQuotaTopEntity">
@@ -5546,6 +5573,7 @@
         <Property Name="LastLogin" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="ExoUsage" Type="Edm.Int64" />
         <Property Name="OdbUsage" Type="Edm.Int64" />
+        <Property Name="OdbLastActivity" Type="Edm.DateTimeOffset" />
         <Property Name="SpoUsage" Type="Edm.Int64" />
       </ComplexType>
       <ComplexType Name="itemDecorator">
@@ -5620,6 +5648,7 @@
       <ComplexType Name="photoPreferences">
         <Property Name="eTag" Type="Edm.String" />
         <Property Name="autoTagging" Type="Edm.Boolean" />
+        <Property Name="biometricConsent" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="featureSettingsPreferences" />
       <ComplexType Name="notificationPreferences">
@@ -5834,6 +5863,10 @@
         <Member Name="IpLabel_IsBlockDownloadPolicyExcludeSiteOwnersEnabled" Value="131072" />
         <Member Name="IpLabelApplicableToContainer_Site" Value="262144" />
         <Member Name="IpLabelApplicableToContainer_UnifiedGroup" Value="524288" />
+        <Member Name="IpLabelApplicableToContent_Email" Value="1048576" />
+        <Member Name="IpLabelApplicableTo_Teamwork" Value="2097152" />
+        <Member Name="IpLabelApplicableTo_PurviewAssets" Value="4194304" />
+        <Member Name="IpLabelApplicableTo_SchematizedData" Value="8388608" />
         <Member Name="Invalid" Value="-1" />
       </EnumType>
       <EnumType Name="SandboxedCodeActivationCapabilities">
@@ -6007,13 +6040,18 @@
         <Member Name="Copy" Value="0" />
         <Member Name="Delete" Value="1" />
       </EnumType>
+      <EnumType Name="ItemType">
+        <Member Name="File" Value="0" />
+        <Member Name="Folder" Value="1" />
+      </EnumType>
       <EnumType Name="PageLayoutType">
         <Member Name="microsoftReserved" Value="0" />
         <Member Name="article" Value="1" />
         <Member Name="home" Value="2" />
-        <Member Name="topic" Value="3" />
-        <Member Name="newsLink" Value="4" />
-        <Member Name="unknownFutureValue" Value="5" />
+        <Member Name="unknownFutureValue" Value="3" />
+        <Member Name="topic" Value="4" />
+        <Member Name="newsLink" Value="5" />
+        <Member Name="videoNewsLink" Value="6" />
       </EnumType>
       <EnumType Name="NewsType">
         <Member Name="News" Value="0" />
@@ -6219,7 +6257,7 @@
         <Member Name="EEEUSharing" Value="0" />
       </EnumType>
       <EnumType Name="ReviewSubType">
-        <Member Name="FilesAndFolders" Value="0" />
+        <Member Name="FilesOrFolders" Value="0" />
         <Member Name="SPGroup" Value="1" />
       </EnumType>
       <EnumType Name="ReviewStatus">
@@ -6566,6 +6604,7 @@
       <Action Name="createIBComplianceReport" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="ibComplianceParameters" Type="oneDrive.ibComplianceParameters" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createAIPolicyReport" IsBound="true" EntitySetPath="bindingParameter">
