@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_absentify`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1649\1.0.1649.3368`|
+|**Version**|`u/v-skalgudi/absentify\1.0.1676.3615`|
 |**Publisher**|**BrainCore Solutions GmbH**|
 |**Created**|Tue Nov 08 2022|
-|**Changed**|Tue Aug 01 2023|
+|**Changed**|Fri Jan 19 2024|
 
 ## Description
 Integrate absentify into your existing systems with this connector. Use the absences of your employees in other systems.
