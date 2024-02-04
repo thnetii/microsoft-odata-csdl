@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.24517 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.24524 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -168,6 +168,30 @@
         <Property Name="ErrorMessage" Type="Edm.String" />
         <Property Name="RoleValue" Type="Edm.Int32" Nullable="false" />
         <Property Name="StatusCode" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="AgreementMetaData">
+        <Property Name="AgreementNumber" Type="Edm.String" />
+        <Property Name="Category" Type="Edm.String" />
+        <Property Name="Country" Type="Edm.String" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="CreatedTime" Type="Edm.String" />
+        <Property Name="EndDate" Type="Edm.String" />
+        <Property Name="FirstParty" Type="Edm.String" />
+        <Property Name="Language" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Owner" Type="Edm.String" />
+        <Property Name="SecondParty" Type="Edm.String" />
+        <Property Name="StartDate" Type="Edm.String" />
+        <Property Name="State" Type="Edm.String" />
+        <Property Name="TotalValue" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="AgreementSearchParameters">
+        <Property Name="Category" Type="Edm.String" />
+        <Property Name="Owner" Type="Edm.String" />
+        <Property Name="RowLimit" Type="Edm.Int32" Nullable="false" />
+        <Property Name="StartRow" Type="Edm.Int32" Nullable="false" />
+        <Property Name="State" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ApprovalsCreateRequestParameters">
         <Property Name="approvers" Type="Edm.String" />
@@ -344,6 +368,11 @@
         <Property Name="LanguageCode" Type="Edm.String" />
         <Property Name="WebRelativePath" Type="SP.ResourcePath" />
       </ComplexType>
+      <ComplexType Name="ResourceVisualization">
+        <Property Name="Acronym" Type="Edm.String" />
+        <Property Name="Color" Type="Edm.String" />
+        <Property Name="PreviewImageUrl" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ScriptSafeDomainEntityData">
         <Property Name="DomainName" Type="Edm.String" />
       </ComplexType>
@@ -353,6 +382,12 @@
       <ComplexType Name="SharedWithUser">
         <Property Name="Email" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SharePointIds">
+        <Property Name="HubSiteId" Type="Edm.String" />
+        <Property Name="SiteId" Type="Edm.String" />
+        <Property Name="SiteUrl" Type="Edm.String" />
+        <Property Name="WebId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SharingLinkData">
         <Property Name="BlocksDownload" Type="Edm.Boolean" Nullable="false" />
@@ -416,10 +451,23 @@
         <Property Name="TrackLinkUsers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Url" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SiteTemplate">
+        <Property Name="Name" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SmartTemplateContentType">
         <Property Name="Id" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="PublishStatus" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SPAgreementsSite">
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="GroupId" Type="Edm.String" />
+        <Property Name="LastModifiedDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ResourceVisualization" Type="SP.ResourceVisualization" />
+        <Property Name="SharePointIds" Type="SP.SharePointIds" />
+        <Property Name="Template" Type="SP.SiteTemplate" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="WebUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AlertCreationInformation">
         <Property Name="AlertFrequency" Type="Edm.Int32" Nullable="false" />
@@ -5066,8 +5114,16 @@
       </Action>
       <Function Name="GetAgreements" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
-        <Parameter Name="AgreementStatus" Type="Edm.String" />
-        <ReturnType Type="Collection(Edm.String)" />
+        <Parameter Name="Category" Type="Edm.String" />
+        <Parameter Name="Owner" Type="Edm.String" />
+        <Parameter Name="RowLimit" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="StartRow" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="State" Type="Edm.String" />
+        <ReturnType Type="Collection(SP.AgreementMetaData)" />
+      </Function>
+      <Function Name="GetAgreementsEnabledSites" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.SPAgreementsSite)" />
       </Function>
       <Function Name="MultilingualSettings">
         <ReturnType Type="SP.MultilingualSettings" />
@@ -7316,6 +7372,27 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SiteCreationProperties/Url">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/ClassifierId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/ColumnName">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/ColumnType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/ContentType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/Kind">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig/ModelClassification">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPDependentModel">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -7328,10 +7405,31 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPDependentModel/ModelType">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPExtractorPublishConfig">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPExtractorPublishConfig/ColumnName">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPExtractorPublishConfig/ColumnType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPExtractorPublishConfig/ExtractorId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPModelDependencies">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPModelDependencies/DependentModels">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPModelPublishConfig">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPModelPublishConfig/ClassificationPublishConfigs">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPModelPublishConfig/ExtractorPublishConfigs">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.CompliancePolicy.ComplianceTag">
@@ -9324,6 +9422,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningModel/ManagementAllowed">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningModel/ModelName">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningModel/ModelPublishConfig">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningModel/ModelSettings">
@@ -14034,6 +14138,9 @@
       <Annotations Target="SP.eSignInternal.DeclineAgreement(Microsoft.SharePoint.ESign.Models.Requests.DeclineAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.eSignInternal.GetEsignSettings()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.eSignInternal.SignAgreement(Microsoft.SharePoint.ESign.Models.Requests.SignAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15101,13 +15208,30 @@
         <Property Name="Title" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPClassificationPublishConfig">
+        <Property Name="ClassifierId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="ColumnName" Type="Edm.String" />
+        <Property Name="ColumnType" Type="Edm.String" />
+        <Property Name="ContentType" Type="Edm.String" />
+        <Property Name="Kind" Type="Edm.String" />
+        <Property Name="ModelClassification" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPDependentModel">
         <Property Name="LastRefereshedTimeUtc" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="ModelId" Type="Edm.String" />
         <Property Name="ModelType" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPExtractorPublishConfig">
+        <Property Name="ColumnName" Type="Edm.String" />
+        <Property Name="ColumnType" Type="Edm.String" />
+        <Property Name="ExtractorId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="SPModelDependencies">
         <Property Name="DependentModels" Type="Collection(Microsoft.Office.Server.ContentCenter.SPDependentModel)" />
+      </ComplexType>
+      <ComplexType Name="SPModelPublishConfig">
+        <Property Name="ClassificationPublishConfigs" Type="Collection(Microsoft.Office.Server.ContentCenter.SPClassificationPublishConfig)" />
+        <Property Name="ExtractorPublishConfigs" Type="Collection(Microsoft.Office.Server.ContentCenter.SPExtractorPublishConfig)" />
       </ComplexType>
       <ComplexType Name="SPMachineLearningPublicationEntityData">
         <Property Name="ModelUniqueId" Type="Edm.Guid" Nullable="false" />
@@ -15171,6 +15295,8 @@
         <Property Name="LastTrained" Type="Edm.DateTimeOffset" />
         <Property Name="ListID" Type="Edm.Guid" Nullable="false" />
         <Property Name="ManagementAllowed" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ModelName" Type="Edm.String" />
+        <Property Name="ModelPublishConfig" Type="Microsoft.Office.Server.ContentCenter.SPModelPublishConfig" />
         <Property Name="ModelSettings" Type="Edm.String" />
         <Property Name="ModelType" Type="Edm.Int32" Nullable="false" />
         <Property Name="ModelTypeAsString" Type="Edm.String" />
@@ -25938,7 +26064,6 @@
         <Property Name="filesSharedExternally" Type="Edm.Int32" Nullable="false" />
         <Property Name="filesSharedInternally" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalFilesShared" Type="Edm.Int32" Nullable="false" />
-        <Property Name="userDisplayName" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CollaborativeUser">
@@ -25946,7 +26071,6 @@
         <Property Name="totalFilesSharedExternally" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalFilesSharedInternally" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalFilesViewedOrEdited" Type="Edm.Int32" Nullable="false" />
-        <Property Name="userDisplayName" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CollaborationInsightsOverview">
@@ -26397,8 +26521,11 @@
         <Property Name="objectId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SensitivityLabelInformation">
+        <Property Name="color" Type="Edm.String" />
         <Property Name="displayName" Type="Edm.String" />
+        <Property Name="hasIRMProtection" Type="Edm.Boolean" Nullable="false" />
         <Property Name="id" Type="Edm.String" />
+        <Property Name="tooltip" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SharedWithMeViewItemRemovalResult">
         <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
@@ -28101,7 +28228,7 @@
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="ESignatureSiteListFileName" Type="Edm.String" />
-        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.EsignatureThirdPartyProvidersInfo)" />
+        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureThirdPartyProviderList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureThirdPartyProviderListFileName" Type="Edm.String" />
         <Property Name="ExcludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -32533,7 +32660,7 @@
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="ESignatureSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="ESignatureSiteListFileName" Type="Edm.String" />
-        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.EsignatureThirdPartyProvidersInfo)" />
+        <Property Name="ESignatureThirdPartyProviderInfoList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureThirdPartyProviderList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureThirdPartyProviderListFileName" Type="Edm.String" />
         <Property Name="ExcludedBlockDownloadGroupIds" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -34788,6 +34915,9 @@
       </Action>
       <Action Name="DeclineAgreement">
         <Parameter Name="declineAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.DeclineAgreementModel" />
+      </Action>
+      <Action Name="GetEsignSettings">
+        <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="SignAgreement">
         <Parameter Name="signAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.SignAgreementModel" />
