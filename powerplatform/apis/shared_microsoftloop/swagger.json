@@ -39,7 +39,7 @@
     "application/json"
   ],
   "paths": {
-    "/{connectionId}/webhooks/register": {
+    "/{connectionId}/webhook/register": {
       "x-ms-notification-content": {
         "description": "Details for registering the Webhook",
         "schema": {
@@ -88,7 +88,7 @@
         }
       }
     },
-    "/{connectionId}/webhooks/deregister/${driveId}/${itemId}/${ruleId}": {
+    "/{connectionId}/webhook/deregister/${geoRegion}/${driveId}/${itemId}/${ruleId}": {
       "delete": {
         "description": "De-register the webhook",
         "summary": "De-register the webhook",
@@ -100,6 +100,18 @@
             "required": true,
             "type": "string",
             "x-ms-visibility": "internal"
+          },
+          {
+            "name": "geoRegion",
+            "in": "path",
+            "description": "The geo region of the tenant",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Geo Region",
+            "enum": [
+              "global",
+              "eu"
+            ]
           },
           {
             "name": "driveId",
@@ -133,6 +145,46 @@
         },
         "externalDocs": {
           "url": "https://docs.microsoft.com/connectors/microsoftloop/#de-register-the-webhook"
+        }
+      }
+    },
+    "/{connectionId}/webhook/getmessage": {
+      "post": {
+        "description": "Get the message",
+        "summary": "Get the message content for a rule",
+        "operationId": "get-message-payload",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "Request body of the get message content",
+            "in": "body",
+            "description": "This is the request body of the get message API",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetMessageRequestBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "schema": {
+              "$ref": "#/definitions/GetMessageResponseBody"
+            }
+          },
+          "default": {
+            "description": "Operation Failed",
+            "schema": {}
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/microsoftloop/#get-the-message-content-for-a-rule"
         }
       }
     }
@@ -177,25 +229,123 @@
               "x-ms-summary": "Drive Id",
               "x-ms-visibility": "advanced"
             },
+            "site_origin": {
+              "type": "string",
+              "description": "The site origin of the Loop File",
+              "title": "Site Origin",
+              "x-ms-summary": "Site Origin",
+              "x-ms-visibility": "advanced"
+            },
             "item_id": {
               "type": "string",
               "description": "The Item Id of the Loop File",
               "title": "Item Id",
               "x-ms-summary": "Item Id",
               "x-ms-visibility": "advanced"
+            },
+            "geo_region": {
+              "type": "string",
+              "description": "The geo region of the tenant",
+              "title": "Geo Region",
+              "x-ms-summary": "Geo Region",
+              "x-ms-visibility": "advanced",
+              "enum": [
+                "global",
+                "eu"
+              ]
             }
           },
           "required": [
             "callback_url",
             "rule_id",
             "drive_id",
-            "item_id"
+            "site_origin",
+            "item_id",
+            "geo_region"
           ]
         }
       },
       "required": [
         "config"
       ]
+    },
+    "GetMessageRequestBody": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "description": "Configuration of the Trigger",
+          "type": "object",
+          "properties": {
+            "rule_id": {
+              "type": "string",
+              "description": "Rule Id",
+              "title": "Rule Id",
+              "x-ms-summary": "Rule Id",
+              "x-ms-visibility": "advanced"
+            },
+            "drive_id": {
+              "type": "string",
+              "description": "The Drive Id of the Loop File",
+              "title": "Drive Id",
+              "x-ms-summary": "Drive Id",
+              "x-ms-visibility": "advanced"
+            },
+            "site_origin": {
+              "type": "string",
+              "description": "The site origin of the Loop File",
+              "title": "Site Origin",
+              "x-ms-summary": "Site Origin",
+              "x-ms-visibility": "advanced"
+            },
+            "item_id": {
+              "type": "string",
+              "description": "The Item Id of the Loop File",
+              "title": "Item Id",
+              "x-ms-summary": "Item Id",
+              "x-ms-visibility": "advanced"
+            },
+            "geo_region": {
+              "type": "string",
+              "description": "The geo region of the tenant",
+              "title": "Geo Region",
+              "x-ms-summary": "Geo Region",
+              "x-ms-visibility": "advanced",
+              "enum": [
+                "global",
+                "eu"
+              ]
+            },
+            "unparsed_message": {
+              "type": "string",
+              "description": "The un-parsed message body",
+              "title": "Unparsed message body",
+              "x-ms-summary": "Unparsed message",
+              "x-ms-visibility": "advanced"
+            }
+          },
+          "required": [
+            "rule_id",
+            "drive_id",
+            "site_origin",
+            "item_id",
+            "geo_region",
+            "unparsed_message"
+          ]
+        }
+      },
+      "required": [
+        "config"
+      ]
+    },
+    "GetMessageResponseBody": {
+      "type": "object",
+      "properties": {
+        "parsed_message": {
+          "type": "string",
+          "description": "Parsed message to be used in further actions",
+          "x-ms-summary": "Parsed message to be used in further actions"
+        }
+      }
     }
   },
   "externalDocs": {
