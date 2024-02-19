@@ -2,11 +2,13 @@
 | | |
 |-:|-|
 |**API name**|`shared_microsoftschooldatas`|
-|**Tier**|Premium|
-|**Version**|`releases/v1.0.1667\1.0.1667.3505`|
+|**Tier**|Standard|
+|**Version**|`releases/v1.0.1677\1.0.1677.3631`|
 |**Publisher**|**Microsoft**|
 |**Created**|Mon Nov 13 2023|
-|**Changed**|Mon Nov 13 2023|
+|**Changed**|Wed Feb 14 2024|
 
 ## Description
-Uploads CSV files to School Data Sync Version 2
+Automate the process of synchronizing user and roster data from Student Information or Management Systems with Microsoft 365 for Education. School Data Sync helps you manage your educational organization, users, classes and roles for Microsoft Teams, Intune, Exchange Online, SharePoint Online, OneNote Class Notebooks, and Learning Accelerators.
+
+Use with the new School Data Sync experience only. Not for use with SDS (Classic).
