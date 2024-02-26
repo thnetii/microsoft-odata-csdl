@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_commercemerchandising`|
 |**Tier**|Premium|
-|**Version**|`u/henryorsborn/partial-builds/asev3migrations-with-resourceTemplate\1.0.1653.3403`|
+|**Version**|`releases/v1.0.1678\1.0.1678.3636`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Feb 08 2022|
-|**Changed**|Mon Dec 04 2023|
+|**Changed**|Wed Feb 21 2024|
 
 ## Description
 The connector exposes actions to search and browse product related information like catalogs, inventory, price and recommendations. The connector connects to the Commerce Cloud Scale Unit (CSU) as a wrapper to provide the headless commerce APIs in simplified and easy way so businesses can easily consume and build Commerce applications.
