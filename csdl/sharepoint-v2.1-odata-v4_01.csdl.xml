@@ -2299,6 +2299,16 @@
         <Property Name="source" Type="oneDrive.thumbnail" />
         <Property Name="type" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="mediaReaction" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="reaction" Type="oneDrive.MediaReactionEmoji" />
+        <Property Name="mediaOffset" Type="Edm.Duration" />
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+      </EntityType>
       <EntityType Name="mediaTimeline" OpenType="true">
         <Property Name="version" Type="Edm.String" />
         <Property Name="eTag" Type="Edm.String" />
@@ -4919,6 +4929,7 @@
         <Property Name="childCount" Type="Edm.Int32" />
         <Property Name="view" Type="oneDrive.folderView" />
         <Property Name="folderType" Type="Edm.String" />
+        <Property Name="folderCover" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="folderView" OpenType="true">
         <Property Name="sortBy" Type="Edm.String" />
@@ -5068,6 +5079,7 @@
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
         <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
         <NavigationProperty Name="audioTracks" Type="Collection(oneDrive.audioTrack)" ContainsTarget="true" />
+        <NavigationProperty Name="reactions" Type="Collection(oneDrive.mediaReaction)" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="mediaSource" OpenType="true">
         <Property Name="contentCategory" Type="Edm.String" />
@@ -5196,6 +5208,7 @@
         <Property Name="canWrite" Type="Edm.Boolean" />
         <Property Name="canPrint" Type="Edm.Boolean" />
         <Property Name="canExtract" Type="Edm.Boolean" />
+        <Property Name="canExport" Type="Edm.Boolean" />
         <Property Name="supportsCLP" Type="Edm.Boolean" />
         <Property Name="irmPolicyDetails" Type="oneDrive.irmPolicyDetails" />
       </ComplexType>
@@ -5586,6 +5599,7 @@
         <Property Name="eeeuKey" Type="Edm.String" />
         <Property Name="eeeuType" Type="oneDrive.AnalyticsReportEEEUType" />
         <Property Name="sitesCount" Type="Edm.Int32" />
+        <Property Name="crawledSitesCount" Type="Edm.Int64" />
       </ComplexType>
       <ComplexType Name="ibComplianceParameters" OpenType="true">
         <Property Name="updateOneDriveSegments" Type="Edm.Boolean" />
@@ -5620,6 +5634,7 @@
         <Property Name="endDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="sharingLinkType" Type="oneDrive.AnalyticsReportSharingLinkType" />
         <Property Name="sitesCount" Type="Edm.Int32" />
+        <Property Name="crawledSitesCount" Type="Edm.Int64" />
       </ComplexType>
       <ComplexType Name="format" OpenType="true">
         <Property Name="extensions" Type="Collection(Edm.String)" />
@@ -6559,6 +6574,9 @@
         <Member Name="luis" Value="2" />
         <Member Name="azureCognitive" Value="4" />
         <Member Name="autofillColumn" Value="8" />
+        <Member Name="multiClassClassifier" Value="16" />
+        <Member Name="mixed" Value="32" />
+        <Member Name="textPrebuilt" Value="64" />
         <Member Name="unknownFutureValue" Value="1073741824" />
       </EnumType>
       <EnumType Name="MachineLearningFlags">
@@ -6721,6 +6739,13 @@
         <Member Name="PhotoStream" Value="1" />
         <Member Name="FamilyMember" Value="2" />
         <Member Name="SubstrateRecommendation" Value="3" />
+      </EnumType>
+      <EnumType Name="MediaReactionEmoji">
+        <Member Name="Like" Value="0" />
+        <Member Name="Laugh" Value="1" />
+        <Member Name="Heart" Value="2" />
+        <Member Name="Surprised" Value="3" />
+        <Member Name="ClappingHands" Value="4" />
       </EnumType>
       <EnumType Name="longRunningOperationStatus" />
       <EnumType Name="PlanActivityType" UnderlyingType="Edm.Byte">
@@ -7123,10 +7148,12 @@
         <Parameter Name="bindingParameter" Type="oneDrive.featureSettings" />
         <ReturnType Type="oneDrive.featureSettings" />
       </Action>
-      <Function Name="autoQueueConfig" IsBound="true">
+      <Action Name="setAutoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
+        <Parameter Name="entity" Type="Edm.String" />
+        <Parameter Name="sendEmailNotification" Type="Edm.String" />
         <ReturnType Type="oneDrive.analyticsReportsAutoQueueConfig" />
-      </Function>
+      </Action>
       <Function Name="topRecordsRACForSite" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReport" />
         <ReturnType Type="oneDrive.analyticsReport" />
@@ -7145,7 +7172,15 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="format" Type="Edm.String" />
         <Parameter Name="type" Type="Edm.String" />
-        <Parameter Name="sharingLinkType" Type="Edm.String" />
+        <Parameter Name="sharingLinkType" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="version" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="sharingLinkParameters" Type="oneDrive.analyticsReportSharingLinkParameters">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="createIBComplianceReport" IsBound="true" EntitySetPath="bindingParameter">
