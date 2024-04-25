@@ -21470,6 +21470,7 @@
         <Property Name="type" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="customExtensionClientConfiguration">
+        <Property Name="maximumRetries" Type="Edm.Int32" />
         <Property Name="timeoutInMilliseconds" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="customExtensionEndpointConfiguration" Abstract="true" />
@@ -24762,6 +24763,29 @@
       <ComplexType Name="assignmentOrder">
         <Property Name="order" Type="Collection(Edm.String)" />
       </ComplexType>
+      <ComplexType Name="authenticationConditions">
+        <Property Name="applications" Type="graph.authenticationConditionsApplications" />
+      </ComplexType>
+      <ComplexType Name="authenticationConditionsApplications">
+        <NavigationProperty Name="includeApplications" Type="Collection(graph.authenticationConditionApplication)" ContainsTarget="true" />
+      </ComplexType>
+      <EntityType Name="authenticationConditionApplication">
+        <Key>
+          <PropertyRef Name="appId" />
+        </Key>
+        <Property Name="appId" Type="Edm.String" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="authenticationConfigurationValidation">
+        <Property Name="errors" Type="Collection(graph.genericError)" />
+        <Property Name="warnings" Type="Collection(graph.genericError)" />
+      </ComplexType>
+      <ComplexType Name="genericError">
+        <Property Name="code" Type="Edm.String" />
+        <Property Name="message" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="azureAdTokenAuthentication" BaseType="graph.customExtensionAuthenticationConfiguration">
+        <Property Name="resourceId" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="basicAuthentication" BaseType="graph.apiAuthenticationConfigurationBase">
         <Property Name="password" Type="Edm.String" />
         <Property Name="username" Type="Edm.String" />
@@ -24774,6 +24798,24 @@
         <Property Name="notAfter" Type="Edm.Int64" Nullable="false" />
         <Property Name="notBefore" Type="Edm.Int64" Nullable="false" />
         <Property Name="thumbprint" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="customExtensionOverwriteConfiguration">
+        <Property Name="clientConfiguration" Type="graph.customExtensionClientConfiguration" />
+      </ComplexType>
+      <ComplexType Name="httpRequestEndpoint" BaseType="graph.customExtensionEndpointConfiguration">
+        <Property Name="targetUrl" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="onTokenIssuanceStartHandler" Abstract="true" />
+      <ComplexType Name="onTokenIssuanceStartCustomExtensionHandler" BaseType="graph.onTokenIssuanceStartHandler">
+        <Property Name="configuration" Type="graph.customExtensionOverwriteConfiguration" />
+        <NavigationProperty Name="customExtension" Type="graph.onTokenIssuanceStartCustomExtension" />
+      </ComplexType>
+      <EntityType Name="customAuthenticationExtension" BaseType="graph.customCalloutExtension" Abstract="true" />
+      <EntityType Name="onTokenIssuanceStartCustomExtension" BaseType="graph.customAuthenticationExtension">
+        <Property Name="claimsForTokenConfiguration" Type="Collection(graph.onTokenIssuanceStartReturnClaim)" />
+      </EntityType>
+      <ComplexType Name="onTokenIssuanceStartReturnClaim">
+        <Property Name="claimIdInApiResponse" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="pkcs12Certificate" BaseType="graph.apiAuthenticationConfigurationBase">
         <Property Name="password" Type="Edm.String" />
@@ -24804,6 +24846,10 @@
         <Property Name="developerId" Type="Edm.String" />
         <Property Name="keyId" Type="Edm.String" />
         <Property Name="serviceId" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="authenticationEventListener" BaseType="graph.entity" Abstract="true" OpenType="true">
+        <Property Name="authenticationEventsFlowId" Type="Edm.String" />
+        <Property Name="conditions" Type="graph.authenticationConditions" />
       </EntityType>
       <EntityType Name="identityUserFlow" BaseType="graph.entity">
         <Property Name="userFlowType" Type="graph.userFlowType" Nullable="false" />
@@ -24848,12 +24894,17 @@
       <EntityType Name="identityBuiltInUserFlowAttribute" BaseType="graph.identityUserFlowAttribute" />
       <EntityType Name="identityContainer" BaseType="graph.entity">
         <NavigationProperty Name="apiConnectors" Type="Collection(graph.identityApiConnector)" ContainsTarget="true" />
+        <NavigationProperty Name="authenticationEventListeners" Type="Collection(graph.authenticationEventListener)" ContainsTarget="true" />
         <NavigationProperty Name="b2xUserFlows" Type="Collection(graph.b2xIdentityUserFlow)" ContainsTarget="true" />
+        <NavigationProperty Name="customAuthenticationExtensions" Type="Collection(graph.customAuthenticationExtension)" ContainsTarget="true" />
         <NavigationProperty Name="identityProviders" Type="Collection(graph.identityProviderBase)" ContainsTarget="true" />
         <NavigationProperty Name="userFlowAttributes" Type="Collection(graph.identityUserFlowAttribute)" ContainsTarget="true" />
         <NavigationProperty Name="conditionalAccess" Type="graph.conditionalAccessRoot" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="identityCustomUserFlowAttribute" BaseType="graph.identityUserFlowAttribute" />
+      <EntityType Name="onTokenIssuanceStartListener" BaseType="graph.authenticationEventListener">
+        <Property Name="handler" Type="graph.onTokenIssuanceStartHandler" />
+      </EntityType>
       <EntityType Name="socialIdentityProvider" BaseType="graph.identityProviderBase">
         <Property Name="clientId" Type="Edm.String" />
         <Property Name="clientSecret" Type="Edm.String" />
@@ -26769,10 +26820,6 @@
         <Property Name="errorDetails" Type="graph.genericError" />
         <Property Name="sourceId" Type="Edm.String" />
         <Property Name="targetId" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="genericError">
-        <Property Name="code" Type="Edm.String" />
-        <Property Name="message" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="timeZoneBase">
         <Property Name="name" Type="Edm.String" />
@@ -34173,6 +34220,16 @@
         <Parameter Name="pkcs12Value" Type="Edm.String" Unicode="false" />
         <Parameter Name="password" Type="Edm.String" Unicode="false" />
         <ReturnType Type="graph.identityApiConnector" />
+      </Action>
+      <Action Name="validateAuthenticationConfiguration" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.customAuthenticationExtension)" />
+        <Parameter Name="endpointConfiguration" Type="graph.customExtensionEndpointConfiguration" />
+        <Parameter Name="authenticationConfiguration" Type="graph.customExtensionAuthenticationConfiguration" />
+        <ReturnType Type="graph.authenticationConfigurationValidation" />
+      </Action>
+      <Action Name="validateAuthenticationConfiguration" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.customAuthenticationExtension" />
+        <ReturnType Type="graph.authenticationConfigurationValidation" />
       </Action>
       <Function Name="availableProviderTypes" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.identityProvider)" />
