@@ -1047,6 +1047,7 @@
         <NavigationProperty Name="v1" Type="oneDrive.v1" ContainsTarget="true" />
         <NavigationProperty Name="restorePoints" Type="Collection(oneDrive.restorePoint)" ContainsTarget="true" />
         <NavigationProperty Name="protectionUnits" Type="Collection(oneDrive.protectionUnit)" ContainsTarget="true" />
+        <NavigationProperty Name="serviceSettings" Type="oneDrive.serviceSettings" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="featureSettings" OpenType="true">
@@ -1114,6 +1115,19 @@
         <Property Name="createdDateTimeUtc" Type="Edm.DateTimeOffset" />
         <Property Name="lastModifiedDateTimeUtc" Type="Edm.DateTimeOffset" />
         <Property Name="statusChangeDateTimeUtc" Type="Edm.DateTimeOffset" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="serviceSettings" OpenType="true">
+        <Key>
+          <PropertyRef Name="ConsumingTenantId" />
+        </Key>
+        <Property Name="ConsumingTenantId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="ClientApplicationId" Type="Edm.Guid" />
+        <Property Name="OwningTenantId" Type="Edm.Guid" />
+        <Property Name="BillingProfileIdentityType" Type="oneDrive.BillingProfileIdentityType" />
+        <Property Name="BackupServiceConsumer" Type="oneDrive.BackupServiceConsumer" />
+        <Property Name="SyntexBillingActivationStatus" Type="oneDrive.SyntexBillingActivationStatus" />
+        <Property Name="BillingProfiles" Type="Collection(oneDrive.localBillingProfileFacet)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="deletedStorageContainer" OpenType="true">
@@ -1198,6 +1212,7 @@
         <Property Name="isItemVersioningEnabled" Type="Edm.Boolean" />
         <Property Name="assignedSensitivityLabel" Type="oneDrive.assignedSensitivityLabel" />
         <Property Name="ownershipType" Type="oneDrive.OwnershipType" />
+        <Property Name="lockState" Type="oneDrive.LockState" />
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
@@ -1408,6 +1423,7 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="isPremiumLicenseEnabled" Type="Edm.Boolean" />
         <NavigationProperty Name="accessStatsByDay" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="accessStatsByHour" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
         <NavigationProperty Name="platformStatsByDay" Type="Collection(oneDrive.itemActivityStat)" ContainsTarget="true" />
@@ -3715,6 +3731,14 @@
         <Property Name="retentionPeriodInDays" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="localBillingProfileFacet" OpenType="true">
+        <Property Name="BillingProfileId" Type="Edm.Guid" />
+        <Property Name="AzureResourceId" Type="Edm.String" />
+        <Property Name="Location" Type="Edm.String" />
+        <Property Name="AzureSubscriptionState" Type="oneDrive.AzureSubscriptionState" />
+        <Property Name="SyntexBillingActivationStatus" Type="oneDrive.SyntexBillingActivationStatus" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="restoreDestination" OpenType="true">
         <Property Name="restorePathType" Type="oneDrive.RestorePathType" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -3730,7 +3754,9 @@
         <Property Name="artifactRestoreStatus" Type="oneDrive.ArtifactRestoreStatus" />
         <Property Name="backupStartTime" Type="Edm.DateTimeOffset" />
         <Property Name="backupEndTime" Type="Edm.DateTimeOffset" />
+        <Property Name="destination" Type="oneDrive.restoreDestination" />
         <Property Name="RestoreScheduledTime" Type="Edm.DateTimeOffset" />
+        <Property Name="restoreToTimestamp" Type="Edm.DateTimeOffset" />
         <Property Name="restoreStartTime" Type="Edm.DateTimeOffset" />
         <Property Name="restoreEndTime" Type="Edm.DateTimeOffset" />
         <Property Name="error" Type="oneDrive.error" />
@@ -3763,6 +3789,11 @@
       <ComplexType Name="orglinkscontext" OpenType="true">
         <Property Name="canUserEditOrgLinks" Type="Edm.Boolean" />
         <Property Name="isUserAdmin" Type="Edm.Boolean" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="createFromTemplateRequest" OpenType="true">
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="title" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="elementUpdate" OpenType="true">
@@ -3915,6 +3946,7 @@
       </ComplexType>
       <ComplexType Name="campaignReports" OpenType="true">
         <Property Name="campaignId" Type="Edm.String" />
+        <Property Name="timestamp" Type="Edm.DateTimeOffset" />
         <Property Name="reports" Type="Collection(oneDrive.report)" />
       </ComplexType>
       <ComplexType Name="columnHeaders" OpenType="true">
@@ -3923,6 +3955,7 @@
       </ComplexType>
       <ComplexType Name="publicationReports" OpenType="true">
         <Property Name="publicationId" Type="Edm.String" />
+        <Property Name="timestamp" Type="Edm.DateTimeOffset" />
         <Property Name="reports" Type="Collection(oneDrive.report)" />
       </ComplexType>
       <ComplexType Name="report" OpenType="true">
@@ -4096,7 +4129,7 @@
       </ComplexType>
       <ComplexType Name="opStreamSessionSensitivityLabelsResult" OpenType="true">
         <Property Name="labelsTimestamp" Type="Edm.DateTimeOffset" />
-        <Property Name="labels" Type="oneDrive.extractSensitivityLabelsResult" />
+        <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
       </ComplexType>
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
@@ -6728,6 +6761,30 @@
         <Member Name="Offboarding" Value="8" />
         <Member Name="OffboardFailed" Value="9" />
       </EnumType>
+      <EnumType Name="BillingProfileIdentityType">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="App" Value="1" />
+        <Member Name="Tenant" Value="2" />
+      </EnumType>
+      <EnumType Name="BackupServiceConsumer">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="FirstParty" Value="1" />
+        <Member Name="ThirdParty" Value="2" />
+      </EnumType>
+      <EnumType Name="SyntexBillingActivationStatus">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="None" Value="1" />
+        <Member Name="Active" Value="2" />
+      </EnumType>
+      <EnumType Name="AzureSubscriptionState">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="Active" Value="1" />
+        <Member Name="Deleted" Value="2" />
+        <Member Name="Disabled" Value="3" />
+        <Member Name="Expired" Value="4" />
+        <Member Name="PastDue" Value="5" />
+        <Member Name="Warned" Value="6" />
+      </EnumType>
       <EnumType Name="DeletedStorageContainerStatus">
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
@@ -6739,6 +6796,13 @@
       <EnumType Name="OwnershipType">
         <Member Name="tenantOwned" Value="0" />
         <Member Name="userOwned" Value="1" />
+      </EnumType>
+      <EnumType Name="LockState">
+        <Member Name="unlocked" Value="0" />
+        <Member Name="lockedNoAdditions" Value="1" />
+        <Member Name="lockedNoAccess" Value="2" />
+        <Member Name="lockedReadOnly" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
       <EnumType Name="columnTypes">
         <Member Name="note" Value="0" />
@@ -7409,6 +7473,17 @@
         <Parameter Name="bindingParameter" Type="oneDrive.featureSettings" />
         <ReturnType Type="oneDrive.featureSettings" />
       </Action>
+      <Action Name="setServiceSettings" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.serviceSettings" />
+        <Parameter Name="serviceSettings" Type="oneDrive.serviceSettings">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.serviceSettings" />
+      </Action>
+      <Function Name="getServiceSettings" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.serviceSettings" />
+        <ReturnType Type="oneDrive.serviceSettings" />
+      </Function>
       <Action Name="setAutoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
         <Parameter Name="entity" Type="Edm.String" />
@@ -7518,6 +7593,15 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="format" Type="Edm.String" />
         <Parameter Name="sitePermissionsParameters" Type="oneDrive.sitePermissionsParameters" />
+        <ReturnType Type="oneDrive.analyticsReport" />
+      </Action>
+      <Action Name="createCustomGroupReport" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="version" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="customGroupParameters" Type="oneDrive.customGroupParameters" />
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
       <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
@@ -8001,6 +8085,10 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.orglink)" />
         <ReturnType Type="oneDrive.orglinkscontext" />
       </Function>
+      <Action Name="createFromTemplate" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.baseSitePage)" />
+        <ReturnType Type="oneDrive.baseSitePage" />
+      </Action>
       <Action Name="publish" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.page" />
       </Action>
@@ -8202,6 +8290,9 @@
         </Parameter>
         <ReturnType Type="oneDrive.siteReview" />
       </Action>
+      <Action Name="reportContent">
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Function Name="socketIo" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.subscription)" />
         <ReturnType Type="oneDrive.subscription" />
@@ -8217,6 +8308,15 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
       </Action>
       <Action Name="activateStorageContainer" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
+      </Action>
+      <Action Name="lock" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
+        <Parameter Name="lockState" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+      </Action>
+      <Action Name="unlockStorageContainer" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.storageContainer" />
       </Action>
       <Function Name="getPositionOfWebPart" IsBound="true">
@@ -8850,6 +8950,7 @@
         <ActionImport Name="getItems" Action="oneDrive.getItems" />
         <FunctionImport Name="getWebPartsByPosition" Function="oneDrive.getWebPartsByPosition" IncludeInServiceDocument="true" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
+        <ActionImport Name="reportContent" Action="oneDrive.reportContent" />
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
