@@ -123,13 +123,6 @@
         <Property Name="Audiences" Type="Collection(Edm.String)" />
         <Property Name="Name" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="VivaConnectionsUrlConfiguration">
-        <Property Name="ContentUrl" Type="Edm.String" />
-        <Property Name="DashboardNotConfiguredWarning" Type="Edm.String" />
-        <Property Name="GlobalNavNotConfiguredWarning" Type="Edm.String" />
-        <Property Name="NotHomeSiteUrlWarning" Type="Edm.String" />
-        <Property Name="SearchUrl" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="VivaHomeTitleRegion">
         <Property Name="ImageUrl" Type="Edm.String" />
         <Property Name="ListId" Type="Edm.Guid" />
@@ -138,6 +131,13 @@
         <Property Name="TranslateY" Type="Edm.Double" />
         <Property Name="UniqueId" Type="Edm.Guid" />
         <Property Name="WebId" Type="Edm.Guid" />
+      </ComplexType>
+      <ComplexType Name="VivaConnectionsUrlConfiguration">
+        <Property Name="ContentUrl" Type="Edm.String" />
+        <Property Name="DashboardNotConfiguredWarning" Type="Edm.String" />
+        <Property Name="GlobalNavNotConfiguredWarning" Type="Edm.String" />
+        <Property Name="NotHomeSiteUrlWarning" Type="Edm.String" />
+        <Property Name="SearchUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="UserIdInfo">
         <Property Name="NameId" Type="Edm.String" />
@@ -1519,6 +1519,17 @@
         <Property Name="IsExistingAgreement" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Language" Type="Edm.String" />
         <Property Name="State" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="TenantThemes">
+        <Property Name="hideDefaultThemes" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="themeData" Type="Collection(SP.ThemeData)" />
+      </ComplexType>
+      <ComplexType Name="ThemeData">
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="isVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="source" Type="Edm.Int32" Nullable="false" />
+        <Property Name="themeJson" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="MenuNode">
         <Property Name="AudienceIds" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -3857,6 +3868,11 @@
       <Function Name="BrandCenter">
         <ReturnType Type="SP.BrandCenter" />
       </Function>
+      <Action Name="AddTenantTheme" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="themeData" Type="SP.ThemeData" />
+        <ReturnType Type="SP.ThemeData" />
+      </Action>
       <Function Name="Configuration" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="SP.BrandCenterConfiguration" />
@@ -3873,6 +3889,15 @@
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </Action>
+      <Function Name="GetTenantThemeById" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="SP.ThemeData" />
+      </Function>
+      <Function Name="GetTenantThemes" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <ReturnType Type="SP.TenantThemes" />
+      </Function>
       <Function Name="OrgAssets" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
@@ -3882,6 +3907,16 @@
         <Parameter Name="shouldUseCache" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </Function>
+      <Action Name="UpdateTenantTheme" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="themeData" Type="SP.ThemeData" />
+        <ReturnType Type="SP.ThemeData" />
+      </Action>
+      <Action Name="ValidateTenantThemeName" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="name" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="CancelAllJobs" IsBound="true">
         <Parameter Name="this" Type="SP.AppInstance" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -8910,10 +8945,10 @@
       <Annotations Target="Microsoft.SharePoint.EmployeeEngagement.VivaResourceLink">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.VivaConnectionsUrlConfiguration">
+      <Annotations Target="SP.VivaHomeTitleRegion">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.VivaHomeTitleRegion">
+      <Annotations Target="SP.VivaConnectionsUrlConfiguration">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Deployment.ShortcutInformation">
@@ -9490,6 +9525,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Utilities.WopiWebAppProperties">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.TenantThemes">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ThemeData">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Utilities.ThemingOptions">
@@ -14461,6 +14502,9 @@
       <Annotations Target="SP.CampainAnalytics.GetReport(Microsoft.SharePoint.CampaignAnalytics.VinciAnalyticsReportRequest)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.AddTenantTheme(SP.BrandCenter, SP.ThemeData)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Configuration(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14473,10 +14517,22 @@
       <Annotations Target="SP.EnsureBrandFontsLibraryFeature(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.GetTenantThemeById(SP.BrandCenter, Edm.Int32)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.GetTenantThemes(SP.BrandCenter)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.OrgAssets(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.OrgAssetsWithCacheFlag(SP.BrandCenter, Edm.Boolean)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.UpdateTenantTheme(SP.BrandCenter, SP.ThemeData)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ValidateTenantThemeName(SP.BrandCenter, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.GetAppDatabaseConnectionString(SP.AppInstance)">
@@ -26557,6 +26613,7 @@
       <ComplexType Name="VCConfiguration">
         <Property Name="CompanyLinks" Type="Collection(Microsoft.SharePoint.EmployeeEngagement.VivaResourceLink)" />
         <Property Name="SpotlightConfiguration" Type="Microsoft.SharePoint.EmployeeEngagement.SpotlightConfiguration" />
+        <Property Name="TitleRegion" Type="SP.VivaHomeTitleRegion" />
       </ComplexType>
       <ComplexType Name="VivaResourceLink">
         <Property Name="Audiences" Type="Collection(Edm.String)" />
@@ -28704,6 +28761,10 @@
         <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ProviderName" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="columnsInfo">
+        <Property Name="columnName" Type="Edm.String" />
+        <Property Name="viewFieldName" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="GroupInfo">
         <Property Name="GroupStatusInAAD" Type="Edm.Int32" Nullable="false" />
         <Property Name="SiteUrl" Type="Edm.String" />
@@ -29044,7 +29105,6 @@
         <Property Name="ApplicationId" Type="Edm.Guid" Nullable="false" />
         <Property Name="AzureRegion" Type="Edm.String" />
         <Property Name="IsActivated" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="Name" Type="Edm.String" />
         <Property Name="ResourceGroup" Type="Edm.String" />
         <Property Name="SubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SubscriptionState" Type="Edm.String" />
@@ -30099,6 +30159,7 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="viewXml" Type="Edm.String" />
         <Parameter Name="timeZoneId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="columnsInfo" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.columnsInfo)" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="ExportUnlicensedOneDriveForBusinessListToCSV" IsBound="true">
@@ -30122,11 +30183,6 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.FontPackage)" />
       </Function>
-      <Action Name="GetChatGptResponse" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="requestOptions" Type="Microsoft.SharePoint.Internal.ChatGptRequestOptions" />
-        <ReturnType Type="Microsoft.SharePoint.Internal.ChatGptResponse" />
-      </Action>
       <Function Name="GetCollaborationInsightsData" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborationInsightsData" />
@@ -30173,16 +30229,6 @@
         <Parameter Name="listName" Type="Edm.String" />
         <ReturnType Type="Collection(SP.ListItem)" />
       </Action>
-      <Action Name="GetGptEmbeddings" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="requestOptions" Type="Microsoft.SharePoint.Internal.GptEmbeddingsRequestOptions" />
-        <ReturnType Type="Microsoft.SharePoint.Internal.GptEmbeddingsResponse" />
-      </Action>
-      <Action Name="GetGptResponse" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <Parameter Name="requestOptions" Type="Microsoft.SharePoint.Internal.GptRequestOptions" />
-        <ReturnType Type="Microsoft.SharePoint.Internal.GptResponse" />
-      </Action>
       <Function Name="GetHomeSites" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.HomeSitesDetails)" />
@@ -30204,6 +30250,7 @@
         <Parameter Name="insightsScenario" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="dataFileName" Type="Edm.String" />
         <Parameter Name="pageIndex" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="modelName" Type="Edm.String" />
         <Parameter Name="maxTokenSize" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="maxContentSize" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="timeoutMS" Type="Edm.Int32" Nullable="false" />
