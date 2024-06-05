@@ -2158,6 +2158,7 @@
         <NavigationProperty Name="syntexModelUsages" Type="Collection(oneDrive.syntexModelUsage)" ContainsTarget="true" />
         <NavigationProperty Name="syntexWorkItems" Type="Collection(oneDrive.syntexWorkItem)" ContainsTarget="true" />
         <NavigationProperty Name="siteReviews" Type="Collection(oneDrive.siteReview)" ContainsTarget="true" />
+        <NavigationProperty Name="extensions" Type="Collection(oneDrive.extension)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="itemRetentionLabel" OpenType="true">
@@ -3446,6 +3447,7 @@
       <ComplexType Name="enterpriseSubpoenaExport" OpenType="true">
         <Property Name="recordLocatorId" Type="Edm.String" />
         <Property Name="batchId" Type="Edm.Guid" />
+        <Property Name="submitterAgentId" Type="Edm.Guid" />
         <Property Name="createOrchestrationJob" Type="Edm.Boolean" />
         <Property Name="tenantGeos" Type="Collection(oneDrive.tenantGeo)" />
         <Property Name="requestStartTimeUtcTicks" Type="Edm.Int64" />
@@ -4233,6 +4235,7 @@
         <Property Name="content" Type="Edm.Stream" />
         <Property Name="height" Type="Edm.Int32" />
         <Property Name="url" Type="Edm.String" />
+        <Property Name="downloadCode" Type="Edm.String" />
         <Property Name="width" Type="Edm.Int32" />
         <Property Name="sourceItemId" Type="Edm.String" />
         <Property Name="sourceCropRegions" Type="Collection(oneDrive.cropRegion)" />
@@ -4376,9 +4379,37 @@
       <ComplexType Name="extractSensitivityLabelsResult" OpenType="true">
         <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
       </ComplexType>
+      <ComplexType Name="irmCapabilities" OpenType="true">
+        <Property Name="canPrint" Type="Edm.Boolean" />
+        <Property Name="canExtract" Type="Edm.Boolean" />
+        <Property Name="canRead" Type="Edm.Boolean" />
+        <Property Name="canWrite" Type="Edm.Boolean" />
+      </ComplexType>
+      <ComplexType Name="labelPolicyResult" OpenType="true">
+        <Property Name="appliedPolicyLabelId" Type="Edm.String" />
+        <Property Name="customUrl" Type="Edm.String" />
+        <Property Name="defaultLabelId" Type="Edm.String" />
+        <Property Name="defaultLabelType" Type="Edm.String" />
+        <Property Name="mandatoryLabelingEnforced" Type="Edm.Boolean" />
+        <Property Name="policyLabelAssignmentMethod" Type="oneDrive.SensitivityLabelAssignmentMethod" />
+        <Property Name="policyLabelVersionToken" Type="Edm.String" />
+        <Property Name="requiredDowngradeJustification" Type="Edm.Boolean" />
+        <Property Name="irmCapabilities" Type="oneDrive.irmCapabilities" />
+        <Property Name="sensitivityLabels" Type="Collection(oneDrive.sensitivityLabelEntity)" />
+      </ComplexType>
       <ComplexType Name="rmsLicenses" OpenType="true">
         <Property Name="publishingLicense" Type="Edm.String" />
         <Property Name="useLicense" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="sensitivityLabelAction" OpenType="true">
+        <Property Name="alignment" Type="Edm.String" />
+        <Property Name="font" Type="Edm.String" />
+        <Property Name="fontColor" Type="Edm.String" />
+        <Property Name="fontSize" Type="Edm.Int32" />
+        <Property Name="margin" Type="Edm.Int32" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="placement" Type="Edm.String" />
+        <Property Name="text" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="sensitivityLabelAssignment" OpenType="true">
         <Property Name="sensitivityLabelId" Type="Edm.String" />
@@ -4387,6 +4418,24 @@
         <Property Name="protectionType" Type="oneDrive.LabelProtectionType" />
         <Property Name="appliedByUserEmail" Type="Edm.String" />
         <Property Name="rmsLicenses" Type="oneDrive.rmsLicenses" />
+      </ComplexType>
+      <ComplexType Name="sensitivityLabelEntity" OpenType="true">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="appliesDynamicWatermarking" Type="Edm.Boolean" />
+        <Property Name="color" Type="Edm.String" />
+        <Property Name="defaultSublabelId" Type="Edm.String" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="dynamicWatermarkingText" Type="Edm.String" />
+        <Property Name="enabled" Type="Edm.Boolean" />
+        <Property Name="hasUserDefinedPermissions" Type="Edm.Boolean" />
+        <Property Name="isEndpointProtectionEnabled" Type="Edm.Boolean" />
+        <Property Name="labelActions" Type="Collection(oneDrive.sensitivityLabelAction)" />
+        <Property Name="order" Type="Edm.Int32" />
+        <Property Name="parentId" Type="Edm.String" />
+        <Property Name="requiredDowngradeJustification" Type="Edm.Boolean" />
+        <Property Name="toolTip" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="siteReviewDetails" OpenType="true">
         <Property Name="startDate" Type="Edm.DateTimeOffset" />
@@ -4410,7 +4459,7 @@
         <Property Name="potentialRisk" Type="oneDrive.PotentialRisk" />
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="filesOrFolders" Type="oneDrive.siteReviewFilesOrFolders" />
-        <Property Name="groups" Type="oneDrive.siteReviewGroups" />
+        <Property Name="groups" Type="oneDrive.siteReviewGroupPermissionDetails" />
         <Property Name="spSites" Type="oneDrive.siteReviewSiteCollection" />
         <Property Name="spLists" Type="oneDrive.siteReviewSharePointList" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -4793,6 +4842,9 @@
       <ComplexType Name="siteReviewGroups" OpenType="true">
         <Property Name="id" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
+        <Property Name="countOfUsers" Type="Edm.String" />
+        <Property Name="email" Type="Edm.String" />
+        <Property Name="type" Type="oneDrive.GroupTypeEnum" />
       </ComplexType>
       <ComplexType Name="siteReviewScenarioDetails" OpenType="true">
         <Property Name="type" Type="oneDrive.ScenarioType" />
@@ -5851,6 +5903,7 @@
         <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="nextExpectedRanges" Type="Collection(Edm.String)" />
         <Property Name="uploadUrl" Type="Edm.String" />
+        <Property Name="authorizationCode" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="tmrUploadSession" BaseType="oneDrive.uploadSession" OpenType="true">
         <Property Name="resourceUploadToken" Type="Edm.String" />
@@ -6280,12 +6333,6 @@
         <Property Name="lastCounterReductionTimes" Type="oneDrive.custom" />
         <Property Name="policiesExceeded" Type="Collection(oneDrive.throttleInfoPolicy)" />
       </ComplexType>
-      <ComplexType Name="basePermissions">
-        <Property Name="manageLists" Type="Edm.Boolean" />
-        <Property Name="managePersonalViews" Type="Edm.Boolean" />
-        <Property Name="openItems" Type="Edm.Boolean" />
-        <Property Name="useClientIntegration" Type="Edm.Boolean" />
-      </ComplexType>
       <ComplexType Name="throttleInfoPolicy">
         <Property Name="name" Type="Edm.String" />
         <Property Name="inViolation" Type="Edm.Boolean" />
@@ -6378,10 +6425,6 @@
         <Property Name="isEnabled" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
-      <ComplexType Name="listDecorator">
-        <Property Name="color" Type="oneDrive.ListColor" />
-        <Property Name="icon" Type="oneDrive.ListIcon" />
-      </ComplexType>
       <ComplexType Name="commandProperties">
         <Property Name="defaultScope" Type="Edm.String" />
         <Property Name="scopes" Type="Collection(Edm.String)" />
@@ -6417,6 +6460,16 @@
         <Property Name="requestedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="estimatedCompletionDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="error" Type="oneDrive.error" />
+      </ComplexType>
+      <ComplexType Name="listDecorator">
+        <Property Name="color" Type="oneDrive.ListColor" />
+        <Property Name="icon" Type="oneDrive.ListIcon" />
+      </ComplexType>
+      <ComplexType Name="basePermissions">
+        <Property Name="manageLists" Type="Edm.Boolean" />
+        <Property Name="managePersonalViews" Type="Edm.Boolean" />
+        <Property Name="openItems" Type="Edm.Boolean" />
+        <Property Name="useClientIntegration" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="photoPreferences">
         <Property Name="eTag" Type="Edm.String" />
@@ -7021,6 +7074,81 @@
         <Member Name="Infected" Value="1" />
         <Member Name="NotScanned" Value="2" />
       </EnumType>
+      <EnumType Name="AgeGroupEnum" UnderlyingType="Edm.Int64">
+        <Member Name="Undefined" Value="0" />
+        <Member Name="MinorWithoutParentalConsent" Value="1" />
+        <Member Name="MinorWithParentalConsent" Value="2" />
+        <Member Name="Adult" Value="3" />
+        <Member Name="NotAdult" Value="4" />
+        <Member Name="MinorNoParentalConsentRequired" Value="5" />
+      </EnumType>
+      <EnumType Name="EntitlementType">
+        <Member Name="PaidPlan" Value="0" />
+        <Member Name="FreePlan" Value="1" />
+        <Member Name="Reward" Value="2" />
+        <Member Name="FreePlanBonus" Value="3" />
+        <Member Name="Referral" Value="4" />
+        <Member Name="Bonus" Value="5" />
+      </EnumType>
+      <EnumType Name="InviteSourceType">
+        <Member Name="inviteSourceDefault" Value="90" />
+        <Member Name="inviteSourceTwitter" Value="91" />
+        <Member Name="inviteSourceFacebook" Value="92" />
+        <Member Name="inviteSourceWeibo" Value="93" />
+        <Member Name="inviteSourceLinkedin" Value="94" />
+        <Member Name="inviteSourceEmail" Value="95" />
+      </EnumType>
+      <EnumType Name="CommentActionType" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="Annotation" Value="1" />
+      </EnumType>
+      <EnumType Name="SiteArchiveStatus">
+        <Member Name="recentlyArchived" Value="0" />
+        <Member Name="fullyArchived" Value="1" />
+        <Member Name="reactivating" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
+      <EnumType Name="SharingCapabilities">
+        <Member Name="disabled" Value="0" />
+        <Member Name="externalUserSharingOnly" Value="1" />
+        <Member Name="externalUserAndGuestSharing" Value="2" />
+        <Member Name="existingExternalUserSharingOnly" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
+      </EnumType>
+      <EnumType Name="SiteType">
+        <Member Name="Group" Value="0" />
+        <Member Name="Communication" Value="1" />
+      </EnumType>
+      <EnumType Name="behaviorDuringRetentionPeriod">
+        <Member Name="doNotRetain" Value="0" />
+        <Member Name="retain" Value="1" />
+        <Member Name="retainAsRecord" Value="2" />
+        <Member Name="retainAsRegulatoryRecord" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
+      </EnumType>
+      <EnumType Name="ActivityType">
+        <Member Name="None" Value="0" />
+        <Member Name="Invite" Value="1" />
+        <Member Name="AccessRequest" Value="2" />
+        <Member Name="InviteAccepted" Value="3" />
+        <Member Name="AccessGranted" Value="4" />
+        <Member Name="Comment" Value="5" />
+        <Member Name="Reaction" Value="6" />
+      </EnumType>
+      <EnumType Name="Source">
+        <Member Name="None" Value="0" />
+        <Member Name="PhotoStream" Value="1" />
+        <Member Name="FamilyMember" Value="2" />
+        <Member Name="SubstrateRecommendation" Value="3" />
+      </EnumType>
+      <EnumType Name="MediaReactionEmoji">
+        <Member Name="Like" Value="0" />
+        <Member Name="Laugh" Value="1" />
+        <Member Name="Heart" Value="2" />
+        <Member Name="Surprised" Value="3" />
+        <Member Name="ClappingHands" Value="4" />
+      </EnumType>
+      <EnumType Name="longRunningOperationStatus" />
       <EnumType Name="ItemOperation">
         <Member Name="Copy" Value="0" />
         <Member Name="Delete" Value="1" />
@@ -7028,51 +7156,6 @@
       <EnumType Name="ItemType">
         <Member Name="File" Value="0" />
         <Member Name="Folder" Value="1" />
-      </EnumType>
-      <EnumType Name="PageLayoutType">
-        <Member Name="microsoftReserved" Value="0" />
-        <Member Name="article" Value="1" />
-        <Member Name="home" Value="2" />
-        <Member Name="unknownFutureValue" Value="3" />
-        <Member Name="topic" Value="4" />
-        <Member Name="newsLink" Value="5" />
-        <Member Name="videoNewsLink" Value="6" />
-      </EnumType>
-      <EnumType Name="NewsType">
-        <Member Name="News" Value="0" />
-        <Member Name="NewsLink" Value="1" />
-        <Member Name="ExternalNews" Value="2" />
-      </EnumType>
-      <EnumType Name="PagePromotionType">
-        <Member Name="microsoftReserved" Value="0" />
-        <Member Name="page" Value="1" />
-        <Member Name="newsPost" Value="2" />
-        <Member Name="unknownFutureValue" Value="3" />
-      </EnumType>
-      <EnumType Name="TitleAreaLayoutType">
-        <Member Name="imageAndTitle" Value="0" />
-        <Member Name="plain" Value="1" />
-        <Member Name="colorBlock" Value="2" />
-        <Member Name="overlap" Value="3" />
-        <Member Name="topicPage" Value="4" />
-        <Member Name="unknownFutureValue" Value="5" />
-      </EnumType>
-      <EnumType Name="TitleAreaTextAlignmentType">
-        <Member Name="left" Value="0" />
-        <Member Name="center" Value="1" />
-        <Member Name="unknownFutureValue" Value="2" />
-      </EnumType>
-      <EnumType Name="ResourceType">
-        <Member Name="SHAREPOINT" Value="0" />
-        <Member Name="EXTERNAL" Value="1" />
-        <Member Name="CONNECTOR" Value="2" />
-      </EnumType>
-      <EnumType Name="LockStateType" UnderlyingType="Edm.Byte">
-        <Member Name="Unlocked" Value="0" />
-        <Member Name="LockedNoTopicEditPermissions" Value="1" />
-        <Member Name="LockedCheckedOutToOtherUser" Value="2" />
-        <Member Name="LockedMultiLingual" Value="3" />
-        <Member Name="LockedOtherReason" Value="4" />
       </EnumType>
       <EnumType Name="ListColor">
         <Member Name="darkRed" Value="0" />
@@ -7111,81 +7194,20 @@
         <Member Name="birthdayCake" Value="18" />
         <Member Name="unknownFutureValue" Value="19" />
       </EnumType>
-      <EnumType Name="SiteArchiveStatus">
-        <Member Name="recentlyArchived" Value="0" />
-        <Member Name="fullyArchived" Value="1" />
-        <Member Name="reactivating" Value="2" />
+      <EnumType Name="PageLayoutType">
+        <Member Name="microsoftReserved" Value="0" />
+        <Member Name="article" Value="1" />
+        <Member Name="home" Value="2" />
         <Member Name="unknownFutureValue" Value="3" />
+        <Member Name="topic" Value="4" />
+        <Member Name="newsLink" Value="5" />
+        <Member Name="videoNewsLink" Value="6" />
       </EnumType>
-      <EnumType Name="SharingCapabilities">
-        <Member Name="disabled" Value="0" />
-        <Member Name="externalUserSharingOnly" Value="1" />
-        <Member Name="externalUserAndGuestSharing" Value="2" />
-        <Member Name="existingExternalUserSharingOnly" Value="3" />
-        <Member Name="unknownFutureValue" Value="4" />
+      <EnumType Name="NewsType">
+        <Member Name="News" Value="0" />
+        <Member Name="NewsLink" Value="1" />
+        <Member Name="ExternalNews" Value="2" />
       </EnumType>
-      <EnumType Name="SiteType">
-        <Member Name="Group" Value="0" />
-        <Member Name="Communication" Value="1" />
-      </EnumType>
-      <EnumType Name="AgeGroupEnum" UnderlyingType="Edm.Int64">
-        <Member Name="Undefined" Value="0" />
-        <Member Name="MinorWithoutParentalConsent" Value="1" />
-        <Member Name="MinorWithParentalConsent" Value="2" />
-        <Member Name="Adult" Value="3" />
-        <Member Name="NotAdult" Value="4" />
-        <Member Name="MinorNoParentalConsentRequired" Value="5" />
-      </EnumType>
-      <EnumType Name="EntitlementType">
-        <Member Name="PaidPlan" Value="0" />
-        <Member Name="FreePlan" Value="1" />
-        <Member Name="Reward" Value="2" />
-        <Member Name="FreePlanBonus" Value="3" />
-        <Member Name="Referral" Value="4" />
-        <Member Name="Bonus" Value="5" />
-      </EnumType>
-      <EnumType Name="InviteSourceType">
-        <Member Name="inviteSourceDefault" Value="90" />
-        <Member Name="inviteSourceTwitter" Value="91" />
-        <Member Name="inviteSourceFacebook" Value="92" />
-        <Member Name="inviteSourceWeibo" Value="93" />
-        <Member Name="inviteSourceLinkedin" Value="94" />
-        <Member Name="inviteSourceEmail" Value="95" />
-      </EnumType>
-      <EnumType Name="CommentActionType" IsFlags="true">
-        <Member Name="None" Value="0" />
-        <Member Name="Annotation" Value="1" />
-      </EnumType>
-      <EnumType Name="behaviorDuringRetentionPeriod">
-        <Member Name="doNotRetain" Value="0" />
-        <Member Name="retain" Value="1" />
-        <Member Name="retainAsRecord" Value="2" />
-        <Member Name="retainAsRegulatoryRecord" Value="3" />
-        <Member Name="unknownFutureValue" Value="4" />
-      </EnumType>
-      <EnumType Name="ActivityType">
-        <Member Name="None" Value="0" />
-        <Member Name="Invite" Value="1" />
-        <Member Name="AccessRequest" Value="2" />
-        <Member Name="InviteAccepted" Value="3" />
-        <Member Name="AccessGranted" Value="4" />
-        <Member Name="Comment" Value="5" />
-        <Member Name="Reaction" Value="6" />
-      </EnumType>
-      <EnumType Name="Source">
-        <Member Name="None" Value="0" />
-        <Member Name="PhotoStream" Value="1" />
-        <Member Name="FamilyMember" Value="2" />
-        <Member Name="SubstrateRecommendation" Value="3" />
-      </EnumType>
-      <EnumType Name="MediaReactionEmoji">
-        <Member Name="Like" Value="0" />
-        <Member Name="Laugh" Value="1" />
-        <Member Name="Heart" Value="2" />
-        <Member Name="Surprised" Value="3" />
-        <Member Name="ClappingHands" Value="4" />
-      </EnumType>
-      <EnumType Name="longRunningOperationStatus" />
       <EnumType Name="PlanActivityType" UnderlyingType="Edm.Byte">
         <Member Name="PlanDueToday" Value="1" />
         <Member Name="Assigned" Value="2" />
@@ -7341,6 +7363,25 @@
         <Member Name="strong" Value="3" />
         <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
+      <EnumType Name="PagePromotionType">
+        <Member Name="microsoftReserved" Value="0" />
+        <Member Name="page" Value="1" />
+        <Member Name="newsPost" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
+      <EnumType Name="TitleAreaLayoutType">
+        <Member Name="imageAndTitle" Value="0" />
+        <Member Name="plain" Value="1" />
+        <Member Name="colorBlock" Value="2" />
+        <Member Name="overlap" Value="3" />
+        <Member Name="topicPage" Value="4" />
+        <Member Name="unknownFutureValue" Value="5" />
+      </EnumType>
+      <EnumType Name="TitleAreaTextAlignmentType">
+        <Member Name="left" Value="0" />
+        <Member Name="center" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
       <EnumType Name="Relationship">
         <Member Name="pin" Value="0" />
         <Member Name="reuse" Value="1" />
@@ -7398,6 +7439,18 @@
         <Member Name="system" Value="1" />
         <Member Name="siteCollection" Value="2" />
       </EnumType>
+      <EnumType Name="ResourceType">
+        <Member Name="SHAREPOINT" Value="0" />
+        <Member Name="EXTERNAL" Value="1" />
+        <Member Name="CONNECTOR" Value="2" />
+      </EnumType>
+      <EnumType Name="LockStateType" UnderlyingType="Edm.Byte">
+        <Member Name="Unlocked" Value="0" />
+        <Member Name="LockedNoTopicEditPermissions" Value="1" />
+        <Member Name="LockedCheckedOutToOtherUser" Value="2" />
+        <Member Name="LockedMultiLingual" Value="3" />
+        <Member Name="LockedOtherReason" Value="4" />
+      </EnumType>
       <EnumType Name="SPSubpoenaJobAction">
         <Member Name="None" Value="0" />
         <Member Name="SubpoenaFetchLogs" Value="1" />
@@ -7442,6 +7495,10 @@
         <Member Name="Appeal" Value="6" />
       </EnumType>
       <EnumType Name="docFormatOption" />
+      <EnumType Name="GroupTypeEnum">
+        <Member Name="SharePointGroup" Value="0" />
+        <Member Name="SecurityGroup" Value="1" />
+      </EnumType>
       <EnumType Name="ReviewScope">
         <Member Name="SPSite" Value="0" />
         <Member Name="SPFile" Value="1" />
