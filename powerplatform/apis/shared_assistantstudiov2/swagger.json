@@ -1,0 +1,1031 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Dynamics 365 Sales Insights",
+    "description": "Dynamics 365 Sales Insights helps increase your sales with the help of AI-driven insights that promote personalized engagement and proactive decision making to help build relationships.",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Production"
+    },
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://us.flow.microsoft.com/en-us/support/"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/assistantstudiov2",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/v1.0/$metadata.json/organizations": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Get organizations",
+        "description": "Get all organizations.",
+        "operationId": "GetOrganizations",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OrganizationsDynamicValuesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-organizations"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetActionTypes": {
+      "post": {
+        "tags": [
+          "GetActionTypes"
+        ],
+        "operationId": "GetActionTypes",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ActionTypesList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get action types list",
+        "description": "Get action types list.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-action-types-list"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_ActionCardCreate": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "operationId": "CreateActionCard",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "x-ms-summary": "Environment (org)",
+            "description": "Choose the Dynamics 365 environment (org) in which you want to create the insight card.",
+            "type": "string",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-list": {
+              "operationId": "GetOrganizations",
+              "parameters": {},
+              "itemsPath": "value",
+              "itemValuePath": "Url",
+              "itemTitlePath": "FriendlyName"
+            },
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizations",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Url",
+              "value-title": "FriendlyName"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Body field details",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BodyFieldsForCreateActionCard"
+            },
+            "x-ms-summary": "Body field details"
+          },
+          {
+            "name": "actiontype",
+            "in": "header",
+            "type": "string",
+            "description": "Choose an action type.",
+            "x-ms-summary": "Primary action type",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetActionTypes",
+              "parameters": {
+                "organization": {
+                  "parameter": "organization"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "yominame"
+            }
+          },
+          {
+            "name": "secondaryactiontype",
+            "in": "header",
+            "type": "string",
+            "description": "Choose an action type. Ensure Primary action type is not None.",
+            "x-ms-summary": "Secondary action type",
+            "x-ms-visibility": "advanced",
+            "x-ms-dynamic-values": {
+              "operationId": "GetActionTypes",
+              "parameters": {
+                "organization": {
+                  "parameter": "organization"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "yominame"
+            }
+          },
+          {
+            "name": "regardingobjecttype",
+            "in": "header",
+            "type": "string",
+            "description": "Choose the entity where this card should be shown.",
+            "x-ms-dynamic-values": {
+              "operationId": "GetEligibleRegardingEntities",
+              "parameters": {
+                "organization": {
+                  "parameter": "organization"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "yominame"
+            },
+            "x-ms-summary": "Display entity",
+            "x-ms-visibility": "advanced"
+          },
+          {
+            "name": "regardingobjectid",
+            "x-ms-summary": "Display record ID",
+            "x-ms-visibility": "advanced",
+            "in": "header",
+            "type": "string",
+            "format": "uuid",
+            "description": "Enter the dynamic value with the record ID for the display entity."
+          },
+          {
+            "name": "ownerid",
+            "x-ms-summary": "Show for",
+            "x-ms-visibility": "advanced",
+            "in": "header",
+            "type": "string",
+            "format": "uuid",
+            "description": "Enter a dynamic value to define who should see this card (usually \"Owner\")."
+          },
+          {
+            "name": "startdate",
+            "x-ms-summary": "Show from",
+            "x-ms-visibility": "advanced",
+            "in": "header",
+            "type": "string",
+            "format": "date-time",
+            "description": "Set how long after a card is generated it should be shown. Default is immediate - utcNow(). (UTC format: yyyy-MM-ddTHH:mm:ssZ)"
+          },
+          {
+            "name": "expirydate",
+            "x-ms-summary": "Show until",
+            "x-ms-visibility": "advanced",
+            "in": "header",
+            "type": "string",
+            "format": "date-time",
+            "description": "Set how long after a card is generated it should expire. Default is 24 hours - utcNow().addHours(24). (UTC format: yyyy-MM-ddTHH:mm:ssZ)"
+          }
+        ],
+        "summary": "Create card for assistant",
+        "description": "Create Card for Sales Assistant.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#create-card-for-assistant"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetEligibleRegardingEntities": {
+      "post": {
+        "tags": [
+          "RegardingEntities"
+        ],
+        "operationId": "GetEligibleRegardingEntities",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/EntityList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get entity list",
+        "description": "Get list of entities.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-entity-list"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetEntityList": {
+      "post": {
+        "tags": [
+          "EntityList"
+        ],
+        "operationId": "GetEntityList",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/EntityList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get entity list",
+        "description": "Get list of entities.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-entity-list"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_CreateCustomActionDefinition": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ActionDetails"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "operationId": "CreateCustomActionDefinition",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "x-ms-summary": "Environment (org)",
+            "description": "Choose the Dynamics 365 environment (org) in which you want to create the insight card.",
+            "type": "string",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-list": {
+              "operationId": "GetOrganizations",
+              "parameters": {},
+              "itemsPath": "value",
+              "itemValuePath": "Url",
+              "itemTitlePath": "FriendlyName"
+            },
+            "x-ms-dynamic-values": {
+              "operationId": "GetOrganizations",
+              "parameters": {},
+              "value-collection": "value",
+              "value-path": "Url",
+              "value-title": "FriendlyName"
+            }
+          },
+          {
+            "name": "entityname",
+            "in": "header",
+            "type": "string",
+            "description": "Choose the primary entity that the custom action is associated with (custom values are not supported)",
+            "x-ms-summary": "Filter by entity",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetEntityListForCustomAction",
+              "parameters": {
+                "organization": {
+                  "parameter": "organization"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "yominame"
+            }
+          },
+          {
+            "name": "customaction",
+            "in": "header",
+            "type": "string",
+            "description": "Choose the custom action to use (custom values are not supported)",
+            "x-ms-summary": "Custom action (CRM process)",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetCustomActionList",
+              "parameters": {
+                "organization": {
+                  "parameter": "organization"
+                },
+                "entityname": {
+                  "parameter": "entityname"
+                }
+              },
+              "value-collection": "value",
+              "value-path": "name",
+              "value-title": "yominame"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Custom action parameters",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetCustomActionParameters",
+                "parameters": {
+                  "organization": {
+                    "parameter": "organization"
+                  },
+                  "customaction": {
+                    "parameter": "customaction"
+                  }
+                },
+                "value-path": "Schema/Items"
+              }
+            },
+            "x-ms-summary": "Custom Action parameters"
+          }
+        ],
+        "summary": "Choose custom action (CRM process) for insight card",
+        "description": "The output of this step should be used in the \"Create card for assistant V2\" step, when Button type is Custom action (CRM process)",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#choose-custom-action-(crm-process)-for-insight-card"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetPostOperations": {
+      "post": {
+        "tags": [
+          "GetPostOperations"
+        ],
+        "operationId": "GetPostOperations",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PostOperationsList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get post operations list",
+        "description": "Get post operations list.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-post-operations-list"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetEntityListForCustomAction": {
+      "post": {
+        "tags": [
+          "GetEntityListForCustomAction"
+        ],
+        "operationId": "GetEntityListForCustomAction",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/EntityList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get entity list for custom action",
+        "description": "Get list of entities for custom action.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-entity-list-for-custom-action"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetDynamicFieldsForActionType": {
+      "post": {
+        "summary": "Get dynamic fields for action type",
+        "description": "Get dynamic fields for action type.",
+        "operationId": "GetDynamicFieldsForActionType",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          },
+          {
+            "name": "actiontype",
+            "in": "header",
+            "description": "Action type",
+            "required": true,
+            "x-ms-summary": "Action type",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          },
+          {
+            "name": "secondaryactiontype",
+            "in": "header",
+            "description": "Secondary action type",
+            "x-ms-summary": "Secondary action type",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-dynamic-fields-for-action-type"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetCustomActionParameters": {
+      "post": {
+        "summary": "Get parameters for custom action",
+        "description": "Get parameters for custom action.",
+        "operationId": "GetCustomActionParameters",
+        "x-ms-visibility": "internal",
+        "x-ms-no-generic-test": true,
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          },
+          {
+            "name": "customaction",
+            "in": "header",
+            "description": "Custom Action",
+            "required": true,
+            "x-ms-summary": "Custom Action",
+            "x-ms-url-encoding": "double",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Object"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-parameters-for-custom-action"
+        }
+      }
+    },
+    "/{connectionId}/api/data/v9.0/msdyn_GetCustomActionList": {
+      "post": {
+        "tags": [
+          "GetCustomActionList"
+        ],
+        "operationId": "GetCustomActionList",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "organization",
+            "in": "header",
+            "description": "Environment",
+            "required": true,
+            "x-ms-summary": "Environment",
+            "type": "string"
+          },
+          {
+            "name": "entityname",
+            "in": "header",
+            "description": "Entity",
+            "required": true,
+            "x-ms-summary": "Entity",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CustomActionList"
+            }
+          },
+          "default": {
+            "description": "Operation Failed."
+          }
+        },
+        "deprecated": false,
+        "x-ms-visibility": "internal",
+        "summary": "Get custom actions list",
+        "description": "Get custom actions list.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/assistantstudiov2/#get-custom-actions-list"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "OrganizationsDynamicValuesList": {
+      "description": "List of organizations as dynamic values.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of organizations as dynamic values.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrganizationsDynamicValuesListItem"
+          }
+        }
+      }
+    },
+    "OrganizationsDynamicValuesListItem": {
+      "description": "Represents a table as dynamic value item.",
+      "type": "object",
+      "properties": {
+        "Url": {
+          "description": "The URL of the organization.",
+          "type": "string"
+        },
+        "FriendlyName": {
+          "description": "The name of the organization.",
+          "type": "string"
+        }
+      }
+    },
+    "BodyFieldsForCreateActionCard": {
+      "description": "Describes the fields for CreateActionCard",
+      "type": "object",
+      "required": [
+        "cardname",
+        "title",
+        "description",
+        "dynamicproperties"
+      ],
+      "properties": {
+        "cardname": {
+          "description": "Simple text only (no dynamic content or expressions). Card name is shown in the insight card list and at the top of the card.",
+          "title": "Card name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Enter a title to appear in the card header.",
+          "title": "Card header",
+          "type": "string"
+        },
+        "description": {
+          "description": "Enter text for the body of the insight card.",
+          "title": "Card text",
+          "type": "string"
+        },
+        "dynamicproperties": {
+          "title": "Dynamic properties",
+          "type": "object",
+          "x-ms-dynamic-schema": {
+            "operationId": "GetDynamicFieldsForActionType",
+            "parameters": {
+              "organization": {
+                "parameter": "organization"
+              },
+              "actiontype": {
+                "parameter": "actiontype"
+              },
+              "secondaryactiontype": {
+                "parameter": "secondaryactiontype"
+              }
+            },
+            "value-path": "Schema/Items"
+          }
+        }
+      }
+    },
+    "OrganizationsList": {
+      "description": "List of organization.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of organizations.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Organization"
+          }
+        }
+      }
+    },
+    "Organization": {
+      "description": "Organization.",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Organization name.",
+          "type": "string"
+        },
+        "DisplayName": {
+          "description": "Organization display name.",
+          "type": "string"
+        }
+      }
+    },
+    "EntityList": {
+      "description": "Represents a list of CRM Entities.",
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "description": "@odata.context"
+        },
+        "value": {
+          "description": "List of Entities.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Entity"
+          }
+        }
+      }
+    },
+    "Entity": {
+      "description": "Represents a CRM Entity.",
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "description": "@odata.type"
+        },
+        "name": {
+          "description": "The name of the Entity. The name is used at runtime.",
+          "type": "string"
+        },
+        "yominame": {
+          "description": "The display name of the Entity.",
+          "type": "string"
+        }
+      }
+    },
+    "ActionDetails": {
+      "title": "Custom action for insight card",
+      "description": "Represents a custom action for insight card.",
+      "type": "string"
+    },
+    "ActionTypesList": {
+      "description": "Represents a list of action types.",
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "description": "@odata.context"
+        },
+        "value": {
+          "description": "List of action types.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionTypes"
+          }
+        }
+      }
+    },
+    "ActionTypes": {
+      "description": "Represents an action type.",
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "description": "@odata.type"
+        },
+        "name": {
+          "description": "The name of the action type.",
+          "type": "string"
+        },
+        "yominame": {
+          "description": "The display name of the action type.",
+          "type": "string"
+        }
+      }
+    },
+    "PostOperationsList": {
+      "description": "Represents a list of post operations.",
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "description": "@odata.context"
+        },
+        "value": {
+          "description": "List of post operations.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostOperation"
+          }
+        }
+      }
+    },
+    "PostOperation": {
+      "description": "Represents a post operation.",
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "description": "@odata.type"
+        },
+        "name": {
+          "description": "The name of the post operation.",
+          "type": "string"
+        },
+        "yominame": {
+          "description": "The display name of the post operation.",
+          "type": "string"
+        }
+      }
+    },
+    "CustomActionList": {
+      "description": "Represents a list of custom actions.",
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "description": "@odata.context"
+        },
+        "value": {
+          "description": "List of custom actions.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CustomAction"
+          }
+        }
+      }
+    },
+    "CustomAction": {
+      "description": "Represents a custom action.",
+      "type": "object",
+      "properties": {
+        "@odata.type": {
+          "type": "string",
+          "description": "@odata.type"
+        },
+        "name": {
+          "description": "The name of the custom action.",
+          "type": "string"
+        },
+        "yominame": {
+          "description": "The display name of the custom action.",
+          "type": "string"
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.windows.net/common/oauth2/authorize",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": []
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://dynamics.microsoft.com/ai/sales-insights/"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/assistantstudiov2"
+  }
+}
