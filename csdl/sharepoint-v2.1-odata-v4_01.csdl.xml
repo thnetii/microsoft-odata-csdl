@@ -1275,6 +1275,7 @@
         <Property Name="assignedSensitivityLabel" Type="oneDrive.assignedSensitivityLabel" />
         <Property Name="ownershipType" Type="oneDrive.StorageContainerOwnershipType" />
         <Property Name="lockState" Type="oneDrive.LockState" />
+        <Property Name="settings" Type="oneDrive.settings" />
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
@@ -1405,6 +1406,9 @@
       </EntityType>
       <EntityType Name="unifiedStorageQuotaEligibility" OpenType="true">
         <Property Name="isEligible" Type="Edm.Boolean" />
+        <Property Name="lastUpdated" Type="Edm.DateTimeOffset" />
+        <Property Name="isOverQuota" Type="Edm.Boolean" />
+        <Property Name="quotaEnforcement" Type="Edm.DateTimeOffset" />
       </EntityType>
       <EntityType Name="unifiedStorageQuotaTopEntities" OpenType="true">
         <NavigationProperty Name="exo" Type="oneDrive.UnifiedQuotaTopEntities_1OfEXOUnifiedQuotaTopEntity" ContainsTarget="true" />
@@ -2474,10 +2478,14 @@
         <Property Name="mediaOffset" Type="Edm.Duration" />
         <Property Name="createdBy" Type="oneDrive.identitySet" />
       </EntityType>
+      <EntityType Name="mediaScreenShare" BaseType="oneDrive.mediaTimelineEvent" OpenType="true">
+        <Property Name="presenter" Type="oneDrive.teamworkUserIdentity" />
+      </EntityType>
       <EntityType Name="mediaTimeline" OpenType="true">
         <Property Name="version" Type="Edm.String" />
         <Property Name="eTag" Type="Edm.String" />
         <NavigationProperty Name="chapters" Type="Collection(oneDrive.mediaChapter)" ContainsTarget="true" />
+        <NavigationProperty Name="screenShares" Type="Collection(oneDrive.mediaScreenShare)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="timelineeventstream" OpenType="true">
         <Property Name="cTag" Type="Edm.String" />
@@ -3889,6 +3897,7 @@
         <Property Name="assignedSensitivityLabel" Type="oneDrive.assignedSensitivityLabel" />
         <Property Name="itemMajorVersionLimit" Type="Edm.Int32" />
         <Property Name="isItemVersioningEnabled" Type="Edm.Boolean" />
+        <Property Name="settings" Type="oneDrive.settings" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
@@ -3917,6 +3926,9 @@
       </ComplexType>
       <ComplexType Name="assignedSensitivityLabel" OpenType="true">
         <Property Name="labelId" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="settings" OpenType="true">
+        <Property Name="isOcrEnabled" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="storageContainerViewpoint" OpenType="true">
         <Property Name="effectiveRole" Type="Edm.String" />
@@ -4195,6 +4207,69 @@
         <NavigationProperty Name="annotations" Type="Collection(oneDrive.interactivityAnnotation)" ContainsTarget="true" />
         <NavigationProperty Name="forms" Type="Collection(oneDrive.interactivityForm)" ContainsTarget="true" />
       </ComplexType>
+      <ComplexType Name="classificationResult" OpenType="true">
+        <Property Name="contentTypeId" Type="Edm.String" />
+        <Property Name="contentTypeName" Type="Edm.String" />
+        <Property Name="confidenceScore" Type="Edm.Double" />
+        <Property Name="error" Type="Edm.String" />
+        <Property Name="modelId" Type="Edm.String" />
+        <Property Name="modelVersion" Type="Edm.String" />
+        <Property Name="metas" Type="Collection(oneDrive.metasKeyStringPair)" />
+        <Property Name="tableMetas" Type="Collection(oneDrive.metasKeyStringPair)" />
+        <Property Name="retryCount" Type="Edm.Int32" />
+        <Property Name="retentionLabelName" Type="Edm.String" />
+        <Property Name="retentionLabelFlags" Type="Edm.Int32" />
+        <Property Name="sensitivityLabel" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="machineLearningSampleMeta" OpenType="true">
+        <Property Name="extractedText" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="mediaServiceUpdate" OpenType="true">
+        <Property Name="mediaServiceUpdateParameters" Type="oneDrive.mediaServiceUpdateParameters" />
+        <Property Name="eventFiringEnabled" Type="Edm.Boolean" />
+      </ComplexType>
+      <ComplexType Name="mediaServiceUpdateParameters" OpenType="true">
+        <Property Name="mediaServiceMetadata" Type="Edm.String" />
+        <Property Name="mediaServiceFastMetadata" Type="Edm.String" />
+        <Property Name="mediaServiceSearchProperties" Type="Edm.String" />
+        <Property Name="mediaServiceProtectionKey" Type="Edm.String" />
+        <Property Name="isMediaServiceRequest" Type="Edm.Boolean" />
+        <Property Name="mediaServiceGenerationTime" Type="Edm.String" />
+        <Property Name="mediaServiceEventHashCode" Type="Edm.String" />
+        <Property Name="mediaServiceDateTaken" Type="Edm.String" />
+        <Property Name="mediaServicePhotoCategory" Type="Edm.String" />
+        <Property Name="mediaServiceObjectDetectorVersions" Type="Edm.String" />
+        <Property Name="mediaServiceSystemTags" Type="Edm.String" />
+        <Property Name="mediaServiceAutoKeyPoints" Type="Edm.String" />
+        <Property Name="mediaServiceAutoTags" Type="Edm.String" />
+        <Property Name="mediaServiceKeyPoints" Type="Edm.String" />
+        <Property Name="mediaServiceLocation" Type="Edm.String" />
+        <Property Name="mediaServiceOCR" Type="Edm.String" />
+        <Property Name="mediaServiceTranscript" Type="Edm.String" />
+        <Property Name="mediaLengthInSeconds" Type="Edm.Int32" />
+        <Property Name="mediaServiceImageHeight" Type="Edm.Int32" />
+        <Property Name="mediaServiceImageWidth" Type="Edm.Int32" />
+        <Property Name="contentVersion" Type="Edm.Int32" />
+        <Property Name="eTag" Type="Edm.String" />
+        <Property Name="sensitivityLabel" Type="Edm.String" />
+        <Property Name="classificationResult" Type="oneDrive.classificationResult" />
+        <Property Name="sensitivityLabelAssignmentMethod" Type="oneDrive.sensivityLabelAssignmentMethod" />
+        <Property Name="machineLearningSampleMeta" Type="oneDrive.machineLearningSampleMeta" />
+        <Property Name="xTenantLabelInfo" Type="Edm.String" />
+        <Property Name="aipLabelExtractionStatus" Type="oneDrive.aipLabelExtractionStatus" />
+        <Property Name="mediaServiceDocTags" Type="Edm.String" />
+        <Property Name="mediaServiceImageTags" Type="Edm.String" />
+        <Property Name="virusStatus" Type="Edm.String" />
+        <Property Name="virusInfo" Type="Edm.String" />
+        <Property Name="entropy" Type="Edm.String" />
+        <Property Name="chiSquareDistribution" Type="Edm.String" />
+        <Property Name="monteCarloApproximation" Type="Edm.String" />
+        <Property Name="isLowPriorityRequest" Type="Edm.Boolean" />
+      </ComplexType>
+      <ComplexType Name="metasKeyStringPair" OpenType="true">
+        <Property Name="key" Type="Edm.String" />
+        <Property Name="value" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="opStreamSessionSensitivityLabelsResult" OpenType="true">
         <Property Name="labelsTimestamp" Type="Edm.DateTimeOffset" />
         <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
@@ -4230,6 +4305,12 @@
         <Property Name="itemIds" Type="Collection(Edm.String)" />
         <NavigationProperty Name="tagsToAdd" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
         <NavigationProperty Name="tagsToDelete" Type="Collection(oneDrive.tag)" ContainsTarget="true" />
+      </ComplexType>
+      <ComplexType Name="teamworkUserIdentity" OpenType="true">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="userIdentityType" Type="oneDrive.TeamworkUserIdentityType" />
+        <Property Name="tenantId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="thumbnail" OpenType="true">
         <Property Name="content" Type="Edm.Stream" />
@@ -4617,6 +4698,10 @@
         <Property Name="wacSessionId" Type="Edm.String" />
         <Property Name="isEduUser" Type="Edm.Boolean" />
         <Property Name="parentFolderWebUrl" Type="Edm.String" />
+        <Property Name="bundleUrlNoAuth" Type="Edm.String" />
+        <Property Name="bundleCode" Type="Edm.String" />
+        <Property Name="fileUrlNoAuth" Type="Edm.String" />
+        <Property Name="downloadCode" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="listInfo" OpenType="true">
@@ -5351,6 +5436,7 @@
         <Property Name="actorCount" Type="Edm.Int32" />
         <Property Name="timeSpentInSeconds" Type="Edm.Int64" />
         <Property Name="engagedActorCount" Type="Edm.Int32" />
+        <Property Name="engagedActionCount" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="itemRecommendation" OpenType="true">
         <Property Name="itemRankingScore" Type="Edm.Double" />
@@ -5468,6 +5554,7 @@
         <Property Name="isTranscriptionAllowed" Type="Edm.Boolean" />
         <Property Name="isAutomaticTranscriptionAllowed" Type="Edm.Boolean" />
         <Property Name="isTranscriptionTranslationAllowed" Type="Edm.Boolean" />
+        <Property Name="areReactionsAllowed" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="metaSettings" OpenType="true">
         <Property Name="isAipIntegrationEnabled" Type="Edm.Boolean" />
@@ -5562,6 +5649,8 @@
         <Property Name="customFontCatalogUrl" Type="Edm.String" />
         <Property Name="fileGetUrl" Type="Edm.String" />
         <Property Name="fileGetUrlExpiry" Type="Edm.String" />
+        <Property Name="fileUrlNoAuth" Type="Edm.String" />
+        <Property Name="downloadCode" Type="Edm.String" />
         <Property Name="userId" Type="Edm.String" />
         <Property Name="ownerId" Type="Edm.String" />
         <Property Name="wopiSrc" Type="Edm.String" />
@@ -5604,7 +5693,9 @@
         <Property Name="officeFontLibrary" Type="oneDrive.organizationAssetsType" />
         <Property Name="brandKitLibrary" Type="oneDrive.organizationAssetsType" />
       </ComplexType>
-      <ComplexType Name="organizationAssetsType" OpenType="true" />
+      <ComplexType Name="organizationAssetsType" OpenType="true">
+        <Property Name="isCopilotSearchable" Type="Edm.Boolean" />
+      </ComplexType>
       <ComplexType Name="originalFileMetadata" OpenType="true">
         <Property Name="hashes" Type="oneDrive.hashes" />
         <Property Name="size" Type="Edm.Int64" />
@@ -7150,6 +7241,17 @@
         <Member Name="Surprised" Value="3" />
         <Member Name="ClappingHands" Value="4" />
       </EnumType>
+      <EnumType Name="TeamworkUserIdentityType">
+        <Member Name="AadUser" Value="0" />
+        <Member Name="OnPremiseAadUser" Value="1" />
+        <Member Name="AnonymousGuest" Value="2" />
+        <Member Name="FederatedUser" Value="3" />
+        <Member Name="PersonalMicrosoftAccountUser" Value="4" />
+        <Member Name="SkypeUser" Value="5" />
+        <Member Name="PhoneUser" Value="6" />
+        <Member Name="UnknownFutureValue" Value="7" />
+        <Member Name="EmailUser" Value="8" />
+      </EnumType>
       <EnumType Name="longRunningOperationStatus" />
       <EnumType Name="ItemOperation">
         <Member Name="Copy" Value="0" />
@@ -7333,6 +7435,8 @@
         <Member Name="NonGroupOneDrives" Value="2" />
         <Member Name="NonGroupCommunicationSites" Value="3" />
         <Member Name="NonGroupClassic" Value="4" />
+        <Member Name="NonGroupOneDrive" Value="5" />
+        <Member Name="NonGroupCommunicationSite" Value="6" />
       </EnumType>
       <EnumType Name="AnalyticsReportAccessGroupType">
         <Member Name="M365Group" Value="0" />
@@ -7496,6 +7600,8 @@
         <Member Name="WebRac" Value="5" />
         <Member Name="Appeal" Value="6" />
       </EnumType>
+      <EnumType Name="sensivityLabelAssignmentMethod" />
+      <EnumType Name="aipLabelExtractionStatus" />
       <EnumType Name="docFormatOption" />
       <EnumType Name="GroupTypeEnum">
         <Member Name="SharePointGroup" Value="0" />
