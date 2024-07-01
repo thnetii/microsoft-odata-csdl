@@ -1,0 +1,313 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Copilot for Service extension (preview)",
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "description": "Microsoft Service copilot connector",
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://go.microsoft.com/fwlink/?linkid=2261507"
+    },
+    "x-ms-openai-published-to-copilots": [
+      {
+        "AICopilot-enabled": true,
+        "AICopilotName": "Microsoft 365 Copilot"
+      }
+    ],
+    "x-ms-keywords": [
+      "case",
+      "cases",
+      "account",
+      "accounts",
+      "contact",
+      "contacts",
+      "incident",
+      "incidents",
+      "no",
+      "number",
+      "summary",
+      "service",
+      "customer",
+      "support",
+      "ticket",
+      "tickets",
+      "resolution",
+      "SLA",
+      "SLA KPI",
+      "key performance indicators",
+      "service level agreement",
+      "user",
+      "support agent",
+      "support agents",
+      "owner",
+      "case summary",
+      "due"
+    ]
+  },
+  "host": "europe-002.azure-apim.net",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/{connectionId}/api/orchestrator/connector": {
+      "post": {
+        "tags": [
+          "CoPilot"
+        ],
+        "operationId": "NaturalQueryTextSearch",
+        "x-ms-contextparameters": [
+          {
+            "in": "query",
+            "name": "IdOfTheThread",
+            "id": "ThreadId"
+          }
+        ],
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "summary": "get any crm data with natural language query",
+        "description": "Search/summarize/list/ask/find/query for any data. Data can be case/s, incident/s, account/s, contact/s, incident resolution, key performance indicators, user/s, sla/s, sla kpi/s, support ticket/s",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The full text the user typed.",
+            "schema": {
+              "$ref": "#/definitions/OrchestratorRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/OrchestratorConnectorResponse"
+            }
+          }
+        },
+        "x-ms-openai-data": {
+          "openai-enabled": true,
+          "operations": [
+            {
+              "operationId": "NaturalQueryTextSearch",
+              "x-ms-require-user-confirmation": false,
+              "capabilities": {
+                "response_semantics": {
+                  "data_path": "$.results",
+                  "properties": {
+                    "title": "$.PreviewCardTitle",
+                    "subtitle": "$.PreviewCardSubtitle",
+                    "url": "$.PreviewCardUrl",
+                    "template_selector": "$.DynamicTemplatesPath"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/copilotforservice/#get-any-crm-data-with-natural-language-query"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConnectorDynamicTemplateContainerBase": {
+      "type": "object",
+      "properties": {
+        "containerType": {
+          "type": "string"
+        },
+        "dynamicTemplatesPath": {
+          "type": "string"
+        },
+        "previewCardTitle": {
+          "type": "string"
+        },
+        "previewCardSubtitle": {
+          "type": "string"
+        },
+        "previewCardUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "OrchestratorConnectorResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ConnectorDynamicTemplateContainerBase"
+          }
+        },
+        "metadata": {
+          "$ref": "#/definitions/OrchestratorExecutionMetadata"
+        },
+        "templates": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "OrchestratorExecutionMetadata": {
+      "type": "object",
+      "properties": {
+        "startTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "endTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "retrievedSkills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrchestratorSkillMetadata"
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "OrchestratorRequest": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        }
+      }
+    },
+    "OrchestratorSkillMetadata": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrchestratorSkillMetadataParameter"
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "OrchestratorSkillMetadataParameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "isMandatory": {
+          "type": "boolean"
+        },
+        "allowedValues": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "ProblemDetails": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    }
+  },
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "access_as_user": "access_as_user"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "access_as_user"
+      ]
+    }
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://go.microsoft.com/fwlink/?linkid=2261507"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "x-ms-openai-manifest": {
+    "humanName": "Copilot for Service (preview)",
+    "modelDescription": "Microsoft Service copilot connector"
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/copilotforservice"
+  },
+  "basePath": "/apim/copilotforservice"
+}
