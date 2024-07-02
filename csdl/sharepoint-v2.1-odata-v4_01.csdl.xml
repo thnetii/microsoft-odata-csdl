@@ -4227,6 +4227,7 @@
         <Property Name="id" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
         <Property Name="email" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AccessRequest" OpenType="true">
         <Property Name="requestStatus" Type="Edm.String" />
@@ -4639,6 +4640,11 @@
         <Property Name="toolTip" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="siteCopilotConfiguration" OpenType="true">
+        <Property Name="type" Type="oneDrive.SiteCopilotType" />
+        <Property Name="settings" Type="oneDrive.siteCopilotSettings" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="siteReviewDetails" OpenType="true">
         <Property Name="startDate" Type="Edm.DateTimeOffset" />
         <Property Name="endDate" Type="Edm.DateTimeOffset" />
@@ -4686,6 +4692,7 @@
         <Property Name="timeZone" Type="Edm.String" />
         <Property Name="timeZoneBias" Type="Edm.Int32" />
         <Property Name="timeZoneId" Type="Edm.Int32" />
+        <Property Name="siteCopilotConfiguration" Type="oneDrive.siteCopilotConfiguration" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="awaitingApproval" BaseType="oneDrive.custom" OpenType="true">
@@ -4958,6 +4965,9 @@
         <Property Name="serverRelativeUrl" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="resourceAccess" OpenType="true">
+        <Property Name="authorizationCode" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="resourceVisualization" OpenType="true">
         <Property Name="acronym" Type="Edm.String" />
         <Property Name="color" Type="Edm.String" />
@@ -5040,6 +5050,8 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="path" Type="Edm.String" />
         <Property Name="listId" Type="Edm.String" />
+        <Property Name="listItemId" Type="Edm.String" />
+        <Property Name="listItemUniqueId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="siteReviewGroupPermissionDetails" OpenType="true">
         <Property Name="countOfGroups" Type="Edm.String" />
@@ -6668,6 +6680,12 @@
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="optedIn" Type="Edm.Boolean" />
       </ComplexType>
+      <ComplexType Name="siteCopilotSettings">
+        <Property Name="webAbsoluteUrl" Type="Edm.String" />
+        <Property Name="serverRelativeUrl" Type="Edm.String" />
+        <Property Name="filename" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="generationDetails">
         <Property Name="status" Type="oneDrive.longRunningOperationStatus" />
         <Property Name="requestedDateTime" Type="Edm.DateTimeOffset" />
@@ -7380,6 +7398,10 @@
         <Member Name="None" Value="0" />
         <Member Name="Annotation" Value="1" />
       </EnumType>
+      <EnumType Name="SiteCopilotType">
+        <Member Name="Default" Value="1" />
+        <Member Name="Custom" Value="2" />
+      </EnumType>
       <EnumType Name="SiteArchiveStatus">
         <Member Name="recentlyArchived" Value="0" />
         <Member Name="fullyArchived" Value="1" />
@@ -7898,6 +7920,28 @@
         <Parameter Name="urls" Type="Collection(Edm.String)" />
         <ReturnType Type="Collection(oneDrive.restorableSite)" />
       </Action>
+      <Action Name="search" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.restorableSite)" />
+        <Parameter Name="siteUrl" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="title" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="Collection(oneDrive.restorableSite)" />
+      </Action>
+      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter/items">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+        <ReturnType Type="Collection(oneDrive.baseItem)" />
+      </Function>
+      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter/items">
+        <Parameter Name="bindingParameter" Type="oneDrive.drive" />
+        <ReturnType Type="Collection(oneDrive.item)" />
+      </Function>
+      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="Collection(oneDrive.item)" />
+      </Function>
       <Action Name="lookupLatestInDateRange" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.restorePoint)" />
         <Parameter Name="startDate" Type="Edm.DateTimeOffset" Nullable="false" />
@@ -8742,18 +8786,6 @@
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
         <ReturnType Type="oneDrive.itemAnalytics" />
-      </Function>
-      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter/items">
-        <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <ReturnType Type="Collection(oneDrive.baseItem)" />
-      </Function>
-      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter/items">
-        <Parameter Name="bindingParameter" Type="oneDrive.drive" />
-        <ReturnType Type="Collection(oneDrive.item)" />
-      </Function>
-      <Function Name="search" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <ReturnType Type="Collection(oneDrive.item)" />
       </Function>
       <Function Name="getInsights" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
