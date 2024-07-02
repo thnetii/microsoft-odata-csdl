@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25012 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25019 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -241,6 +241,7 @@
       </ComplexType>
       <ComplexType Name="AgreementReportBaseData">
         <Property Name="ByExpirationStatus" Type="Collection(SP.AgreementDataPair)" />
+        <Property Name="ErrorMessage" Type="Edm.String" />
         <Property Name="Expired" Type="Edm.Int32" Nullable="false" />
         <Property Name="InEffect" Type="Edm.Int32" Nullable="false" />
         <Property Name="InProgressByState" Type="Collection(SP.AgreementDataPair)" />
@@ -1547,8 +1548,7 @@
         <Property Name="Language" Type="Edm.String" />
         <Property Name="State" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="TenantThemes">
-        <Property Name="hideDefaultThemes" Type="Edm.Boolean" Nullable="false" />
+      <ComplexType Name="SiteThemes">
         <Property Name="themeData" Type="Collection(SP.ThemeData)" />
       </ComplexType>
       <ComplexType Name="ThemeData">
@@ -1557,6 +1557,10 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="source" Type="Edm.Int32" Nullable="false" />
         <Property Name="themeJson" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="TenantThemes">
+        <Property Name="hideDefaultThemes" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="themeData" Type="Collection(SP.ThemeData)" />
       </ComplexType>
       <ComplexType Name="MenuNode">
         <Property Name="AudienceIds" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -3017,6 +3021,7 @@
         <Property Name="webId" Type="Edm.String" />
         <Property Name="webTemplateConfiguration" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="RecommendationCollection" Abstract="true" />
       <EntityType Name="RelatedItemManager" />
       <EntityType Name="ServerSettings" Abstract="true" />
       <EntityType Name="SharedWithMeItemCollection" Abstract="true" />
@@ -3925,6 +3930,10 @@
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </Action>
+      <Function Name="GetSiteThemes" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <ReturnType Type="SP.SiteThemes" />
+      </Function>
       <Function Name="GetTenantThemeById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
@@ -4308,6 +4317,11 @@
       <Action Name="MapFieldsToColumnsForModernTemlate" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="payload" Type="SP.PublishModernTemplatePayload" />
+        <ReturnType Type="SP.ContentAssemblyModernTemplateColumnsMappingInfo" />
+      </Action>
+      <Action Name="MapFieldsToColumnsForModernTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="templatePayload" Type="SP.PublishModernTemplatePayload" />
         <ReturnType Type="SP.ContentAssemblyModernTemplateColumnsMappingInfo" />
       </Action>
       <Action Name="ParseDocumentTemplate" IsBound="true">
@@ -5472,6 +5486,11 @@
         <Parameter Name="fieldId" Type="Edm.String" />
         <Parameter Name="overwrite" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="SP.SPImageItem" />
+      </Action>
+      <Action Name="AddField" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="fieldCreationParameters" Type="Microsoft.SharePoint.Agreements.Models.FieldCreationParameters" />
+        <ReturnType Type="SP.ListItem" />
       </Action>
       <Action Name="CreateAgreementFolder" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -9592,6 +9611,15 @@
       <Annotations Target="SP.Utilities.JsonTheme">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Utilities.LLMColumnInfo">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SiteThemes">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ThemeData">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Utilities.NewsItemMetaData">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9608,9 +9636,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.TenantThemes">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.ThemeData">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Utilities.ThemingOptions">
@@ -12815,6 +12840,9 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.GetCDSMetadata(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.String, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.GetColumnLLMInfo(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.Guid)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.GetMachineLearningFlags(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14636,6 +14664,9 @@
       <Annotations Target="SP.EnsureBrandFontsLibraryFeature(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.GetSiteThemes(SP.BrandCenter)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.GetTenantThemeById(SP.BrandCenter, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15138,6 +15169,15 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecentListProxy.GetRecentListsProxy(Edm.Int32, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RecommendationCollection.Dismissed(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RecommendationCollection.Events(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RecommendationCollection.GetRecommendations(Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharedWithMeItemCollection.GetCalendarEvents()">
@@ -16413,6 +16453,12 @@
         <Parameter Name="environmentName" Type="Edm.String" />
         <Parameter Name="isTestEnvironment" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Office.Server.ContentCenter.CDSMetadata" />
+      </Function>
+      <Function Name="GetColumnLLMInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
+        <Parameter Name="docLibId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="columnId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="SP.Utilities.LLMColumnInfo" />
       </Function>
       <Function Name="GetMachineLearningFlags" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
@@ -24981,10 +25027,6 @@
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveServiceInfo" />
       </Action>
-      <Action Name="GetSiteMoveState" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.Int32" Nullable="false" />
-      </Action>
       <Action Name="GetSiteProperties" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="isDeleted" Type="Edm.Boolean" Nullable="false" />
@@ -27283,6 +27325,14 @@
         <Property Name="title" Type="Edm.String" />
       </ComplexType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Agreements.Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="FieldCreationParameters">
+        <Property Name="DataSource" Type="Edm.String" />
+        <Property Name="DataType" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+      </ComplexType>
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="AuditData">
         <Property Name="ClientIP" Type="Edm.String" />
@@ -28433,6 +28483,10 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="themeJson" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="LLMColumnInfo">
+        <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Prompt" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="NewsItemMetaData">
         <Property Name="fileExtension" Type="Edm.String" />
         <Property Name="newsType" Type="Edm.Int32" Nullable="false" />
@@ -29008,6 +29062,15 @@
         <Property Name="loginName" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SettingDataProperty">
+        <Property Name="AvailableInGraph" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AvailableInPowerShell" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AvailableInSharePointAdminCenter" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Category" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="SettingName" Type="Edm.String" />
+        <Property Name="SettingValue" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ShowNextGenerationSyncClientOnTeamSite">
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
@@ -29782,7 +29845,6 @@
         <Property Name="IsMultiGeo" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultipleHomeSitesFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMultipleVivaConnectionsFlightEnabled" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="IsRansomwareProtectionEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientForTenantRestricted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnmanagedSyncClientRestrictionFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaHomeFlightEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -30486,6 +30548,10 @@
       <Action Name="GetRansomwareEventsOverview" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.TenantAdminRansomwareEventsOverview" />
+      </Action>
+      <Action Name="GetSharePointSettingData" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SettingDataProperty)" />
       </Action>
       <Function Name="GetSharePointSiteSharingInsights" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -36811,6 +36877,20 @@
         <Parameter Name="sortBy" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="templateTypeId" Type="Edm.String" />
         <ReturnType Type="Edm.Stream" />
+      </Function>
+    </Schema>
+    <Schema Namespace="SP.RecommendationCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="Dismissed">
+        <Parameter Name="recommendationId" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="Events">
+        <Parameter Name="eventDetails" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Function Name="GetRecommendations" IsComposable="true">
+        <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Edm.String" />
       </Function>
     </Schema>
     <Schema Namespace="SP.RelatedItemManager" xmlns="http://docs.oasis-open.org/odata/ns/edm">
