@@ -22483,7 +22483,7 @@
       </EntityType>
       <EntityType Name="appManagementPolicy" BaseType="graph.policyBase">
         <Property Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="restrictions" Type="graph.appManagementConfiguration" />
+        <Property Name="restrictions" Type="graph.customAppManagementConfiguration" />
         <NavigationProperty Name="appliesTo" Type="Collection(graph.directoryObject)" />
       </EntityType>
       <EntityType Name="extensionProperty" BaseType="graph.directoryObject" OpenType="true">
@@ -23173,6 +23173,7 @@
       <EntityType Name="userSettings" BaseType="graph.entity">
         <Property Name="contributionToContentDiscoveryAsOrganizationDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="contributionToContentDiscoveryDisabled" Type="Edm.Boolean" Nullable="false" />
+        <NavigationProperty Name="itemInsights" Type="graph.userInsightsSettings" ContainsTarget="true" />
         <NavigationProperty Name="windows" Type="Collection(graph.windowsSetting)" ContainsTarget="true" />
         <NavigationProperty Name="shiftPreferences" Type="graph.shiftPreferences" ContainsTarget="true" />
         <NavigationProperty Name="storage" Type="graph.userStorage" ContainsTarget="true" />
@@ -23934,9 +23935,9 @@
         <NavigationProperty Name="templates" Type="graph.policyTemplate" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="tenantAppManagementPolicy" BaseType="graph.policyBase">
-        <Property Name="applicationRestrictions" Type="graph.appManagementConfiguration" />
+        <Property Name="applicationRestrictions" Type="graph.appManagementApplicationConfiguration" />
         <Property Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="servicePrincipalRestrictions" Type="graph.appManagementConfiguration" />
+        <Property Name="servicePrincipalRestrictions" Type="graph.appManagementServicePrincipalConfiguration" />
       </EntityType>
       <EntityType Name="permissionGrantPolicy" BaseType="graph.policyBase">
         <NavigationProperty Name="excludes" Type="Collection(graph.permissionGrantConditionSet)" ContainsTarget="true" />
@@ -25917,10 +25918,11 @@
         <Property Name="appId" Type="Edm.String" />
         <Property Name="delegatedPermissionIds" Type="Collection(Edm.String)" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="appManagementConfiguration">
+      <ComplexType Name="appManagementConfiguration" Abstract="true">
         <Property Name="keyCredentials" Type="Collection(graph.keyCredentialConfiguration)" />
         <Property Name="passwordCredentials" Type="Collection(graph.passwordCredentialConfiguration)" />
       </ComplexType>
+      <ComplexType Name="appManagementApplicationConfiguration" BaseType="graph.appManagementConfiguration" />
       <ComplexType Name="keyCredentialConfiguration">
         <Property Name="maxLifetime" Type="Edm.Duration" />
         <Property Name="restrictForAppsCreatedAfterDateTime" Type="Edm.DateTimeOffset" />
@@ -25931,6 +25933,7 @@
         <Property Name="restrictForAppsCreatedAfterDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="restrictionType" Type="graph.appCredentialRestrictionType" />
       </ComplexType>
+      <ComplexType Name="appManagementServicePrincipalConfiguration" BaseType="graph.appManagementConfiguration" />
       <ComplexType Name="certificateAuthority">
         <Property Name="certificate" Type="Edm.Binary" Nullable="false" />
         <Property Name="certificateRevocationListUrl" Type="Edm.String" />
@@ -25973,6 +25976,7 @@
       <ComplexType Name="crossTenantUserSyncInbound">
         <Property Name="isSyncAllowed" Type="Edm.Boolean" />
       </ComplexType>
+      <ComplexType Name="customAppManagementConfiguration" BaseType="graph.appManagementConfiguration" />
       <ComplexType Name="invitationRedemptionIdentityProviderConfiguration">
         <Property Name="fallbackIdentityProvider" Type="graph.b2bIdentityProvidersType" />
         <Property Name="primaryIdentityProviderPrecedenceOrder" Type="Collection(graph.b2bIdentityProvidersType)" />
@@ -32331,6 +32335,9 @@
         <Property Name="resourceReference" Type="graph.resourceReference" />
         <Property Name="resourceVisualization" Type="graph.resourceVisualization" />
         <NavigationProperty Name="resource" Type="graph.entity" />
+      </EntityType>
+      <EntityType Name="userInsightsSettings" BaseType="graph.entity">
+        <Property Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
       </EntityType>
       <EntityType Name="windowsSetting" BaseType="graph.entity">
         <Property Name="payloadType" Type="Edm.String" />
