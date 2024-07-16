@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25026 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25103 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -2458,6 +2458,7 @@
         <Property Name="frameSize" Type="Edm.Int32" />
         <Property Name="sampleRate" Type="Edm.Int32" />
         <Property Name="duration" Type="Edm.Int64" />
+        <Property Name="downloadCode" Type="Edm.String" />
       </EntityType>
       <EntityType Name="mediaTimelineEvent" OpenType="true">
         <Key>
@@ -2545,6 +2546,7 @@
         <Property Name="temporaryDownloadUrl" Type="Edm.String" />
         <Property Name="source" Type="Edm.String" />
         <Property Name="generationDetails" Type="oneDrive.generationDetails" />
+        <Property Name="downloadCode" Type="Edm.String" />
       </EntityType>
       <EntityType Name="nonAggregatedRecommendedAction" OpenType="true">
         <Key>
@@ -3527,6 +3529,7 @@
         <Property Name="fieldlinks" Type="Collection(oneDrive.diagnosticFieldLink)" />
         <Property Name="hidden" Type="Edm.Boolean" />
         <Property Name="jslink" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
         <Property Name="parentCTypeId" Type="Edm.String" />
         <Property Name="parentWebId" Type="Edm.String" />
         <Property Name="readOnly" Type="Edm.Boolean" />
@@ -4662,6 +4665,7 @@
         <Property Name="scope" Type="oneDrive.ReviewScope" />
         <Property Name="numberOfUsers" Type="Edm.String" />
         <Property Name="numberOfAnyoneLinks" Type="Edm.String" />
+        <Property Name="numberOfPeopleInOrgLink" Type="Edm.String" />
         <Property Name="hasEveryoneExcepteExternalUsers" Type="Edm.String" />
         <Property Name="hasEveryoneLink" Type="Edm.String" />
         <Property Name="potentialRisk" Type="oneDrive.PotentialRisk" />
@@ -4826,8 +4830,6 @@
         <Property Name="wacSessionId" Type="Edm.String" />
         <Property Name="isEduUser" Type="Edm.Boolean" />
         <Property Name="parentFolderWebUrl" Type="Edm.String" />
-        <Property Name="bundleUrlNoAuth" Type="Edm.String" />
-        <Property Name="bundleCode" Type="Edm.String" />
         <Property Name="fileUrlNoAuth" Type="Edm.String" />
         <Property Name="downloadCode" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -5308,6 +5310,17 @@
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="languageTag" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="itemBody" OpenType="true">
+        <Property Name="content" Type="Edm.String" />
+        <Property Name="contentType" Type="oneDrive.ItemBodyContentType" />
+      </ComplexType>
+      <ComplexType Name="notificationCard" OpenType="true">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="actor" Type="oneDrive.identitySet" />
+        <Property Name="data" Type="Edm.String" />
+        <Property Name="path" Type="Edm.String" />
+        <Property Name="view" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="accessViewpoint" OpenType="true">
         <Property Name="canRead" Type="Edm.Boolean" />
         <Property Name="canEdit" Type="Edm.Boolean" />
@@ -5635,6 +5648,7 @@
         <Property Name="correctedByUser" Type="Edm.Boolean" />
         <Property Name="models" Type="Collection(oneDrive.machineLearningModelInfo)" />
         <Property Name="sampleExtractedText" Type="Edm.String" />
+        <Property Name="autofillColumns" Type="Collection(oneDrive.autofillColumnInfo)" />
         <Property Name="machineLearningFlags" Type="oneDrive.MachineLearningFlags" />
       </ComplexType>
       <ComplexType Name="malware" OpenType="true">
@@ -6342,17 +6356,6 @@
       <ComplexType Name="versionAction" OpenType="true">
         <Property Name="newVersion" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="itemBody" OpenType="true">
-        <Property Name="content" Type="Edm.String" />
-        <Property Name="contentType" Type="oneDrive.ItemBodyContentType" />
-      </ComplexType>
-      <ComplexType Name="notificationCard" OpenType="true">
-        <Property Name="id" Type="Edm.String" />
-        <Property Name="actor" Type="oneDrive.identitySet" />
-        <Property Name="data" Type="Edm.String" />
-        <Property Name="path" Type="Edm.String" />
-        <Property Name="view" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="subpoenaMoveParameters" OpenType="true">
         <Property Name="Container" Type="Edm.String" />
         <Property Name="SASUri" Type="Edm.String" />
@@ -6629,11 +6632,19 @@
         <Property Name="upload" Type="oneDrive.uploadRequest" />
       </ComplexType>
       <ComplexType Name="uploadRequest" />
+      <ComplexType Name="autofillColumnInfo">
+        <Property Name="columnName" Type="Edm.String" />
+        <Property Name="columnDataType" Type="Edm.String" />
+        <Property Name="prompt" Type="Edm.String" />
+        <Property Name="isEnabled" Type="Edm.Boolean" />
+      </ComplexType>
       <ComplexType Name="officeBundle">
         <Property Name="version" Type="Edm.String" />
         <Property Name="cTag" Type="Edm.String" />
         <Property Name="generationTime" Type="Edm.DateTimeOffset" />
         <Property Name="url" Type="Edm.String" />
+        <Property Name="bundleUrlNoAuth" Type="Edm.String" />
+        <Property Name="bundleCode" Type="Edm.String" />
         <Property Name="fatalError" Type="Edm.Boolean" />
         <Property Name="errorInfo" Type="Edm.String" />
         <Property Name="bundleStaleness" Type="Edm.Int32" />
@@ -6737,6 +6748,7 @@
         <Property Name="faceExperienceETag" Type="Edm.String" />
         <Property Name="florenceSearch" Type="Edm.Boolean" />
         <Property Name="florenceSearchIngestion" Type="Edm.Boolean" />
+        <Property Name="odcMigratedFaceAndFlorenceData" Type="Edm.Boolean" />
         <Property Name="albumVersion" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="notificationPreferences">
@@ -7833,6 +7845,10 @@
       <EnumType Name="ScenarioType">
         <Member Name="dataGovernance" Value="0" />
       </EnumType>
+      <EnumType Name="ItemBodyContentType">
+        <Member Name="text" Value="0" />
+        <Member Name="html" Value="1" />
+      </EnumType>
       <EnumType Name="OperationType">
         <Member Name="Normal" Value="0" />
         <Member Name="TrialMode" Value="1" />
@@ -7846,10 +7862,6 @@
         <Member Name="upgrade" Value="1" />
         <Member Name="downgrade" Value="2" />
         <Member Name="renewal" Value="3" />
-      </EnumType>
-      <EnumType Name="ItemBodyContentType">
-        <Member Name="text" Value="0" />
-        <Member Name="html" Value="1" />
       </EnumType>
       <EnumType Name="SubpoenaJobStatus">
         <Member Name="None" Value="0" />
@@ -9466,6 +9478,7 @@
         <EntitySet Name="subscriptions" EntityType="oneDrive.subscription" />
         <EntitySet Name="vaultKeys" EntityType="oneDrive.vaultKey" />
         <EntitySet Name="memberOf" EntityType="oneDrive.memberOf" />
+        <EntitySet Name="pageTemplate" EntityType="oneDrive.pageTemplate" />
         <EntitySet Name="sites" EntityType="oneDrive.site" />
         <EntitySet Name="followedSites" EntityType="oneDrive.site" />
         <EntitySet Name="tenants" EntityType="oneDrive.tenant" />
