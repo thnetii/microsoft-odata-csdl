@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_blockchainethereum`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1694\1.0.1694.3752`|
+|**Version**|`releases/v1.0.1702\1.0.1702.3810`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Apr 09 2019|
-|**Changed**|Wed Jun 26 2024|
+|**Changed**|Tue Jul 30 2024|
 
 ## Description
 Ethereum is a smart contract blockchain. With the Ethereum Blockchain connector, you can perform actions such as submitting transactions, reading contract state, and trigger flows on contract updates.
