@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25117 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25124 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -186,6 +186,10 @@
       </ComplexType>
       <ComplexType Name="AgreementAttributeRequestDTO">
         <Property Name="DocumentUri" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="AgreementCountryResponse">
+        <Property Name="CountryKey" Type="Edm.String" />
+        <Property Name="DisplayName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AgreementDataPair">
         <Property Name="Count" Type="Edm.Int32" Nullable="false" />
@@ -1601,6 +1605,7 @@
         <Property Name="Email" Type="Edm.String" />
         <Property Name="LoginName" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
+        <Property Name="ProfilePicUrl" Type="Edm.String" />
         <Property Name="UserId" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ApprovalConfigurationRequest">
@@ -3939,6 +3944,10 @@
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="SP.TenantThemes" />
       </Function>
+      <Action Name="GetTenantThemesXgeoUtil" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <ReturnType Type="SP.TenantThemes" />
+      </Action>
       <Function Name="OrgAssets" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
@@ -4158,6 +4167,7 @@
       <Action Name="DeleteRule" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="ruleId" Type="Edm.String" />
+        <Parameter Name="triggerType" Type="Edm.Int32" Nullable="false" />
       </Action>
       <Action Name="EnableQueryableColumns" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -4866,6 +4876,8 @@
         <Parameter Name="checkInComment" Type="Edm.String" />
         <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="View" Type="Edm.String" />
+        <Parameter Name="RootFolder" Type="Edm.String" />
         <ReturnType Type="SP.ListItemUpdateResults" />
       </Action>
       <Action Name="ValidateUpdateFetchListItemInFolder" IsBound="true">
@@ -5506,6 +5518,10 @@
         <Parameter Name="AgreementNumber" Type="Edm.String" />
         <ReturnType Type="SP.AgreementMetaData" />
       </Function>
+      <Function Name="GetAgreementCountries" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.AgreementCountryResponse)" />
+      </Function>
       <Function Name="GetAgreementDocuments" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="folderUrl" Type="Edm.String" />
@@ -5593,6 +5609,21 @@
         <Parameter Name="ApprovalsConfigurations" Type="Collection(SP.ApprovalConfigurationRequest)" />
         <ReturnType Type="Collection(SP.ApprovalConfigurationResponse)" />
       </Action>
+      <Action Name="AddTemplateManagerUsers" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Action>
+      <Action Name="AddWorkspaceMembers" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Action>
+      <Action Name="AddWorkspaceOwners" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Action>
       <Function Name="GetApprovalsConfigurationList" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="CategoryID" Type="Edm.String" />
@@ -5601,9 +5632,45 @@
         <Parameter Name="Source" Type="Edm.String" />
         <ReturnType Type="Collection(SP.ApprovalConfigurationResponse)" />
       </Function>
+      <Function Name="GetTemplateManagerUsers" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Function>
+      <Function Name="GetWorkspaceMembers" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Function>
+      <Function Name="GetWorkspaceOwners" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Function>
       <Action Name="ProvisionApprovalsConfigurationList" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
         <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="ProvisionTemplateManagerGroup" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+      </Action>
+      <Action Name="ProvisionWorkspaceMemberGroup" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+      </Action>
+      <Action Name="ProvisionWorkspaceOwnerGroup" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+      </Action>
+      <Action Name="RemoveTemplateManagerUsers" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Action>
+      <Action Name="RemoveWorkspaceMembers" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Action>
+      <Action Name="RemoveWorkspaceOwners" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
       </Action>
       <Action Name="AddDeviationAnalysisRule" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -8212,6 +8279,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/TopicHeader">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePageFieldsData/TranspileContents">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/WebTranspileContent">
@@ -14695,6 +14765,9 @@
       <Annotations Target="SP.GetTenantThemes(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.GetTenantThemesXgeoUtil(SP.BrandCenter)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.OrgAssets(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14755,7 +14828,7 @@
       <Annotations Target="SP.CreateRuleEx(SP.List, Edm.String, Edm.String, Edm.Int32, SP.SPRuleAction, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.DeleteRule(SP.List, Edm.String)">
+      <Annotations Target="SP.DeleteRule(SP.List, Edm.String, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.EnableQueryableColumns(SP.List)">
@@ -21951,6 +22024,7 @@
         <Property Name="TeamsTranspileContent" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="TopicHeader" Type="Edm.String" />
+        <Property Name="TranspileContents" Type="Edm.String" />
         <Property Name="WebTranspileContent" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SitePageCoAuthState">
@@ -28434,6 +28508,8 @@
         <Parameter Name="checkInComment" Type="Edm.String" />
         <Parameter Name="datesInUTC" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="numberInInvariantCulture" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="View" Type="Edm.String" />
+        <Parameter Name="RootFolder" Type="Edm.String" />
         <ReturnType Type="SP.ListItemUpdateResults" />
       </Action>
       <Action Name="ValidateUpdateFetchListItemInFolder" IsBound="true">
