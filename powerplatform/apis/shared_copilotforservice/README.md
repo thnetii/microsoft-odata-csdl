@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_copilotforservice`|
 |**Tier**|Premium|
-|**Version**|`u/v-sekonda/copilotforservice19062024\1.0.1705.3837`|
+|**Version**|`releases/v1.0.1706\1.0.1706.3848`|
 |**Publisher**|**Microsoft Corporation**|
-|**Created**|Mon May 13 2024|
-|**Changed**|Fri Jul 19 2024|
+|**Created**|Wed Aug 07 2024|
+|**Changed**|Wed Aug 07 2024|
 
 ## Description
 Microsoft Service copilot connector
