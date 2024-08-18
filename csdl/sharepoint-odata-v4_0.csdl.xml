@@ -1591,16 +1591,6 @@
         <Property Name="Title" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="ApprovalConfigurationResponse">
-        <Property Name="ApprovalConfigurationID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Approvers" Type="Collection(SP.ConfiguredUserInfo)" />
-        <Property Name="CategoryID" Type="Edm.String" />
-        <Property Name="CategoryLabel" Type="Edm.String" />
-        <Property Name="Country" Type="Edm.String" />
-        <Property Name="ESigners" Type="Collection(SP.ConfiguredUserInfo)" />
-        <Property Name="Language" Type="Edm.String" />
-        <Property Name="Source" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="ConfiguredUserInfo">
         <Property Name="Email" Type="Edm.String" />
         <Property Name="LoginName" Type="Edm.String" />
@@ -1608,19 +1598,34 @@
         <Property Name="ProfilePicUrl" Type="Edm.String" />
         <Property Name="UserId" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="ApprovalConfigurationRequest">
+      <ComplexType Name="WorkflowConfigurationResponse">
+        <Property Name="Approvers" Type="Collection(SP.ConfiguredUserInfo)" />
+        <Property Name="CategoryID" Type="Edm.String" />
+        <Property Name="CategoryName" Type="Edm.String" />
+        <Property Name="ConfigurationID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Country" Type="Edm.String" />
+        <Property Name="ESignNeeded" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Language" Type="Edm.String" />
+        <Property Name="Reviewers" Type="Collection(SP.ConfiguredUserInfo)" />
+        <Property Name="Source" Type="Edm.String" />
+        <Property Name="Type" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="WorkflowConfigurationCreateRequest">
         <Property Name="Approvers" Type="Collection(Edm.String)" />
         <Property Name="CategoryID" Type="Edm.String" />
         <Property Name="Country" Type="Edm.String" />
-        <Property Name="ESigners" Type="Collection(Edm.String)" />
+        <Property Name="ESignNeeded" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Language" Type="Edm.String" />
+        <Property Name="Reviewers" Type="Collection(Edm.String)" />
         <Property Name="Source" Type="Edm.String" />
+        <Property Name="Type" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="ApprovalsConfigurationFilter">
+      <ComplexType Name="WorkflowConfigurationSearchFilters">
         <Property Name="CategoryID" Type="Edm.String" />
         <Property Name="Country" Type="Edm.String" />
         <Property Name="Language" Type="Edm.String" />
         <Property Name="Source" Type="Edm.String" />
+        <Property Name="Type" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="DeviationAnalysisRule">
         <Property Name="Definition" Type="Edm.String" />
@@ -5606,11 +5611,6 @@
         <Parameter Name="State" Type="Edm.String" />
         <ReturnType Type="SP.AgreementSummaryData" />
       </Function>
-      <Action Name="AddApprovalsConfigurationList" IsBound="true">
-        <Parameter Name="this" Type="SP.Web" />
-        <Parameter Name="ApprovalsConfigurations" Type="Collection(SP.ApprovalConfigurationRequest)" />
-        <ReturnType Type="Collection(SP.ApprovalConfigurationResponse)" />
-      </Action>
       <Action Name="AddTemplateManagerUsers" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
@@ -5626,17 +5626,23 @@
         <Parameter Name="usersInfo" Type="Collection(SP.ConfiguredUserInfo)" />
         <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
       </Action>
-      <Function Name="GetApprovalsConfigurationList" IsBound="true" IsComposable="true">
+      <Action Name="CreateWorkflowConfiguration" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="configuration" Type="SP.WorkflowConfigurationCreateRequest" />
+        <ReturnType Type="SP.WorkflowConfigurationResponse" />
+      </Action>
+      <Function Name="GetTemplateManagerUsers" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+      </Function>
+      <Function Name="GetWorkflowConfigurations" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="CategoryID" Type="Edm.String" />
         <Parameter Name="Country" Type="Edm.String" />
         <Parameter Name="Language" Type="Edm.String" />
         <Parameter Name="Source" Type="Edm.String" />
-        <ReturnType Type="Collection(SP.ApprovalConfigurationResponse)" />
-      </Function>
-      <Function Name="GetTemplateManagerUsers" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="SP.Web" />
-        <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
+        <Parameter Name="Type" Type="Edm.String" />
+        <ReturnType Type="Collection(SP.WorkflowConfigurationResponse)" />
       </Function>
       <Function Name="GetWorkspaceMembers" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -5646,10 +5652,6 @@
         <Parameter Name="this" Type="SP.Web" />
         <ReturnType Type="Collection(SP.ConfiguredUserInfo)" />
       </Function>
-      <Action Name="ProvisionApprovalsConfigurationList" IsBound="true">
-        <Parameter Name="this" Type="SP.Web" />
-        <ReturnType Type="Edm.String" />
-      </Action>
       <Action Name="ProvisionTemplateManagerGroup" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
       </Action>
@@ -8283,9 +8285,6 @@
       <Annotations Target="SP.Publishing.SitePageFieldsData/TopicHeader">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.SitePageFieldsData/TranspileContents">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
       <Annotations Target="SP.Publishing.SitePageFieldsData/WebTranspileContent">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -8455,6 +8454,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.WebPartDetailsWrapper">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePagStreamData/CoAuthState">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePagStreamData/StreamContents">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePageVersionInfoCollection/Created">
@@ -13282,6 +13287,9 @@
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.CampaignPublication, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.CampaignPublication, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.CampaignPublication, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13459,6 +13467,9 @@
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.FeedVideoPage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.FeedVideoPage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.FeedVideoPage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13594,6 +13605,9 @@
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.RepostPage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.RepostPage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.RepostPage, SP.Publishing.SitePageFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13706,6 +13720,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.SitePage3D, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.SitePage3D, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.SitePage3D, SP.Publishing.SitePageFieldsData)">
@@ -13859,6 +13876,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.SitePage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.SitePage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.SitePage, SP.Publishing.SitePageFieldsData)">
@@ -14021,6 +14041,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SavePageCoAuth(SP.Publishing.TopicSitePage, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SaveStreams(SP.Publishing.TopicSitePage, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SchedulePublish(SP.Publishing.TopicSitePage, SP.Publishing.SitePageFieldsData)">
@@ -22086,7 +22109,6 @@
         <Property Name="TeamsTranspileContent" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
         <Property Name="TopicHeader" Type="Edm.String" />
-        <Property Name="TranspileContents" Type="Edm.String" />
         <Property Name="WebTranspileContent" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SitePageCoAuthState">
@@ -22267,6 +22289,7 @@
       <ComplexType Name="PrePublishValidationsErrorCodesForTeams">
         <Property Name="AudienceId" Type="Edm.String" />
         <Property Name="ErrorCodes" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="NumberOfImagesInPayload" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="PrePublishValidationsErrorCodesForVivaEngage">
         <Property Name="DestinationName" Type="Edm.String" />
@@ -22445,6 +22468,11 @@
         <Property Name="IsInternal" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ManifestId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="SitePageStreamContent" />
+      <ComplexType Name="SitePagStreamData">
+        <Property Name="CoAuthState" Type="SP.Publishing.SitePageCoAuthState" />
+        <Property Name="StreamContents" Type="Collection(SP.Publishing.SitePageStreamContent)" />
+      </ComplexType>
       <ComplexType Name="SitePageVersionInfoCollection">
         <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="CreatedBy" Type="Edm.String" />
@@ -22495,7 +22523,6 @@
         <Property Name="EntityType" Type="Edm.String" />
         <Property Name="VerifiedTopicAllowedEditors" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="TranspileContent" />
       <ComplexType Name="ViewProgressAnalyticsData" BaseType="SP.Publishing.ViewData">
         <Property Name="PercentageViewed" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
@@ -23049,6 +23076,10 @@
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -23305,6 +23336,10 @@
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -23560,6 +23595,10 @@
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.RepostPage" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -23813,6 +23852,10 @@
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
+      </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <Parameter Name="sitePage" Type="SP.Publishing.SitePageFieldsData" />
@@ -24050,6 +24093,10 @@
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
       </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
@@ -24295,6 +24342,10 @@
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <Parameter Name="pageStream" Type="Edm.Stream" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
+      </Action>
+      <Action Name="SaveStreams" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
       </Action>
       <Action Name="SchedulePublish" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
@@ -29480,6 +29531,9 @@
         <Property Name="OwnersCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="PublisherName" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPContainerSearchParameters">
+        <Property Name="SearchText" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPContainerSortOrder">
         <Property Name="Ascending" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SortingField" Type="Edm.Int32" Nullable="false" />
@@ -31199,6 +31253,7 @@
         <Parameter Name="pageSize" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="pagingToken" Type="Edm.String" />
         <Parameter Name="containerStatus" Type="Edm.String" />
+        <Parameter Name="searchParameters" Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerSearchParameters" />
         <ReturnType Type="Edm.Stream" />
       </Action>
       <Action Name="RenderDeletedContainers" IsBound="true">
