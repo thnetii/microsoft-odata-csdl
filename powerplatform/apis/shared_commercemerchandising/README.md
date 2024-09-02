@@ -6,7 +6,7 @@
 |**Version**|`releases/v1.0.1702\1.0.1702.3810`|
 |**Publisher**|**Microsoft**|
 |**Created**|Tue Feb 08 2022|
-|**Changed**|Tue Jul 30 2024|
+|**Changed**|Fri Aug 02 2024|
 
 ## Description
 The connector exposes actions to search and browse product related information like catalogs, inventory, price and recommendations. The connector connects to the Commerce Cloud Scale Unit (CSU) as a wrapper to provide the headless commerce APIs in simplified and easy way so businesses can easily consume and build Commerce applications.
