@@ -6,7 +6,7 @@
 |**Version**|`releases/v1.0.1682\1.0.1682.3673`|
 |**Publisher**|**Fördős András**|
 |**Created**|Thu Jan 25 2024|
-|**Changed**|Thu Mar 21 2024|
+|**Changed**|Fri Aug 02 2024|
 
 ## Description
 Abstract's IBAN Validation for determining the validity and other details of the International Bank Account Number (IBAN).
