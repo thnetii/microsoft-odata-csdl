@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25221 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25228 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -203,6 +203,7 @@
         <Property Name="collation" Type="Edm.Int16" />
         <Property Name="compatibilityLevel" Type="Edm.Int32" />
         <Property Name="configuration" Type="Edm.Int16" />
+        <Property Name="contentDatabase" Type="oneDrive.diagnosticContentDatabaseFacet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="currencyLocaleID" Type="Edm.Int32" />
         <Property Name="customJavaScriptFileUrl" Type="Edm.String" />
@@ -1350,7 +1351,6 @@
         <Property Name="externalGroupId" Type="Edm.Guid" />
         <Property Name="status" Type="oneDrive.StorageContainerStatus" />
         <Property Name="customProperties" Type="microsoft.graph.fileStorageContainerCustomPropertyDictionary" />
-        <Property Name="permissionViewpoint" Type="oneDrive.storageContainerViewpoint" />
         <Property Name="viewpoint" Type="oneDrive.storageContainerViewpoint" />
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
@@ -2621,6 +2621,21 @@
         <Property Name="source" Type="Edm.String" />
         <Property Name="generationDetails" Type="oneDrive.generationDetails" />
         <Property Name="downloadCode" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="visualSegmentFrame" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="format" Type="Edm.String" />
+        <Property Name="width" Type="Edm.Int32" />
+        <Property Name="height" Type="Edm.Int32" />
+        <Property Name="content" Type="Edm.Stream" />
+        <Property Name="error" Type="oneDrive.error" />
+      </EntityType>
+      <EntityType Name="visualSegmentsData" OpenType="true">
+        <Property Name="version" Type="Edm.String" />
+        <Property Name="data" Type="Edm.String" />
       </EntityType>
       <EntityType Name="nonAggregatedRecommendedAction" OpenType="true">
         <Key>
@@ -5765,6 +5780,7 @@
         <Property Name="models" Type="Collection(oneDrive.machineLearningModelInfo)" />
         <Property Name="sampleExtractedText" Type="Edm.String" />
         <Property Name="autofillColumns" Type="Collection(oneDrive.autofillColumnInfo)" />
+        <Property Name="templatedPrebuiltModels" Type="Collection(oneDrive.templatedPrebuiltModel)" />
         <Property Name="machineLearningFlags" Type="oneDrive.MachineLearningFlags" />
       </ComplexType>
       <ComplexType Name="malware" OpenType="true">
@@ -5801,6 +5817,8 @@
         <NavigationProperty Name="timelineEvents" Type="Collection(oneDrive.mediaTimelineEvent)" ContainsTarget="true" />
         <NavigationProperty Name="timeline" Type="oneDrive.mediaTimeline" ContainsTarget="true" />
         <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
+        <NavigationProperty Name="visualSegmentFrames" Type="Collection(oneDrive.visualSegmentFrame)" ContainsTarget="true" />
+        <NavigationProperty Name="visualSegmentsData" Type="oneDrive.visualSegmentsData" ContainsTarget="true" />
         <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
         <NavigationProperty Name="audioTracks" Type="Collection(oneDrive.audioTrack)" ContainsTarget="true" />
         <NavigationProperty Name="reactions" Type="Collection(oneDrive.mediaReaction)" ContainsTarget="true" />
@@ -6132,6 +6150,9 @@
       <ComplexType Name="root" OpenType="true" />
       <ComplexType Name="searchResult" OpenType="true">
         <Property Name="onClickTelemetryUrl" Type="Edm.String" />
+        <Property Name="metadataScore" Type="Edm.Double" />
+        <Property Name="relevanceScore" Type="Edm.Double" />
+        <Property Name="relevanceTier" Type="oneDrive.SearchRelevanceTiers" />
       </ComplexType>
       <ComplexType Name="self" OpenType="true" />
       <ComplexType Name="shared" OpenType="true">
@@ -6333,6 +6354,8 @@
         <Property Name="customGroupKey" Type="Edm.String" />
         <Property Name="customGroupType" Type="oneDrive.AnalyticsReportCustomGroupType" />
         <Property Name="customGroups" Type="Collection(Edm.String)" />
+        <Property Name="sitesCount" Type="Edm.Int32" />
+        <Property Name="crawledSitesCount" Type="Edm.Int64" />
       </ComplexType>
       <ComplexType Name="eeeuParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
@@ -6491,6 +6514,16 @@
         <NavigationProperty Name="validTenantLevelHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
         <NavigationProperty Name="siteLevelOrphanHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
         <NavigationProperty Name="validSiteLevelHolds" Type="Collection(oneDrive.diagnosticComplianceHold)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="diagnosticContentDatabaseFacet" OpenType="true">
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="id" Type="Edm.Guid" />
+        <Property Name="isReadOnly" Type="Edm.Boolean" />
+        <Property Name="lastLanguageAndRegionSyncTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastProfileSyncTime" Type="Edm.DateTimeOffset" />
+        <Property Name="lastSearchCrawlSyncTime" Type="Edm.DateTimeOffset" />
+        <Property Name="status" Type="oneDrive.SPObjectStatus" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="DiagnosticIdentityFacet" OpenType="true">
@@ -6755,6 +6788,15 @@
         <Property Name="prompt" Type="Edm.String" />
         <Property Name="isEnabled" Type="Edm.Boolean" />
       </ComplexType>
+      <ComplexType Name="templatedPrebuiltModel">
+        <Property Name="apiVersion" Type="Edm.String" />
+        <Property Name="prebuiltModelType" Type="Edm.String" />
+        <Property Name="prebuiltColumnMappings" Type="Collection(oneDrive.prebuiltColumnMapping)" />
+      </ComplexType>
+      <ComplexType Name="prebuiltColumnMapping">
+        <Property Name="azureFieldName" Type="Edm.String" />
+        <Property Name="columnName" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="officeBundle">
         <Property Name="version" Type="Edm.String" />
         <Property Name="cTag" Type="Edm.String" />
@@ -7003,6 +7045,15 @@
         <Member Name="Enabled" Value="1" />
         <Member Name="On" Value="2" />
       </EnumType>
+      <EnumType Name="SPObjectStatus">
+        <Member Name="Online" Value="0" />
+        <Member Name="Disabled" Value="1" />
+        <Member Name="Offline" Value="2" />
+        <Member Name="Unprovisioning" Value="3" />
+        <Member Name="Provisioning" Value="4" />
+        <Member Name="Upgrading" Value="5" />
+        <Member Name="Patching" Value="6" />
+      </EnumType>
       <EnumType Name="SPEventHostType">
         <Member Name="Site" Value="0" />
         <Member Name="Web" Value="1" />
@@ -7116,15 +7167,6 @@
         <Member Name="Site" Value="2" />
         <Member Name="Web" Value="3" />
         <Member Name="ScopeInvalid" Value="-1" />
-      </EnumType>
-      <EnumType Name="SPObjectStatus">
-        <Member Name="Online" Value="0" />
-        <Member Name="Disabled" Value="1" />
-        <Member Name="Offline" Value="2" />
-        <Member Name="Unprovisioning" Value="3" />
-        <Member Name="Provisioning" Value="4" />
-        <Member Name="Upgrading" Value="5" />
-        <Member Name="Patching" Value="6" />
       </EnumType>
       <EnumType Name="SPIpLabelCacheSettings" UnderlyingType="Edm.Int64" IsFlags="true">
         <Member Name="ProtectSite_AllowFullAccess" Value="1" />
@@ -7498,6 +7540,13 @@
         <Member Name="Clean" Value="0" />
         <Member Name="Infected" Value="1" />
         <Member Name="NotScanned" Value="2" />
+      </EnumType>
+      <EnumType Name="SearchRelevanceTiers">
+        <Member Name="veryLow" Value="0" />
+        <Member Name="low" Value="1" />
+        <Member Name="moderate" Value="2" />
+        <Member Name="high" Value="3" />
+        <Member Name="veryHigh" Value="4" />
       </EnumType>
       <EnumType Name="AgeGroupEnum" UnderlyingType="Edm.Int64">
         <Member Name="Undefined" Value="0" />
@@ -8144,19 +8193,10 @@
         <Parameter Name="upns" Type="Collection(Edm.String)" />
         <ReturnType Type="Collection(oneDrive.odbUser)" />
       </Action>
-      <Action Name="cortexQuery" IsBound="true">
+      <Function Name="cortexQuery" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="query" Type="Edm.String">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
-        <Parameter Name="maxSnippets" Type="Edm.Int32">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
-        <Parameter Name="threshold" Type="Edm.Double">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
         <ReturnType Type="Collection(oneDrive.CortexQueryResult)" />
-      </Action>
+      </Function>
       <Action Name="setAutoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
         <Parameter Name="entity" Type="Edm.String" />
