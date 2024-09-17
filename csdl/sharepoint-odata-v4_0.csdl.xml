@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25228 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25304 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -3178,6 +3178,7 @@
         <Property Name="FillInChoice" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Mappings" Type="Edm.String" />
         <Property Name="Choices" Type="Collection(Edm.String)" />
+        <Property Name="UnlimitedLengthInDocumentLibrary" Type="Edm.Boolean" Nullable="false" />
       </EntityType>
       <EntityType Name="FieldChoice" BaseType="SP.FieldMultiChoice">
         <Property Name="EditFormat" Type="Edm.Int32" Nullable="false" />
@@ -5554,6 +5555,9 @@
         <Parameter Name="LibraryCategoryName" Type="Edm.String" />
         <Parameter Name="Description" Type="Edm.String" />
         <ReturnType Type="SP.List" />
+      </Action>
+      <Action Name="EnableContentSolutionApprovals" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
       </Action>
       <Function Name="GetAgreement" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
@@ -10217,6 +10221,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPORestrictedContentDiscoverabilitySiteDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPSitePageCopyJobProgress">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SyntexBillingContext">
@@ -22656,6 +22663,7 @@
       </ComplexType>
       <ComplexType Name="CampaignPublicationResetEndpointParam">
         <Property Name="EmailTranspileContent" Type="Edm.String" />
+        <Property Name="EngageTranspileContent" Type="Edm.String" />
         <Property Name="ResetEndpoint" Type="Collection(Edm.String)" />
         <Property Name="TeamsTranspileContent" Type="Edm.String" />
       </ComplexType>
@@ -25383,7 +25391,11 @@
       <ComplexType Name="SiteMoveServiceInfo">
         <Property Name="ServiceCapabilities" Type="Collection(Edm.Int32)" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="SiteRelocationJobManagementServiceInfo">
+        <Property Name="ServiceCapabilities" Type="Collection(Edm.Int32)" Nullable="false" />
+      </ComplexType>
       <EntityType Name="SiteMoveService" />
+      <EntityType Name="SiteRelocationJobManagementService" />
       <Function Name="SiteMoveService">
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
@@ -25432,6 +25444,23 @@
       <Action Name="SourceCleanupAfterMove" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="isDeleted" Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Function Name="SiteRelocationJobManagementService">
+        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
+      </Function>
+      <Action Name="EnqueueSiteRelocationJob" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
+        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteUrl" Type="Edm.String" />
+        <Parameter Name="sourceDatabaseId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="targetDatabaseId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteMoveFlags" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="preferredStartTimeInUtc" Type="Edm.DateTimeOffset" Nullable="false" />
+      </Action>
+      <Action Name="GetServiceInfo" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementServiceInfo" />
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Yammer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -27053,6 +27082,10 @@
         <Property Name="Choices" Type="Collection(Microsoft.SharePoint.Internal.GptResponseChoice)" />
         <Property Name="Usage" Type="Microsoft.SharePoint.Internal.GptResponseUsage" />
       </ComplexType>
+      <ComplexType Name="LogActivityExtraProperties">
+        <Property Name="CampaignMetadata" Type="Edm.String" />
+        <Property Name="LinkUrlClicked" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="LogActivityRequest">
         <Property Name="LastAccessTime" Type="Edm.String" />
         <Property Name="ListItemUniqueId" Type="Edm.Guid" Nullable="false" />
@@ -27091,6 +27124,7 @@
         <Parameter Name="ListItemUniqueId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="AffectedResourceUrl" Type="Edm.String" />
         <Parameter Name="ItemType" Type="Edm.String" />
+        <Parameter Name="ExtraProperties" Type="Microsoft.SharePoint.Internal.LogActivityExtraProperties" />
         <Parameter Name="AuditCreationTime" Type="Edm.String" />
         <Parameter Name="IsOffline" Type="Edm.Boolean" Nullable="false" />
       </Action>
@@ -29860,6 +29894,14 @@
         <Property Name="Id" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPSitePageCopyJobProgress">
+        <Property Name="ErrorMessage" Type="Edm.String" />
+        <Property Name="JobState" Type="Edm.String" />
+        <Property Name="NewPageUrl" Type="Edm.String" />
+        <Property Name="SourcePageName" Type="Edm.String" />
+        <Property Name="StatusMessage" Type="Edm.String" />
+        <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="SPSyntexApplicationProperties">
         <Property Name="ApplicationId" Type="Edm.Guid" Nullable="false" />
         <Property Name="ApplicationName" Type="Edm.String" />
@@ -30345,12 +30387,17 @@
         <Property Name="NotificationsInSharePointEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NotifyOwnersWhenInvitationsAccepted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NotifyOwnersWhenItemsReshared" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="OCRAdminODBGroupList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="OCRAdminODBUserList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="OCRAdminSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="OCRAdminSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="OCRAdminSiteListFileName" Type="Edm.String" />
+        <Property Name="OCRComplianceODBGroupList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="OCRComplianceODBUserList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="OCRComplianceSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
         <Property Name="OCRComplianceSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="OCRComplianceSiteListFileName" Type="Edm.String" />
+        <Property Name="OCRModeForAdminODBs" Type="Edm.Int32" Nullable="false" />
         <Property Name="OCRModeForAdminSites" Type="Edm.Int32" Nullable="false" />
         <Property Name="OCRModeForComplianceODBs" Type="Edm.Int32" Nullable="false" />
         <Property Name="OCRModeForComplianceSites" Type="Edm.Int32" Nullable="false" />
@@ -31730,6 +31777,11 @@
       <Action Name="SetSiteUserGroups" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="siteUserGroupsData" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteUserGroupsData" />
+      </Action>
+      <Action Name="SetSPEmbeddedApplicationPermissions" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="spSyntexApplicationProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPSyntexApplicationProperties" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPSyntexApplicationProperties" />
       </Action>
       <Action Name="SetSPHSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
