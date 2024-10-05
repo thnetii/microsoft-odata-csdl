@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25311 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25318 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1052,6 +1052,7 @@
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </Property>
         <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="unifiedDomainWebUrl" Type="Edm.String" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
         <NavigationProperty Name="anomalies" Type="Collection(oneDrive.anomaly)" ContainsTarget="true" />
         <NavigationProperty Name="apps" Type="Collection(oneDrive.driveApp)" ContainsTarget="true" />
@@ -1265,6 +1266,7 @@
         <Property Name="OwningTenantId" Type="Edm.Guid" />
         <Property Name="BillingProfileIdentityType" Type="oneDrive.BillingProfileIdentityType" />
         <Property Name="BackupServiceConsumer" Type="oneDrive.BackupServiceConsumer" />
+        <Property Name="FeatureStatus" Type="oneDrive.FeatureStatus" />
         <Property Name="BillingProfiles" Type="Collection(oneDrive.localBillingProfileFacet)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -1709,6 +1711,7 @@
         <Property Name="content" Type="Edm.Stream" />
         <Property Name="hashes" Type="oneDrive.hashes" />
         <Property Name="mimeType" Type="Edm.String" />
+        <Property Name="operation" Type="oneDrive.StreamOperation" />
         <Property Name="properties" Type="oneDrive.itemStreamProperties" />
         <Property Name="size" Type="Edm.Int64" />
         <Property Name="streamContent" Type="Edm.Stream" />
@@ -1747,6 +1750,7 @@
         </Property>
         <Property Name="size" Type="Edm.Int64" />
         <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="unifiedDomainWebUrl" Type="Edm.String" />
         <NavigationProperty Name="analytics" Type="oneDrive.itemAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="driveItem" Type="oneDrive.item" ContainsTarget="true" />
@@ -1764,7 +1768,6 @@
         <Property Name="coverImage" Type="oneDrive.coverImage" />
         <Property Name="cTag" Type="Edm.String" />
         <Property Name="customFilterAttributes" Type="oneDrive.custom" />
-        <Property Name="decorator" Type="oneDrive.itemDecorator" />
         <Property Name="deleted" Type="oneDrive.deleted" />
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="excelSurvey" Type="oneDrive.excelSurvey" />
@@ -1901,6 +1904,7 @@
         <Property Name="planInfo" Type="oneDrive.paidPlanInfo" />
         <Property Name="referralInfo" Type="oneDrive.referralInfoFacet" />
         <Property Name="bonusInfo" Type="oneDrive.bonusInfoFacet" />
+        <Property Name="productId" Type="Edm.String" />
       </EntityType>
       <EntityType Name="contentInsights" OpenType="true">
         <Key>
@@ -2321,7 +2325,6 @@
       </EntityType>
       <EntityType Name="listItem" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="contentType" Type="oneDrive.contentTypeReference" />
-        <Property Name="decorator" Type="oneDrive.itemDecorator" />
         <Property Name="deleted" Type="oneDrive.deleted" />
         <Property Name="folder" Type="oneDrive.folder" />
         <Property Name="followed" Type="oneDrive.followed" />
@@ -5141,6 +5144,7 @@
         <Property Name="tenantDisplayName" Type="Edm.String" />
         <Property Name="tenantId" Type="Edm.String" />
         <Property Name="subscriptionId" Type="Edm.String" />
+        <Property Name="unifiedDomainSiteUrl" Type="Edm.String" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="webId" Type="Edm.String" />
         <Property Name="webRelativeListUrl" Type="Edm.String" />
@@ -6777,10 +6781,6 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="values" Type="Collection(Edm.String)" />
       </ComplexType>
-      <ComplexType Name="itemDecorator">
-        <Property Name="iconColor" Type="oneDrive.ItemIconColor" />
-        <Property Name="emoji" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="dataRequest">
         <Property Name="upload" Type="oneDrive.uploadRequest" />
       </ComplexType>
@@ -7506,24 +7506,10 @@
         <Member Name="adminDefined" Value="0" />
         <Member Name="userDefined" Value="1" />
       </EnumType>
-      <EnumType Name="ItemIconColor">
-        <Member Name="yellow" Value="0" />
-        <Member Name="darkRed" Value="1" />
-        <Member Name="darkOrange" Value="2" />
-        <Member Name="darkGreen" Value="3" />
-        <Member Name="darkTeal" Value="4" />
-        <Member Name="darkBlue" Value="5" />
-        <Member Name="darkPurple" Value="6" />
-        <Member Name="darkPink" Value="7" />
-        <Member Name="gray" Value="8" />
-        <Member Name="lightRed" Value="9" />
-        <Member Name="lightOrange" Value="10" />
-        <Member Name="lightGreen" Value="11" />
-        <Member Name="lightTeal" Value="12" />
-        <Member Name="lightBlue" Value="13" />
-        <Member Name="lightPurple" Value="14" />
-        <Member Name="lightPink" Value="15" />
-        <Member Name="unknownFutureValue" Value="16" />
+      <EnumType Name="StreamOperation">
+        <Member Name="Put" Value="0" />
+        <Member Name="Delete" Value="1" />
+        <Member Name="PatchProperties" Value="2" />
       </EnumType>
       <EnumType Name="MachineLearningModelType">
         <Member Name="none" Value="0" />
@@ -8218,6 +8204,10 @@
         <Parameter Name="sendEmailNotification" Type="Edm.String" />
         <ReturnType Type="oneDrive.analyticsReportsAutoQueueConfig" />
       </Action>
+      <Function Name="archivedReports" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <ReturnType Type="Collection(oneDrive.analyticsReport)" />
+      </Function>
       <Function Name="topRecordsRACForSite" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReport" />
         <ReturnType Type="oneDrive.analyticsReport" />
