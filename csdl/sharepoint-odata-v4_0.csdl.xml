@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25318 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25325 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1081,6 +1081,7 @@
         <Property Name="MediaLengthInSeconds" Type="Edm.Int32" Nullable="false" />
         <Property Name="MediaServiceAutoKeyPoints" Type="Edm.String" />
         <Property Name="MediaServiceAutoTags" Type="Edm.String" />
+        <Property Name="MediaServiceBillingMetadata" Type="Edm.String" />
         <Property Name="MediaServiceDateTaken" Type="Edm.String" />
         <Property Name="MediaServiceDocTags" Type="Edm.String" />
         <Property Name="MediaServiceEventHashCode" Type="Edm.String" />
@@ -3010,6 +3011,7 @@
         <Property Name="PermissionName" Type="Edm.String" />
         <Property Name="PermissionRoleType" Type="Edm.Int32" Nullable="false" />
       </EntityType>
+      <EntityType Name="PeopleCollection" Abstract="true" />
       <EntityType Name="PersonalListsProxy" Abstract="true" />
       <EntityType Name="QuickAccessItemCollection" Abstract="true" />
       <EntityType Name="RecentFileCollection" Abstract="true" />
@@ -3863,6 +3865,10 @@
         <Parameter Name="canvasAsJson" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="includePersonalizationData" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.EmployeeEngagement.DashboardConfiguration" />
+      </Function>
+      <Function Name="GetConfiguredVivaConnectionsURL" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.EmployeeEngagement" />
+        <ReturnType Type="Edm.String" />
       </Function>
       <Function Name="GetDashboardPersonalization" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.EmployeeEngagement" />
@@ -10975,6 +10981,9 @@
       <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/TargetCompanyId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/TargetFarmId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.MultiGeo.Service.SiteMoveJobEntityData/TargetInstanceId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14873,6 +14882,9 @@
       <Annotations Target="SP.DashboardOOBContent(SP.EmployeeEngagement, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.GetConfiguredVivaConnectionsURL(SP.EmployeeEngagement)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.GetDashboardPersonalization(SP.EmployeeEngagement)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15474,6 +15486,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.NewsCollection.MultiSiteNews(Edm.String, Edm.Int32, Edm.Int32, Edm.Boolean, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.PeopleCollection.GetCollaborators(Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.PersonalListsProxy.GetPersonalListsProxy(Edm.Int32, Edm.String)">
@@ -17346,6 +17361,7 @@
         <Property Name="SourceSiteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SourceSiteUrl" Type="Edm.String" />
         <Property Name="TargetCompanyId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="TargetFarmId" Type="Edm.String" />
         <Property Name="TargetInstanceId" Type="Edm.Guid" Nullable="false" />
         <Property Name="TargetSiteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="TargetSiteUrl" Type="Edm.String" />
@@ -25468,14 +25484,6 @@
         <Parameter Name="leaseDurationInMinute" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.SystemSiteLockExpirationResult" />
       </Action>
-      <Action Name="GetChecksumForTable" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="schemaName" Type="Edm.String" />
-        <Parameter Name="tableName" Type="Edm.String" />
-        <Parameter Name="partitionColumnName" Type="Edm.String" />
-        <Parameter Name="columnsToChecksum" Type="Collection(Edm.String)" />
-        <ReturnType Type="Edm.Int32" Nullable="false" />
-      </Action>
       <Action Name="GetCPSChangeToken" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.Int64" Nullable="false" />
@@ -25492,13 +25500,6 @@
       <Action Name="GetMarker" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetRowCountForTable" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="schemaName" Type="Edm.String" />
-        <Parameter Name="tableName" Type="Edm.String" />
-        <Parameter Name="partitionColumnName" Type="Edm.String" />
-        <ReturnType Type="Edm.Int64" Nullable="false" />
       </Action>
       <Action Name="GetScalarValue" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
@@ -32214,6 +32215,9 @@
         <Property Name="LastModifiedBy" Type="Edm.String" />
         <Property Name="LastModifiedDateTimeUtc" Type="Edm.DateTimeOffset" Nullable="false" />
       </EntityType>
+      <Function Name="AgentGroups">
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.AgentGroup)" />
+      </Function>
       <Action Name="CreateByName" IsBound="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.AgentGroup)" />
         <Parameter Name="Name" Type="Edm.String" />
@@ -32238,6 +32242,9 @@
       <Action Name="DeleteObject" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MigrationCenter.Service.AgentGroup" />
       </Action>
+      <Function Name="DeviceCollection">
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.Device)" />
+      </Function>
       <Function Name="GetById" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.Device)" />
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
@@ -32394,6 +32401,9 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MigrationCenter.Service.MigrationSPFlight" />
         <Parameter Name="flightName" Type="Edm.String" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Function>
+      <Function Name="MigrationTaskCollection">
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.MigrationTask)" />
       </Function>
       <Action Name="BatchCreate" IsBound="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MigrationCenter.Service.MigrationTask)" />
@@ -32561,6 +32571,7 @@
         </Key>
         <Property Name="Id" Type="Edm.Guid" Nullable="false" />
         <Property Name="Name" Type="Edm.String" />
+        <NavigationProperty Name="Default" Type="Microsoft.Online.SharePoint.MigrationCenter.Common.AgentGroupEntity" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="DeviceEntityData">
         <Key>
@@ -37534,6 +37545,12 @@
         <ReturnType Type="Microsoft.SharePoint.News.DataModel.ItemsList" />
       </Action>
     </Schema>
+    <Schema Namespace="SP.PeopleCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="GetCollaborators" IsComposable="true">
+        <Parameter Name="top" Type="Edm.Int64" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Function>
+    </Schema>
     <Schema Namespace="SP.PersonalListsProxy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="GetPersonalListsProxy" IsComposable="true">
         <Parameter Name="sortBy" Type="Edm.Int32" Nullable="false" />
@@ -38413,6 +38430,16 @@
         <Parameter Name="parameterName" Type="Edm.String" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexFeatureScopeSettingsValues" />
       </Action>
+    </Schema>
+    <Schema Namespace="Microsoft.Online.SharePoint.MigrationCenter.Service.AgentGroup" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="Default">
+        <ReturnType Type="Microsoft.Online.SharePoint.MigrationCenter.Common.AgentGroupEntity" />
+      </Function>
+    </Schema>
+    <Schema Namespace="Microsoft.Online.SharePoint.MigrationCenter.Common.AgentGroupEntity" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="Default">
+        <ReturnType Type="Microsoft.Online.SharePoint.MigrationCenter.Common.AgentGroupEntity" />
+      </Function>
     </Schema>
     <Schema Namespace="SP.Translation.TranslationJob" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="CancelJob">
