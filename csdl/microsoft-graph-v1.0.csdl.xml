@@ -6311,6 +6311,9 @@
           </Record>
         </Annotation>
       </Annotations>
+      <Annotations Target="microsoft.graph.security.sensorSettings/networkAdapters">
+        <Annotation Term="Org.OData.Core.V1.AutoExpand" Bool="true" />
+      </Annotations>
       <Annotations Target="microsoft.graph.directory/deviceLocalCredentials">
         <Annotation Term="Org.OData.Capabilities.V1.ExpandRestrictions">
           <Record>
@@ -18039,6 +18042,11 @@
         <Member Name="asymmetricKeyLifetime" Value="0" />
         <Member Name="unknownFutureValue" Value="99" />
       </EnumType>
+      <EnumType Name="appManagementRestrictionState">
+        <Member Name="enabled" Value="1" />
+        <Member Name="disabled" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
       <EnumType Name="authenticationProtocol">
         <Member Name="wsFed" Value="0" />
         <Member Name="saml" Value="1" />
@@ -19072,6 +19080,12 @@
         <Member Name="enabled" Value="0" />
         <Member Name="disabled" Value="1" />
         <Member Name="enabledForReportingButNotEnforced" Value="2" />
+      </EnumType>
+      <EnumType Name="conditionalAccessTransferMethods" IsFlags="true">
+        <Member Name="none" Value="0" />
+        <Member Name="deviceCodeFlow" Value="1" />
+        <Member Name="authenticationTransfer" Value="2" />
+        <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
       <EnumType Name="countryLookupMethodType">
         <Member Name="clientIpAddress" Value="0" />
@@ -26460,11 +26474,13 @@
         <Property Name="maxLifetime" Type="Edm.Duration" />
         <Property Name="restrictForAppsCreatedAfterDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="restrictionType" Type="graph.appKeyCredentialRestrictionType" />
+        <Property Name="state" Type="graph.appManagementRestrictionState" Nullable="false" />
       </ComplexType>
       <ComplexType Name="passwordCredentialConfiguration">
         <Property Name="maxLifetime" Type="Edm.Duration" />
         <Property Name="restrictForAppsCreatedAfterDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="restrictionType" Type="graph.appCredentialRestrictionType" />
+        <Property Name="state" Type="graph.appManagementRestrictionState" Nullable="false" />
       </ComplexType>
       <ComplexType Name="appManagementServicePrincipalConfiguration" BaseType="graph.appManagementConfiguration" />
       <ComplexType Name="certificateAuthority">
@@ -29928,6 +29944,9 @@
         <Property Name="mode" Type="graph.filterMode" Nullable="false" />
         <Property Name="rule" Type="Edm.String" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="conditionalAccessAuthenticationFlows">
+        <Property Name="transferMethods" Type="graph.conditionalAccessTransferMethods" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="conditionalAccessClientApplications">
         <Property Name="excludeServicePrincipals" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="includeServicePrincipals" Type="Collection(Edm.String)" Nullable="false" />
@@ -29935,6 +29954,7 @@
       </ComplexType>
       <ComplexType Name="conditionalAccessConditionSet">
         <Property Name="applications" Type="graph.conditionalAccessApplications" />
+        <Property Name="authenticationFlows" Type="graph.conditionalAccessAuthenticationFlows" />
         <Property Name="clientApplications" Type="graph.conditionalAccessClientApplications" />
         <Property Name="clientAppTypes" Type="Collection(graph.conditionalAccessClientApp)" Nullable="false" />
         <Property Name="devices" Type="graph.conditionalAccessDevices" />
@@ -41398,6 +41418,18 @@
         <Member Name="site" Value="2" />
         <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
+      <EnumType Name="deploymentStatus">
+        <Member Name="upToDate" Value="1" />
+        <Member Name="outdated" Value="2" />
+        <Member Name="updating" Value="3" />
+        <Member Name="updateFailed" Value="4" />
+        <Member Name="notConfigured" Value="5" />
+        <Member Name="unreachable" Value="6" />
+        <Member Name="disconnected" Value="7" />
+        <Member Name="startFailure" Value="8" />
+        <Member Name="syncing" Value="9" />
+        <Member Name="unknownFutureValue" Value="10" />
+      </EnumType>
       <EnumType Name="healthIssueSeverity">
         <Member Name="low" Value="1" />
         <Member Name="medium" Value="2" />
@@ -41414,6 +41446,21 @@
         <Member Name="sensor" Value="1" />
         <Member Name="global" Value="2" />
         <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
+      <EnumType Name="sensorHealthStatus">
+        <Member Name="healthy" Value="1" />
+        <Member Name="notHealthyLow" Value="2" />
+        <Member Name="notHealthyMedium" Value="3" />
+        <Member Name="notHealthyHigh" Value="4" />
+        <Member Name="unknownFutureValue" Value="5" />
+      </EnumType>
+      <EnumType Name="sensorType">
+        <Member Name="adConnectIntegrated" Value="1" />
+        <Member Name="adcsIntegrated" Value="2" />
+        <Member Name="adfsIntegrated" Value="3" />
+        <Member Name="domainControllerIntegrated" Value="4" />
+        <Member Name="domainControllerStandalone" Value="5" />
+        <Member Name="unknownFutureValue" Value="6" />
       </EnumType>
       <EnumType Name="behaviorDuringRetentionPeriod">
         <Member Name="doNotRetain" Value="0" />
@@ -41545,6 +41592,12 @@
         <Member Name="blocked" Value="3" />
         <Member Name="notFound" Value="4" />
         <Member Name="unknownFutureValue" Value="5" />
+        <Member Name="active" Value="6" />
+        <Member Name="pendingApproval" Value="7" />
+        <Member Name="declined" Value="8" />
+        <Member Name="unremediated" Value="9" />
+        <Member Name="running" Value="10" />
+        <Member Name="partiallyRemediated" Value="11" />
       </EnumType>
       <EnumType Name="evidenceRole">
         <Member Name="unknown" Value="0" />
@@ -41765,6 +41818,7 @@
       </EntityType>
       <EntityType Name="identityContainer" BaseType="graph.entity">
         <NavigationProperty Name="healthIssues" Type="Collection(microsoft.graph.security.healthIssue)" ContainsTarget="true" />
+        <NavigationProperty Name="sensors" Type="Collection(microsoft.graph.security.sensor)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="alert" BaseType="graph.entity">
         <Property Name="actorDisplayName" Type="Edm.String" />
@@ -42023,6 +42077,23 @@
         <NavigationProperty Name="search" Type="microsoft.graph.security.ediscoverySearch" />
       </EntityType>
       <EntityType Name="ediscoveryTagOperation" BaseType="microsoft.graph.security.caseOperation" />
+      <ComplexType Name="deploymentAccessKeyType">
+        <Property Name="deploymentAccessKey" Type="Edm.String" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="sensorDeploymentPackage">
+        <Property Name="downloadUrl" Type="Edm.String" Nullable="false" />
+        <Property Name="version" Type="Edm.String" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="sensorSettings">
+        <Property Name="description" Type="Edm.String" Nullable="false" />
+        <Property Name="domainControllerDnsNames" Type="Collection(Edm.String)" />
+        <Property Name="isDelayedDeploymentEnabled" Type="Edm.Boolean" />
+        <NavigationProperty Name="networkAdapters" Type="Collection(microsoft.graph.security.networkAdapter)" ContainsTarget="true" />
+      </ComplexType>
+      <EntityType Name="networkAdapter" BaseType="graph.entity">
+        <Property Name="isEnabled" Type="Edm.Boolean" />
+        <Property Name="name" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="healthIssue" BaseType="graph.entity">
         <Property Name="additionalInformation" Type="Collection(Edm.String)" Nullable="false" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
@@ -42037,6 +42108,18 @@
         <Property Name="sensorDNSNames" Type="Collection(Edm.String)" />
         <Property Name="severity" Type="microsoft.graph.security.healthIssueSeverity" />
         <Property Name="status" Type="microsoft.graph.security.healthIssueStatus" />
+      </EntityType>
+      <EntityType Name="sensor" BaseType="graph.entity">
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="deploymentStatus" Type="microsoft.graph.security.deploymentStatus" Nullable="false" />
+        <Property Name="displayName" Type="Edm.String" Nullable="false" />
+        <Property Name="domainName" Type="Edm.String" Nullable="false" />
+        <Property Name="healthStatus" Type="microsoft.graph.security.sensorHealthStatus" Nullable="false" />
+        <Property Name="openHealthIssuesCount" Type="Edm.Int64" Nullable="false" />
+        <Property Name="sensorType" Type="microsoft.graph.security.sensorType" Nullable="false" />
+        <Property Name="settings" Type="microsoft.graph.security.sensorSettings" Nullable="false" />
+        <Property Name="version" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="healthIssues" Type="Collection(microsoft.graph.security.healthIssue)" />
       </EntityType>
       <ComplexType Name="alertComment">
         <Property Name="comment" Type="Edm.String" />
@@ -42947,6 +43030,18 @@
       <Function Name="asHierarchy" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.security.ediscoveryReviewTag)" />
         <ReturnType Type="Collection(microsoft.graph.security.ediscoveryReviewTag)" />
+      </Function>
+      <Action Name="regenerateDeploymentAccessKey" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.security.sensor)" />
+        <ReturnType Type="microsoft.graph.security.deploymentAccessKeyType" />
+      </Action>
+      <Function Name="getDeploymentAccessKey" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.security.sensor)" />
+        <ReturnType Type="microsoft.graph.security.deploymentAccessKeyType" />
+      </Function>
+      <Function Name="getDeploymentPackageUri" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.security.sensor)" />
+        <ReturnType Type="microsoft.graph.security.sensorDeploymentPackage" />
       </Function>
       <Action Name="runHuntingQuery" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.security" />
