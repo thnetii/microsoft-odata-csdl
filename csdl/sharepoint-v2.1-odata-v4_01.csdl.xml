@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25430 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25506 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1564,6 +1564,26 @@
         <Property Name="LastRequestState" Type="Edm.String" />
         <Property Name="ReportDate" Type="Edm.DateTimeOffset" />
         <Property Name="Items" Type="Collection(oneDrive.InactiveUsersUnifiedQuotaTopEntity)" />
+      </EntityType>
+      <EntityType Name="copilot" OpenType="true">
+        <NavigationProperty Name="capacitypack" Type="oneDrive.capacitypack" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="capacitypack" OpenType="true">
+        <NavigationProperty Name="checkUsage" Type="oneDrive.checkUsage" ContainsTarget="true" />
+        <NavigationProperty Name="logUsage" Type="oneDrive.logUsage" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="checkUsage" OpenType="true">
+        <Property Name="hasCapacity" Type="Edm.Boolean" />
+        <Property Name="availableCapacity" Type="Edm.Int32" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="logUsage" OpenType="true">
+        <Property Name="featureName" Type="Edm.String" />
+        <Property Name="entitlement" Type="Edm.String" />
+        <Property Name="consumption" Type="Edm.Int32" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="campaign" OpenType="true">
         <Key>
@@ -5872,6 +5892,7 @@
         <Property Name="count" Type="Edm.Int32" />
         <Property Name="title" Type="Edm.String" />
         <Property Name="subtitle" Type="Edm.String" />
+        <Property Name="sentiments" Type="Collection(oneDrive.sentiment)" />
       </ComplexType>
       <ComplexType Name="json" OpenType="true" />
       <ComplexType Name="jsonV2" OpenType="true" />
@@ -6302,6 +6323,10 @@
         <Property Name="relevanceTier" Type="oneDrive.SearchRelevanceTiers" />
       </ComplexType>
       <ComplexType Name="self" OpenType="true" />
+      <ComplexType Name="sentiment" OpenType="true">
+        <Property Name="type" Type="oneDrive.sentimentType" />
+        <Property Name="weight" Type="Edm.Double" />
+      </ComplexType>
       <ComplexType Name="shared" OpenType="true">
         <Property Name="effectiveRoles" Type="Collection(Edm.String)" />
         <Property Name="owner" Type="oneDrive.identitySet" />
@@ -7680,6 +7705,13 @@
         <Member Name="Infected" Value="1" />
         <Member Name="NotScanned" Value="2" />
       </EnumType>
+      <EnumType Name="sentimentType">
+        <Member Name="generic" Value="0" />
+        <Member Name="calm" Value="1" />
+        <Member Name="celebration" Value="2" />
+        <Member Name="active" Value="3" />
+        <Member Name="unknownFutureValue" Value="4" />
+      </EnumType>
       <EnumType Name="SearchRelevanceTiers">
         <Member Name="veryLow" Value="0" />
         <Member Name="low" Value="1" />
@@ -8559,6 +8591,22 @@
       <Function Name="speedOfLight">
         <ReturnType Type="Edm.String" />
       </Function>
+      <Action Name="createEmailTemplate" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsEmailTemplate)" />
+        <Parameter Name="type" Type="Edm.String" />
+        <Parameter Name="subType" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="subject" Type="Edm.String" />
+        <Parameter Name="emailContent" Type="Edm.String" />
+        <Parameter Name="helpText" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="helpURL" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.analyticsEmailTemplate" />
+      </Action>
       <Action Name="remove" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
         <Parameter Name="value" Type="Collection(oneDrive.site)" />
@@ -9863,6 +9911,7 @@
         <Singleton Name="policyAutomation" Type="oneDrive.policyAutomation" />
         <Singleton Name="unifiedStorageQuotaEligible" Type="oneDrive.unifiedStorageQuotaEligibility" />
         <Singleton Name="topEntities" Type="oneDrive.unifiedStorageQuotaTopEntities" />
+        <Singleton Name="copilot" Type="oneDrive.copilot" />
         <Singleton Name="drive" Type="oneDrive.drive" />
         <Singleton Name="recycleBin" Type="oneDrive.recycleBin" />
         <Singleton Name="unifiedStorageQuota" Type="oneDrive.unifiedStorageQuotaRoot" />
