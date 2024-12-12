@@ -396,6 +396,7 @@
         <NavigationProperty Name="diagnosticResources" Type="Collection(oneDrive.diagnosticResource)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSites" Type="Collection(oneDrive.diagnosticSite)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteSubscription" Type="oneDrive.diagnosticSiteSubscription" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticSiteSubscriptionQuotaUsage" Type="oneDrive.diagnosticSiteSubscriptionQuotaUsage" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteSubscriptionSettings" Type="oneDrive.diagnosticSiteSubscriptionSettings" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticTenant" Type="oneDrive.diagnosticTenant" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUpaTenant" Type="oneDrive.diagnosticUPATenant" ContainsTarget="true" />
@@ -757,6 +758,25 @@
         </Key>
         <Property Name="hasMultipleTenantInstances" Type="Edm.Boolean" />
         <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="diagnosticSiteSubscriptionQuotaUsage" OpenType="true">
+        <Property Name="archivedODBDiskUsed" Type="Edm.Int64" />
+        <Property Name="archivedODBQuota" Type="Edm.Int64" />
+        <Property Name="archivedODBSitesCount" Type="Edm.Int64" />
+        <Property Name="archivedODBBonusQuota" Type="Edm.Int64" />
+        <Property Name="archivedDiskUsed" Type="Edm.Int64" />
+        <Property Name="archivedQuota" Type="Edm.Int64" />
+        <Property Name="archivedSitesCount" Type="Edm.Int64" />
+        <Property Name="archivedBonusQuota" Type="Edm.Int64" />
+        <Property Name="bonusQuota" Type="Edm.Int64" />
+        <Property Name="diskUsed" Type="Edm.Int64" />
+        <Property Name="odbDiskUsed" Type="Edm.Int64" />
+        <Property Name="odbQuota" Type="Edm.Int64" />
+        <Property Name="odbSitesCount" Type="Edm.Int64" />
+        <Property Name="odbBonusQuota" Type="Edm.Int64" />
+        <Property Name="quotaAllocated" Type="Edm.Int64" />
+        <Property Name="siteCount" Type="Edm.Int64" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="diagnosticSiteSubscriptionSettings" OpenType="true">
@@ -1348,6 +1368,20 @@
         <Property Name="mobileAppVisible" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="billingEvent" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="featureName" Type="Edm.String" />
+        <Property Name="usageTime" Type="Edm.DateTimeOffset" />
+        <Property Name="resourceUri" Type="Edm.String" />
+        <Property Name="resourceRegion" Type="Edm.String" />
+        <Property Name="meterId" Type="Edm.Guid" />
+        <Property Name="quantity" Type="Edm.Int64" />
+        <Property Name="tags" Type="oneDrive.billingEventTags" />
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="billingPolicy" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1623,6 +1657,13 @@
         <Property Name="creatorUpn" Type="Edm.String" />
         <Property Name="creatorName" Type="Edm.String" />
         <Property Name="isRequiredApprovalEnabled" Type="Edm.Boolean" />
+      </EntityType>
+      <EntityType Name="AccessRequest" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
       </EntityType>
       <EntityType Name="actorAndActivity" OpenType="true">
         <Key>
@@ -2393,6 +2434,7 @@
         <Property Name="isRestricted" Type="Edm.Boolean" />
         <Property Name="remoteItem" Type="oneDrive.remoteItem" />
         <Property Name="shared" Type="oneDrive.shared" />
+        <Property Name="machineLearning" Type="oneDrive.machineLearning" />
         <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="attachments" Type="Collection(oneDrive.attachment)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
@@ -3329,7 +3371,7 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="owningAppId" Type="Edm.String" />
-        <Property Name="billingClassification" Type="oneDrive.FileStorageContainerBillingClasification" />
+        <Property Name="billingClassification" Type="oneDrive.FileStorageContainerBillingClassification" />
         <Property Name="billingStatus" Type="oneDrive.FileStorageContainerBillingStatus" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
@@ -3352,7 +3394,7 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="owningAppId" Type="Edm.String" />
-        <Property Name="billingClassification" Type="oneDrive.FileStorageContainerBillingClasification" />
+        <Property Name="billingClassification" Type="oneDrive.FileStorageContainerBillingClassification" />
         <Property Name="billingStatus" Type="oneDrive.FileStorageContainerBillingStatus" />
         <Property Name="registeredDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
@@ -3617,6 +3659,7 @@
         <Property Name="syntexExternalVideoSharingSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
         <Property Name="syntexPlaybackTranscriptTranslationSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
         <Property Name="syntexAzureKeyVaultName" Type="Edm.String" />
+        <Property Name="syntexAzureStorageAccountContainerUrl" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -4215,6 +4258,7 @@
         <Property Name="templateId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="billingEventTags" OpenType="true" />
       <ComplexType Name="elementUpdate" OpenType="true">
         <Property Name="action" Type="Edm.String" />
         <Property Name="elementId" Type="Edm.String" />
@@ -4477,9 +4521,6 @@
         <Property Name="email" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="AccessRequest" OpenType="true">
-        <Property Name="requestStatus" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="activitiesDigestEmailWorkItem" OpenType="true">
         <Property Name="itemIds" Type="Collection(Edm.String)" />
       </ComplexType>
@@ -4497,6 +4538,12 @@
         <Property Name="userAtMentioned" Type="Edm.Boolean" />
         <Property Name="deepLink" Type="Edm.String" />
         <Property Name="referencePreview" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="createVideoFromClipchampJsonRequest" OpenType="true">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="quality" Type="oneDrive.ClipchampVideoOutputQuality" />
+        <Property Name="format" Type="oneDrive.ClipchampVideoOutputFormat" />
+        <Property Name="clipchampJSON" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="cropRegion" OpenType="true">
         <Property Name="aspectRatio" Type="Edm.String" />
@@ -5776,6 +5823,7 @@
         <Property Name="isFavorite" Type="Edm.Boolean" />
         <Property Name="accessOperations" Type="oneDrive.driveItemAccessOperationsViewpoint" />
         <Property Name="sharing" Type="oneDrive.sharingViewpoint" />
+        <NavigationProperty Name="accessRequest" Type="oneDrive.AccessRequest" ContainsTarget="true" />
       </ComplexType>
       <ComplexType Name="driveViewpoint" OpenType="true">
         <Property Name="aggregatedFeatures" Type="Collection(Edm.String)" />
@@ -7605,6 +7653,18 @@
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
       </EnumType>
+      <EnumType Name="SPPAYGFeature">
+        <Member Name="Unknown" Value="0" />
+        <Member Name="Archive" Value="1" />
+        <Member Name="Backup" Value="2" />
+        <Member Name="ContentAssembly" Value="3" />
+        <Member Name="EBAR" Value="4" />
+        <Member Name="ESign" Value="5" />
+        <Member Name="OCR" Value="6" />
+        <Member Name="SPEmbedded" Value="7" />
+        <Member Name="SPEmbeddedStorage" Value="8" />
+        <Member Name="CopilotAgentSPO" Value="9" />
+      </EnumType>
       <EnumType Name="StorageContainerStatus">
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
@@ -7663,6 +7723,7 @@
         <Member Name="Visitor" Value="3" />
         <Member Name="Unknown" Value="10" />
       </EnumType>
+      <EnumType Name="accessRequestStatus" />
       <EnumType Name="AggregationWindow">
         <Member Name="None" Value="0" />
         <Member Name="Week" Value="7" />
@@ -8026,16 +8087,32 @@
         <Member Name="strong" Value="3" />
         <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
-      <EnumType Name="FileStorageContainerBillingClasification">
-        <Member Name="Standard" Value="0" />
-        <Member Name="Trial" Value="1" />
-        <Member Name="DirectToCustomer" Value="2" />
+      <EnumType Name="FileStorageContainerBillingClassification">
+        <Member Name="standard" Value="0" />
+        <Member Name="trial" Value="1" />
+        <Member Name="directToCustomer" Value="2" />
       </EnumType>
       <EnumType Name="FileStorageContainerBillingStatus">
-        <Member Name="Invalid" Value="0" />
-        <Member Name="Valid" Value="1" />
+        <Member Name="invalid" Value="0" />
+        <Member Name="valid" Value="1" />
       </EnumType>
-      <EnumType Name="fileStorageContainerTypeAppPermission" />
+      <EnumType Name="fileStorageContainerTypeAppPermission">
+        <Member Name="none" Value="0" />
+        <Member Name="readContent" Value="1" />
+        <Member Name="writeContent" Value="2" />
+        <Member Name="manageContent" Value="3" />
+        <Member Name="create" Value="4" />
+        <Member Name="delete" Value="5" />
+        <Member Name="read" Value="6" />
+        <Member Name="write" Value="7" />
+        <Member Name="enumeratePermissions" Value="8" />
+        <Member Name="addPermissions" Value="9" />
+        <Member Name="updatePermissions" Value="10" />
+        <Member Name="deletePermissions" Value="11" />
+        <Member Name="deleteOwnPermission" Value="12" />
+        <Member Name="managePermissions" Value="13" />
+        <Member Name="full" Value="14" />
+      </EnumType>
       <EnumType Name="PagePromotionType">
         <Member Name="microsoftReserved" Value="0" />
         <Member Name="page" Value="1" />
@@ -8171,6 +8248,13 @@
         <Member Name="Person" Value="1" />
         <Member Name="Group" Value="2" />
       </EnumType>
+      <EnumType Name="ClipchampVideoOutputQuality">
+        <Member Name="480p" Value="0" />
+        <Member Name="720p" Value="1" />
+        <Member Name="1080p" Value="2" />
+        <Member Name="4k" Value="3" />
+      </EnumType>
+      <EnumType Name="ClipchampVideoOutputFormat" />
       <EnumType Name="SensivityLabelAssignmentMethod">
         <Member Name="None" Value="0" />
         <Member Name="Standard" Value="1" />
@@ -9089,6 +9173,18 @@
         <Parameter Name="anonymousToken" Type="Edm.String" />
         <ReturnType Type="oneDrive.augLoopResponse" />
       </Action>
+      <Action Name="addUserToTeamsChannel" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.teamsChannelManagementApis" />
+        <Parameter Name="siteId" Type="Edm.String" />
+        <Parameter Name="siteGroupId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="loginName" Type="Edm.String" />
+        <Parameter Name="name" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="email" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+      </Action>
       <Action Name="requestIt" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Edm.Stream" />
@@ -9286,14 +9382,6 @@
       <Action Name="updateCache" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.contentType" />
         <ReturnType Type="oneDrive.contentType" />
-      </Action>
-      <Function Name="checkAlphaTest" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="oneDrive.site" />
-        <ReturnType Type="oneDrive.site" />
-      </Function>
-      <Action Name="checkAlphaTest" IsBound="true" EntitySetPath="bindingParameter">
-        <Parameter Name="bindingParameter" Type="Collection(oneDrive.drive)" />
-        <ReturnType Type="oneDrive.drive" />
       </Action>
       <Action Name="unifiedStorageQuotaSpoUpdate" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
@@ -9871,6 +9959,7 @@
         <EntitySet Name="protectionUnits" EntityType="oneDrive.protectionUnit" />
         <EntitySet Name="deletedStorageContainers" EntityType="oneDrive.deletedStorageContainer" />
         <EntitySet Name="orglinks" EntityType="oneDrive.orglink" />
+        <EntitySet Name="billingEvents" EntityType="oneDrive.billingEvent" />
         <EntitySet Name="billingpolicies" EntityType="oneDrive.billingPolicy" />
         <EntitySet Name="actionableMessages" EntityType="oneDrive.actionableMessage" />
         <EntitySet Name="storageContainers" EntityType="oneDrive.storageContainer" />
@@ -9879,6 +9968,7 @@
         <EntitySet Name="unifiedStoragePolicies" EntityType="oneDrive.policy" />
         <EntitySet Name="usqPolicyTemplates" EntityType="oneDrive.policyTemplate" />
         <EntitySet Name="campaign" EntityType="oneDrive.campaign" />
+        <EntitySet Name="AccessRequests" EntityType="oneDrive.AccessRequest" />
         <EntitySet Name="consumerSiteAppConfigs" EntityType="oneDrive.consumerSiteAppConfigs" />
         <EntitySet Name="drives" EntityType="oneDrive.drive" />
         <EntitySet Name="entitlements" EntityType="oneDrive.entitlement" />
