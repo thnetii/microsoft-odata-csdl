@@ -23877,9 +23877,12 @@
         <Property Name="allowedPresenters" Type="graph.onlineMeetingPresenters" />
         <Property Name="allowMeetingChat" Type="graph.meetingChatMode" />
         <Property Name="allowParticipantsToChangeName" Type="Edm.Boolean" />
+        <Property Name="allowRecording" Type="Edm.Boolean" />
         <Property Name="allowTeamworkReactions" Type="Edm.Boolean" />
+        <Property Name="allowTranscription" Type="Edm.Boolean" />
         <Property Name="audioConferencing" Type="graph.audioConferencing" />
         <Property Name="chatInfo" Type="graph.chatInfo" />
+        <Property Name="chatRestrictions" Type="graph.chatRestrictions" />
         <Property Name="isEntryExitAnnounced" Type="Edm.Boolean" />
         <Property Name="joinInformation" Type="graph.itemBody" />
         <Property Name="joinMeetingIdSettings" Type="graph.joinMeetingIdSettings" />
@@ -23899,6 +23902,7 @@
         <Property Name="endDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="externalId" Type="Edm.String" />
         <Property Name="isBroadcast" Type="Edm.Boolean" />
+        <Property Name="meetingTemplateId" Type="Edm.String" />
         <Property Name="participants" Type="graph.meetingParticipants" />
         <Property Name="startDateTime" Type="Edm.DateTimeOffset" />
         <NavigationProperty Name="recordings" Type="Collection(graph.callRecording)" ContainsTarget="true" />
@@ -34207,6 +34211,9 @@
         <Property Name="replyChainMessageId" Type="Edm.String" />
         <Property Name="threadId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="chatRestrictions">
+        <Property Name="allowTextOnly" Type="Edm.Boolean" />
+      </ComplexType>
       <ComplexType Name="commsNotification" OpenType="true">
         <Property Name="changeType" Type="graph.changeType" Nullable="false" />
         <Property Name="resourceUrl" Type="Edm.String" Nullable="false" />
@@ -34359,6 +34366,14 @@
         <Property Name="sequenceId" Type="Edm.Int64" Nullable="false" />
         <Property Name="tone" Type="graph.tone" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="virtualEventExternalInformation">
+        <Property Name="applicationId" Type="Edm.String" />
+        <Property Name="externalEventId" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="virtualEventExternalRegistrationInformation">
+        <Property Name="referrer" Type="Edm.String" />
+        <Property Name="registrationId" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="virtualEventPresenterDetails">
         <Property Name="bio" Type="graph.itemBody" />
         <Property Name="company" Type="Edm.String" />
@@ -34451,6 +34466,7 @@
         <Property Name="description" Type="graph.itemBody" />
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="endDateTime" Type="graph.dateTimeTimeZone" />
+        <Property Name="externalEventInformation" Type="Collection(graph.virtualEventExternalInformation)" />
         <Property Name="settings" Type="graph.virtualEventSettings" />
         <Property Name="startDateTime" Type="graph.dateTimeTimeZone" />
         <Property Name="status" Type="graph.virtualEventStatus" />
@@ -34469,6 +34485,7 @@
       <EntityType Name="virtualEventRegistration" BaseType="graph.entity">
         <Property Name="cancelationDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="email" Type="Edm.String" />
+        <Property Name="externalRegistrationInformation" Type="graph.virtualEventExternalRegistrationInformation" />
         <Property Name="firstName" Type="Edm.String" />
         <Property Name="lastName" Type="Edm.String" />
         <Property Name="preferredLanguage" Type="Edm.String" />
@@ -40933,6 +40950,10 @@
         <Parameter Name="clientContext" Type="Edm.String" Unicode="false" />
         <ReturnType Type="graph.updateRecordingStatusOperation" />
       </Action>
+      <Action Name="setExternalEventInformation" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.virtualEvent" />
+        <Parameter Name="externalEventId" Type="Edm.String" Unicode="false" />
+      </Action>
       <Action Name="clearPresence" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.presence" />
         <Parameter Name="sessionId" Type="Edm.String" Unicode="false" />
@@ -41014,10 +41035,21 @@
         <ReturnType Type="graph.stopHoldMusicOperation" />
       </Action>
       <Function Name="getByUserIdAndRole" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.virtualEventTownhall)" />
+        <Parameter Name="userId" Type="Edm.String" Nullable="false" Unicode="false" />
+        <Parameter Name="role" Type="Edm.String" Nullable="false" Unicode="false" />
+        <ReturnType Type="Collection(graph.virtualEventTownhall)" />
+      </Function>
+      <Function Name="getByUserIdAndRole" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.virtualEventWebinar)" />
         <Parameter Name="userId" Type="Edm.String" Nullable="false" Unicode="false" />
         <Parameter Name="role" Type="Edm.String" Nullable="false" Unicode="false" />
         <ReturnType Type="Collection(graph.virtualEventWebinar)" />
+      </Function>
+      <Function Name="getByUserRole" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.virtualEventTownhall)" />
+        <Parameter Name="role" Type="Edm.String" Nullable="false" Unicode="false" />
+        <ReturnType Type="Collection(graph.virtualEventTownhall)" />
       </Function>
       <Function Name="getByUserRole" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.virtualEventWebinar)" />
