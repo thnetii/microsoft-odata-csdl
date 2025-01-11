@@ -100,6 +100,7 @@
         <Property Name="BridgeAbsolutePath" Type="SP.ResourcePath" />
         <Property Name="IsCustomizedThemeEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsPersonalizationEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsVivaHomeFeedReplaceFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaHomeOptedOut" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NavConfig" Type="SP.HomeSiteNavConfiguration" />
         <Property Name="SiteId" Type="Edm.Guid" Nullable="false" />
@@ -244,6 +245,13 @@
         <Property Name="WebId" Type="Edm.String" />
         <Property Name="WebUrl" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="AgreementPermissionsData">
+        <Property Name="CanCreateAgreement" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CanCreateTemplate" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CanImportAgreement" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CanUploadSignedVersion" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsWorkspaceOwner" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="AgreementReportBaseData">
         <Property Name="ByExpirationStatus" Type="Collection(SP.AgreementDataPair)" />
         <Property Name="ErrorMessage" Type="Edm.String" />
@@ -366,6 +374,9 @@
       <ComplexType Name="CreateAgreementFolderInfo">
         <Property Name="AgreementFolderServerRelativeUrl" Type="Edm.String" />
         <Property Name="AgreementNumber" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CreateHVCSItemApprovalRequestParameters" BaseType="SP.ApprovalsCreateRequestParameters">
+        <Property Name="approvalConfig" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CreateReviewRequestDTO">
         <Property Name="DocumentUri" Type="Edm.String" />
@@ -1110,6 +1121,10 @@
         <Property Name="VirusStatus" Type="Edm.String" />
         <Property Name="XTenantLabelInfo" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="MigrationJobProgress">
+        <Property Name="Logs" Type="Collection(Edm.String)" />
+        <Property Name="NextToken" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="MoveCopyOptions">
         <Property Name="KeepBoth" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ResetAuthorAndCreatedOnCopy" Type="Edm.Boolean" Nullable="false" />
@@ -1397,6 +1412,7 @@
         <Property Name="baseViewId" Type="Edm.Int32" Nullable="false" />
         <Property Name="CalendarViewStyles" Type="Edm.String" />
         <Property Name="ColumnWidth" Type="Edm.String" />
+        <Property Name="CustomFormatter" Type="Edm.String" />
         <Property Name="Paged" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PersonalView" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Query" Type="Edm.String" />
@@ -3053,6 +3069,7 @@
       </EntityType>
       <EntityType Name="RecommendationCollection" Abstract="true" />
       <EntityType Name="RelatedItemManager" />
+      <EntityType Name="SearchResultItemCollection" Abstract="true" />
       <EntityType Name="ServerSettings" Abstract="true" />
       <EntityType Name="SharedWithMeItemCollection" Abstract="true" />
       <EntityType Name="SharingResult">
@@ -4189,7 +4206,7 @@
       </Action>
       <Action Name="CreateHVCSItemApprovalRequest" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
-        <Parameter Name="createItemRequestPayload" Type="SP.ApprovalsCreateRequestParameters" />
+        <Parameter Name="createItemRequestPayload" Type="SP.CreateHVCSItemApprovalRequestParameters" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="CreateMappedView" IsBound="true">
@@ -5622,6 +5639,12 @@
         <Parameter Name="this" Type="SP.Web" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="MoveAndAssociateSignedFileWithAgreement" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="AgreementFileId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="SignedFileId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="PublishTemplate" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="payload" Type="SP.PublishModernTemplatePayload" />
@@ -5655,6 +5678,10 @@
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="updateUploadedAgreementMetadataPayload" Type="SP.UpdateUploadedAgreementMetadataPayload" />
       </Action>
+      <Function Name="GetCurrentUserAgreementPermissions" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="SP.AgreementPermissionsData" />
+      </Function>
       <Function Name="GetAgreementInsightsReport" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
         <ReturnType Type="SP.AgreementReportBaseData" />
@@ -5785,11 +5812,11 @@
         <Parameter Name="createReviewRequestDTO" Type="SP.CreateReviewRequestDTO" />
         <ReturnType Type="SP.ReviewWorkFlowResponseDTO" />
       </Action>
-      <Action Name="GetAgreementDetails" IsBound="true">
+      <Function Name="GetAgreementReviewDetails" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Web" />
-        <Parameter Name="agreementAttributeRequestDTO" Type="SP.AgreementAttributeRequestDTO" />
+        <Parameter Name="properties" Type="Collection(SP.KeyValue)" />
         <ReturnType Type="SP.AgreementAttributeDTO" />
-      </Action>
+      </Function>
       <Action Name="UpdateReview" IsBound="true">
         <Parameter Name="this" Type="SP.Web" />
         <Parameter Name="updateReviewRequestDTO" Type="SP.UpdateReviewRequestDTO" />
@@ -7399,6 +7426,12 @@
         <Parameter Name="this" Type="SP.Site" />
         <ReturnType Type="Edm.String" />
       </Function>
+      <Function Name="GetMigrationJobProgress" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Site" />
+        <Parameter Name="jobId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="nextToken" Type="Edm.String" />
+        <ReturnType Type="SP.MigrationJobProgress" />
+      </Function>
       <Action Name="GetMigrationJobStatus" IsBound="true">
         <Parameter Name="this" Type="SP.Site" />
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
@@ -8219,6 +8252,18 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.AcronymInformation">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyRequestEndpoint">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyRequestEndpoint/Data">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyRequestEndpoint/EndpointType">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyRequestParams">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.AnnouncementAuthor">
@@ -13442,6 +13487,9 @@
       <Annotations Target="SP.Publishing.CampaignPublicationCollection()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.CampaignPublication, SP.Publishing.AmplifyRequestParams)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.CampaignPublication, SP.Publishing.BoostFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13640,6 +13688,9 @@
       <Annotations Target="SP.Publishing.IsContentTypeAvailable(Collection(SP.Publishing.FeedVideoPage))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.FeedVideoPage, SP.Publishing.AmplifyRequestParams)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.FeedVideoPage, SP.Publishing.BoostFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13784,6 +13835,9 @@
       <Annotations Target="SP.Publishing.IsContentTypeAvailable(Collection(SP.Publishing.RepostPage))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.RepostPage, SP.Publishing.AmplifyRequestParams)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.RepostPage, SP.Publishing.BoostFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13889,7 +13943,7 @@
       <Annotations Target="SP.Publishing.RichSharing()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.SharePageByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Collection(Edm.String), Collection(Edm.String))">
+      <Annotations Target="SP.Publishing.SharePageByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Collection(Edm.String), Collection(Edm.String), Edm.Int32, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.ShareSiteByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Edm.String, Edm.String, Collection(Edm.String))">
@@ -13905,6 +13959,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.Activate(Collection(SP.Publishing.SitePage3D))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.SitePage3D, SP.Publishing.AmplifyRequestParams)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.SitePage3D, SP.Publishing.BoostFieldsData)">
@@ -14069,6 +14126,9 @@
       <Annotations Target="SP.Publishing.GetById(Collection(SP.Publishing.SitePageMetadata), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.SitePage, SP.Publishing.AmplifyRequestParams)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.SitePage, SP.Publishing.BoostFieldsData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14213,6 +14273,9 @@
       <Annotations Target="SP.Publishing.SitePageService.GetCurrentUserMemberships(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.GetOrCreateAssetFolder(SP.Publishing.SitePageService, Edm.String, Edm.Boolean, Edm.String, Edm.Int32)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SitePageService.IsFilePickerExternalImageSearchEnabled()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14241,6 +14304,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.IsContentTypeAvailable(Collection(SP.Publishing.TopicSitePage))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.TopicSitePage, SP.Publishing.AmplifyRequestParams)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.BoostNews(SP.Publishing.TopicSitePage, SP.Publishing.BoostFieldsData)">
@@ -15563,6 +15629,9 @@
       <Annotations Target="SP.eSignInternal.GetEsignSettings()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.eSignInternal.InitializeAgreement(Microsoft.SharePoint.ESign.Models.Requests.InitializeAgreementModel)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.eSignInternal.SignAgreement(Microsoft.SharePoint.ESign.Models.Requests.SignAgreementModel)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15626,6 +15695,9 @@
       <Annotations Target="SP.PeopleCollection.GetCollaborators(Edm.Int64)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.PeopleCollection.GetCollaboratorsAsStream(Edm.Int64, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.PersonalListsProxy.GetPersonalListsProxy(Edm.Int32, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15665,7 +15737,13 @@
       <Annotations Target="SP.RecommendationCollection.Events(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.RecommendationCollection.GetRecommendations(Edm.Int32)">
+      <Annotations Target="SP.RecommendationCollection.GetRecommendations(Edm.Int32, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RecommendationCollection.GetRecommendationsAsStream(Edm.Int32, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SearchResultItemCollection.GetSearchResultsAsStream(Edm.Int32, Edm.String, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharedWithMeItemCollection.GetCalendarEvents()">
@@ -22377,6 +22455,13 @@
         <Property Name="Lcid" Type="Edm.Int32" Nullable="false" />
         <Property Name="Text" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="AmplifyRequestEndpoint">
+        <Property Name="Data" Type="Edm.String" />
+        <Property Name="EndpointType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="AmplifyRequestParams">
+        <Property Name="Endpoints" Type="Collection(SP.Publishing.AmplifyRequestEndpoint)" />
+      </ComplexType>
       <ComplexType Name="AnnouncementAuthor">
         <Property Name="Email" Type="Edm.String" />
         <Property Name="ID" Type="Edm.String" />
@@ -22982,6 +23067,7 @@
         <Property Name="AlternativeUrlMap" Type="Edm.String" />
         <Property Name="AuthoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
         <Property Name="BoostProperties" Type="SP.Publishing.SitePageBoostProperties" />
+        <Property Name="CampaignMetadata" Type="Edm.String" />
         <Property Name="CanvasContent1" Type="Edm.String" />
         <Property Name="CanvasJson1" Type="Edm.String" />
         <Property Name="CheckIn" Type="Edm.Boolean" Nullable="false" />
@@ -23314,6 +23400,10 @@
       <Function Name="CampaignPublicationCollection">
         <ReturnType Type="Collection(SP.Publishing.CampaignPublication)" />
       </Function>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+      </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="SitePageBoost" Type="SP.Publishing.BoostFieldsData" />
@@ -23607,6 +23697,10 @@
         <Parameter Name="this" Type="Collection(SP.Publishing.FeedVideoPage)" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+      </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <Parameter Name="SitePageBoost" Type="SP.Publishing.BoostFieldsData" />
@@ -23877,6 +23971,10 @@
         <Parameter Name="this" Type="Collection(SP.Publishing.RepostPage)" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.RepostPage" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+      </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="SitePageBoost" Type="SP.Publishing.BoostFieldsData" />
@@ -24122,6 +24220,8 @@
         <Parameter Name="subject" Type="Edm.String" />
         <Parameter Name="ccEmails" Type="Collection(Edm.String)" />
         <Parameter Name="bccEmails" Type="Collection(Edm.String)" />
+        <Parameter Name="pageItemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="scenarioTag" Type="Edm.String" />
       </Action>
       <Action Name="ShareSiteByEmail" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RichSharing" />
@@ -24144,6 +24244,10 @@
       </Function>
       <Action Name="Activate" IsBound="true">
         <Parameter Name="this" Type="Collection(SP.Publishing.SitePage3D)" />
+      </Action>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
       </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
@@ -24398,6 +24502,10 @@
         <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageMetadata" />
       </Function>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePage" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+      </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <Parameter Name="SitePageBoost" Type="SP.Publishing.BoostFieldsData" />
@@ -24588,6 +24696,14 @@
       <Action Name="EnableCategories" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePageService" />
       </Action>
+      <Action Name="GetOrCreateAssetFolder" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePageService" />
+        <Parameter Name="pageName" Type="Edm.String" />
+        <Parameter Name="createFolderIfNeeded" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="subFolderName" Type="Edm.String" />
+        <Parameter Name="pageId" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Function Name="PagesInLib" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.Publishing.SitePageService" />
         <Parameter Name="id" Type="Edm.Guid" Nullable="false" />
@@ -24661,6 +24777,10 @@
         <Parameter Name="this" Type="Collection(SP.Publishing.TopicSitePage)" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="Amplify" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+      </Action>
       <Action Name="BoostNews" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <Parameter Name="SitePageBoost" Type="SP.Publishing.BoostFieldsData" />
@@ -27425,7 +27545,7 @@
       </ComplexType>
       <EntityType Name="FlowPermissions" />
       <EntityType Name="FormsCustomization" />
-      <EntityType Name="AgreementsESignManager" Abstract="true" />
+      <EntityType Name="AgreementsESignManager" />
       <EntityType Name="ApprovalsManager" Abstract="true" />
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Internal" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -27600,6 +27720,7 @@
         <Property Name="agreementId" Type="Edm.Guid" Nullable="false" />
         <Property Name="agreementSource" Type="Edm.String" />
         <Property Name="documents" Type="Edm.String" />
+        <Property Name="documentSource" Type="Edm.String" />
         <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="formFieldSets" Type="Edm.String" />
         <Property Name="locale" Type="Edm.String" />
@@ -27624,6 +27745,10 @@
       <ComplexType Name="DeclineAgreementModel">
         <Property Name="documentId" Type="Edm.Guid" Nullable="false" />
         <Property Name="reason" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="InitializeAgreementModel">
+        <Property Name="agreementId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="documents" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SignAgreementModel">
         <Property Name="agreements" Type="Edm.String" />
@@ -27851,6 +27976,10 @@
         <Property Name="Action" Type="Microsoft.SharePoint.EmployeeEngagement.Experience.AnnouncementAction" />
         <Property Name="ExpiresOn" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="Id" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="DashboardPersonalizationData">
+        <Property Name="PersonalizedOrder" Type="Microsoft.SharePoint.EmployeeEngagement.Experience.DashboardContent" />
+        <Property Name="UserCards" Type="Edm.String" />
       </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Deployment" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -30823,6 +30952,7 @@
         <Property Name="DisableAddToOneDrive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableBackToClassic" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisableCustomAppAuthentication" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="DisabledAdaptiveCardExtensionIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="DisabledModernListTemplateIds" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="DisableDocumentLibraryDefaultLabeling" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DisabledWebPartIds" Type="Collection(Edm.Guid)" Nullable="false" />
@@ -30858,7 +30988,6 @@
         <Property Name="EnableSensitivityLabelForPDF" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSiteArchive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableTenantRestrictionsInsights" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="EnableVersionExpirationSetting" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureAppList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
@@ -35625,7 +35754,6 @@
         <Property Name="EnableGuestSignInAcceleration" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnablePromotedFileHandlers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="EnableVersionExpirationSetting" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureAppList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
@@ -37913,6 +38041,10 @@
       <Action Name="GetEsignSettings">
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="InitializeAgreement">
+        <Parameter Name="initializeAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.InitializeAgreementModel" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="SignAgreement">
         <Parameter Name="signAgreement" Type="Microsoft.SharePoint.ESign.Models.Requests.SignAgreementModel" />
       </Action>
@@ -38002,6 +38134,11 @@
         <Parameter Name="top" Type="Edm.Int64" Nullable="false" />
         <ReturnType Type="Edm.String" />
       </Function>
+      <Function Name="GetCollaboratorsAsStream" IsComposable="true">
+        <Parameter Name="top" Type="Edm.Int64" Nullable="false" />
+        <Parameter Name="payload" Type="Edm.String" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
     </Schema>
     <Schema Namespace="SP.PersonalListsProxy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="GetPersonalListsProxy" IsComposable="true">
@@ -38070,7 +38207,13 @@
       </Action>
       <Function Name="GetRecommendations" IsComposable="true">
         <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="payload" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
+      </Function>
+      <Function Name="GetRecommendationsAsStream" IsComposable="true">
+        <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="payload" Type="Edm.String" />
+        <ReturnType Type="Edm.Stream" />
       </Function>
     </Schema>
     <Schema Namespace="SP.RelatedItemManager" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -38113,6 +38256,15 @@
         <Parameter Name="SourceListName" Type="Edm.String" />
         <Parameter Name="SourceItemID" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(SP.RelatedItem)" />
+      </Function>
+    </Schema>
+    <Schema Namespace="SP.SearchResultItemCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="GetSearchResultsAsStream" IsComposable="true">
+        <Parameter Name="textDecorations" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="scenario" Type="Edm.String" />
+        <Parameter Name="entitytypes" Type="Edm.String" />
+        <Parameter Name="payload" Type="Edm.String" />
+        <ReturnType Type="Edm.Stream" />
       </Function>
     </Schema>
     <Schema Namespace="SP.ServerSettings" xmlns="http://docs.oasis-open.org/odata/ns/edm">
