@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25708 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25715 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -2391,6 +2391,7 @@
         <Property Name="sharingCapability" Type="oneDrive.SharingCapabilities" />
         <Property Name="dataLocationCode" Type="Edm.String" />
         <Property Name="siteType" Type="oneDrive.SiteType" />
+        <Property Name="siteSubType" Type="oneDrive.SiteSubType" />
         <Property Name="isPersonalSite" Type="Edm.Boolean" />
         <Property Name="groupId" Type="Edm.String" />
         <Property Name="exchangeIds" Type="oneDrive.exchangeIds" />
@@ -3346,6 +3347,7 @@
         <Property Name="customGroupParameters" Type="oneDrive.customGroupParameters" />
         <Property Name="sitePermissionsParameters" Type="oneDrive.sitePermissionsParameters" />
         <Property Name="copilotInsightsParameters" Type="oneDrive.copilotInsightsParameters" />
+        <Property Name="eduSiteQuotaParameters" Type="oneDrive.eduSiteQuotaParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -4438,6 +4440,11 @@
         <Property Name="Length" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="info" BaseType="oneDrive.custom" OpenType="true">
+        <Property Name="info" Type="oneDrive.exceptionInfo" />
+        <Property Name="failedOperation" Type="Edm.String" />
+        <Property Name="responseCode" Type="oneDrive.HttpStatusCode" />
+      </ComplexType>
       <ComplexType Name="pinnedTerm" OpenType="true" />
       <ComplexType Name="reusedTerm" OpenType="true" />
       <ComplexType Name="sourceTerm" OpenType="true" />
@@ -5518,6 +5525,7 @@
         <Property Name="listId" Type="Edm.String" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
+        <Property Name="parentWeb" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="siteReviewSiteCollection" OpenType="true">
         <Property Name="siteId" Type="Edm.String" />
@@ -6655,6 +6663,7 @@
         <Property Name="contentTypeName" Type="Edm.String" />
         <Property Name="modelType" Type="oneDrive.MachineLearningModelType" />
         <Property Name="additionalModelInfo" Type="Edm.String" />
+        <Property Name="authorizationCode" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="aiBasedPolicyReportParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
@@ -6698,6 +6707,10 @@
         <Property Name="customGroups" Type="Collection(Edm.String)" />
         <Property Name="sitesCount" Type="Edm.Int32" />
         <Property Name="crawledSitesCount" Type="Edm.Int64" />
+      </ComplexType>
+      <ComplexType Name="eduSiteQuotaParameters" OpenType="true">
+        <Property Name="overQuota" Type="Edm.Boolean" />
+        <Property Name="siteLimit" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="eeeuParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
@@ -7212,6 +7225,10 @@
       <ComplexType Name="listDecorator">
         <Property Name="color" Type="oneDrive.ListColor" />
         <Property Name="icon" Type="oneDrive.ListIcon" />
+      </ComplexType>
+      <ComplexType Name="exceptionInfo">
+        <Property Name="code" Type="Edm.String" />
+        <Property Name="message" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="sharePointEndpoint">
         <Property Name="siteId" Type="Edm.String" />
@@ -7954,6 +7971,9 @@
         <Member Name="Group" Value="0" />
         <Member Name="Communication" Value="1" />
       </EnumType>
+      <EnumType Name="SiteSubType">
+        <Member Name="Amplify" Value="0" />
+      </EnumType>
       <EnumType Name="behaviorDuringRetentionPeriod">
         <Member Name="doNotRetain" Value="0" />
         <Member Name="retain" Value="1" />
@@ -8128,6 +8148,7 @@
         <Member Name="SitePermissions" Value="12" />
         <Member Name="RestrictContentOrgWideSearchUsage" Value="13" />
         <Member Name="CopilotInsights" Value="14" />
+        <Member Name="EduSiteQuota" Value="15" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
@@ -8159,6 +8180,7 @@
       <EnumType Name="AnalyticsReportWorkLoad">
         <Member Name="sharePoint" Value="0" />
         <Member Name="oneDrive" Value="1" />
+        <Member Name="all" Value="2" />
       </EnumType>
       <EnumType Name="AnalyticsReportEEEUType">
         <Member Name="SPGroups" Value="0" />
@@ -8369,6 +8391,50 @@
         <Member Name="InAppRac" Value="4" />
         <Member Name="WebRac" Value="5" />
         <Member Name="Appeal" Value="6" />
+      </EnumType>
+      <EnumType Name="HttpStatusCode">
+        <Member Name="Continue" Value="100" />
+        <Member Name="SwitchingProtocols" Value="101" />
+        <Member Name="OK" Value="200" />
+        <Member Name="Created" Value="201" />
+        <Member Name="Accepted" Value="202" />
+        <Member Name="NonAuthoritativeInformation" Value="203" />
+        <Member Name="NoContent" Value="204" />
+        <Member Name="ResetContent" Value="205" />
+        <Member Name="PartialContent" Value="206" />
+        <Member Name="MultipleChoices" Value="300" />
+        <Member Name="MovedPermanently" Value="301" />
+        <Member Name="Redirect" Value="302" />
+        <Member Name="SeeOther" Value="303" />
+        <Member Name="NotModified" Value="304" />
+        <Member Name="UseProxy" Value="305" />
+        <Member Name="Unused" Value="306" />
+        <Member Name="TemporaryRedirect" Value="307" />
+        <Member Name="BadRequest" Value="400" />
+        <Member Name="Unauthorized" Value="401" />
+        <Member Name="PaymentRequired" Value="402" />
+        <Member Name="Forbidden" Value="403" />
+        <Member Name="NotFound" Value="404" />
+        <Member Name="MethodNotAllowed" Value="405" />
+        <Member Name="NotAcceptable" Value="406" />
+        <Member Name="ProxyAuthenticationRequired" Value="407" />
+        <Member Name="RequestTimeout" Value="408" />
+        <Member Name="Conflict" Value="409" />
+        <Member Name="Gone" Value="410" />
+        <Member Name="LengthRequired" Value="411" />
+        <Member Name="PreconditionFailed" Value="412" />
+        <Member Name="RequestEntityTooLarge" Value="413" />
+        <Member Name="RequestUriTooLong" Value="414" />
+        <Member Name="UnsupportedMediaType" Value="415" />
+        <Member Name="RequestedRangeNotSatisfiable" Value="416" />
+        <Member Name="ExpectationFailed" Value="417" />
+        <Member Name="UpgradeRequired" Value="426" />
+        <Member Name="InternalServerError" Value="500" />
+        <Member Name="NotImplemented" Value="501" />
+        <Member Name="BadGateway" Value="502" />
+        <Member Name="ServiceUnavailable" Value="503" />
+        <Member Name="GatewayTimeout" Value="504" />
+        <Member Name="HttpVersionNotSupported" Value="505" />
       </EnumType>
       <EnumType Name="EmailType">
         <Member Name="Person" Value="1" />
@@ -9181,7 +9247,7 @@
         <Parameter Name="bindingParameter" Type="oneDrive.drive" />
         <Parameter Name="loadEstimates" Type="Collection(oneDrive.loadEstimateInfo)" />
       </Action>
-      <Function Name="delta" IsBound="true" EntitySetPath="bindingParameter">
+      <Function Name="delta" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
         <ReturnType Type="Collection(oneDrive.listItem)" />
       </Function>
@@ -9312,6 +9378,14 @@
         <ReturnType Type="oneDrive.actionableMessage" />
       </Action>
       <Action Name="setAuthToken" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.augLoopApis" />
+        <Parameter Name="sessionUrlBase" Type="Edm.String" />
+        <Parameter Name="sessionKey" Type="Edm.String" />
+        <Parameter Name="origin" Type="Edm.String" />
+        <Parameter Name="anonymousToken" Type="Edm.String" />
+        <ReturnType Type="oneDrive.augLoopResponse" />
+      </Action>
+      <Action Name="setSPEContext" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.augLoopApis" />
         <Parameter Name="sessionUrlBase" Type="Edm.String" />
         <Parameter Name="sessionKey" Type="Edm.String" />
@@ -9844,6 +9918,9 @@
       <Action Name="unfollow" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
       </Action>
+      <Function Name="inappfeaturemessages">
+        <ReturnType Type="Collection(oneDrive.inAppMessage)" />
+      </Function>
       <Function Name="changes" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Collection(oneDrive.item)" />
@@ -10171,6 +10248,7 @@
         <FunctionImport Name="getWebPartsByPosition" Function="oneDrive.getWebPartsByPosition" IncludeInServiceDocument="true" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
         <ActionImport Name="reportContent" Action="oneDrive.reportContent" />
+        <FunctionImport Name="inappfeaturemessages" Function="oneDrive.inappfeaturemessages" IncludeInServiceDocument="true" />
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
         <FunctionImport Name="getNewsFeed" Function="oneDrive.getNewsFeed" IncludeInServiceDocument="true" />
