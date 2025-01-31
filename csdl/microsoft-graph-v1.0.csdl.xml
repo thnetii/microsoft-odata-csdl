@@ -22224,6 +22224,11 @@
         <Member Name="administrator" Value="3" />
         <Member Name="unknownFutureValue" Value="127" />
       </EnumType>
+      <EnumType Name="allowedLobbyAdmitterRoles">
+        <Member Name="organizerAndCoOrganizersAndPresenters" Value="0" />
+        <Member Name="organizerAndCoOrganizers" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
       <EnumType Name="broadcastMeetingAudience">
         <Member Name="roleIsAttendee" Value="0" />
         <Member Name="organization" Value="1" />
@@ -22276,6 +22281,11 @@
       <EnumType Name="meetingChatHistoryDefaultMode">
         <Member Name="none" Value="0" />
         <Member Name="all" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
+      <EnumType Name="meetingLiveShareOptions">
+        <Member Name="enabled" Value="0" />
+        <Member Name="disabled" Value="1" />
         <Member Name="unknownFutureValue" Value="2" />
       </EnumType>
       <EnumType Name="modality">
@@ -22579,6 +22589,12 @@
         <Member Name="unknownFutureValue" Value="7" />
         <Member Name="emailUser" Value="8" />
       </EnumType>
+      <EnumType Name="confirmedBy" IsFlags="true">
+        <Member Name="none" Value="0" />
+        <Member Name="user" Value="1" />
+        <Member Name="manager" Value="2" />
+        <Member Name="unknownFutureValue" Value="1024" />
+      </EnumType>
       <EnumType Name="eligibilityFilteringEnabledEntities" IsFlags="true">
         <Member Name="none" Value="0" />
         <Member Name="swapRequest" Value="1" />
@@ -22613,6 +22629,12 @@
         <Member Name="darkPink" Value="10" />
         <Member Name="darkYellow" Value="11" />
         <Member Name="unknownFutureValue" Value="12" />
+      </EnumType>
+      <EnumType Name="timeCardState">
+        <Member Name="clockedIn" Value="0" />
+        <Member Name="onBreak" Value="1" />
+        <Member Name="clockedOut" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
       </EnumType>
       <EnumType Name="timeOffReasonIconType">
         <Member Name="none" Value="0" />
@@ -22651,6 +22673,7 @@
         <Member Name="openShiftRequest" Value="32" />
         <Member Name="offerShiftRequest" Value="64" />
         <Member Name="unknownFutureValue" Value="1024" />
+        <Member Name="timeCard" Value="2048" />
         <Member Name="timeOffReason" Value="4096" />
         <Member Name="timeOff" Value="8192" />
         <Member Name="timeOffRequest" Value="16384" />
@@ -23875,12 +23898,17 @@
       <EntityType Name="onlineMeetingBase" BaseType="graph.entity" Abstract="true" OpenType="true">
         <Property Name="allowAttendeeToEnableCamera" Type="Edm.Boolean" />
         <Property Name="allowAttendeeToEnableMic" Type="Edm.Boolean" />
+        <Property Name="allowBreakoutRooms" Type="Edm.Boolean" />
+        <Property Name="allowedLobbyAdmitters" Type="graph.allowedLobbyAdmitterRoles" />
         <Property Name="allowedPresenters" Type="graph.onlineMeetingPresenters" />
+        <Property Name="allowLiveShare" Type="graph.meetingLiveShareOptions" />
         <Property Name="allowMeetingChat" Type="graph.meetingChatMode" />
         <Property Name="allowParticipantsToChangeName" Type="Edm.Boolean" />
+        <Property Name="allowPowerPointSharing" Type="Edm.Boolean" />
         <Property Name="allowRecording" Type="Edm.Boolean" />
         <Property Name="allowTeamworkReactions" Type="Edm.Boolean" />
         <Property Name="allowTranscription" Type="Edm.Boolean" />
+        <Property Name="allowWhiteboard" Type="Edm.Boolean" />
         <Property Name="audioConferencing" Type="graph.audioConferencing" />
         <Property Name="chatInfo" Type="graph.chatInfo" />
         <Property Name="chatRestrictions" Type="graph.chatRestrictions" />
@@ -26025,21 +26053,26 @@
       <EntityType Name="teamsTemplate" BaseType="graph.entity" />
       <EntityType Name="schedule" BaseType="graph.entity">
         <Property Name="enabled" Type="Edm.Boolean" />
+        <Property Name="isActivitiesIncludedWhenCopyingShiftsEnabled" Type="Edm.Boolean" />
         <Property Name="offerShiftRequestsEnabled" Type="Edm.Boolean" />
         <Property Name="openShiftsEnabled" Type="Edm.Boolean" />
         <Property Name="provisionStatus" Type="graph.operationStatus" />
         <Property Name="provisionStatusCode" Type="Edm.String" />
+        <Property Name="startDayOfWeek" Type="graph.dayOfWeek" />
         <Property Name="swapShiftsRequestsEnabled" Type="Edm.Boolean" />
         <Property Name="timeClockEnabled" Type="Edm.Boolean" />
+        <Property Name="timeClockSettings" Type="graph.timeClockSettings" />
         <Property Name="timeOffRequestsEnabled" Type="Edm.Boolean" />
         <Property Name="timeZone" Type="Edm.String" />
         <Property Name="workforceIntegrationIds" Type="Collection(Edm.String)" />
+        <NavigationProperty Name="dayNotes" Type="Collection(graph.dayNote)" ContainsTarget="true" />
         <NavigationProperty Name="offerShiftRequests" Type="Collection(graph.offerShiftRequest)" ContainsTarget="true" />
         <NavigationProperty Name="openShiftChangeRequests" Type="Collection(graph.openShiftChangeRequest)" ContainsTarget="true" />
         <NavigationProperty Name="openShifts" Type="Collection(graph.openShift)" ContainsTarget="true" />
         <NavigationProperty Name="schedulingGroups" Type="Collection(graph.schedulingGroup)" ContainsTarget="true" />
         <NavigationProperty Name="shifts" Type="Collection(graph.shift)" ContainsTarget="true" />
         <NavigationProperty Name="swapShiftsChangeRequests" Type="Collection(graph.swapShiftsChangeRequest)" ContainsTarget="true" />
+        <NavigationProperty Name="timeCards" Type="Collection(graph.timeCard)" ContainsTarget="true" />
         <NavigationProperty Name="timeOffReasons" Type="Collection(graph.timeOffReason)" ContainsTarget="true" />
         <NavigationProperty Name="timeOffRequests" Type="Collection(graph.timeOffRequest)" ContainsTarget="true" />
         <NavigationProperty Name="timesOff" Type="Collection(graph.timeOff)" ContainsTarget="true" />
@@ -33126,6 +33159,7 @@
         <NavigationProperty Name="instances" Type="Collection(graph.windowsSettingInstance)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="changeTrackedEntity" BaseType="graph.entity" Abstract="true">
+        <Property Name="createdBy" Type="graph.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="lastModifiedBy" Type="graph.identitySet" />
         <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
@@ -35072,6 +35106,25 @@
         <Property Name="endTime" Type="Edm.TimeOfDay" />
         <Property Name="startTime" Type="Edm.TimeOfDay" />
       </ComplexType>
+      <ComplexType Name="timeCardBreak">
+        <Property Name="breakId" Type="Edm.String" />
+        <Property Name="end" Type="graph.timeCardEvent" />
+        <Property Name="notes" Type="graph.itemBody" />
+        <Property Name="start" Type="graph.timeCardEvent" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="timeCardEvent">
+        <Property Name="dateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="isAtApprovedLocation" Type="Edm.Boolean" />
+        <Property Name="notes" Type="graph.itemBody" />
+      </ComplexType>
+      <ComplexType Name="timeCardEntry">
+        <Property Name="breaks" Type="Collection(graph.timeCardBreak)" />
+        <Property Name="clockInEvent" Type="graph.timeCardEvent" />
+        <Property Name="clockOutEvent" Type="graph.timeCardEvent" />
+      </ComplexType>
+      <ComplexType Name="timeClockSettings">
+        <Property Name="approvedLocation" Type="graph.geoCoordinates" />
+      </ComplexType>
       <ComplexType Name="timeOffItem" BaseType="graph.scheduleEntity">
         <Property Name="timeOffReasonId" Type="Edm.String" />
       </ComplexType>
@@ -35079,6 +35132,11 @@
         <Property Name="protocol" Type="graph.workforceIntegrationEncryptionProtocol" />
         <Property Name="secret" Type="Edm.String" />
       </ComplexType>
+      <EntityType Name="dayNote" BaseType="graph.changeTrackedEntity">
+        <Property Name="dayNoteDate" Type="Edm.Date" />
+        <Property Name="draftDayNote" Type="graph.itemBody" />
+        <Property Name="sharedDayNote" Type="graph.itemBody" />
+      </EntityType>
       <EntityType Name="scheduleChangeRequest" BaseType="graph.changeTrackedEntity" Abstract="true">
         <Property Name="assignedTo" Type="graph.scheduleChangeRequestActor" />
         <Property Name="managerActionDateTime" Type="Edm.DateTimeOffset" />
@@ -35105,6 +35163,7 @@
         <Property Name="openShiftId" Type="Edm.String" />
       </EntityType>
       <EntityType Name="schedulingGroup" BaseType="graph.changeTrackedEntity">
+        <Property Name="code" Type="Edm.String" />
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="isActive" Type="Edm.Boolean" />
         <Property Name="userIds" Type="Collection(Edm.String)" />
@@ -35119,7 +35178,18 @@
       <EntityType Name="swapShiftsChangeRequest" BaseType="graph.offerShiftRequest">
         <Property Name="recipientShiftId" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="timeCard" BaseType="graph.changeTrackedEntity">
+        <Property Name="breaks" Type="Collection(graph.timeCardBreak)" />
+        <Property Name="clockInEvent" Type="graph.timeCardEvent" />
+        <Property Name="clockOutEvent" Type="graph.timeCardEvent" />
+        <Property Name="confirmedBy" Type="graph.confirmedBy" />
+        <Property Name="notes" Type="graph.itemBody" />
+        <Property Name="originalEntry" Type="graph.timeCardEntry" />
+        <Property Name="state" Type="graph.timeCardState" />
+        <Property Name="userId" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="timeOffReason" BaseType="graph.changeTrackedEntity">
+        <Property Name="code" Type="Edm.String" />
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="iconType" Type="graph.timeOffReasonIconType" />
         <Property Name="isActive" Type="Edm.Boolean" />
@@ -41219,6 +41289,34 @@
       <Action Name="approve" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.scheduleChangeRequest" />
         <Parameter Name="message" Type="Edm.String" Unicode="false" />
+      </Action>
+      <Action Name="clockIn" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.timeCard)" />
+        <Parameter Name="isAtApprovedLocation" Type="Edm.Boolean" />
+        <Parameter Name="notes" Type="graph.itemBody" />
+        <ReturnType Type="graph.timeCard" />
+      </Action>
+      <Action Name="clockOut" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.timeCard" />
+        <Parameter Name="isAtApprovedLocation" Type="Edm.Boolean" />
+        <Parameter Name="notes" Type="graph.itemBody" />
+        <ReturnType Type="graph.timeCard" />
+      </Action>
+      <Action Name="confirm" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.timeCard" />
+        <ReturnType Type="graph.timeCard" />
+      </Action>
+      <Action Name="endBreak" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.timeCard" />
+        <Parameter Name="isAtApprovedLocation" Type="Edm.Boolean" />
+        <Parameter Name="notes" Type="graph.itemBody" />
+        <ReturnType Type="graph.timeCard" />
+      </Action>
+      <Action Name="startBreak" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.timeCard" />
+        <Parameter Name="isAtApprovedLocation" Type="Edm.Boolean" />
+        <Parameter Name="notes" Type="graph.itemBody" />
+        <ReturnType Type="graph.timeCard" />
       </Action>
       <Action Name="share" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.schedule" />
