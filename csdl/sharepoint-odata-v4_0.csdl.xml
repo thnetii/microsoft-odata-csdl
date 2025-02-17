@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25729 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25805 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -545,6 +545,7 @@
       </ComplexType>
       <ComplexType Name="ReviewWorkFlowResponseDTO">
         <Property Name="Action" Type="Edm.String" />
+        <Property Name="Comments" Type="Edm.String" />
         <Property Name="Status" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ScriptSafeDomainEntityData">
@@ -1023,6 +1024,10 @@
       <ComplexType Name="ListDataValidationExceptionValue">
         <Property Name="FieldFailures" Type="Collection(SP.ListDataValidationFailure)" />
         <Property Name="ItemFailure" Type="SP.ListDataValidationFailure" />
+      </ComplexType>
+      <ComplexType Name="ListForm">
+        <Property Name="Id" Type="Edm.String" />
+        <Property Name="SchemaJSON" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ListItemCollectionPosition">
         <Property Name="PagingInfo" Type="Edm.String" />
@@ -4235,6 +4240,11 @@
         <Parameter Name="createItemRequestPayload" Type="SP.CreateHVCSItemApprovalRequestParameters" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="CreateListForm" IsBound="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="parameters" Type="SP.ListForm" />
+        <ReturnType Type="SP.ListForm" />
+      </Action>
       <Action Name="CreateMappedView" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="appViewCreationInfo" Type="SP.AppViewCreationInfo" />
@@ -4369,6 +4379,11 @@
         <Parameter Name="query" Type="SP.CamlQuery" />
         <ReturnType Type="Collection(SP.ListItem)" />
       </Action>
+      <Function Name="GetListForms" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.List" />
+        <Parameter Name="bSanitize" Type="Edm.Boolean" Nullable="false" />
+        <ReturnType Type="Collection(SP.ListForm)" />
+      </Function>
       <Action Name="GetListItemChangesSinceToken" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="query" Type="SP.ChangeLogItemQuery" />
@@ -5661,6 +5676,10 @@
         <Parameter Name="rowLimit" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="skipToken" Type="Edm.String" />
         <ReturnType Type="SP.AgreementsSolutionEnabledSitesResponse" />
+      </Function>
+      <Function Name="GetDataverseUsageConsent" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
       <Function Name="IsApprovalConfiguredForAgreement" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.List" />
@@ -9159,7 +9178,13 @@
       <Annotations Target="Microsoft.SharePoint.MicroService.Internal.PacInfo/Endpoint">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.MicroService.Internal.PacInfo/IsAppOnly">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.MicroService.Internal.PacInfo/Token">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.MicroService.Internal.PacInfo/Version">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery.AppUpgradeAvailability">
@@ -13378,6 +13403,9 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.VerifyModelUrls(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Collection(Edm.String))">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.VerifyModelUrlsAndGrantPAC(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Collection(Edm.String))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningModelEntityData()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14035,7 +14063,7 @@
       <Annotations Target="SP.Publishing.RichSharing()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.SharePageByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Collection(Edm.String), Collection(Edm.String), Edm.Int32, Edm.String)">
+      <Annotations Target="SP.Publishing.SharePageByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Collection(Edm.String), Collection(Edm.String), Edm.Int32, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.ShareSiteByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Edm.String, Edm.String, Collection(Edm.String))">
@@ -15400,6 +15428,9 @@
       <Annotations Target="SP.CreateDocumentWithDefaultName(SP.List, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.CreateListForm(SP.List, SP.ListForm)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.CreateMappedView(SP.List, SP.AppViewCreationInfo, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15443,6 +15474,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.List.GetListDataAsStream(Edm.String, SP.RenderListDataParameters, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Collection(SP.KeyValue), Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.GetListForms(SP.List, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.GetMappedApp(SP.List, Edm.Guid, Edm.Int32)">
@@ -17267,6 +17301,11 @@
         <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
         <Parameter Name="urls" Type="Collection(Edm.String)" />
       </Action>
+      <Function Name="VerifyModelUrlsAndGrantPAC" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
+        <Parameter Name="urls" Type="Collection(Edm.String)" />
+        <ReturnType Type="Edm.String" />
+      </Function>
       <Function Name="SPMachineLearningModelEntityData">
         <ReturnType Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningModelEntityData" />
       </Function>
@@ -24417,6 +24456,7 @@
         <Parameter Name="bccEmails" Type="Collection(Edm.String)" />
         <Parameter Name="pageItemId" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="scenarioTag" Type="Edm.String" />
+        <Parameter Name="emailSize" Type="Edm.String" />
       </Action>
       <Action Name="ShareSiteByEmail" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RichSharing" />
@@ -26208,6 +26248,9 @@
         <Parameter Name="lockRequestor" Type="Edm.String" />
         <ReturnType Type="Edm.Int32" Nullable="false" />
       </Action>
+      <Action Name="RemoveSiteMapEntry" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
       <Action Name="ResumeCrawling" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="originalCPSDeleteReason" Type="Edm.Int16" Nullable="false" />
@@ -27419,7 +27462,9 @@
     <Schema Namespace="Microsoft.SharePoint.MicroService.Internal" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="PacInfo">
         <Property Name="Endpoint" Type="Edm.String" />
+        <Property Name="IsAppOnly" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Token" Type="Edm.String" />
+        <Property Name="Version" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Marketplace.CorporateCuratedGallery" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -30483,6 +30528,7 @@
         <Property Name="AvailableInGraph" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AvailableInPowerShell" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AvailableInSharePointAdminCenter" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Category" Type="Edm.Int32" Nullable="false" />
         <Property Name="Description" Type="Edm.String" />
         <Property Name="SettingName" Type="Edm.String" />
         <Property Name="SettingValue" Type="Edm.String" />
@@ -31263,6 +31309,7 @@
         <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
+        <Property Name="DataverseUsageConsentEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
         <Property Name="DefaultODBMode" Type="Edm.String" />
@@ -32224,6 +32271,7 @@
       </Action>
       <Action Name="GetSharePointSettingData" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="category" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SettingDataProperty)" />
       </Action>
       <Function Name="GetSharePointSiteSharingInsights" IsBound="true" IsComposable="true">
