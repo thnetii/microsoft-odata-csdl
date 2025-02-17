@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25729 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25805 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -366,6 +366,7 @@
         <NavigationProperty Name="diagnosticViews" Type="Collection(oneDrive.diagnosticView)" ContainsTarget="true" />
         <NavigationProperty Name="drives" Type="Collection(oneDrive.drive)" ContainsTarget="true" />
         <NavigationProperty Name="facts" Type="Collection(oneDrive.fact)" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticWebs" Type="Collection(oneDrive.diagnosticWeb)" ContainsTarget="true" />
         <NavigationProperty Name="onedrive.subpoena" Type="Collection(oneDrive.diagnosticSubpoenaStatus)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -377,6 +378,7 @@
         <NavigationProperty Name="consumerAdminPlatform" Type="oneDrive.consumerAdminPlatform" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticActiveSites" Type="Collection(oneDrive.diagnosticActiveSite)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticCdnDetails" Type="oneDrive.diagnosticCdnDetails" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticDatabase" Type="Collection(oneDrive.diagnosticDatabase)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticDirectoryGroups" Type="Collection(oneDrive.diagnosticDirectoryEntry)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticDirectorySubscribedPlan" Type="Collection(oneDrive.diagnosticDirectoryEntry)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticDirectoryTenant" Type="Collection(oneDrive.diagnosticDirectoryEntry)" ContainsTarget="true" />
@@ -405,6 +407,7 @@
         <NavigationProperty Name="diagnosticUserProfileTypeProperties" Type="Collection(oneDrive.diagnosticProfileTypeProperty)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUnifiedGroups" Type="Collection(oneDrive.diagnosticUnifiedGroup)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUnifiedStorageQuota" Type="oneDrive.diagnosticUnifiedStorageQuota" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticWebs" Type="Collection(oneDrive.diagnosticWeb)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticWorkItems" Type="Collection(oneDrive.diagnosticWorkItem)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -439,6 +442,17 @@
         <Property Name="subscriptionId" Type="Edm.String" Nullable="false" />
         <NavigationProperty Name="privateCdnOrigins" Type="Collection(oneDrive.diagnosticCdnOrigin)" ContainsTarget="true" />
         <NavigationProperty Name="publicCdnOrigins" Type="Collection(oneDrive.diagnosticCdnOrigin)" ContainsTarget="true" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="diagnosticDatabase" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <NavigationProperty Name="diagnosticQueueStatistic" Type="oneDrive.diagnosticQueueStatistic" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticSites" Type="Collection(oneDrive.diagnosticSite)" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticItems" Type="Collection(oneDrive.diagnosticItem)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="diagnosticDirectoryEntry" OpenType="true">
@@ -883,6 +897,14 @@
         <Property Name="used" Type="Edm.Int64" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="diagnosticWeb" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="diagnosticWorkItem" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -957,7 +979,11 @@
         <Property Name="timeStamp" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
-      <EntityType Name="diagnosticCrawlQueueStatisticsEntry" OpenType="true">
+      <EntityType Name="diagnosticQueueStatistic" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
         <Property Name="totalInQueue" Type="Edm.Int32" />
         <Property Name="addModifyInQueue" Type="Edm.Int32" />
         <Property Name="deletesInQueue" Type="Edm.Int32" />
@@ -3835,6 +3861,19 @@
         <Property Name="subpoenaDetails" Type="oneDrive.subpoenaDetails" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="diagnosticCPSQueueInfo" OpenType="true">
+        <Property Name="siteId" Type="Edm.Guid" />
+        <Property Name="total" Type="Edm.Int32" />
+        <Property Name="p1" Type="Edm.Int32" />
+        <Property Name="p2" Type="Edm.Int32" />
+        <Property Name="p3" Type="Edm.Int32" />
+        <Property Name="p4" Type="Edm.Int32" />
+        <Property Name="p1Loaded" Type="Edm.Int32" />
+        <Property Name="p2Loaded" Type="Edm.Int32" />
+        <Property Name="p3Loaded" Type="Edm.Int32" />
+        <Property Name="p4Loaded" Type="Edm.Int32" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="enterpriseSubpoenaExport" OpenType="true">
         <Property Name="recordLocatorId" Type="Edm.String" />
         <Property Name="batchId" Type="Edm.Guid" />
@@ -5546,6 +5585,10 @@
         <NavigationProperty Name="targetSet" Type="oneDrive.termSet" ContainsTarget="true">
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </NavigationProperty>
+      </ComplexType>
+      <ComplexType Name="SPCertificateDetails" OpenType="true">
+        <Property Name="x5c" Type="Edm.String" />
+        <Property Name="certificateState" Type="oneDrive.SPCertificateState" />
       </ComplexType>
       <ComplexType Name="stub" OpenType="true">
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -8492,6 +8535,7 @@
       <EnumType Name="ScenarioType">
         <Member Name="dataGovernance" Value="0" />
       </EnumType>
+      <EnumType Name="SPCertificateState" />
       <EnumType Name="ItemBodyContentType">
         <Member Name="text" Value="0" />
         <Member Name="html" Value="1" />
