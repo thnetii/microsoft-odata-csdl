@@ -1,0 +1,681 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "RamQuest Events",
+    "description": "This connector contains triggers which respond to events enabled within RamQuest title production software solutions including CCE and Horizon. \nNote: This connector is currently in Preview/Beta status. RamQuest customers interested in becoming early adopters should contact their RamQuest representative. If selected, RamQuest will provide the necessary credentials to access the connector.",
+    "contact": {
+      "name": "AE&I Support",
+      "url": "https://www.ramquest.com/support",
+      "email": "AEI@ortitletech.com"
+    },
+    "version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/ramquestevents",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/published-events": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "List of Configured Event Names",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "name",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Published Events",
+        "operationId": "GetPublishedEvents",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "description": "Get the publishedEvents list tied to a publisher record in the supermarket database.",
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ramquestevents/#get-published-events"
+        }
+      }
+    },
+    "/{connectionId}/register/cce": {
+      "x-ms-notification-content": {
+        "description": "Event Data",
+        "schema": {
+          "type": "object",
+          "x-ms-dynamic-schema": {
+            "operationId": "GetCCENotificationSchema",
+            "parameters": {
+              "action": {
+                "parameter": "action"
+              }
+            }
+          },
+          "x-ms-dynamic-properties": {
+            "operationId": "GetCCENotificationSchema",
+            "parameters": {
+              "action": {
+                "parameterReference": "body/action"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "summary": "CCE Event Trigger",
+        "description": "Activates upon receiving a CCE event.",
+        "operationId": "CCEEventTrigger",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "webHook": {
+                  "type": "string",
+                  "description": "webHook",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": ""
+                },
+                "action": {
+                  "type": "string",
+                  "description": "If blank, all configured events will trigger this flow",
+                  "title": "Event",
+                  "enum": [
+                    "TaskEvent",
+                    "DocumentEvent",
+                    "File",
+                    "Commitment",
+                    "CheckWriting"
+                  ],
+                  "x-ms-visibility": "important"
+                }
+              },
+              "required": [
+                "webHook"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ramquestevents/#cce-event-trigger"
+        }
+      }
+    },
+    "/{connectionId}/register/horizon": {
+      "x-ms-notification-content": {
+        "description": "Event Data",
+        "schema": {
+          "$ref": "#/definitions/HorizonWorkflowEvent"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "summary": "Horizon Event Trigger",
+        "description": "Activates upon receiving a Horizon event.",
+        "operationId": "HorizonEventTrigger",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "webHook": {
+                  "type": "string",
+                  "description": "webHook",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": ""
+                },
+                "action": {
+                  "type": "string",
+                  "description": "If blank, all configured events will trigger this flow",
+                  "title": "Event",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetPublishedEvents",
+                    "value-path": "name",
+                    "value-title": "name"
+                  },
+                  "x-ms-visibility": "important"
+                }
+              },
+              "required": [
+                "webHook"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ramquestevents/#horizon-event-trigger"
+        }
+      }
+    },
+    "/{connectionId}/health": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Get CCE Notification Schema",
+        "description": "Get the schema of the payload sent to a trigger for a given CCE event.",
+        "operationId": "GetCCENotificationSchema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "action",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ramquestevents/#get-cce-notification-schema"
+        }
+      }
+    },
+    "/{connectionId}/connector/{connectorId}": {
+      "delete": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Delete Trigger",
+        "operationId": "DeleteTrigger",
+        "description": "Deregister a workflow when a trigger is updated or when a workflow is inactivated/deleted",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "connectorId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-url-encoding": "single"
+          }
+        ],
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ramquestevents/#delete-trigger"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CCEWorkflowEvent": {
+      "type": "object",
+      "properties": {
+        "PublisherId": {
+          "title": "Publisher Id",
+          "description": "Id of the publisher (source of the event)",
+          "type": "string"
+        },
+        "FileNo": {
+          "title": "File #",
+          "description": "File Number that the event is associated with",
+          "type": "string"
+        },
+        "Name": {
+          "title": "Event Name",
+          "description": "Name of the event if configured",
+          "type": "string"
+        },
+        "Region": {
+          "title": "Region",
+          "description": "Region name",
+          "type": "string"
+        },
+        "Branch": {
+          "title": "Branch",
+          "description": "Branch name",
+          "type": "string"
+        },
+        "TitleCompany": {
+          "title": "Title Company",
+          "description": "Title Company name",
+          "type": "string"
+        },
+        "EventType": {
+          "title": "Event Type",
+          "description": "Schema type of the event",
+          "type": "string",
+          "enum": [
+            "TaskEvent",
+            "DocumentEvent",
+            "File",
+            "Commitment",
+            "CheckWriting"
+          ]
+        },
+        "EventData": {
+          "title": "Event Data",
+          "description": "Event specific data",
+          "type": "object"
+        }
+      }
+    },
+    "TaskEvent": {
+      "type": "object",
+      "properties": {
+        "taskEventType": {
+          "$ref": "#/definitions/TaskEventType"
+        },
+        "name": {
+          "title": "Task Name",
+          "description": "Name of the task",
+          "type": "string"
+        },
+        "sourceId": {
+          "title": "Task Source Id",
+          "description": "Source system identifier",
+          "type": "string"
+        },
+        "status": {
+          "title": "Task Status",
+          "description": "Status of the task",
+          "type": "string",
+          "enum": [
+            "DueToday",
+            "Overdue",
+            "DueWithIn7",
+            "DueWithIn30"
+          ]
+        },
+        "startDate": {
+          "title": "Task Start Date",
+          "description": "Date-time when the task was started",
+          "type": "string",
+          "format": "date-time"
+        },
+        "na": {
+          "title": "Task N/A",
+          "description": "Not applicable flag",
+          "type": "boolean"
+        },
+        "dueDate": {
+          "title": "Task Due Date",
+          "description": "Date-time when the task is due",
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedDate": {
+          "title": "Task Completed Date",
+          "description": "Date-time when the task was marked complete",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "DocumentEvent": {
+      "type": "object",
+      "properties": {
+        "documentEventType": {
+          "$ref": "#/definitions/DocumentEventType"
+        },
+        "name": {
+          "title": "Document Name",
+          "description": "Name of the document",
+          "type": "string"
+        },
+        "status": {
+          "title": "Document Status",
+          "description": "Status of the document",
+          "type": "string"
+        },
+        "printDate": {
+          "title": "Document Print Date",
+          "description": "Date-time when the document was printed",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "FileEvent": {
+      "type": "object",
+      "properties": {
+        "fileEventType": {
+          "$ref": "#/definitions/FileEventType"
+        },
+        "name": {
+          "title": "File Name",
+          "description": "Name of the file",
+          "type": "string"
+        },
+        "data": {
+          "title": "File Data",
+          "description": "For buyer/seller use formal name",
+          "type": "string"
+        },
+        "sourceId": {
+          "title": "File Source Id",
+          "description": "Source system identifier",
+          "type": "string"
+        },
+        "action": {
+          "title": "File Action",
+          "description": "Action performed on the file",
+          "type": "string",
+          "enum": [
+            "AddBuyer",
+            "DeleteBuyer",
+            "EditBuyer",
+            "AddSeller",
+            "DeleteSeller",
+            "EditSeller"
+          ]
+        }
+      }
+    },
+    "CommitmentEvent": {
+      "type": "object",
+      "properties": {
+        "commitmentEventType": {
+          "$ref": "#/definitions/CommitmentEventType"
+        },
+        "number": {
+          "title": "Commitment Number",
+          "description": "Number of the commitment",
+          "type": "string"
+        },
+        "date": {
+          "title": "Commitment Date",
+          "description": "Date-time associated with the commitment",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "CheckWritingEvent": {
+      "type": "object",
+      "properties": {
+        "checkWritingEventType": {
+          "$ref": "#/definitions/CheckWritingEventType"
+        },
+        "payee": {
+          "title": "Check Payee",
+          "description": "Person or business paid by the check",
+          "type": "string"
+        },
+        "checkNumber": {
+          "title": "Check Number",
+          "description": "Number of the check",
+          "type": "string"
+        },
+        "amount": {
+          "title": "Check Amount",
+          "description": "Amount of the check",
+          "type": "string"
+        },
+        "date": {
+          "title": "Check Date",
+          "description": "Date of the check",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "TaskEventType": {
+      "title": "Task Event Type",
+      "description": "Type of the task event",
+      "type": "string",
+      "enum": [
+        "OpenTask",
+        "CloseTask",
+        "StatusTask",
+        "MarkTaskNonApplicable"
+      ]
+    },
+    "SystemEventType": {
+      "title": "System Event Type",
+      "description": "Type of the system event",
+      "type": "string",
+      "enum": [
+        "TaskEvent",
+        "DocumentEvent",
+        "File",
+        "Commitment",
+        "CheckWriting"
+      ]
+    },
+    "DocumentEventType": {
+      "title": "Document Event Type",
+      "description": "Type of the document event",
+      "type": "string",
+      "enum": [
+        "Attached",
+        "Printed",
+        "Emailed",
+        "Removed"
+      ]
+    },
+    "FileEventType": {
+      "title": "File Event Type",
+      "description": "Type of the file event",
+      "type": "string",
+      "enum": [
+        "Created",
+        "Updated",
+        "Closed"
+      ]
+    },
+    "CommitmentEventType": {
+      "title": "Commitment Event Type",
+      "description": "Type of the commitment event",
+      "type": "string",
+      "enum": [
+        "PolicyDate",
+        "Updated"
+      ]
+    },
+    "CheckWritingEventType": {
+      "title": "Check Writing Event Type",
+      "description": "Type of the check writing event",
+      "type": "string",
+      "enum": [
+        "AddCheck",
+        "EditCheck",
+        "DeleteCheck",
+        "AddDeposit",
+        "EditDeposit",
+        "DeleteDeposit"
+      ]
+    },
+    "HorizonWorkflowEvent": {
+      "type": "object",
+      "properties": {
+        "PublisherId": {
+          "title": "Publisher Id",
+          "description": "Id of the publisher (source of the event)",
+          "type": "string"
+        },
+        "FileNo": {
+          "title": "File #",
+          "description": "File Number that the event is associated with",
+          "type": "string"
+        },
+        "Name": {
+          "title": "Event Name",
+          "description": "Name of the event if configured",
+          "type": "string"
+        },
+        "Region": {
+          "title": "Region",
+          "description": "Region name",
+          "type": "string"
+        },
+        "RegionID": {
+          "title": "Region Id",
+          "description": "Id of the Region",
+          "type": "string"
+        },
+        "Branch": {
+          "title": "Branch",
+          "description": "Branch name",
+          "type": "string"
+        },
+        "TitleCompany": {
+          "title": "Title Company",
+          "description": "Title Company name",
+          "type": "string"
+        },
+        "TitleCompanyID": {
+          "title": "Title Company Id",
+          "description": "Id of the Title Company",
+          "type": "string"
+        },
+        "EventType": {
+          "title": "Event Type",
+          "description": "Schema type of the event",
+          "type": "string"
+        },
+        "EventData": {
+          "$ref": "#/definitions/HznEvent"
+        }
+      }
+    },
+    "HznEvent": {
+      "title": "Horizon Event Data",
+      "description": "Details on the record associated with the event before and after it occurred",
+      "type": "object",
+      "properties": {
+        "before": {
+          "title": "Before the Event",
+          "description": "Details on the record before the event occurred (must be parsed with the Parse JSON action)",
+          "type": "object"
+        },
+        "after": {
+          "title": "After the Event",
+          "description": "Details on the record after the event occurred (must be parsed with the Parse JSON action)",
+          "type": "object"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://sm.uat.ortitletech.com/auth/realms/supermarket/protocol/openid-connect/auth",
+      "tokenUrl": "https://sm.uat.ortitletech.com/auth/realms/supermarket/protocol/openid-connect/token",
+      "scopes": {
+        "good-service offline_access": "good-service offline_access"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "good-service offline_access"
+      ]
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.ortitletech.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.ortitletech.com/privacy-policy/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Productivity"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/ramquestevents"
+  }
+}
