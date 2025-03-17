@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25826 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25905 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -887,8 +887,10 @@
         <Key>
           <PropertyRef Name="id" />
         </Key>
+        <Property Name="cacheLastUpdated" Type="Edm.DateTimeOffset" />
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="manageWebUrl" Type="Edm.String" />
+        <Property Name="quotaEnforcementStart" Type="Edm.DateTimeOffset" />
         <Property Name="remaining" Type="Edm.Int64" />
         <Property Name="services" Type="Collection(oneDrive.service)" />
         <Property Name="state" Type="Edm.String" />
@@ -1697,6 +1699,7 @@
       <EntityType Name="capacitypack" OpenType="true">
         <NavigationProperty Name="checkUsage" Type="oneDrive.checkUsage" ContainsTarget="true" />
         <NavigationProperty Name="logUsage" Type="oneDrive.logUsage" ContainsTarget="true" />
+        <NavigationProperty Name="usageStatistics" Type="oneDrive.usageStatistics" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="checkUsage" OpenType="true">
@@ -1709,6 +1712,11 @@
         <Property Name="featureName" Type="Edm.String" />
         <Property Name="entitlement" Type="Edm.String" />
         <Property Name="consumption" Type="Edm.Int32" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="usageStatistics" OpenType="true">
+        <Property Name="promoUsageLimit" Type="Edm.Int64" />
+        <Property Name="monthlyUsage" Type="Collection(oneDrive.monthlyUsage)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="campaign" OpenType="true">
@@ -2931,6 +2939,7 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="isSubscribe" Type="Edm.Boolean" />
         <Property Name="expirationDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="notificationUrl" Type="Edm.String" />
         <Property Name="eventTypes" Type="Collection(Edm.String)" />
@@ -2970,6 +2979,7 @@
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="subscriptions" Type="Collection(oneDrive.subscription)" ContainsTarget="true" />
         <NavigationProperty Name="views" Type="Collection(oneDrive.view)" ContainsTarget="true" />
+        <NavigationProperty Name="rtnSubscriptions" Type="Collection(oneDrive.rtnSubscription)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="HubSite" BaseType="oneDrive.site" OpenType="true">
@@ -4439,6 +4449,10 @@
       <ComplexType Name="assignedSensitivityLabel" OpenType="true">
         <Property Name="labelId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="monthlyUsage" OpenType="true">
+        <Property Name="monthYear" Type="Edm.String" />
+        <Property Name="usage" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="settings" OpenType="true">
         <Property Name="isOcrEnabled" Type="Edm.Boolean" />
         <Property Name="itemMajorVersionLimit" Type="Edm.Int32" />
@@ -5817,6 +5831,7 @@
         <Property Name="canComment" Type="Edm.Boolean" />
         <Property Name="canDownload" Type="Edm.Boolean" />
         <Property Name="canCreate" Type="Edm.Boolean" />
+        <Property Name="canManagePermissions" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="accountInfo" OpenType="true">
         <Property Name="manageStorageLink" Type="Edm.String" />
@@ -5958,6 +5973,7 @@
         <Property Name="canDownload" Type="Edm.Boolean" />
         <Property Name="canRead" Type="Edm.Boolean" />
         <Property Name="canUpdate" Type="Edm.Boolean" />
+        <Property Name="canManagePermissions" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="driveItemSource" OpenType="true">
         <Property Name="application" Type="Edm.String" />
@@ -6722,6 +6738,7 @@
         <Property Name="siteTemplates" Type="Collection(Edm.String)" />
         <Property Name="creationSources" Type="Collection(Edm.String)" />
         <Property Name="sampleSitesCount" Type="Edm.Int32" />
+        <Property Name="sitesCount" Type="Edm.Int32" />
         <Property Name="crawledSitesCount" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="analyticsReportAppsData" OpenType="true">
