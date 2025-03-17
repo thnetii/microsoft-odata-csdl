@@ -1,0 +1,515 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Priva",
+    "description": "Process Priva Requests",
+    "version": "1.0",
+    "x-ms-deployment-version": "1.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    },
+    "contact": {
+      "name": "Microsoft",
+      "url": "https://support.microsoft.com"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/purviewprivacy",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "x-ms-capabilities": {
+    "testConnection": {
+      "operationId": "TestConnection"
+    }
+  },
+  "paths": {
+    "/{connectionId}/pa/connections/test": {
+      "get": {
+        "description": "Test that the user has permission to access Purview Privacy APIs.",
+        "summary": "Test user access to Purview Privacy APIs",
+        "operationId": "TestConnection",
+        "x-ms-visibility": "internal",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#test-user-access-to-purview-privacy-apis"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      }
+    },
+    "/{connectionId}/pa/webhooks": {
+      "x-ms-notification-content": {
+        "description": "A SRR was created.",
+        "schema": {
+          "$ref": "#/definitions/DsarNotificationSchema"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "x-ms-operation-context": {
+        "simulate": {
+          "operationId": "GetDsarNotificationEvent"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "A Webhook was created."
+          }
+        },
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "callbackUrl": {
+                      "type": "string",
+                      "description": "The URL to trigger the flow.",
+                      "x-ms-notification-url": true,
+                      "x-ms-visibility": "internal",
+                      "title": "CallbackUrl"
+                    }
+                  },
+                  "description": "properties",
+                  "required": [
+                    "callbackUrl"
+                  ]
+                }
+              },
+              "required": [
+                "properties"
+              ]
+            }
+          },
+          {
+            "name": "x-ms-operation-context",
+            "in": "header",
+            "description": "Special header to enable operation simulation.",
+            "required": false,
+            "x-ms-summary": "x-ms-operation-context",
+            "x-ms-visibility": "internal",
+            "type": "string"
+          }
+        ],
+        "summary": "When a subject rights request task is created",
+        "description": "When a subject rights request task is created.",
+        "operationId": "DsarEvent",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#when-a-subject-rights-request-task-is-created"
+        }
+      }
+    },
+    "/{connectionId}/pa/webhooks/{webhookId}/notify": {
+      "post": {
+        "description": "Send DSAR Test Event",
+        "summary": "Send a Test DSAR to a flow",
+        "operationId": "SendDsarNotificationEvent",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/webhookId_in_path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DsarNotificationSchema"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        },
+        "x-ms-visibility": "internal",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#send-a-test-dsar-to-a-flow"
+        }
+      }
+    },
+    "/{connectionId}/pa/webhooks/{webhookId}/testdata": {
+      "get": {
+        "description": "Get test data to trigger the flow.",
+        "summary": "Get test data",
+        "operationId": "GetDsarNotificationEvent",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/webhookId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DsarNotificationSchema"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#get-test-data"
+        }
+      }
+    },
+    "/{connectionId}/pa/dsars/{dsarId}/tasks/{taskId}/upload": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default"
+          }
+        },
+        "summary": "Upload export data",
+        "description": "Upload export data for a SRR.",
+        "operationId": "UploadExportData",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/dsarId_in_path"
+          },
+          {
+            "$ref": "#/parameters/taskId_in_path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "output": {
+                  "type": "string",
+                  "description": "output",
+                  "title": "Output"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "Optional filename.",
+                  "title": "Filename"
+                }
+              },
+              "required": [
+                "output"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#upload-export-data"
+        }
+      }
+    },
+    "/{connectionId}/pa/dsars/{dsarId}/tasks/{taskId}/status": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default"
+          }
+        },
+        "summary": "Report request task status",
+        "description": "Report request task status.",
+        "operationId": "TaskStatus",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/dsarId_in_path"
+          },
+          {
+            "$ref": "#/parameters/taskId_in_path"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "description": "status",
+                  "title": "Status"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "optional error message",
+                  "title": "Error Message"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#report-request-task-status"
+        }
+      }
+    },
+    "/{connectionId}/pa/dsars/{dsarId}/tasks/{taskId}/acquire": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/DsarDetailsSchema"
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "Content-Type",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "summary": "Get subject rights request details",
+        "description": "Get subject rights request details.",
+        "operationId": "GetDsarDetails",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/dsarId_in_path"
+          },
+          {
+            "$ref": "#/parameters/taskId_in_path"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/purviewprivacy/#get-subject-rights-request-details"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DataAgent": {
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "description": "The unique Id of the data agent.",
+          "type": "string",
+          "x-ms-summary": "Data Agent Id",
+          "x-ms-visibility": "advanced"
+        },
+        "agentName": {
+          "type": "string",
+          "x-ms-summary": "Data Agent Name",
+          "description": "Name of the data agent.",
+          "x-ms-visibility": "important"
+        }
+      }
+    },
+    "DataAgentsList": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataAgent"
+          }
+        }
+      }
+    },
+    "DsarNotificationSchema": {
+      "type": "object",
+      "properties": {
+        "dsarId": {
+          "x-ms-summary": "Request ID",
+          "type": "string",
+          "description": "The request identifier."
+        },
+        "taskId": {
+          "x-ms-summary": "Request Task ID",
+          "type": "string",
+          "description": "The request task identifier."
+        }
+      }
+    },
+    "DsarDetailsSchema": {
+      "type": "object",
+      "properties": {
+        "dsarId": {
+          "x-ms-summary": "Request ID",
+          "type": "string",
+          "description": "The request identifier."
+        },
+        "taskId": {
+          "x-ms-summary": "Request Task ID",
+          "type": "string",
+          "description": "The request task identifier."
+        },
+        "assets": {
+          "x-ms-summary": "Assets",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The assets that are applicable to this SRR."
+        },
+        "dataSubjectIdentifiers": {
+          "x-ms-summary": "Data Subject Identifiers",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "key"
+              },
+              "value": {
+                "type": "string",
+                "description": "value"
+              }
+            }
+          },
+          "description": "The data subject identifiers that are applicable to this SRR."
+        }
+      }
+    }
+  },
+  "parameters": {
+    "dsarId_in_path": {
+      "name": "dsarId",
+      "type": "string",
+      "in": "path",
+      "description": "Unique identifier for a SRR.",
+      "required": true,
+      "x-ms-url-encoding": "single",
+      "x-ms-summary": "Request ID",
+      "x-ms-test-value": "40649f36-46b6-43a6-95e2-9554b7933919"
+    },
+    "taskId_in_path": {
+      "name": "taskId",
+      "type": "string",
+      "in": "path",
+      "description": "Unique identifier for a SRR Task.",
+      "required": true,
+      "x-ms-url-encoding": "single",
+      "x-ms-summary": "Request Task ID",
+      "x-ms-test-value": "991edb52-a88a-4a4d-90c9-d8f6f6f60000"
+    },
+    "webhookId_in_path": {
+      "name": "webhookId",
+      "type": "string",
+      "in": "path",
+      "description": "Unique identifier for a Webhook.",
+      "required": true,
+      "x-ms-url-encoding": "single",
+      "x-ms-summary": "Webhook Id",
+      "x-ms-test-value": "40649f36-46b6-43a6-95e2-9554b7933919"
+    }
+  },
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": []
+    }
+  ],
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://privacy.microsoft.com/en-us/privacystatement"
+    },
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.microsoft.com/en-US/security/business/microsoft-purview"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Business Management;Data"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/purviewprivacy"
+  }
+}
