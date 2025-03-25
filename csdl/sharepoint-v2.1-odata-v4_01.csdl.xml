@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.25905 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.25912 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -3404,6 +3404,19 @@
         <Property Name="expiryInMonths" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="analyticsReportsOptInStatus" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="entity" Type="oneDrive.AnalyticsReportEntity" />
+        <Property Name="dataCollectionStatus" Type="oneDrive.AnalyticsReportDataCollectionStatus" />
+        <Property Name="optInDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="optOutDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="error" Type="oneDrive.error" />
+        <Property Name="value" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="augLoopApis" OpenType="true">
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -3721,6 +3734,7 @@
         <Property Name="dataAnalytics" Type="oneDrive.dataAnalytics" />
         <NavigationProperty Name="settings" Type="oneDrive.tenantSettings" ContainsTarget="true" />
         <NavigationProperty Name="analyticsReports" Type="Collection(oneDrive.analyticsReport)" ContainsTarget="true" />
+        <NavigationProperty Name="analyticsReportsOptIn" Type="Collection(oneDrive.analyticsReportsOptInStatus)" ContainsTarget="true" />
         <NavigationProperty Name="analyticsReportsConfig" Type="oneDrive.analyticsReportsConfig" ContainsTarget="true" />
         <NavigationProperty Name="siteReviews" Type="Collection(oneDrive.siteReview)" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -3774,6 +3788,7 @@
         <Property Name="syntexPlaybackTranscriptTranslationSettings" Type="oneDrive.syntexSiteSpecificFeatureSettings" />
         <Property Name="syntexAzureKeyVaultName" Type="Edm.String" />
         <Property Name="syntexAzureStorageAccountContainerUrl" Type="Edm.String" />
+        <Property Name="syntexCustomModelSettings" Type="oneDrive.syntexCustomModelSettingsFacet" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -4703,6 +4718,20 @@
         <Property Name="relationshipType" Type="Edm.String" />
         <Property Name="count" Type="Edm.Int32" />
       </ComplexType>
+      <ComplexType Name="syntexCustomModelFacet" OpenType="true">
+        <Property Name="isDisabled" Type="Edm.Boolean" />
+        <Property Name="endpoint" Type="Edm.String" />
+        <Property Name="modelDeploymentName" Type="Edm.String" />
+        <Property Name="uniqueName" Type="Edm.String" />
+        <Property Name="uniqueId" Type="Edm.String" />
+        <Property Name="azureResourceId" Type="Edm.String" />
+        <Property Name="endpointType" Type="oneDrive.SyntexCustomModelEndpointType" />
+        <Property Name="taskType" Type="oneDrive.SyntexCustomModelTaskType" />
+      </ComplexType>
+      <ComplexType Name="syntexCustomModelSettingsFacet" OpenType="true">
+        <Property Name="isDisabled" Type="Edm.Boolean" />
+        <Property Name="models" Type="Collection(oneDrive.syntexCustomModelFacet)" />
+      </ComplexType>
       <ComplexType Name="identity" OpenType="true">
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="email" Type="Edm.String" />
@@ -4832,7 +4861,7 @@
         <Property Name="value" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="opStreamSessionSensitivityLabelsResult" OpenType="true">
-        <Property Name="labelsTimestamp" Type="Edm.DateTimeOffset" />
+        <Property Name="timestamp" Type="Edm.DateTimeOffset" />
         <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
       </ComplexType>
       <ComplexType Name="photoStreamAnonymousInvitation" OpenType="true">
@@ -6022,6 +6051,7 @@
         <Property Name="irmEnabled" Type="Edm.Boolean" />
         <Property Name="irmEffectivelyEnabled" Type="Edm.Boolean" />
         <Property Name="contentSensitivityLabelProtected" Type="Edm.Boolean" />
+        <Property Name="archiveStatus" Type="oneDrive.FileArchiveStatus" />
       </ComplexType>
       <ComplexType Name="fileHandler" OpenType="true">
         <Property Name="actionMenuDisplayName" Type="Edm.String" />
@@ -7208,6 +7238,7 @@
         <Property Name="anchorId" Type="Edm.String" />
         <Property Name="choices" Type="Collection(Edm.String)" />
         <Property Name="isEnabled" Type="Edm.Boolean" />
+        <Property Name="inferenceModel" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="autofillColumnSettings">
         <Property Name="scenarioName" Type="Edm.String" />
@@ -7961,6 +7992,12 @@
         <Member Name="Delete" Value="1" />
         <Member Name="PatchProperties" Value="2" />
       </EnumType>
+      <EnumType Name="FileArchiveStatus">
+        <Member Name="notArchived" Value="0" />
+        <Member Name="fullyArchived" Value="1" />
+        <Member Name="reactivating" Value="2" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
       <EnumType Name="MachineLearningModelType">
         <Member Name="none" Value="0" />
         <Member Name="aiBuilder" Value="1" />
@@ -7970,6 +8007,7 @@
         <Member Name="multiClassClassifier" Value="16" />
         <Member Name="mixed" Value="32" />
         <Member Name="textPrebuilt" Value="64" />
+        <Member Name="azureAIInference" Value="128" />
         <Member Name="unknownFutureValue" Value="1073741824" />
       </EnumType>
       <EnumType Name="MachineLearningFlags">
@@ -8286,6 +8324,12 @@
         <Member Name="SPGroups" Value="0" />
         <Member Name="FilesAndFolders" Value="1" />
       </EnumType>
+      <EnumType Name="AnalyticsReportDataCollectionStatus">
+        <Member Name="NotStarted" Value="0" />
+        <Member Name="Triggered" Value="1" />
+        <Member Name="InProgress" Value="2" />
+        <Member Name="Paused" Value="3" />
+      </EnumType>
       <EnumType Name="HorizontalSectionLayoutType">
         <Member Name="none" Value="0" />
         <Member Name="oneColumn" Value="1" />
@@ -8400,6 +8444,15 @@
         <Member Name="enabled" Value="1" />
         <Member Name="enabledWithNoSites" Value="2" />
         <Member Name="disabledWithNoSites" Value="3" />
+      </EnumType>
+      <EnumType Name="SyntexCustomModelEndpointType">
+        <Member Name="None" Value="0" />
+        <Member Name="AzureOpenAI" Value="1" />
+        <Member Name="AzureAIInference" Value="2" />
+      </EnumType>
+      <EnumType Name="SyntexCustomModelTaskType">
+        <Member Name="None" Value="0" />
+        <Member Name="ChatCompletion" Value="1" />
       </EnumType>
       <EnumType Name="TermGroupScope">
         <Member Name="global" Value="0" />
