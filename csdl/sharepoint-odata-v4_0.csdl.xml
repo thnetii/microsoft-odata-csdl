@@ -808,7 +808,9 @@
         <Property Name="IgnoreVersionHistory" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IncludeItemPermissions" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsMoveMode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="MergeEmailNotifications" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MoveAndShareFileInfo" Type="SP.SPMoveAndShareFileInfo" />
+        <Property Name="MoveAndShareItems" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MoveButKeepSource" Type="Edm.Boolean" Nullable="false" />
         <Property Name="NameConflictBehavior" Type="Edm.Int32" Nullable="false" />
         <Property Name="SameWebCopyMoveOptimization" Type="Edm.Boolean" Nullable="false" />
@@ -1871,6 +1873,7 @@
         <Property Name="CanCurrentUserEditMembership" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CanCurrentUserManageGroup" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CanCurrentUserViewMembership" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ContainsCurrentUser" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Description" Type="Edm.String" />
         <Property Name="OnlyAllowMembersViewMembership" Type="Edm.Boolean" Nullable="false" />
         <Property Name="OwnerTitle" Type="Edm.String" />
@@ -23812,10 +23815,6 @@
         <Parameter Name="this" Type="SP.Publishing.AnnouncementsController" />
         <ReturnType Type="Collection(SP.Publishing.AnnouncementsData)" />
       </Function>
-      <Function Name="Channel" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="SP.Publishing.AnnouncementsController" />
-        <ReturnType Type="Collection(SP.Publishing.ChannelAnnouncement)" />
-      </Function>
       <Action Name="FlwPropertyFilteringMapping" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.AnnouncementsController" />
         <Parameter Name="flwPropertyFilteringMapping" Type="Edm.String" />
@@ -29376,6 +29375,13 @@
         <Property Name="Config" Type="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.AdaptiveCardConfig" />
         <Property Name="SchemaVersion" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="ReportDetails" BaseType="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.BaseRawDataSources">
+        <Property Name="Headers" Type="Collection(Edm.String)" />
+        <Property Name="ReportRows" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.Copilot.ReportRow)" />
+      </ComplexType>
+      <ComplexType Name="ReportRow">
+        <Property Name="Row" Type="Collection(Edm.String)" />
+      </ComplexType>
     </Schema>
     <Schema Namespace="SP.SiteHealth" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="SiteHealthResult">
@@ -31742,6 +31748,7 @@
         <Property Name="EnableSensitivityLabelForPDF" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSiteArchive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableTenantRestrictionsInsights" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnforceRequestDigest" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureAppList" Type="Collection(Edm.String)" />
         <Property Name="ESignatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ESignatureSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
@@ -35812,6 +35819,13 @@
         <Parameter Name="endDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <ReturnType Type="SP.SimpleDataTable" />
       </Action>
+      <Action Name="GetUnsuccesfulCrawledUrlsForEdiscovery" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Client.Search.Administration.DocumentCrawlLog" />
+        <Parameter Name="displayUrl" Type="Edm.String" />
+        <Parameter Name="startDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Parameter Name="endDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <ReturnType Type="SP.SimpleDataTable" />
+      </Action>
       <Action Name="GetAzureContainerToken" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Client.Search.Administration.SiteContentProcessingInfoProvider" />
         <ReturnType Type="Edm.String" />
@@ -36611,6 +36625,15 @@
     </Schema>
     <Schema Namespace="SP.Analytics" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="AnalyticsUsageEntry" />
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.Claims" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="SPVivaLearningManager" />
+      <Function Name="SPVivaLearningManager">
+        <ReturnType Type="Microsoft.SharePoint.Administration.Claims.SPVivaLearningManager" />
+      </Function>
+      <Action Name="RegisterListEventReceiver" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.Claims.SPVivaLearningManager" />
+      </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Administration.Archiving" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="ArchiveFileSizeMetric">
@@ -37924,6 +37947,11 @@
       <Function Name="OrgAssets" IsComposable="true">
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </Function>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Client.Search.Administration.DocumentCrawlLog" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="Create">
+        <ReturnType Type="Microsoft.SharePoint.Client.Search.Administration.DocumentCrawlLog" />
+      </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Client.Search.Administration.SiteContentProcessingInfoProvider" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="Create">
