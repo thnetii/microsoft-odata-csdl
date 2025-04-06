@@ -481,6 +481,7 @@
         <Key>
           <PropertyRef Name="id" />
         </Key>
+        <Property Name="accessScope" Type="oneDrive.SPDlpAccessScope" />
         <Property Name="author" Type="Edm.String" />
         <Property Name="checkedOutDate" Type="Edm.DateTimeOffset" />
         <Property Name="checkedOutByUser" Type="Edm.String" />
@@ -548,6 +549,7 @@
         <Property Name="retentionPolicyData" Type="Edm.String" />
         <Property Name="retentionScheduleSrc" Type="oneDrive.RetentionScheduleSource" />
         <Property Name="retentionSourceId" Type="Edm.String" />
+        <Property Name="ruleTests" Type="Collection(Edm.String)" />
         <Property Name="scopeId" Type="Edm.Guid" />
         <Property Name="serverRedirected" Type="Edm.Boolean" />
         <Property Name="serverRelativePath" Type="Edm.String" />
@@ -1498,6 +1500,7 @@
         <Property Name="identityid" Type="Edm.String" />
         <Property Name="scope" Type="Edm.String" />
         <Property Name="feature" Type="Edm.String" />
+        <Property Name="featureset" Type="Collection(Edm.String)" />
         <Property Name="tenantid" Type="Edm.Guid" />
         <Property Name="subscriptionid" Type="Edm.Guid" />
         <Property Name="subscriptionstate" Type="Edm.String" />
@@ -2032,6 +2035,8 @@
         <Property Name="source" Type="oneDrive.driveItemSource" />
         <Property Name="specialFolder" Type="oneDrive.specialFolder" />
         <Property Name="title" Type="Edm.String" />
+        <Property Name="unifiedDomainDirectAccessUrl" Type="Edm.String" />
+        <Property Name="unifiedDomainWebDavUrl" Type="Edm.String" />
         <Property Name="uploadSession" Type="oneDrive.uploadSession" />
         <Property Name="vault" Type="oneDrive.vault" />
         <Property Name="video" Type="oneDrive.video" />
@@ -2968,6 +2973,7 @@
       </EntityType>
       <EntityType Name="share" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="owner" Type="oneDrive.identitySet" />
+        <Property Name="package" Type="oneDrive.package" />
         <NavigationProperty Name="items" Type="Collection(oneDrive.item)" ContainsTarget="true" />
         <NavigationProperty Name="list" Type="oneDrive.list" ContainsTarget="true">
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
@@ -4464,7 +4470,12 @@
         <Property Name="reference" Type="oneDrive.itemReference" />
         <Property Name="sensitivityLabel" Type="Edm.String" />
         <Property Name="snippets" Type="Collection(oneDrive.CortexQueryResultSnippet)" />
+        <Property Name="knowledgeBaseEntities" Type="Collection(oneDrive.CortexQueryResultKnowledgeBaseEntity)" />
         <Property Name="webUrl" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CortexQueryResultKnowledgeBaseEntity" OpenType="true">
+        <Property Name="score" Type="Edm.Double" Nullable="false" />
+        <Property Name="simplifiedEntityString" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CortexQueryResultSnippet" OpenType="true">
         <Property Name="score" Type="Edm.Double" Nullable="false" />
@@ -6844,6 +6855,8 @@
       </ComplexType>
       <ComplexType Name="copilotInsightsParameters" OpenType="true">
         <Property Name="reportDuration" Type="Edm.Int32" />
+        <Property Name="agentsFound" Type="Edm.Int32" />
+        <Property Name="reportName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="customGroupParameters" OpenType="true">
         <Property Name="reportName" Type="Edm.String" />
@@ -7294,7 +7307,7 @@
         <Property Name="anchorId" Type="Edm.String" />
         <Property Name="choices" Type="Collection(Edm.String)" />
         <Property Name="isEnabled" Type="Edm.Boolean" />
-        <Property Name="inferenceModel" Type="Edm.String" />
+        <Property Name="customModelId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="autofillColumnSettings">
         <Property Name="scenarioName" Type="Edm.String" />
@@ -7759,6 +7772,11 @@
         <Member Name="Disabled" Value="2" />
         <Member Name="Installing" Value="3" />
       </EnumType>
+      <EnumType Name="SPDlpAccessScope" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="InternalUsersOnly" Value="1" />
+        <Member Name="IncludeExternalUsers" Value="2" />
+      </EnumType>
       <EnumType Name="SPCheckOutStatus">
         <Member Name="None" Value="0" />
         <Member Name="ShortTerm" Value="1" />
@@ -8072,7 +8090,6 @@
         <Member Name="multiClassClassifier" Value="16" />
         <Member Name="mixed" Value="32" />
         <Member Name="textPrebuilt" Value="64" />
-        <Member Name="azureAIInference" Value="128" />
         <Member Name="unknownFutureValue" Value="1073741824" />
       </EnumType>
       <EnumType Name="MachineLearningFlags">
