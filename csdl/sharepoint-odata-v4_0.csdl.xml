@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26002 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26009 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -267,7 +267,10 @@
         <Property Name="SignedDocId" Type="Edm.Guid" />
         <Property Name="Status" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="AgreementImportData" />
+      <ComplexType Name="AgreementImportData">
+        <Property Name="ExtractionPending" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UserConfirmationPending" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="AgreementLocationData">
         <Property Name="LibraryId" Type="Edm.String" />
         <Property Name="SiteId" Type="Edm.String" />
@@ -338,6 +341,7 @@
         <Property Name="SkipToken" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPAgreementsSite">
+        <Property Name="CreatedDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="Description" Type="Edm.String" />
         <Property Name="GroupId" Type="Edm.String" />
         <Property Name="LastModifiedDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
@@ -394,6 +398,11 @@
         <Property Name="Id" Type="Edm.String" />
         <Property Name="Name" Type="Edm.String" />
         <Property Name="Value" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CoAuthConfiguration">
+        <Property Name="SourceSessionId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="UpdateDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="UpdateReason" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ColumnSet" BaseType="SP.CardElement">
         <Property Name="columns" Type="Collection(SP.AdaptiveCardColumn)" />
@@ -1151,6 +1160,7 @@
         <Property Name="ExtractedText" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="MediaServiceUpdateParameters">
+        <Property Name="AgreementClauses" Type="Edm.String" />
         <Property Name="AIPLabelExtractionStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="ChiSquareDistribution" Type="Edm.String" />
         <Property Name="ClassificationResult" Type="SP.ClassificationResult" />
@@ -5833,6 +5843,12 @@
         <Parameter Name="this" Type="SP.Web" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Function>
+      <Action Name="MakeDocumentDraft" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+      </Action>
+      <Action Name="PublishAgreement" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+      </Action>
       <Action Name="PublishTemplate" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
         <Parameter Name="payload" Type="SP.PublishModernTemplatePayload" />
@@ -8751,6 +8767,9 @@
       <Annotations Target="SP.Publishing.DateTimeCustomProperty">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.GettyImage">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.PageMoveParams">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9760,6 +9779,18 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.AdditionalAccessStatusResponse">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.CoAuthConfiguration">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.CoAuthConfiguration/SourceSessionId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.CoAuthConfiguration/UpdateDate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.CoAuthConfiguration/UpdateReason">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.ColumnSet">
@@ -10932,6 +10963,51 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Created">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/DeliverDate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/ErrorMessage">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/ID">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Status">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/StatusCode">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetServerRelativeUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetSiteId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetSiteUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetUniqueId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetWebId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetWebServerRelativeUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Type">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub/AgreementWorkItems">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub/DefaultContentCenter">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -11236,48 +11312,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub/SyntexContext">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Created">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/DeliverDate">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/ErrorMessage">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/ID">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Status">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/StatusCode">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetServerRelativeUrl">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetSiteId">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetSiteUrl">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetUniqueId">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetWebId">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/TargetWebServerRelativeUrl">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem/Type">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub/WorkItems">
@@ -12488,6 +12522,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePage/CoAuthState">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SitePage/CoAuthTenantConfiguration">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SitePage/Collaborators">
@@ -13945,7 +13982,7 @@
       <Annotations Target="SP.Publishing.CampaignPublicationCollection()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.CampaignPublication)">
+      <Annotations Target="SP.Publishing.Amplify(SP.Publishing.CampaignPublication, SP.Publishing.AmplifyRequestParams)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.AmplifyHistory(SP.Publishing.CampaignPublication)">
@@ -13984,7 +14021,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.CampaignPublication, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.CampaignPublication, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.CampaignPublication)">
@@ -14065,6 +14102,18 @@
       <Annotations Target="SP.Publishing.Update(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyCancelSchedule(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyPublish(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifySchedule(SP.Publishing.CampaignPublication, Edm.DateTimeOffset)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyValidate(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.ApproveApprovalRequest(SP.Publishing.CampaignPublication, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14072,6 +14121,15 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.CancelSchedulePublication(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.CanPerformAmplifyCancelSchedule(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.CanPerformAmplifyPublish(SP.Publishing.CampaignPublication)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.CanPerformAmplifySchedule(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.CreateApprovalRequest(SP.Publishing.CampaignPublication, SP.Publishing.ApprovalRequestCreationInfo)">
@@ -14087,9 +14145,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.LoadMailDraft(SP.Publishing.CampaignPublication, SP.Publishing.CampaignPublicationLoadMailDraftParam)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Publishing.Prepare(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.PublishAsBot(SP.Publishing.CampaignPublication, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Edm.String)">
@@ -14117,9 +14172,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.UpdateSharePointPublishingStatus(SP.Publishing.CampaignPublication, Edm.String, Edm.String, Edm.Int32, Edm.Int32)">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.Publishing.Validate(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.CommunicationSite()">
@@ -14188,7 +14240,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.FeedVideoPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.FeedVideoPage, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.FeedVideoPage, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.FeedVideoPage)">
@@ -14347,7 +14399,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.RepostPage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.RepostPage, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.RepostPage, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.RepostPage)">
@@ -14485,7 +14537,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.SitePage3D)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.SitePage3D, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.SitePage3D, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.SitePage3D)">
@@ -14662,7 +14714,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.SitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.SitePage, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.SitePage, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.SitePage)">
@@ -14800,6 +14852,9 @@
       <Annotations Target="SP.Publishing.PagesInLibByName(SP.Publishing.SitePageService, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.ReportGettyImages(SP.Publishing.SitePageService, Collection(SP.Publishing.GettyImage))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.Update(SP.Publishing.SitePageService)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14854,7 +14909,7 @@
       <Annotations Target="SP.Publishing.DiscardPage(SP.Publishing.TopicSitePage)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.TopicSitePage, SP.Publishing.SitePageAuthoringMetadata)">
+      <Annotations Target="SP.Publishing.ExtendSessionCoAuth(SP.Publishing.TopicSitePage, SP.Publishing.SitePageAuthoringMetadata, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.GetDependencyMetadata(SP.Publishing.TopicSitePage)">
@@ -17415,6 +17470,7 @@
       <EntityType Name="SPMachineLearningHub">
         <Property Name="IsDefaultContentCenter" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MachineLearningCaptureEnabled" Type="Edm.Boolean" Nullable="false" />
+        <NavigationProperty Name="AgreementWorkItems" Type="Collection(Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem)" ContainsTarget="true" />
         <NavigationProperty Name="DefaultContentCenter" Type="Microsoft.Office.Server.ContentCenter.DefaultContentCenterSiteInfo" ContainsTarget="true" />
         <NavigationProperty Name="MachineLearningEnabled" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningEnabled" ContainsTarget="true" />
         <NavigationProperty Name="Models" Type="Collection(Microsoft.Office.Server.ContentCenter.SPMachineLearningModel)" ContainsTarget="true" />
@@ -17422,6 +17478,21 @@
         <NavigationProperty Name="Samples" Type="Collection(Microsoft.Office.Server.ContentCenter.SPMachineLearningSample)" ContainsTarget="true" />
         <NavigationProperty Name="SyntexContext" Type="Microsoft.Office.Server.ContentCenter.SyntexContext" ContainsTarget="true" />
         <NavigationProperty Name="WorkItems" Type="Collection(Microsoft.Office.Server.ContentCenter.SPMachineLearningWorkItem)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="SPMachineLearningWorkItem">
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="DeliverDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ErrorMessage" Type="Edm.String" />
+        <Property Name="ID" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Status" Type="Edm.String" />
+        <Property Name="StatusCode" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TargetServerRelativeUrl" Type="Edm.String" />
+        <Property Name="TargetSiteId" Type="Edm.Guid" />
+        <Property Name="TargetSiteUrl" Type="Edm.String" />
+        <Property Name="TargetUniqueId" Type="Edm.Guid" />
+        <Property Name="TargetWebId" Type="Edm.Guid" />
+        <Property Name="TargetWebServerRelativeUrl" Type="Edm.String" />
+        <Property Name="Type" Type="Edm.Guid" Nullable="false" />
       </EntityType>
       <EntityType Name="SPMachineLearningModel">
         <Property Name="AIBuilderHybridModelType" Type="Edm.String" />
@@ -17520,21 +17591,6 @@
         <Property Name="SyntexAIBuilderEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SyntexDocumentUnderstandingEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SyntexPrebuiltEnabled" Type="Edm.Boolean" Nullable="false" />
-      </EntityType>
-      <EntityType Name="SPMachineLearningWorkItem">
-        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="DeliverDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="ErrorMessage" Type="Edm.String" />
-        <Property Name="ID" Type="Edm.Guid" Nullable="false" />
-        <Property Name="Status" Type="Edm.String" />
-        <Property Name="StatusCode" Type="Edm.Int32" Nullable="false" />
-        <Property Name="TargetServerRelativeUrl" Type="Edm.String" />
-        <Property Name="TargetSiteId" Type="Edm.Guid" />
-        <Property Name="TargetSiteUrl" Type="Edm.String" />
-        <Property Name="TargetUniqueId" Type="Edm.Guid" />
-        <Property Name="TargetWebId" Type="Edm.Guid" />
-        <Property Name="TargetWebServerRelativeUrl" Type="Edm.String" />
-        <Property Name="Type" Type="Edm.Guid" Nullable="false" />
       </EntityType>
       <EntityType Name="SPMachineLearningModelEntityData">
         <Property Name="Accuracy" Type="Edm.Single" />
@@ -23257,6 +23313,13 @@
       </ComplexType>
       <ComplexType Name="RepostPageFieldsData" BaseType="SP.Publishing.SitePageFieldsData" />
       <ComplexType Name="FeedVideoPageFieldsData" BaseType="SP.Publishing.RepostPageFieldsData" />
+      <ComplexType Name="GettyImage">
+        <Property Name="ImageId" Type="Edm.String" />
+        <Property Name="ImageUrl" Type="Edm.String" />
+        <Property Name="InsertionISOTimestamp" Type="Edm.String" />
+        <Property Name="PrimaryId" Type="Edm.String" />
+        <Property Name="SecondaryId" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ViewData">
         <Property Name="TotalHits" Type="Edm.Int32" Nullable="false" />
         <Property Name="TotalUsers" Type="Edm.Int32" Nullable="false" />
@@ -23623,6 +23686,11 @@
         <Property Name="CentralAssetRepository" Type="Microsoft.SharePoint.Administration.OrgAssets" />
         <Property Name="OrgAssets" Type="Microsoft.SharePoint.Administration.OrgAssets" />
       </ComplexType>
+      <EntityType Name="AllowanceCheckResult">
+        <Property Name="Allowed" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ErrorReason" Type="Edm.String" />
+        <Property Name="ErrorCode" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="AnnouncementsController" />
       <EntityType Name="SitePageMetadata">
         <Key>
@@ -23685,6 +23753,7 @@
         <Property Name="CanvasJson1" Type="Edm.String" />
         <Property Name="CheckIn" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CoAuthState" Type="SP.Publishing.SitePageCoAuthState" />
+        <Property Name="CoAuthTenantConfiguration" Type="SP.CoAuthConfiguration" />
         <Property Name="Collaborators" Type="Collection(SP.Publishing.SitePageCollaborator)" />
         <Property Name="CreationMode" Type="Edm.Int32" Nullable="false" />
         <Property Name="IsLikedByCurrentUser" Type="Edm.Boolean" Nullable="false" />
@@ -24012,7 +24081,8 @@
       </Function>
       <Action Name="Amplify" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
-        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+        <Parameter Name="request" Type="SP.Publishing.AmplifyRequestParams" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyAnywhereResults" />
       </Action>
       <Action Name="AmplifyHistory" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
@@ -24069,6 +24139,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -24190,6 +24261,23 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
       </Action>
+      <Action Name="AmplifyCancelSchedule" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+      </Action>
+      <Action Name="AmplifyPublish" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+      </Action>
+      <Action Name="AmplifySchedule" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="publishStartDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+      </Action>
+      <Action Name="AmplifyValidate" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+      </Action>
       <Action Name="ApproveApprovalRequest" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="comment" Type="Edm.String" />
@@ -24202,6 +24290,18 @@
       <Action Name="CancelSchedulePublication" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <ReturnType Type="SP.Publishing.SchedulePublicationResponse" />
+      </Action>
+      <Action Name="CanPerformAmplifyCancelSchedule" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="SP.Publishing.AllowanceCheckResult" />
+      </Action>
+      <Action Name="CanPerformAmplifyPublish" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="SP.Publishing.AllowanceCheckResult" />
+      </Action>
+      <Action Name="CanPerformAmplifySchedule" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="SP.Publishing.AllowanceCheckResult" />
       </Action>
       <Action Name="CreateApprovalRequest" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
@@ -24224,10 +24324,6 @@
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="requestParam" Type="SP.Publishing.CampaignPublicationLoadMailDraftParam" />
         <ReturnType Type="SP.Publishing.CampaignPublicationMailDraftData" />
-      </Action>
-      <Action Name="Prepare" IsBound="true">
-        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
-        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
       </Action>
       <Action Name="PublishAsBot" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
@@ -24278,10 +24374,6 @@
         <Parameter Name="sharePointPublishingStatus" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="sharePointPublishingErrorCode" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
-      </Action>
-      <Action Name="Validate" IsBound="true">
-        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
-        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
       </Action>
       <Function Name="CommunicationSite">
         <ReturnType Type="SP.Publishing.CommunicationSite" />
@@ -24373,6 +24465,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.FeedVideoPage" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -24670,6 +24763,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RepostPage" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -24968,6 +25062,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage3D" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -25248,6 +25343,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePage" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -25426,6 +25522,11 @@
         <Parameter Name="name" Type="Edm.String" />
         <ReturnType Type="Collection(SP.Publishing.SitePage)" />
       </Function>
+      <Action Name="ReportGettyImages" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePageService" />
+        <Parameter Name="images" Type="Collection(SP.Publishing.GettyImage)" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePageService" />
       </Action>
@@ -25546,6 +25647,7 @@
       <Action Name="ExtendSessionCoAuth" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.TopicSitePage" />
         <Parameter Name="authoringMetadata" Type="SP.Publishing.SitePageAuthoringMetadata" />
+        <Parameter Name="connectivityUpdateReason" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.Publishing.SitePageCoAuthState" />
       </Action>
       <Function Name="GetDependencyMetadata" IsBound="true" IsComposable="true">
@@ -26576,11 +26678,7 @@
       <ComplexType Name="SiteMoveServiceInfo">
         <Property Name="ServiceCapabilities" Type="Collection(Edm.Int32)" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="SiteRelocationJobManagementServiceInfo">
-        <Property Name="ServiceCapabilities" Type="Collection(Edm.Int32)" Nullable="false" />
-      </ComplexType>
       <EntityType Name="SiteMoveService" />
-      <EntityType Name="SiteRelocationJobManagementService" />
       <Function Name="SiteMoveService">
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
@@ -26727,23 +26825,6 @@
       <Action Name="UnlockSiteOnFailure" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="originalLockFlags" Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Function Name="SiteRelocationJobManagementService">
-        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
-      </Function>
-      <Action Name="EnqueueSiteRelocationJob" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
-        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="siteUrl" Type="Edm.String" />
-        <Parameter Name="sourceDatabaseId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="targetDatabaseId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="siteMoveFlags" Type="Edm.Int32" Nullable="false" />
-        <Parameter Name="preferredStartTimeInUtc" Type="Edm.DateTimeOffset" Nullable="false" />
-      </Action>
-      <Action Name="GetServiceInfo" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementService" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteRelocationJobManagementServiceInfo" />
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Yammer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -29165,11 +29246,13 @@
       <ComplexType Name="CancelItemApprovalRequestPayload">
         <Property Name="approvalId" Type="Edm.String" />
         <Property Name="itemId" Type="Edm.String" />
+        <Property Name="makeDocumentDraft" Type="Edm.Boolean" Nullable="false" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CreateItemApprovalRequestPayload" BaseType="SP.ApprovalsCreateRequestParameters">
         <Property Name="approvalConfig" Type="Edm.String" />
+        <Property Name="restrictDocEdit" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="FieldCreationParameters">
         <Property Name="DataSource" Type="Edm.String" />
@@ -29827,6 +29910,7 @@
       </ComplexType>
       <ComplexType Name="MainAccessInformation">
         <Property Name="mainLink" Type="SP.Sharing.MainLinkInfo" />
+        <Property Name="mainLinkDefaults" Type="SP.Sharing.MainLinkInfo" />
         <Property Name="sharingSettings" Type="SP.Sharing.ItemSharingSettings" />
       </ComplexType>
       <ComplexType Name="MainLinkInfo">
@@ -32101,6 +32185,7 @@
         <Property Name="RootSiteUrl" Type="Edm.String" />
         <Property Name="SearchResolveExactEmailOrUPN" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SelfServiceSiteCreationDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="SharePointAddInsBlocked" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SharePointAddInsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SharingAllowedDomainList" Type="Edm.String" />
         <Property Name="SharingBlockedDomainList" Type="Edm.String" />
@@ -32494,6 +32579,11 @@
       <Function Name="TenantAdminSettingsService">
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminSettingsService" />
       </Function>
+      <Action Name="GetTenantAdminSharePointSettingsData" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminSettingsService" />
+        <Parameter Name="category" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SettingDataProperty)" />
+      </Action>
       <Function Name="GetTenantSharingStatus" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.TenantAdminSettingsService" />
         <ReturnType Type="Edm.Int32" Nullable="false" />
@@ -33747,6 +33837,10 @@
         <Parameter Name="includeSmartGestures" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="force" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SpoOperation" />
+      </Action>
+      <Action Name="UnArchiveContainer" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="containerId" Type="Edm.String" />
       </Action>
       <Action Name="UnarchiveSiteById" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />

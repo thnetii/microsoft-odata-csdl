@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26002 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26009 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -360,6 +360,7 @@
         <NavigationProperty Name="diagnosticLists" Type="Collection(oneDrive.diagnosticList)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticPages" Type="Collection(oneDrive.diagnosticPage)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteCollectionFeatures" Type="Collection(oneDrive.diagnosticFeature)" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticSiteComplianceTags" Type="Collection(oneDrive.diagnosticComplianceTag)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteFeatures" Type="Collection(oneDrive.diagnosticFeature)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticTermStores" Type="Collection(oneDrive.diagnosticTermStore)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUsers" Type="Collection(oneDrive.diagnosticUser)" ContainsTarget="true" />
@@ -683,6 +684,7 @@
         <Property Name="writeSecurity" Type="Edm.Int32" />
         <NavigationProperty Name="diagnosticColumns" Type="Collection(oneDrive.diagnosticColumn)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticItems" Type="Collection(oneDrive.diagnosticItem)" ContainsTarget="true" />
+        <NavigationProperty Name="diagnosticListComplianceTags" Type="Collection(oneDrive.diagnosticComplianceTag)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticPages" Type="Collection(oneDrive.diagnosticPage)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticUsers" Type="Collection(oneDrive.diagnosticUser)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticViews" Type="Collection(oneDrive.diagnosticView)" ContainsTarget="true" />
@@ -904,7 +906,7 @@
         <Key>
           <PropertyRef Name="id" />
         </Key>
-        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="title" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
@@ -975,6 +977,14 @@
         <Property Name="policyScenario" Type="Edm.String" />
         <Property Name="serverRelativeUrl" Type="Edm.String" />
         <Property Name="workLoad" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="diagnosticComplianceTag" OpenType="true">
+        <Key>
+          <PropertyRef Name="labelName" />
+        </Key>
+        <Property Name="labelName" Type="Edm.String" Nullable="false" />
+        <Property Name="labelCount" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="diagnosticCrawlEntry" OpenType="true">
@@ -1343,6 +1353,7 @@
         <NavigationProperty Name="featureSettings" Type="oneDrive.featureSettings" ContainsTarget="true" />
         <NavigationProperty Name="restorableSites" Type="Collection(oneDrive.restorableSite)" ContainsTarget="true" />
         <NavigationProperty Name="restoreSessions" Type="Collection(oneDrive.restoreSession)" ContainsTarget="true" />
+        <NavigationProperty Name="browseSessions" Type="Collection(oneDrive.browseSession)" ContainsTarget="true" />
         <NavigationProperty Name="v1" Type="oneDrive.v1" ContainsTarget="true" />
         <NavigationProperty Name="restorePoints" Type="Collection(oneDrive.restorePoint)" ContainsTarget="true" />
         <NavigationProperty Name="protectionUnits" Type="Collection(oneDrive.protectionUnit)" ContainsTarget="true" />
@@ -1385,6 +1396,14 @@
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="vroomCorrelationId" Type="Edm.Guid" />
         <Property Name="restoreType" Type="oneDrive.RestoreType" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="browseSession" OpenType="true">
+        <Key>
+          <PropertyRef Name="siteId" />
+        </Key>
+        <Property Name="siteId" Type="Edm.String" Nullable="false" />
+        <Property Name="restorePointId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="v1" OpenType="true">
@@ -1439,6 +1458,18 @@
         <Property Name="BaseUri" Type="Edm.String" />
         <Property Name="UserPrincipalName" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="workspace" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+      </EntityType>
+      <EntityType Name="agreementsSolution" OpenType="true">
+        <NavigationProperty Name="workspaces" Type="Collection(oneDrive.workspace)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="deletedStorageContainer" OpenType="true">
         <Key>
@@ -3446,6 +3477,7 @@
         <Property Name="sitePermissionsParameters" Type="oneDrive.sitePermissionsParameters" />
         <Property Name="copilotInsightsParameters" Type="oneDrive.copilotInsightsParameters" />
         <Property Name="eduSiteQuotaParameters" Type="oneDrive.eduSiteQuotaParameters" />
+        <Property Name="permissionsParameters" Type="oneDrive.permissionsParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -4415,6 +4447,7 @@
         <Property Name="restoredSiteId" Type="Edm.String" />
         <Property Name="restoredSiteKey" Type="Edm.String" />
         <Property Name="blobSourceSiteId" Type="Edm.String" />
+        <Property Name="restorePointId" Type="Edm.String" />
         <Property Name="restoredArtifactId" Type="Edm.String" />
         <Property Name="restoredArtifactType" Type="oneDrive.ArtifactType" />
         <Property Name="artifactRestoreStatus" Type="oneDrive.ArtifactRestoreStatus" />
@@ -4555,6 +4588,7 @@
       </ComplexType>
       <ComplexType Name="agentQuery" OpenType="true">
         <Property Name="query" Type="Edm.String" />
+        <Property Name="flights" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="assignedSensitivityLabel" OpenType="true">
         <Property Name="labelId" Type="Edm.String" />
@@ -6554,6 +6588,23 @@
       <ComplexType Name="pendingOperations" OpenType="true">
         <Property Name="pendingContentUpdate" Type="oneDrive.pendingContentUpdate" />
       </ComplexType>
+      <ComplexType Name="permissionsParameters" OpenType="true">
+        <Property Name="reportName" Type="Edm.String" />
+        <Property Name="reportType" Type="Edm.String" />
+        <Property Name="privacySetting" Type="Edm.String" />
+        <Property Name="labelId" Type="Edm.String" />
+        <Property Name="userIdList" Type="Collection(Edm.String)" />
+        <Property Name="siteList" Type="Collection(Edm.String)" />
+        <Property Name="labelIds" Type="Collection(Edm.String)" />
+        <Property Name="siteTemplates" Type="Collection(Edm.String)" />
+        <Property Name="reportDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="permissionsKey" Type="Edm.String" />
+        <Property Name="userLimit" Type="Edm.Int64" />
+        <Property Name="countOfSitesInTenant" Type="Edm.Int64" />
+        <Property Name="countOfSitesInReport" Type="Edm.Int64" />
+        <Property Name="totalSiteCount" Type="Edm.Int64" />
+        <Property Name="filteredSiteCount" Type="Edm.Int64" />
+      </ComplexType>
       <ComplexType Name="photo" OpenType="true">
         <Property Name="alternateTakenDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="cameraMake" Type="Edm.String" />
@@ -8414,6 +8465,7 @@
         <Member Name="RestrictContentOrgWideSearchUsage" Value="13" />
         <Member Name="CopilotInsights" Value="14" />
         <Member Name="EduSiteQuota" Value="15" />
+        <Member Name="Permissions" Value="16" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
@@ -10545,8 +10597,10 @@
         <EntitySet Name="restorableSites" EntityType="oneDrive.restorableSite" />
         <EntitySet Name="odbUsers" EntityType="oneDrive.odbUser" />
         <EntitySet Name="restoreSessions" EntityType="oneDrive.restoreSession" />
+        <EntitySet Name="browseSessions" EntityType="oneDrive.browseSession" />
         <EntitySet Name="restorePoints" EntityType="oneDrive.restorePoint" />
         <EntitySet Name="protectionUnits" EntityType="oneDrive.protectionUnit" />
+        <EntitySet Name="workspaces" EntityType="oneDrive.workspace" />
         <EntitySet Name="deletedStorageContainers" EntityType="oneDrive.deletedStorageContainer" />
         <EntitySet Name="orglinks" EntityType="oneDrive.orglink" />
         <EntitySet Name="billingEvents" EntityType="oneDrive.billingEvent" />
@@ -10586,8 +10640,10 @@
         <Singleton Name="restorableSite" Type="oneDrive.restorableSite" />
         <Singleton Name="odbUser" Type="oneDrive.odbUser" />
         <Singleton Name="restoreSession" Type="oneDrive.restoreSession" />
+        <Singleton Name="browseSession" Type="oneDrive.browseSession" />
         <Singleton Name="restorePoint" Type="oneDrive.restorePoint" />
         <Singleton Name="protectionUnit" Type="oneDrive.protectionUnit" />
+        <Singleton Name="agreementsSolution" Type="oneDrive.agreementsSolution" />
         <Singleton Name="policyAutomation" Type="oneDrive.policyAutomation" />
         <Singleton Name="unifiedStorageQuotaEligible" Type="oneDrive.unifiedStorageQuotaEligibility" />
         <Singleton Name="topEntities" Type="oneDrive.unifiedStorageQuotaTopEntities" />
