@@ -3,10 +3,10 @@
 |-:|-|
 |**API name**|`shared_ramquestactions`|
 |**Tier**|Premium|
-|**Version**|`releases/v1.0.1725\1.0.1725.4008`|
+|**Version**|`releases/v1.0.1745\1.0.1745.4169`|
 |**Publisher**|**Ramquest Software, Inc**|
 |**Created**|Thu Sep 12 2024|
-|**Changed**|Mon Feb 24 2025|
+|**Changed**|Thu Apr 24 2025|
 
 ## Description
 This connector streamlines your RamQuest title production software solution processes, whether CCE or Horizon, by offering a suite of actions which can be performed from order retrieval and creation to document and task management. 
