@@ -1460,6 +1460,28 @@
         <Property Name="UserPrincipalName" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="documentPackage" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="state" Type="oneDrive.AgreementsSolutionDocumentPackageState" />
+        <Property Name="referenceNumber" Type="Edm.String" />
+        <NavigationProperty Name="documents" Type="Collection(oneDrive.document)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="document">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="fieldDefinitions" Type="Collection(oneDrive.FieldDefinition)" />
+        <Property Name="fieldValues" Type="Collection(oneDrive.fieldValue)" />
+        <Property Name="documentType" Type="oneDrive.AgreementsSolutionDocumentType" />
+        <Property Name="isActive" Type="Edm.Boolean" />
+        <Property Name="url" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="template" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -1468,6 +1490,8 @@
         <Property Name="name" Type="Edm.String" />
         <Property Name="state" Type="Edm.String" />
         <Property Name="isPublished" Type="Edm.Boolean" />
+        <Property Name="url" Type="Edm.String" />
+        <Property Name="fieldDefinitions" Type="Collection(oneDrive.FieldDefinition)" />
       </EntityType>
       <EntityType Name="agreementsSolution" OpenType="true">
         <NavigationProperty Name="workspaces" Type="Collection(oneDrive.workspace)" ContainsTarget="true" />
@@ -4460,6 +4484,9 @@
         <Property Name="restoredSiteId" Type="Edm.String" />
         <Property Name="restoredSiteKey" Type="Edm.String" />
         <Property Name="blobSourceSiteId" Type="Edm.String" />
+        <Property Name="browseSessionId" Type="Edm.String" />
+        <Property Name="webId" Type="Edm.String" />
+        <Property Name="listId" Type="Edm.String" />
         <Property Name="restorePointId" Type="Edm.String" />
         <Property Name="restoredArtifactId" Type="Edm.String" />
         <Property Name="restoredArtifactType" Type="oneDrive.ArtifactType" />
@@ -4473,6 +4500,22 @@
         <Property Name="restoreEndTime" Type="Edm.DateTimeOffset" />
         <Property Name="error" Type="oneDrive.error" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="FieldDefinition" OpenType="true">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="valueSpecification" Type="oneDrive.AgreementsSolutionFieldValueSpecification" />
+        <Property Name="isReadOnly" Type="Edm.Boolean" />
+        <Property Name="isRequired" Type="Edm.Boolean" />
+        <Property Name="defaultValue" Type="oneDrive.fieldValue" />
+      </ComplexType>
+      <ComplexType Name="fieldValuesSet" OpenType="true" />
+      <ComplexType Name="fieldValue" OpenType="true">
+        <Property Name="stringValue" Type="Edm.String" />
+        <Property Name="numericValue" Type="Edm.Double" />
+        <Property Name="booleanValue" Type="Edm.Boolean" />
+        <Property Name="dateTimeOffsetValue" Type="Edm.DateTimeOffset" />
+        <Property Name="dateValue" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="urlSigning" OpenType="true">
         <Property Name="p1" Type="Edm.String" />
@@ -7395,6 +7438,23 @@
         <Property Name="message" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="AgreementsSolutionFieldValueSpecification">
+        <Property Name="valueType" Type="oneDrive.AgreementsSolutionFieldValueType" />
+        <Property Name="isCustomValueAllowed" Type="Edm.Boolean" />
+        <Property Name="sourceInfo" Type="oneDrive.AgreementsSolutionFieldValueSourceInfo" />
+        <Property Name="tableSpecification" Type="oneDrive.AgreementsSolutionTableValueSpecification" />
+      </ComplexType>
+      <ComplexType Name="AgreementsSolutionFieldValueSourceInfo" />
+      <ComplexType Name="AgreementsSolutionTableValueSpecification">
+        <Property Name="ColumnCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="columnValuesCharacteristics" Type="Collection(oneDrive.AgreementsSolutionTableColumnValueSpecification)" />
+      </ComplexType>
+      <ComplexType Name="AgreementsSolutionTableColumnValueSpecification">
+        <Property Name="Header" Type="Edm.String" />
+        <Property Name="ValueType" Type="oneDrive.AgreementsSolutionFieldValueType" Nullable="false" />
+        <Property Name="IsCustomValueAllowed" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ColumnValueSourceInfo" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <EntityType Name="storageContainerTypeAppPermissions">
         <Key>
           <PropertyRef Name="id" />
@@ -8131,6 +8191,37 @@
         <Member Name="None" Value="1" />
         <Member Name="Active" Value="2" />
       </EnumType>
+      <EnumType Name="AgreementsSolutionDocumentPackageState">
+        <Member Name="draft" Value="0" />
+        <Member Name="published" Value="1" />
+        <Member Name="inReview" Value="2" />
+        <Member Name="reviewed" Value="3" />
+        <Member Name="inApproval" Value="4" />
+        <Member Name="approved" Value="5" />
+        <Member Name="inESign" Value="6" />
+        <Member Name="eSigned" Value="7" />
+        <Member Name="active" Value="8" />
+        <Member Name="terminated" Value="9" />
+        <Member Name="expired" Value="10" />
+        <Member Name="UnknownFutureValue" Value="11" />
+      </EnumType>
+      <EnumType Name="AgreementsSolutionFieldValueType">
+        <Member Name="singleLineOfText" Value="0" />
+        <Member Name="multiLinesOfText" Value="1" />
+        <Member Name="number" Value="2" />
+        <Member Name="dateTimeOffset" Value="3" />
+        <Member Name="date" Value="4" />
+        <Member Name="table" Value="5" />
+        <Member Name="email" Value="6" />
+        <Member Name="hyperLink" Value="7" />
+        <Member Name="Image" Value="8" />
+        <Member Name="UnknownFutureValue" Value="9" />
+      </EnumType>
+      <EnumType Name="AgreementsSolutionDocumentType">
+        <Member Name="primaryDocument" Value="0" />
+        <Member Name="supportingDocument" Value="1" />
+        <Member Name="unknownFutureValue" Value="3" />
+      </EnumType>
       <EnumType Name="DeletedStorageContainerStatus">
         <Member Name="inactive" Value="0" />
         <Member Name="active" Value="1" />
@@ -8156,6 +8247,7 @@
         <Member Name="M365DeclarativeAgent" Value="11" />
         <Member Name="M365CopilotActions" Value="12" />
         <Member Name="HighVolumeEmail" Value="13" />
+        <Member Name="SPOServicePrioritization" Value="14" />
       </EnumType>
       <EnumType Name="StorageContainerStatus">
         <Member Name="inactive" Value="0" />
@@ -9053,6 +9145,12 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.AgentQueryResult" />
       </Action>
+      <Action Name="createDocumentPackage" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.template" />
+        <Parameter Name="documentName" Type="Edm.String" />
+        <Parameter Name="fieldValues" Type="oneDrive.fieldValuesSet" />
+        <ReturnType Type="oneDrive.documentPackage" />
+      </Action>
       <Action Name="setAutoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
         <Parameter Name="entity" Type="Edm.String" />
@@ -9196,6 +9294,16 @@
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
         <Parameter Name="format" Type="Edm.String" />
         <Parameter Name="sitePermissionsParameters" Type="oneDrive.sitePermissionsParameters" />
+        <Parameter Name="workLoad" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.analyticsReport" />
+      </Action>
+      <Action Name="createPermissionsReport" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.analyticsReport)" />
+        <Parameter Name="entity" Type="Edm.String" />
+        <Parameter Name="format" Type="Edm.String" />
+        <Parameter Name="permissionsParameters" Type="oneDrive.permissionsParameters" />
         <Parameter Name="workLoad" Type="Edm.String">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
@@ -9793,6 +9901,13 @@
         <Parameter Name="origin" Type="Edm.String" />
         <Parameter Name="anonymousToken" Type="Edm.String" />
         <ReturnType Type="oneDrive.augLoopResponse" />
+      </Action>
+      <Action Name="validateSPEContext" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.augLoopApis" />
+        <Parameter Name="stateId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="containerTypeId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="applicationId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="getAppProofAuthorizationCode" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.privateApis" />
@@ -10646,6 +10761,7 @@
         <EntitySet Name="browseSessions" EntityType="oneDrive.browseSession" />
         <EntitySet Name="restorePoints" EntityType="oneDrive.restorePoint" />
         <EntitySet Name="protectionUnits" EntityType="oneDrive.protectionUnit" />
+        <EntitySet Name="documentPackages" EntityType="oneDrive.documentPackage" />
         <EntitySet Name="templates" EntityType="oneDrive.template" />
         <EntitySet Name="workspaces" EntityType="oneDrive.workspace" />
         <EntitySet Name="deletedStorageContainers" EntityType="oneDrive.deletedStorageContainer" />
