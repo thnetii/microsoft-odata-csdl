@@ -26,6 +26,100 @@
     "application/json"
   ],
   "paths": {
+    "/{connectionId}/getLibraries": {
+      "get": {
+        "summary": "Get libraries",
+        "description": "Gets a list of libraries to which the user has access.",
+        "tags": [
+          "Library"
+        ],
+        "x-im-controller": "library.controllers",
+        "operationId": "GetLibraries",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "showAllLibraries",
+            "in": "query",
+            "type": "boolean",
+            "default": false,
+            "x-ms-visibility": "internal",
+            "required": false
+          },
+          {
+            "name": "hidePreferredLibrary",
+            "in": "query",
+            "type": "boolean",
+            "default": false,
+            "x-ms-visibility": "internal",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of libraries.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "Indicates the list of libraries to which the user has access.",
+                  "items": {
+                    "type": "object",
+                    "title": "Each Library",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": "ID",
+                        "description": "Indicates the name of the library."
+                      },
+                      "display_name": {
+                        "type": "string",
+                        "title": "Name",
+                        "description": "Indicates the display name of the library."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "worksite",
+                          "linksite"
+                        ],
+                        "title": "Type",
+                        "description": "Indicates the type of the library. Possible values are 'worksite' or 'linksite'."
+                      },
+                      "is_hidden": {
+                        "type": "boolean",
+                        "title": "Is Hidden",
+                        "description": "Indicates if the library is hidden."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "display_name",
+                      "type",
+                      "is_hidden"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#get-libraries"
+        }
+      }
+    },
     "/{connectionId}/getTrackersForWorkspace": {
       "get": {
         "summary": "Get trackers for workspace",
@@ -53,6 +147,14 @@
             "x-ms-summary": "Workspace ID",
             "description": "Specifies the ID of the workspace. For example, 'ACTIVE_US!427'.",
             "x-ms-visibility": "important"
+          },
+          {
+            "in": "query",
+            "name": "showAllTrackers",
+            "type": "boolean",
+            "default": false,
+            "x-ms-visibility": "internal",
+            "required": false
           }
         ],
         "responses": {
@@ -1186,6 +1288,344 @@
           "url": "https://docs.microsoft.com/connectors/imanagetracker/#clear-a-task-field"
         }
       }
+    },
+    "/{connectionId}/getTrackerImportTypes": {
+      "get": {
+        "summary": "Get tracker import types",
+        "description": "Gets a list of import types for tracker.",
+        "tags": [
+          "General"
+        ],
+        "x-im-controller": "getTrackerImportTypes.controllers",
+        "operationId": "GetTrackerImportTypes",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "display_name": {
+                        "title": "Display Name",
+                        "description": "Indicates the display name of the import type.",
+                        "type": "string"
+                      },
+                      "import_type": {
+                        "title": "Import Type",
+                        "description": "Indicates the tracker import type.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "display_name",
+                      "import_type"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#get-tracker-import-types"
+        }
+      }
+    },
+    "/{connectionId}/getTrackerImportOptionsSchema": {
+      "get": {
+        "summary": "Get options for tracker import",
+        "description": "Gets dynamic schema for tracker import options.",
+        "tags": [
+          "General"
+        ],
+        "x-im-controller": "getTrackerImportOptionsSchema.controllers",
+        "operationId": "GetTrackerImportOptionsSchema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "import_type",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "Import Type",
+            "description": "Specifies the type of import for which the dynamic response schema is requested. Accepted values are 'tasks_only', 'fields_only' and 'tasks_and_fields'.",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#get-options-for-tracker-import"
+        }
+      }
+    },
+    "/{connectionId}/getAdditionalFieldIDsOptions": {
+      "get": {
+        "summary": "Get additional field IDs options",
+        "description": "Gets a dynamic list of additional field IDs to import, when 'Import Type' is 'Both Both tasks and fields'",
+        "tags": [
+          "General"
+        ],
+        "x-im-controller": "getAdditionalFieldIDsOptions.controllers",
+        "operationId": "GetAdditionalFieldIDsOptions",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "import_type",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "Import Type",
+            "description": "Specifies the type of import for which the dynamic response schema is requested. Accepted values are 'tasks_only', 'fields_only' and 'tasks_and_fields'.",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#get-additional-field-ids-options"
+        }
+      }
+    },
+    "/{connectionId}/getSchemaForImportTrackerResponse": {
+      "get": {
+        "summary": "Get schema for import tracker response",
+        "description": "Gets the dynamic schema for import tracker response.",
+        "tags": [
+          "General"
+        ],
+        "x-im-controller": "getSchemaForImportTrackerResponse.controllers",
+        "operationId": "GetSchemaForImportTrackerResponse",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "import_type",
+            "type": "string",
+            "required": true,
+            "x-ms-summary": "Import Type",
+            "description": "Specifies the type of import we want to perform. Possible values are 'tasks_only', 'fields_only' and 'tasks_and_fields'.",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#get-schema-for-import-tracker-response"
+        }
+      }
+    },
+    "/{connectionId}/importTracker": {
+      "post": {
+        "summary": "Import from trackers",
+        "description": "Imports tasks, fields, or both from tracker(s) of the source workspace to the destination workspace.",
+        "tags": [
+          "Tracker"
+        ],
+        "x-im-controller": "importTracker.controllers",
+        "operationId": "ImportTracker",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "source_workspace_id": {
+                  "type": "string",
+                  "title": "Source Workspace ID",
+                  "description": "Specifies the workspace ID of the source tracker.",
+                  "pattern": "^[^!]+![0-9]+$",
+                  "x-ms-visibility": "important"
+                },
+                "source_tracker_id": {
+                  "type": "string",
+                  "title": "Source Tracker ID",
+                  "description": "Specifies one or more source tracker IDs, separated by semicolons.",
+                  "minLength": 1,
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetTrackersForWorkspace",
+                    "value-collection": "data/trackers",
+                    "value-title": "name",
+                    "value-path": "_id",
+                    "parameters": {
+                      "workspaceId": {
+                        "parameter": "source_workspace_id"
+                      },
+                      "showAllTrackers": true
+                    }
+                  },
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetTrackersForWorkspace",
+                    "itemsPath": "data/trackers",
+                    "itemTitlePath": "name",
+                    "itemValuePath": "_id",
+                    "parameters": {
+                      "workspaceId": {
+                        "parameterReference": "body/source_workspace_id"
+                      },
+                      "showAllTrackers": {
+                        "value": true
+                      }
+                    }
+                  }
+                },
+                "destination_workspace_id": {
+                  "type": "string",
+                  "title": "Destination Workspace ID",
+                  "description": "Specifies the workspace ID of the destination tracker.",
+                  "pattern": "^[^!]+![0-9]+$",
+                  "x-ms-visibility": "important"
+                },
+                "import_type": {
+                  "title": "Import Type",
+                  "description": "Specifies the type of import.",
+                  "type": "string",
+                  "minLength": 1,
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetTrackerImportTypes",
+                    "value-title": "display_name",
+                    "value-path": "import_type",
+                    "value-collection": "data"
+                  },
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetTrackerImportTypes",
+                    "itemsPath": "data",
+                    "itemTitlePath": "display_name",
+                    "itemValuePath": "import_type"
+                  }
+                },
+                "options": {
+                  "x-ms-dynamic-schema": {
+                    "operationId": "GetTrackerImportOptionsSchema",
+                    "parameters": {
+                      "import_type": {
+                        "parameter": "import_type"
+                      }
+                    },
+                    "value-path": "data"
+                  },
+                  "x-ms-dynamic-properties": {
+                    "operationId": "GetTrackerImportOptionsSchema",
+                    "parameters": {
+                      "import_type": {
+                        "parameterReference": "body/import_type"
+                      }
+                    },
+                    "itemValuePath": "data"
+                  }
+                }
+              },
+              "required": [
+                "source_workspace_id",
+                "source_tracker_id",
+                "destination_workspace_id",
+                "import_type"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "x-ms-dynamic-schema": {
+                    "operationId": "GetSchemaForImportTrackerResponse",
+                    "parameters": {
+                      "import_type": {
+                        "parameter": "import_type"
+                      }
+                    },
+                    "value-path": "data"
+                  },
+                  "x-ms-dynamic-properties": {
+                    "operationId": "GetSchemaForImportTrackerResponse",
+                    "parameters": {
+                      "import_type": {
+                        "parameterReference": "body/import_type"
+                      }
+                    },
+                    "itemValuePath": "data"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/imanagetracker/#import-from-trackers"
+        }
+      }
     }
   },
   "definitions": {
@@ -1229,16 +1669,28 @@
           "title": "Owner Name",
           "description": "Indicates the name of the tracker owner.",
           "type": "string"
+        },
+        "tracker_url": {
+          "type": "string",
+          "title": "Tracker URL",
+          "description": "Indicates the shareable link for the tracker."
+        },
+        "basic_properties": {
+          "type": "string",
+          "title": "Basic Tracker Properties",
+          "description": "Indicates an embeddable '<span>' element that contains basic tracker properties."
         }
       },
       "required": [
         "_id",
+        "basic_properties",
         "context_work_id",
         "created_at",
         "last_updated_at",
         "name",
         "tracker_owner_work_id",
-        "tracker_owner_name"
+        "tracker_owner_name",
+        "tracker_url"
       ]
     },
     "TaskProfile": {
@@ -1326,12 +1778,18 @@
         },
         "task_url": {
           "title": "Task URL",
-          "description": "Indicates the sharable link of the task.",
+          "description": "Indicates the shareable link of the task.",
           "type": "string"
+        },
+        "basic_properties": {
+          "type": "string",
+          "title": "Basic Task Properties",
+          "description": "Indicates an embeddable '<span>' element that contains basic task properties."
         }
       },
       "required": [
         "_id",
+        "basic_properties",
         "title",
         "context_id",
         "context_work_id",
@@ -1517,16 +1975,28 @@
           "title": "Tracker Owner Name",
           "description": "Indicates the name of the tracker owner.",
           "type": "string"
+        },
+        "tracker_url": {
+          "type": "string",
+          "title": "Tracker URL",
+          "description": "Indicates the shareable link for the tracker."
+        },
+        "basic_properties": {
+          "type": "string",
+          "title": "Basic Tracker Properties",
+          "description": "Indicates an embeddable '<span>' element that contains basic tracker properties."
         }
       },
       "required": [
         "_id",
+        "basic_properties",
         "context_work_id",
         "created_at",
         "last_updated_at",
         "name",
         "tracker_owner_work_id",
-        "tracker_owner_name"
+        "tracker_owner_name",
+        "tracker_url"
       ]
     }
   },
