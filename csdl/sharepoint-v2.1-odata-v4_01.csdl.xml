@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26023 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26107 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1246,6 +1246,14 @@
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </NavigationProperty>
       </EntityType>
+      <EntityType Name="diagnosticSiteDeleteEvent" OpenType="true">
+        <Property Name="correlationId" Type="Edm.Guid" />
+        <Property Name="eventTimeUTC" Type="Edm.DateTimeOffset" />
+        <Property Name="hostName" Type="Edm.String" />
+        <Property Name="siteId" Type="Edm.Guid" />
+        <Property Name="siteUrl" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="diagnosticTenantRenameJob" OpenType="true">
         <Property Name="jobState" Type="Edm.String" />
         <Property Name="jobId" Type="Edm.Guid" />
@@ -1551,7 +1559,22 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="identity" Type="oneDrive.sharePointIdentitySet" />
+        <Property Name="objectId" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="objectId" />
+                    <PropertyValue Property="Name" PropertyPath="objectId" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
       </EntityType>
       <EntityType Name="billingEvent" OpenType="true">
         <Key>
@@ -3421,6 +3444,29 @@
         <Property Name="quotaType" Type="Edm.String" />
         <NavigationProperty Name="apps" Type="Collection(oneDrive.storageBreakdownPerApp)" ContainsTarget="true" />
       </EntityType>
+      <EntityType Name="testAlternateKeys" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="timestamp" Type="Edm.DateTimeOffset" />
+        <Property Name="type" Type="Edm.String" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="name" />
+                    <PropertyValue Property="Name" PropertyPath="name" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
+      </EntityType>
       <EntityType Name="serviceStorageQuotaBreakdown" BaseType="oneDrive.storageQuotaBreakdown" OpenType="true" />
       <EntityType Name="storageBreakdownPerApp" OpenType="true">
         <Key>
@@ -4054,6 +4100,12 @@
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="diagnosticPropertyValueSet" OpenType="true" />
+      <ComplexType Name="diagnosticSiteDeleteEventQuery" OpenType="true">
+        <Property Name="endDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="siteUrl" Type="Edm.String" />
+        <Property Name="startDateTime" Type="Edm.DateTimeOffset" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="blockGuestsAsSiteAdminPolicyFacet" OpenType="true">
         <Property Name="enabled" Type="Edm.Boolean" />
         <Property Name="override" Type="Edm.Boolean" />
@@ -4610,6 +4662,7 @@
         <Property Name="language" Type="Edm.String" />
         <Property Name="tag" Type="Edm.String" />
         <Property Name="value" Type="Edm.String" />
+        <Property Name="createdTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="CortexQueryResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
@@ -4630,6 +4683,8 @@
       <ComplexType Name="CortexQueryResultSnippet" OpenType="true">
         <Property Name="score" Type="Edm.Double" Nullable="false" />
         <Property Name="snippet" Type="Edm.String" />
+        <Property Name="index" Type="Edm.Int32" Nullable="false" />
+        <Property Name="embedding" Type="Collection(Edm.Single)" Nullable="false" />
       </ComplexType>
       <ComplexType Name="CortexResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
@@ -4928,6 +4983,7 @@
         <Property Name="isDisabled" Type="Edm.Boolean" />
         <Property Name="endpoint" Type="Edm.String" />
         <Property Name="modelDeploymentName" Type="Edm.String" />
+        <Property Name="analyzerId" Type="Edm.String" />
         <Property Name="uniqueName" Type="Edm.String" />
         <Property Name="uniqueId" Type="Edm.String" />
         <Property Name="azureResourceId" Type="Edm.String" />
@@ -4998,6 +5054,9 @@
         <Property Name="firstInteractiveContentOffset" Type="Edm.Duration" />
         <NavigationProperty Name="annotations" Type="Collection(oneDrive.interactivityAnnotation)" ContainsTarget="true" />
         <NavigationProperty Name="forms" Type="Collection(oneDrive.interactivityForm)" ContainsTarget="true" />
+      </ComplexType>
+      <ComplexType Name="agreementResults" OpenType="true">
+        <Property Name="results" Type="Collection(oneDrive.metasKeyStringPair)" />
       </ComplexType>
       <ComplexType Name="classificationResult" OpenType="true">
         <Property Name="contentTypeId" Type="Edm.String" />
@@ -5084,6 +5143,8 @@
         <Property Name="mediaServiceBillingMetadata" Type="Edm.String" />
         <Property Name="translatedLang" Type="Edm.String" />
         <Property Name="agreementClauses" Type="Edm.String" />
+        <Property Name="agreementResults" Type="oneDrive.agreementResults" />
+        <Property Name="generatedSnippetShortInstructions" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="metasKeyStringPair" OpenType="true">
         <Property Name="key" Type="Edm.String" />
@@ -7511,6 +7572,7 @@
         <Property Name="choices" Type="Collection(Edm.String)" />
         <Property Name="isEnabled" Type="Edm.Boolean" />
         <Property Name="customModelId" Type="Edm.String" />
+        <Property Name="analyzeImageWithVision" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="autofillColumnSettings">
         <Property Name="scenarioName" Type="Edm.String" />
@@ -7626,7 +7688,7 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="type" Type="Edm.String" />
+        <Property Name="type" Type="oneDrive.VivaEngageType" />
       </EntityType>
       <ComplexType Name="basePermissions">
         <Property Name="manageLists" Type="Edm.Boolean" />
@@ -8154,6 +8216,7 @@
         <Member Name="Protect" Value="1" />
         <Member Name="Unprotect" Value="2" />
         <Member Name="Offboard" Value="3" />
+        <Member Name="StopBilling" Value="4" />
       </EnumType>
       <EnumType Name="SyncStatus">
         <Member Name="None" Value="0" />
@@ -8166,6 +8229,9 @@
         <Member Name="Offboarded" Value="7" />
         <Member Name="Offboarding" Value="8" />
         <Member Name="OffboardFailed" Value="9" />
+        <Member Name="StoppedBilling" Value="10" />
+        <Member Name="StoppingBilling" Value="11" />
+        <Member Name="StopBillingFailed" Value="12" />
       </EnumType>
       <EnumType Name="BillingProfileIdentityType">
         <Member Name="Unknown" Value="0" />
@@ -8789,10 +8855,12 @@
         <Member Name="None" Value="0" />
         <Member Name="AzureOpenAI" Value="1" />
         <Member Name="AzureAIInference" Value="2" />
+        <Member Name="AzureContentUnderstanding" Value="3" />
       </EnumType>
       <EnumType Name="SyntexCustomModelTaskType">
         <Member Name="None" Value="0" />
         <Member Name="ChatCompletion" Value="1" />
+        <Member Name="VideoShotAnalyzer" Value="2" />
       </EnumType>
       <EnumType Name="TermGroupScope">
         <Member Name="global" Value="0" />
@@ -8901,6 +8969,11 @@
       <EnumType Name="EmailType">
         <Member Name="Person" Value="1" />
         <Member Name="Group" Value="2" />
+      </EnumType>
+      <EnumType Name="VivaEngageType">
+        <Member Name="Community" Value="1" />
+        <Member Name="Storyline" Value="2" />
+        <Member Name="AllCompanyCommunity" Value="3" />
       </EnumType>
       <EnumType Name="ClipchampVideoOutputQuality">
         <Member Name="480p" Value="0" />
@@ -10346,6 +10419,9 @@
       <Action Name="getAudienceSizeEstimate" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
         <Parameter Name="audienceSizeEstimateQuery" Type="oneDrive.audienceSizeEstimateQuery" />
+        <Parameter Name="testBearerToken" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
         <ReturnType Type="oneDrive.audienceSizeEstimateReports" />
       </Action>
       <Action Name="getCampaignPreaggregatedAnalyticsReport" IsBound="true">
