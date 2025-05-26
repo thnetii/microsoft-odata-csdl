@@ -1,0 +1,1053 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "WP Connectr for WordPress",
+    "description": "Connect your WordPress site to the Power Platform by using this connector to access the WordPress REST API",
+    "contact": {
+      "name": "Reenhanced",
+      "url": "https://www.reenhanced.com",
+      "email": "support@reenhanced.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/wpconnectrforwordpre",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/resources": {
+      "get": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Get resources",
+        "description": "Get resources",
+        "x-ms-visibility": "internal",
+        "operationId": "GetResources",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "member_method",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Limit resources returned to those that support the specified member method",
+            "enum": [
+              "get",
+              "patch",
+              "delete"
+            ]
+          },
+          {
+            "name": "collection_method",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Limit resources returned to those that support the specified collection method",
+            "enum": [
+              "get",
+              "post"
+            ]
+          },
+          {
+            "name": "query_type",
+            "in": "query",
+            "type": "string",
+            "default": "resource",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "resource": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Throttled"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#get-resources"
+        }
+      }
+    },
+    "/{connectionId}/trigger_topics": {
+      "get": {
+        "operationId": "GetTriggerTopics",
+        "summary": "Get a list of trigger options",
+        "description": "Gets a list of trigger options",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "Specify the type of resource to work with",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#get-a-list-of-trigger-options"
+        }
+      }
+    },
+    "/{connectionId}/trigger_topics/{topic}": {
+      "get": {
+        "operationId": "TriggerTopicSchema",
+        "summary": "Get the schema for a given trigger topic",
+        "description": "Gets the dynamic schema",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "key",
+              "parameters": {
+                "query_type": "topics"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "key",
+              "itemTitlePath": "name",
+              "parameters": {
+                "query_type": {
+                  "value": "topics"
+                }
+              }
+            }
+          },
+          {
+            "name": "topic",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Trigger Topic",
+            "description": "Specify the trigger topic to get schema for",
+            "x-ms-visibility": "important",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#get-the-schema-for-a-given-trigger-topic"
+        }
+      }
+    },
+    "/{connectionId}/resources/{resource}/fetch": {
+      "post": {
+        "operationId": "GetItemByResourceV2",
+        "summary": "Get a single WordPress item (V2)",
+        "description": "Fetchs a WordPress item of the selected type",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "collection_method": "get"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "collection_method": {
+                  "value": "get"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "FetchSchema",
+                "itemValuePath": "post",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "schema",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#get-a-single-wordpress-item-(v2)"
+        }
+      },
+      "options": {
+        "operationId": "FetchSchema",
+        "summary": "Retrieve fetch schema for the member resource type given",
+        "description": "This is where the magic happens for member objects",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "post": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{connectionId}/resources/{resource}/{id}": {
+      "get": {
+        "operationId": "GetResourceById",
+        "summary": "(deprecated) Get a single WordPress item",
+        "description": "Fetchs a WordPress item of the selected type",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "x-ms-url-encoding": "single",
+            "description": "Specify the type of resource the Resource ID refers to",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "member_method": "get"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "member_method": {
+                  "value": "get"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "x-ms-summary": "Resource ID",
+            "description": "Specify the ID of the resource you wish to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceMemberSchema",
+                "itemValuePath": "schema",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#(deprecated)-get-a-single-wordpress-item"
+        }
+      },
+      "delete": {
+        "operationId": "DeleteResource",
+        "summary": "Delete a WordPress item",
+        "description": "Deletes an item of the specified type and id",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "x-ms-url-encoding": "single",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "member_method": "delete"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "member_method": {
+                  "value": "delete"
+                }
+              }
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "x-ms-summary": "Resource ID",
+            "description": "The ID of the resource",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceMemberSchema",
+                "itemValuePath": "delete",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#delete-a-wordpress-item"
+        }
+      },
+      "patch": {
+        "operationId": "UpdateResource",
+        "summary": "Update a WordPress item",
+        "description": "Updates an item using specified parameters",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "x-ms-summary": "Resource ID",
+            "description": "The ID of the resource",
+            "x-ms-visibility": "important",
+            "type": "string"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "member_method": "patch"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "member_method": {
+                  "value": "patch"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceMemberSchema",
+                "itemValuePath": "patch",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "schema",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#update-a-wordpress-item"
+        }
+      }
+    },
+    "/{connectionId}/resources/{resource}/1": {
+      "options": {
+        "operationId": "ResourceMemberSchema",
+        "summary": "Retrieve schema for the member resource type given",
+        "description": "This is where the magic happens for member objects",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "get": {
+                  "type": "object"
+                },
+                "post": {
+                  "type": "object"
+                },
+                "schema": {
+                  "type": "object"
+                },
+                "delete": {
+                  "type": "object"
+                },
+                "patch": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{connectionId}/resources/{resource}/query": {
+      "post": {
+        "operationId": "GetItemsByResource",
+        "summary": "Find a list of WordPress items",
+        "description": "Gets a list of WordPress items of the selected type",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "collection_method": "get"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "collection_method": {
+                  "value": "get"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "get",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "x-ms-dynamic-properties": {
+                  "operationId": "ResourceSchema",
+                  "itemValuePath": "schema",
+                  "parameters": {
+                    "resource": {
+                      "parameterReference": "resource"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#find-a-list-of-wordpress-items"
+        }
+      }
+    },
+    "/{connectionId}/resources/media": {
+      "post": {
+        "operationId": "UploadMedia",
+        "summary": "Upload a file to the WordPress media library",
+        "description": "Uploads a file that will be available in the WordPress media library",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "description": "File to upload",
+            "x-ms-summary": "File to Upload",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "schema",
+                "parameters": {
+                  "resource": {
+                    "value": "media"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#upload-a-file-to-the-wordpress-media-library"
+        }
+      }
+    },
+    "/{connectionId}/resources/{resource}": {
+      "post": {
+        "operationId": "CreateResource",
+        "summary": "Create a new WordPress item",
+        "description": "Creates an item using specified parameters",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "type": "string",
+            "x-ms-summary": "Resource Type",
+            "description": "Specify the type of resource to work with",
+            "x-ms-visibility": "important",
+            "required": true,
+            "x-ms-dynamic-values": {
+              "operationId": "GetResources",
+              "value-title": "name",
+              "value-path": "resource",
+              "parameters": {
+                "collection_method": "post"
+              }
+            },
+            "x-ms-dynamic-list": {
+              "operationId": "GetResources",
+              "itemValuePath": "resource",
+              "itemTitlePath": "name",
+              "parameters": {
+                "collection_method": {
+                  "value": "post"
+                }
+              }
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "post",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "x-ms-dynamic-properties": {
+                "operationId": "ResourceSchema",
+                "itemValuePath": "schema",
+                "parameters": {
+                  "resource": {
+                    "parameterReference": "resource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#create-a-new-wordpress-item"
+        }
+      },
+      "options": {
+        "operationId": "ResourceSchema",
+        "summary": "Retrieve schema for the resource type given",
+        "description": "This is where the magic happens",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "resource",
+            "in": "path",
+            "x-ms-url-encoding": "single",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "get": {
+                  "type": "object"
+                },
+                "post": {
+                  "type": "object"
+                },
+                "schema": {
+                  "type": "object"
+                },
+                "delete": {
+                  "type": "object"
+                },
+                "patch": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{connectionId}/triggers": {
+      "x-ms-notification-content": {
+        "schema": {
+          "x-ms-dynamic-properties": {
+            "operationId": "TriggerTopicSchema",
+            "itemValuePath": "schema",
+            "parameters": {
+              "resource": {
+                "parameterReference": "body/trigger_resource_schema"
+              },
+              "topic": {
+                "parameterReference": "body/topic"
+              }
+            }
+          },
+          "type": "object"
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateTrigger",
+        "summary": "When a WordPress event happens",
+        "description": "Select events across Posts, Pages, Comments, Users, and more to trigger a flow",
+        "x-ms-trigger": "single",
+        "x-ms-trigger-hint": "To see it work, perform the selected event in WordPress",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "topic",
+                "delivery_url",
+                "trigger_resource_schema"
+              ],
+              "type": "object",
+              "properties": {
+                "trigger_resource_schema": {
+                  "type": "string",
+                  "x-ms-summary": "Resource Type",
+                  "description": "Specify the type of resource to work with",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetResources",
+                    "value-title": "name",
+                    "value-path": "key"
+                  },
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetResources",
+                    "itemValuePath": "key",
+                    "itemTitlePath": "name"
+                  }
+                },
+                "topic": {
+                  "type": "string",
+                  "x-ms-summary": "Trigger Event",
+                  "x-ms-dynamic-list": {
+                    "operationId": "GetTriggerTopics",
+                    "itemValuePath": "key",
+                    "itemTitlePath": "name",
+                    "parameters": {
+                      "resource": {
+                        "parameterReference": "body/trigger_resource_schema"
+                      }
+                    }
+                  }
+                },
+                "delivery_url": {
+                  "type": "string",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre/#when-a-wordpress-event-happens"
+        }
+      }
+    },
+    "/{connectionId}/triggers/{hook_id}": {
+      "delete": {
+        "operationId": "DeleteTrigger",
+        "x-ms-visibility": "internal",
+        "description": "Deletes the trigger when a flow is removed",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "hook_id",
+            "in": "path",
+            "description": "ID of the Hook being deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {
+    "403": {
+      "schema": {},
+      "description": "Unauthorized"
+    },
+    "429": {
+      "schema": {},
+      "description": "Throttled"
+    },
+    "500": {
+      "schema": {},
+      "description": "Server Error"
+    }
+  },
+  "security": [
+    {
+      "basic-auth": []
+    }
+  ],
+  "securityDefinitions": {
+    "basic-auth": {
+      "type": "basic"
+    }
+  },
+  "tags": [],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.reenhanced.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.reenhanced.com/privacy/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Marketing"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/wpconnectrforwordpre"
+  }
+}
