@@ -3,6 +3,7 @@
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="Badger" OpenType="true" />
       <EntityType Name="diagnosticSubpoenaStatus" OpenType="true">
         <Key>
           <PropertyRef Name="subpoenaId" />
@@ -2020,7 +2021,6 @@
         <Property Name="creatorName" Type="Edm.String" />
         <Property Name="isRequiredApprovalEnabled" Type="Edm.Boolean" />
       </EntityType>
-      <EntityType Name="Badger" OpenType="true" />
       <EntityType Name="actorAndActivity" OpenType="true">
         <Key>
           <PropertyRef Name="actorAadId" />
@@ -4193,6 +4193,17 @@
         <Property Name="messages" Type="Collection(oneDrive.accessRequestMessage)" />
         <Property Name="requestorIdentity" Type="oneDrive.sharePointIdentity" />
       </EntityType>
+      <ComplexType Name="badgerAnonymousUserInfo" OpenType="true">
+        <Property Name="givenName" Type="Edm.String" />
+        <Property Name="familyName" Type="Edm.String" />
+        <Property Name="realm" Type="Edm.String" />
+        <Property Name="appid" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="badgerToken" OpenType="true">
+        <Property Name="authScheme" Type="Edm.String" />
+        <Property Name="token" Type="Edm.String" />
+        <Property Name="expiryTimeUtc" Type="Edm.DateTimeOffset" />
+      </ComplexType>
       <ComplexType Name="subpoenaDetails" OpenType="true">
         <Property Name="jobName" Type="Edm.String" />
         <Property Name="usersCid" Type="Edm.Int64" />
@@ -5097,17 +5108,6 @@
         <Property Name="userPrincipalName" Type="Edm.String" />
         <Property Name="email" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="badgerAnonymousUserInfo" OpenType="true">
-        <Property Name="givenName" Type="Edm.String" />
-        <Property Name="familyName" Type="Edm.String" />
-        <Property Name="realm" Type="Edm.String" />
-        <Property Name="appid" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="badgerToken" OpenType="true">
-        <Property Name="authScheme" Type="Edm.String" />
-        <Property Name="token" Type="Edm.String" />
-        <Property Name="expiryTimeUtc" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="activitiesDigestEmailWorkItem" OpenType="true">
         <Property Name="itemIds" Type="Collection(Edm.String)" />
@@ -9276,6 +9276,15 @@
         <Member Name="Add" Value="0" />
         <Member Name="Remove" Value="1" />
       </EnumType>
+      <Function Name="badgerQos">
+        <ReturnType Type="Edm.String" />
+      </Function>
+      <Function Name="badgerCert">
+        <ReturnType Type="Edm.String" />
+      </Function>
+      <Action Name="badgerToken">
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Function Name="fileCount" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticList" />
         <Parameter Name="name" Type="Edm.String">
@@ -10701,15 +10710,6 @@
         <Parameter Name="items" Type="Collection(oneDrive.SynchronizeCampaignPersonalCacheItem)" />
         <ReturnType Type="Edm.String" />
       </Action>
-      <Function Name="badgerQos">
-        <ReturnType Type="Edm.String" />
-      </Function>
-      <Function Name="badgerCert">
-        <ReturnType Type="Edm.String" />
-      </Function>
-      <Action Name="badgerToken">
-        <ReturnType Type="Edm.String" />
-      </Action>
       <Action Name="manageItems" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="value" Type="Collection(oneDrive.item)" />
@@ -11148,6 +11148,7 @@
         <EntitySet Name="webParts" EntityType="oneDrive.webPart" />
         <EntitySet Name="autoQueueConfigs" EntityType="oneDrive.analyticsReportsAutoQueueConfig" />
         <EntitySet Name="AccessRequests" EntityType="oneDrive.AccessRequest" />
+        <Singleton Name="badger" Type="oneDrive.Badger" />
         <Singleton Name="capDrive" Type="oneDrive.capDrive" />
         <Singleton Name="capRecycleBin" Type="oneDrive.capRecycleBin" />
         <Singleton Name="certs" Type="oneDrive.certs" />
@@ -11165,7 +11166,6 @@
         <Singleton Name="unifiedStorageQuotaEligible" Type="oneDrive.unifiedStorageQuotaEligibility" />
         <Singleton Name="topEntities" Type="oneDrive.unifiedStorageQuotaTopEntities" />
         <Singleton Name="copilot" Type="oneDrive.copilot" />
-        <Singleton Name="badger" Type="oneDrive.Badger" />
         <Singleton Name="drive" Type="oneDrive.drive" />
         <Singleton Name="recycleBin" Type="oneDrive.recycleBin" />
         <Singleton Name="unifiedStorageQuota" Type="oneDrive.unifiedStorageQuotaRoot" />
@@ -11176,14 +11176,14 @@
         <Singleton Name="tenantStore" Type="oneDrive.tenantStore" />
         <Singleton Name="termStore" Type="oneDrive.termStore" />
         <Singleton Name="employeeExperience" Type="oneDrive.employeeExperience" />
+        <FunctionImport Name="badgerQos" Function="oneDrive.badgerQos" IncludeInServiceDocument="true" />
+        <FunctionImport Name="badgerCert" Function="oneDrive.badgerCert" IncludeInServiceDocument="true" />
+        <ActionImport Name="badgerToken" Action="oneDrive.badgerToken" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
         <ActionImport Name="getItems" Action="oneDrive.getItems" />
         <FunctionImport Name="getWebPartsByPosition" Function="oneDrive.getWebPartsByPosition" IncludeInServiceDocument="true" />
         <ActionImport Name="getSites" Action="oneDrive.getSites" />
         <ActionImport Name="reportContent" Action="oneDrive.reportContent" />
-        <FunctionImport Name="badgerQos" Function="oneDrive.badgerQos" IncludeInServiceDocument="true" />
-        <FunctionImport Name="badgerCert" Function="oneDrive.badgerCert" IncludeInServiceDocument="true" />
-        <ActionImport Name="badgerToken" Action="oneDrive.badgerToken" />
         <FunctionImport Name="inappfeaturemessages" Function="oneDrive.inappfeaturemessages" IncludeInServiceDocument="true" />
         <ActionImport Name="getMultiSiteNews" Action="oneDrive.getMultiSiteNews" />
         <ActionImport Name="getMultiHubNews" Action="oneDrive.getMultiHubNews" />
