@@ -1279,14 +1279,6 @@
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </NavigationProperty>
       </EntityType>
-      <EntityType Name="diagnosticSiteDeleteEvent" OpenType="true">
-        <Property Name="correlationId" Type="Edm.Guid" />
-        <Property Name="eventTimeUTC" Type="Edm.DateTimeOffset" />
-        <Property Name="hostName" Type="Edm.String" />
-        <Property Name="siteId" Type="Edm.Guid" />
-        <Property Name="siteUrl" Type="Edm.String" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-      </EntityType>
       <EntityType Name="diagnosticTenantRenameJob" OpenType="true">
         <Property Name="jobState" Type="Edm.String" />
         <Property Name="jobId" Type="Edm.Guid" />
@@ -1721,6 +1713,7 @@
         <Property Name="resourceuri" Type="Edm.String" />
         <Property Name="createdate" Type="Edm.DateTimeOffset" />
         <Property Name="lastmodifieddate" Type="Edm.DateTimeOffset" />
+        <Property Name="budgets" Type="Collection(oneDrive.budget)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="policyAutomation" OpenType="true">
@@ -2696,6 +2689,7 @@
         <Property Name="siteServiceEndpoints" Type="oneDrive.siteServiceEndpoints" />
         <Property Name="effectiveBasePermissions" Type="oneDrive.effectiveBasePermissions" />
         <Property Name="inAppPositioningMessages" Type="oneDrive.inAppPositioningMessages" />
+        <Property Name="sitePortal" Type="oneDrive.sitePortal" />
         <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="appPages" Type="Collection(oneDrive.appPage)" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
@@ -4276,6 +4270,14 @@
         <Property Name="rowLimit" Type="Edm.Int32" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="diagnosticSiteDeleteEvent" OpenType="true">
+        <Property Name="correlationId" Type="Edm.Guid" />
+        <Property Name="eventTimeUTC" Type="Edm.DateTimeOffset" />
+        <Property Name="hostName" Type="Edm.String" />
+        <Property Name="siteId" Type="Edm.Guid" />
+        <Property Name="siteUrl" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="diagnosticSiteDeleteEventQuery" OpenType="true">
         <Property Name="endDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="siteUrl" Type="Edm.String" />
@@ -4328,6 +4330,11 @@
         <Property Name="permissions" Type="Edm.String" />
         <Property Name="effectiveBasePermissions" Type="Edm.String" />
         <Property Name="roleAssignments" Type="Collection(oneDrive.DiagnosticRoleAssignmentFacet)" />
+      </ComplexType>
+      <ComplexType Name="diagnosticRecycleBinItemCollectionFacet" OpenType="true">
+        <Property Name="itemCollectionPosition" Type="Edm.String" />
+        <NavigationProperty Name="recycleBinItems" Type="Collection(oneDrive.diagnosticRecycleBinItem)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="DiagnosticRoleAssignmentFacet" BaseType="oneDrive.custom" OpenType="true">
         <Property Name="memberLoginName" Type="Edm.String" />
@@ -4782,6 +4789,17 @@
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="billingEventTags" OpenType="true" />
+      <ComplexType Name="budget" OpenType="true">
+        <Property Name="id" Type="Edm.Guid" />
+        <Property Name="amount" Type="Edm.Decimal" />
+        <Property Name="currency" Type="Edm.String" />
+        <Property Name="thresholds" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Property Name="reset" Type="Edm.String" />
+        <Property Name="mails" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="Active" Type="Edm.Boolean" />
+        <Property Name="bid" Type="Edm.Guid" />
+        <Property Name="agId" Type="Edm.Guid" />
+      </ComplexType>
       <ComplexType Name="elementUpdate" OpenType="true">
         <Property Name="action" Type="Edm.String" />
         <Property Name="elementId" Type="Edm.String" />
@@ -4834,6 +4852,10 @@
         <Property Name="eventTime" Type="Edm.String" Nullable="false" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="cortexGetSummaries" OpenType="true">
+        <Property Name="requestedSummaries" Type="Collection(oneDrive.CortexNode)" />
+        <Property Name="userQuery" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="CortexNode" OpenType="true">
         <Property Name="name" Type="Edm.String" />
         <Property Name="language" Type="Edm.String" />
@@ -4873,6 +4895,13 @@
         <Property Name="sensitivityLabel" Type="Edm.String" />
         <Property Name="cortexNodes" Type="Collection(oneDrive.CortexNode)" />
         <Property Name="webUrl" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="cortexSetSummaries" OpenType="true">
+        <Property Name="documentLanguage" Type="Edm.String" />
+        <Property Name="summaries" Type="Collection(oneDrive.CortexNode)" />
+      </ComplexType>
+      <ComplexType Name="CortexSetSummariesResult" OpenType="true">
+        <Property Name="count" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="agentQuery" OpenType="true">
         <Property Name="query" Type="Edm.String" />
@@ -6053,6 +6082,11 @@
         <Property Name="enforceIbSegmentFiltering" Type="Edm.Boolean" />
         <Property Name="siteIbSegmentIds" Type="Edm.String" />
         <Property Name="siteIbMode" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="sitePortal" OpenType="true">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="dagParameters" OpenType="true">
         <Property Name="cumulativeSourceReportId" Type="Edm.String" />
@@ -7516,11 +7550,6 @@
         <Property Name="mobileFeatureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="securityTrimmingEnabled" Type="Edm.Boolean" />
         <Property Name="seoFeatureEnabled" Type="Edm.Boolean" Nullable="false" />
-      </ComplexType>
-      <ComplexType Name="diagnosticRecycleBinItemCollectionFacet" OpenType="true">
-        <Property Name="itemCollectionPosition" Type="Edm.String" />
-        <NavigationProperty Name="recycleBinItems" Type="Collection(oneDrive.diagnosticRecycleBinItem)" />
-        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="diagnosticSiteCollection" OpenType="true">
         <Property Name="databaseName" Type="Edm.String" />
@@ -9285,12 +9314,51 @@
       <Action Name="badgerToken">
         <ReturnType Type="Edm.String" />
       </Action>
+      <Function Name="getSiteDeleteEvents" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.diagnosticDatabase" />
+        <Parameter Name="startDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="endDateTime" Type="Edm.DateTimeOffset">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="siteUrl" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="Collection(oneDrive.diagnosticSiteDeleteEvent)" />
+      </Function>
       <Function Name="fileCount" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticList" />
         <Parameter Name="name" Type="Edm.String">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
         <ReturnType Type="oneDrive.diagnosticFileCount" />
+      </Function>
+      <Function Name="getRecycleBinItemCollection" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
+        <Parameter Name="itemNameQuery" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="itemState" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="itemCollectionPosition" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="rowLimit" Type="Edm.Int32">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.diagnosticRecycleBinItemCollectionFacet" />
+      </Function>
+      <Function Name="getExpandedRecycleBinItems" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
+        <Parameter Name="id" Type="Edm.Guid">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="itemNameQuery" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.diagnosticRecycleBinItemCollectionFacet" />
       </Function>
       <Function Name="getByPath" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
@@ -10500,6 +10568,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Edm.Stream" />
       </Function>
+      <Action Name="getCortexSummaries" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="oneDrive.CortexResult" />
+      </Action>
       <Action Name="getSummaries" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.CortexResult" />
@@ -11005,12 +11077,7 @@
       </Function>
       <Action Name="enqueue" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.spoExpansionRequestApis" />
-        <Parameter Name="pluginId" Type="Edm.Guid">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
-        <Parameter Name="tenantId" Type="Edm.Guid">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
+        <Parameter Name="pluginId" Type="Edm.String" />
         <Parameter Name="spoId" Type="Edm.String" />
         <Parameter Name="pagingToken" Type="Edm.String">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
@@ -11021,10 +11088,7 @@
         <Parameter Name="eventId" Type="Edm.Int64">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
-        <Parameter Name="owner" Type="Edm.String">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
-        <Parameter Name="scenario" Type="Edm.String">
+        <Parameter Name="additionalParameters" Type="Edm.String">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
       </Action>
