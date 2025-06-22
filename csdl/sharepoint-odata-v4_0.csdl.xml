@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26128 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26204 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1898,6 +1898,7 @@
         <Property Name="IsHubSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsRestrictContentOrgWideSearchPolicyEnforcedOnSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsRestrictedAccessControlPolicyEnforcedOnSite" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsRestrictedContentDiscoveryforCopilotAndAgentsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsRubySite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsScheduledForRemoval" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsUnlicensedOdb" Type="Edm.Boolean" Nullable="false" />
@@ -3022,6 +3023,7 @@
         <Property Name="ContentMarket" Type="Edm.String" />
         <Property Name="VersionString" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="SemanticSearchEnqueueProxy" Abstract="true" />
       <EntityType Name="AlternateUrl">
         <Property Name="Uri" Type="Edm.String" />
         <Property Name="UrlZone" Type="Edm.Int32" Nullable="false" />
@@ -5042,6 +5044,11 @@
         <Parameter Name="this" Type="SP.ListItem" />
         <Parameter Name="parameters" Type="SP.ListItemDeleteParameters" />
       </Action>
+      <Action Name="DoEntitiesHaveAccessToLabel" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+        <Parameter Name="peoplePickerInput" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="GetChanges" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <Parameter Name="query" Type="SP.ChangeQuery" />
@@ -5100,6 +5107,11 @@
         <Parameter Name="parameters" Type="SP.ListItemDeleteParameters" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
       </Action>
+      <Function Name="RenderListItemDataAsStream" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+        <Parameter Name="options" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
       <Action Name="SetCommentsDisabled" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <Parameter Name="value" Type="Edm.Boolean" Nullable="false" />
@@ -9854,6 +9866,18 @@
       <Annotations Target="Microsoft.SharePoint.Administration.TenantAdmin.InsightsSummaryResponse">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem/AssociateSiteId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem/ItemUniqueId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem/SecondsInDB">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem/WorkItemId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.AddToOneDrive.PlacesUserEntity">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14310,6 +14334,9 @@
       <Annotations Target="SP.Publishing.AmplifySendTestEmailMessage(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.AmplifySendTestTeamsMessage(SP.Publishing.CampaignPublication, SP.Publishing.TestTeamsMessageChannel)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.AmplifyValidate(SP.Publishing.CampaignPublication)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15045,6 +15072,9 @@
       <Annotations Target="SP.Publishing.EnableCategories(SP.Publishing.SitePageService)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.EnableLightweightCampaign(SP.Publishing.SitePageService)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.SitePageService.FilePickerTabOptions()">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -15231,13 +15261,13 @@
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Create(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Microsoft.SharePoint.Publishing.Campaigns.Models.CampaignMetadata)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetAssociationsByCampaignUniqueId(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Edm.String)">
+      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetAssociationsByCampaignId(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetById(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Associate(Microsoft.SharePoint.Publishing.Campaigns.Campaign, Edm.Guid)">
+      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Associate(Microsoft.SharePoint.Publishing.Campaigns.Campaign, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Delete(Microsoft.SharePoint.Publishing.Campaigns.Campaign)">
@@ -15262,6 +15292,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Workflow.RecycleWithParameters(SP.Workflow.SPWorkflowTask, SP.ListItemDeleteParameters)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Workflow.RenderListItemDataAsStream(SP.Workflow.SPWorkflowTask, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Workflow.SetCommentsDisabled(SP.Workflow.SPWorkflowTask, Edm.Boolean)">
@@ -16065,6 +16098,12 @@
       <Annotations Target="SP.GetAppDatabaseConnectionString(SP.AppInstance)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.SemanticSearchEnqueueProxy.EnqueueItem(Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SemanticSearchEnqueueProxy.EnqueueItems(Collection(Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.GetPlacesInformation(SP.List, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -16237,6 +16276,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecycleWithParameters(SP.ListItem, SP.ListItemDeleteParameters)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.RenderListItemDataAsStream(SP.ListItem, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SetCommentsDisabled(SP.ListItem, Edm.Boolean)">
@@ -16587,7 +16629,7 @@
       <Annotations Target="SP.SearchResultItemCollection.GetSearchSuggestionsAsStream(Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.SemanticSearchItemCollection.GetSemanticSearchResults()">
+      <Annotations Target="SP.SemanticSearchItemCollection.GetSemanticSearchResults(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SensitivityLabelCollection.GetSensitivityLabelsAsStream(Edm.String, Edm.String)">
@@ -16693,6 +16735,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.DigitalLegacy.AcceptNomination(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.DigitalLegacy.BeneficiaryRedeemAccessRequest(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.DigitalLegacy.CheckConvergeStatus()">
@@ -18498,6 +18543,7 @@
       </EntityType>
       <EntityType Name="AllowedDataLocation" BaseType="Microsoft.Online.SharePoint.MultiGeo.Service.AllowedDataLocationEntityData" />
       <EntityType Name="CompatibleDB">
+        <Property Name="HealthScore" Type="Edm.Int32" Nullable="false" />
         <Property Name="NormalizedDatabaseId" Type="Edm.String" />
         <Property Name="RestoreCount" Type="Edm.Int32" Nullable="false" />
       </EntityType>
@@ -23974,6 +24020,12 @@
       <ComplexType Name="ViewProgressAnalyticsData" BaseType="SP.Publishing.ViewData">
         <Property Name="PercentageViewed" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="TestTeamsMessageChannel">
+        <Property Name="ChannelName" Type="Edm.String" />
+        <Property Name="GroupId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="TeamName" Type="Edm.String" />
+        <Property Name="ThreadId" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ApprovalRequestResponse">
         <Property Name="ApprovalStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="PublicationStatus" Type="Edm.Int32" Nullable="false" />
@@ -24359,12 +24411,6 @@
         <Property Name="NativeLanguageName" Type="Edm.String" />
         <Property Name="Url" Type="Edm.String" />
       </EntityType>
-      <EntityType Name="TestTeamsMessageChannel">
-        <Property Name="ChannelName" Type="Edm.String" />
-        <Property Name="GroupId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="TeamName" Type="Edm.String" />
-        <Property Name="ThreadId" Type="Edm.String" />
-      </EntityType>
       <EntityType Name="TopicSitePage" BaseType="SP.Publishing.SitePage">
         <Property Name="EntityId" Type="Edm.String" />
         <Property Name="EntityRelations" Type="Edm.String" />
@@ -24633,6 +24679,11 @@
       </Action>
       <Action Name="AmplifySendTestEmailMessage" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
+      </Action>
+      <Action Name="AmplifySendTestTeamsMessage" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="channel" Type="SP.Publishing.TestTeamsMessageChannel" />
         <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
       </Action>
       <Action Name="AmplifyValidate" IsBound="true">
@@ -25896,6 +25947,9 @@
       <Action Name="EnableCategories" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePageService" />
       </Action>
+      <Action Name="EnableLightweightCampaign" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.SitePageService" />
+      </Action>
       <Action Name="GetOrCreateAssetFolder" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.SitePageService" />
         <Parameter Name="pageName" Type="Edm.String" />
@@ -26419,8 +26473,8 @@
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Publishing.Campaigns.Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="CampaignAssociation">
-        <Property Name="CampaignUniqueId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="PublicationUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="CampaignId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PublicationId" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="CampaignMetadata">
         <Property Name="Color" Type="Edm.String" />
@@ -27156,6 +27210,10 @@
       <Action Name="GetEventCacheIds" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetFarmProperties" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="GetMarker" IsBound="true">
@@ -28196,6 +28254,7 @@
         <Parameter Name="this" Type="Microsoft.SharePoint.SiteManager.SiteManagerService" />
         <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="skipToken" Type="Edm.String" />
+        <Parameter Name="isDebug" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.SiteManager.RetirablePagesQueryResult" />
       </Function>
       <Action Name="RetiredPagesView" IsBound="true">
@@ -30156,7 +30215,9 @@
       <ComplexType Name="ReportRow">
         <Property Name="Row" Type="Collection(Edm.String)" />
       </ComplexType>
-      <ComplexType Name="ReportMetadata" BaseType="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.BaseMetadata" />
+      <ComplexType Name="ReportMetadata" BaseType="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.BaseMetadata">
+        <Property Name="ReportMetadataDetails" Type="Collection(SP.KeyValue)" />
+      </ComplexType>
     </Schema>
     <Schema Namespace="SP.SiteHealth" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="SiteHealthResult">
@@ -30174,6 +30235,14 @@
         <Property Name="PassedCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="Results" Type="Collection(SP.SiteHealth.SiteHealthResult)" />
       </EntityType>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.SemanticSearchCrawler" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="SemanticSearchCrawlerEnqueueItem">
+        <Property Name="AssociateSiteId" Type="Edm.Guid" />
+        <Property Name="ItemUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="SecondsInDB" Type="Edm.Int32" Nullable="false" />
+        <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Administration.OdbLicenseEnforcement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="UnlicensedOdbLicenseEnforcementWarningContext">
@@ -30801,6 +30870,11 @@
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <Parameter Name="parameters" Type="SP.ListItemDeleteParameters" />
       </Action>
+      <Action Name="DoEntitiesHaveAccessToLabel" IsBound="true">
+        <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
+        <Parameter Name="peoplePickerInput" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Action Name="GetChanges" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <Parameter Name="query" Type="SP.ChangeQuery" />
@@ -30859,6 +30933,11 @@
         <Parameter Name="parameters" Type="SP.ListItemDeleteParameters" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
       </Action>
+      <Function Name="RenderListItemDataAsStream" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
+        <Parameter Name="options" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Edm.Stream" />
+      </Function>
       <Action Name="SetCommentsDisabled" IsBound="true">
         <Parameter Name="this" Type="SP.Workflow.SPWorkflowTask" />
         <Parameter Name="value" Type="Edm.Boolean" Nullable="false" />
@@ -31857,6 +31936,12 @@
         <Property Name="Ascending" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SortingField" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="SPContainerTypeBillingProperties">
+        <Property Name="AzureSubscriptionId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="BillingPolicyId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Region" Type="Edm.String" />
+        <Property Name="ResourceGroup" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPContainerTypeConfigurationProperties">
         <Property Name="ApplicationRedirectUrl" Type="Edm.String" />
         <Property Name="Classification" Type="Edm.Int32" Nullable="false" />
@@ -31876,6 +31961,7 @@
       <ComplexType Name="SPContainerTypeProperties">
         <Property Name="ApplicationRedirectUrl" Type="Edm.String" />
         <Property Name="AzureSubscriptionId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="BillingProperties" Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerTypeBillingProperties" />
         <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
         <Property Name="CreationDate" Type="Edm.String" />
         <Property Name="DisplayName" Type="Edm.String" />
@@ -32342,6 +32428,7 @@
         <Property Name="RestrictedAccessControlGroups" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="RestrictedAccessControlGroupsToAdd" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="RestrictedAccessControlGroupsToRemove" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="RestrictedContentDiscoveryforCopilotAndAgents" Type="Edm.Boolean" Nullable="false" />
         <Property Name="RestrictedToRegion" Type="Edm.Int32" Nullable="false" />
         <Property Name="SandboxedCodeActivationCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="SensitivityLabel" Type="Edm.Guid" Nullable="false" />
@@ -36675,9 +36762,9 @@
         <Parameter Name="metadata" Type="Microsoft.SharePoint.Publishing.Campaigns.Models.CampaignMetadata" />
         <ReturnType Type="Microsoft.SharePoint.Publishing.Campaigns.Campaign" />
       </Action>
-      <Function Name="GetAssociationsByCampaignUniqueId" IsBound="true" IsComposable="true">
+      <Function Name="GetAssociationsByCampaignId" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign)" />
-        <Parameter Name="campaignUniqueId" Type="Edm.String" />
+        <Parameter Name="campaignId" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.SharePoint.Publishing.Campaigns.Models.CampaignAssociation)" />
       </Function>
       <Function Name="GetById" IsBound="true" IsComposable="true">
@@ -36687,7 +36774,7 @@
       </Function>
       <Action Name="Associate" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Publishing.Campaigns.Campaign" />
-        <Parameter Name="PageUniqueId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="publicationId" Type="Edm.Int32" Nullable="false" />
       </Action>
       <Action Name="Delete" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Publishing.Campaigns.Campaign" />
@@ -39645,6 +39732,15 @@
         <ReturnType Type="Edm.String" />
       </Action>
     </Schema>
+    <Schema Namespace="SP.SemanticSearchEnqueueProxy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="EnqueueItem">
+        <Parameter Name="item" Type="Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem" />
+      </Action>
+      <Action Name="EnqueueItems">
+        <Parameter Name="items" Type="Collection(Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem)" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.Administration.SemanticSearchCrawler.SemanticSearchCrawlerEnqueueItem)" />
+      </Action>
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.AddToOneDrive.MountService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Action Name="GetRemoteItemInfo">
         <Parameter Name="request" Type="Microsoft.SharePoint.AddToOneDrive.GetRemoteItemInfoRequest" />
@@ -40298,7 +40394,9 @@
       </Function>
     </Schema>
     <Schema Namespace="SP.SemanticSearchItemCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <Action Name="GetSemanticSearchResults" />
+      <Action Name="GetSemanticSearchResults">
+        <Parameter Name="search" Type="Edm.String" />
+      </Action>
     </Schema>
     <Schema Namespace="SP.SensitivityLabelCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="GetSensitivityLabelsAsStream" IsComposable="true">
@@ -40506,6 +40604,10 @@
       <Action Name="AcceptNomination">
         <Parameter Name="benefactorHexCid" Type="Edm.String" />
         <ReturnType Type="Edm.Stream" />
+      </Action>
+      <Action Name="BeneficiaryRedeemAccessRequest">
+        <Parameter Name="benefactorHexCid" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Function Name="CheckConvergeStatus" IsComposable="true">
         <ReturnType Type="Edm.Boolean" Nullable="false" />
