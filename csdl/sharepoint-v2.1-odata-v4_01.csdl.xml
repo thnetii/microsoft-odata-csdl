@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26128 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26204 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1463,6 +1463,7 @@
         <Property Name="protectionUnitId" Type="Edm.Guid" Nullable="false" />
         <Property Name="protectionUnitType" Type="oneDrive.ProtectionUnitType" />
         <Property Name="syncAction" Type="oneDrive.SyncAction" />
+        <Property Name="previousSyncAction" Type="oneDrive.SyncAction" />
         <Property Name="syncStatus" Type="oneDrive.SyncStatus" />
         <Property Name="retentionSettings" Type="oneDrive.retentionSettings" />
         <Property Name="error" Type="oneDrive.ebarError" />
@@ -1492,6 +1493,13 @@
         <Property Name="BaseUri" Type="Edm.String" />
         <Property Name="UserPrincipalName" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="category" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="label" Type="Edm.String" />
       </EntityType>
       <EntityType Name="documentPackage" OpenType="true">
         <Key>
@@ -1525,6 +1533,7 @@
         <Property Name="isPublished" Type="Edm.Boolean" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="fieldDefinitions" Type="oneDrive.fieldDefinitions" />
+        <NavigationProperty Name="category" Type="oneDrive.category" />
       </EntityType>
       <EntityType Name="agreementsSolution" OpenType="true">
         <NavigationProperty Name="workspaces" Type="Collection(oneDrive.workspace)" ContainsTarget="true" />
@@ -1538,6 +1547,7 @@
         <Property Name="description" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <NavigationProperty Name="templates" Type="Collection(oneDrive.template)" ContainsTarget="true" />
+        <NavigationProperty Name="categories" Type="Collection(oneDrive.category)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="deletedStorageContainer" OpenType="true">
         <Key>
@@ -4198,6 +4208,15 @@
         <Property Name="token" Type="Edm.String" />
         <Property Name="expiryTimeUtc" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="workItem" OpenType="true">
+        <Property Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="recordLocatorId" Type="Edm.String" Nullable="false" />
+        <Property Name="puid" Type="Edm.String" Nullable="false" />
+        <Property Name="executionID" Type="Edm.Guid" Nullable="false" />
+        <Property Name="submitterAgentId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="productType" Type="oneDrive.ProductType" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
       <ComplexType Name="subpoenaDetails" OpenType="true">
         <Property Name="jobName" Type="Edm.String" />
         <Property Name="usersCid" Type="Edm.Int64" />
@@ -5338,6 +5357,7 @@
         <Property Name="eTag" Type="Edm.String" />
         <Property Name="sensitivityLabel" Type="Edm.String" />
         <Property Name="classificationResult" Type="oneDrive.classificationResult" />
+        <Property Name="genericFieldValues" Type="Collection(oneDrive.metasKeyStringPair)" />
         <Property Name="sensitivityLabelAssignmentMethod" Type="oneDrive.SensivityLabelAssignmentMethod" />
         <Property Name="machineLearningSampleMeta" Type="oneDrive.machineLearningSampleMeta" />
         <Property Name="xTenantLabelInfo" Type="Edm.String" />
@@ -7813,6 +7833,7 @@
       </ComplexType>
       <ComplexType Name="autofillColumnSettings">
         <Property Name="scenarioName" Type="Edm.String" />
+        <Property Name="runtimeMode" Type="oneDrive.AutofillColumnsRuntimeMode" />
       </ComplexType>
       <ComplexType Name="templatedPrebuiltModel">
         <Property Name="apiVersion" Type="Edm.String" />
@@ -8671,6 +8692,11 @@
         <Member Name="textPrebuilt" Value="64" />
         <Member Name="unknownFutureValue" Value="1073741824" />
       </EnumType>
+      <EnumType Name="AutofillColumnsRuntimeMode">
+        <Member Name="Default" Value="0" />
+        <Member Name="Efficiency" Value="1" />
+        <Member Name="Quality" Value="2" />
+      </EnumType>
       <EnumType Name="MachineLearningFlags">
         <Member Name="unset" Value="0" />
         <Member Name="skipClassificationOnFileUpdate" Value="1" />
@@ -9380,6 +9406,11 @@
         <Parameter Name="workItem" Type="oneDrive.workItem" />
         <ReturnType Type="Edm.Guid" Nullable="false" />
       </Action>
+      <Action Name="consumerSubpoena" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
+        <Parameter Name="workItem" Type="oneDrive.workItem" />
+        <ReturnType Type="Edm.Guid" Nullable="false" />
+      </Action>
       <Action Name="createMigrationTask" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.crossOrganizationMigrationTask)" />
         <ReturnType Type="oneDrive.crossOrganizationMigrationTask" />
@@ -9524,6 +9555,10 @@
       </Action>
       <Action Name="sendQuery" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="oneDrive.AgentQueryResult" />
+      </Action>
+      <Action Name="sendQuery" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
         <ReturnType Type="oneDrive.AgentQueryResult" />
       </Action>
       <Action Name="createDocumentPackage" IsBound="true">
@@ -11178,8 +11213,11 @@
         <EntitySet Name="browseSessions" EntityType="oneDrive.browseSession" />
         <EntitySet Name="restorePoints" EntityType="oneDrive.restorePoint" />
         <EntitySet Name="protectionUnits" EntityType="oneDrive.protectionUnit" />
+        <EntitySet Name="categories" EntityType="oneDrive.category" />
         <EntitySet Name="documentPackages" EntityType="oneDrive.documentPackage" />
-        <EntitySet Name="templates" EntityType="oneDrive.template" />
+        <EntitySet Name="templates" EntityType="oneDrive.template">
+          <NavigationPropertyBinding Path="category" Target="categories" />
+        </EntitySet>
         <EntitySet Name="workspaces" EntityType="oneDrive.workspace" />
         <EntitySet Name="deletedStorageContainers" EntityType="oneDrive.deletedStorageContainer" />
         <EntitySet Name="orglinks" EntityType="oneDrive.orglink" />
