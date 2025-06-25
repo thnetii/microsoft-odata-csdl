@@ -22368,6 +22368,12 @@
         <Member Name="incoming" Value="0" />
         <Member Name="outgoing" Value="1" />
       </EnumType>
+      <EnumType Name="callEventType">
+        <Member Name="callStarted" Value="0" />
+        <Member Name="callEnded" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+        <Member Name="rosterUpdated" Value="3" />
+      </EnumType>
       <EnumType Name="callState">
         <Member Name="incoming" Value="0" />
         <Member Name="establishing" Value="1" />
@@ -34597,6 +34603,13 @@
       <ComplexType Name="communicationsUserIdentity" BaseType="graph.identity" OpenType="true">
         <Property Name="tenantId" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="emergencyCallerInfo">
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="location" Type="graph.location" />
+        <Property Name="phoneNumber" Type="Edm.String" />
+        <Property Name="tenantId" Type="Edm.String" />
+        <Property Name="upn" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="incomingCallOptions" BaseType="graph.callOptions" />
       <ComplexType Name="incomingContext">
         <Property Name="observedParticipantId" Type="Edm.String" />
@@ -34790,10 +34803,20 @@
         <Property Name="restrictedExperience" Type="graph.onlineMeetingRestricted" />
         <Property Name="rosterSequenceNumber" Type="Edm.Int64" />
       </EntityType>
+      <EntityType Name="callEvent" BaseType="graph.entity">
+        <Property Name="callEventType" Type="graph.callEventType" Nullable="false" />
+        <Property Name="eventDateTime" Type="Edm.DateTimeOffset" />
+        <NavigationProperty Name="participants" Type="Collection(graph.participant)" />
+      </EntityType>
       <EntityType Name="cancelMediaProcessingOperation" BaseType="graph.commsOperation" OpenType="true" />
       <EntityType Name="deltaParticipants" BaseType="graph.entity">
         <Property Name="sequenceNumber" Type="Edm.Int64" />
         <NavigationProperty Name="participants" Type="Collection(graph.participant)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="emergencyCallEvent" BaseType="graph.callEvent">
+        <Property Name="callerInfo" Type="graph.emergencyCallerInfo" />
+        <Property Name="emergencyNumberDialed" Type="Edm.String" />
+        <Property Name="policyName" Type="Edm.String" />
       </EntityType>
       <EntityType Name="inviteParticipantsOperation" BaseType="graph.commsOperation" OpenType="true">
         <Property Name="participants" Type="Collection(graph.invitationParticipantInfo)" Nullable="false" />
@@ -44307,7 +44330,9 @@
       </EntityType>
       <EntityType Name="billingReconciliation" BaseType="graph.entity">
         <NavigationProperty Name="billed" Type="microsoft.graph.partners.billing.billedReconciliation" Nullable="false" ContainsTarget="true" />
+        <NavigationProperty Name="unbilled" Type="microsoft.graph.partners.billing.unbilledReconciliation" Nullable="false" ContainsTarget="true" />
       </EntityType>
+      <EntityType Name="unbilledReconciliation" BaseType="graph.entity" />
       <EntityType Name="exportSuccessOperation" BaseType="microsoft.graph.partners.billing.operation">
         <NavigationProperty Name="resourceLocation" Type="microsoft.graph.partners.billing.manifest" Nullable="false" />
       </EntityType>
@@ -44326,6 +44351,13 @@
       <Action Name="export" IsBound="true">
         <Parameter Name="this" Type="microsoft.graph.partners.billing.billedUsage" />
         <Parameter Name="invoiceId" Type="Edm.String" Unicode="false" />
+        <Parameter Name="attributeSet" Type="microsoft.graph.partners.billing.attributeSet" />
+        <ReturnType Type="microsoft.graph.partners.billing.operation" />
+      </Action>
+      <Action Name="export" IsBound="true">
+        <Parameter Name="this" Type="microsoft.graph.partners.billing.unbilledReconciliation" />
+        <Parameter Name="currencyCode" Type="Edm.String" Unicode="false" />
+        <Parameter Name="billingPeriod" Type="microsoft.graph.partners.billing.billingPeriod" />
         <Parameter Name="attributeSet" Type="microsoft.graph.partners.billing.attributeSet" />
         <ReturnType Type="microsoft.graph.partners.billing.operation" />
       </Action>
