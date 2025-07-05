@@ -23802,7 +23802,9 @@
         <Property Name="lastSuccessfulSignInDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="lastSuccessfulSignInRequestId" Type="Edm.String" />
       </ComplexType>
-      <EntityType Name="dataSecurityAndGovernance" BaseType="graph.entity" Abstract="true" />
+      <EntityType Name="dataSecurityAndGovernance" BaseType="graph.entity" Abstract="true">
+        <NavigationProperty Name="sensitivityLabels" Type="Collection(graph.sensitivityLabel)" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="userDataSecurityAndGovernance" BaseType="graph.dataSecurityAndGovernance">
         <NavigationProperty Name="activities" Type="graph.activitiesContainer" ContainsTarget="true" />
         <NavigationProperty Name="protectionScopes" Type="graph.userProtectionScopeContainer" ContainsTarget="true" />
@@ -26753,10 +26755,29 @@
       </ComplexType>
       <ComplexType Name="computeRightsAndInheritanceResult">
         <NavigationProperty Name="contentRights" Type="Collection(graph.labelContentRight)" />
+        <NavigationProperty Name="inheritedLabel" Type="graph.sensitivityLabel" />
+        <NavigationProperty Name="sensitivityLabels" Type="Collection(graph.sensitivityLabel)" />
       </ComplexType>
       <EntityType Name="labelContentRight" BaseType="graph.entity">
         <Property Name="cid" Type="Edm.String" />
         <Property Name="format" Type="Edm.String" />
+        <Property Name="rights" Type="graph.usageRights" Nullable="false" />
+        <NavigationProperty Name="label" Type="graph.sensitivityLabel" Nullable="false" />
+      </EntityType>
+      <EntityType Name="sensitivityLabel" BaseType="graph.entity">
+        <Property Name="actionSource" Type="graph.labelActionSource" />
+        <Property Name="autoTooltip" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="isDefault" Type="Edm.Boolean" />
+        <Property Name="isEndpointProtectionEnabled" Type="Edm.Boolean" />
+        <Property Name="isScopedToUser" Type="Edm.Boolean" />
+        <Property Name="locale" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="priority" Type="Edm.Int32" />
+        <Property Name="toolTip" Type="Edm.String" />
+        <NavigationProperty Name="rights" Type="graph.usageRightsIncluded" />
+        <NavigationProperty Name="sublabels" Type="Collection(graph.sensitivityLabel)" ContainsTarget="true" />
       </EntityType>
       <ComplexType Name="Dictionary" OpenType="true" />
       <ComplexType Name="customMetadataDictionary" BaseType="graph.Dictionary" OpenType="true" />
@@ -26877,12 +26898,12 @@
         <Property Name="scopeIdentifier" Type="Edm.String" />
         <Property Name="userId" Type="Edm.String" />
       </EntityType>
-      <EntityType Name="tenantProtectionScopeContainer" BaseType="graph.entity" />
       <EntityType Name="usageRightsIncluded" BaseType="graph.entity">
         <Property Name="ownerEmail" Type="Edm.String" />
         <Property Name="userEmail" Type="Edm.String" />
         <Property Name="value" Type="graph.usageRights" Nullable="false" />
       </EntityType>
+      <EntityType Name="tenantProtectionScopeContainer" BaseType="graph.entity" />
       <EntityType Name="userProtectionScopeContainer" BaseType="graph.entity" />
       <ComplexType Name="deviceLocalCredential">
         <Property Name="accountName" Type="Edm.String" Nullable="false" />
@@ -30665,11 +30686,13 @@
         <Property Name="cloudAppSecurity" Type="graph.cloudAppSecuritySessionControl" />
         <Property Name="disableResilienceDefaults" Type="Edm.Boolean" />
         <Property Name="persistentBrowser" Type="graph.persistentBrowserSessionControl" />
+        <Property Name="secureSignInSession" Type="graph.secureSignInSessionControl" />
         <Property Name="signInFrequency" Type="graph.signInFrequencySessionControl" />
       </ComplexType>
       <ComplexType Name="persistentBrowserSessionControl" BaseType="graph.conditionalAccessSessionControl">
         <Property Name="mode" Type="graph.persistentBrowserSessionMode" />
       </ComplexType>
+      <ComplexType Name="secureSignInSessionControl" BaseType="graph.conditionalAccessSessionControl" />
       <ComplexType Name="signInFrequencySessionControl" BaseType="graph.conditionalAccessSessionControl">
         <Property Name="authenticationType" Type="graph.signInFrequencyAuthenticationType" />
         <Property Name="frequencyInterval" Type="graph.signInFrequencyInterval" />
@@ -36924,6 +36947,21 @@
         <Parameter Name="integratedAppMetadata" Type="graph.integratedApplicationMetadata" />
         <ReturnType Type="Collection(graph.policyUserScope)" />
       </Action>
+      <Action Name="computeRightsAndInheritance" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.sensitivityLabel)" />
+        <Parameter Name="delegatedUserEmail" Type="Edm.String" Unicode="false" />
+        <Parameter Name="locale" Type="Edm.String" Unicode="false" />
+        <Parameter Name="protectedContents" Type="Collection(graph.protectedContent)" Nullable="false" />
+        <Parameter Name="supportedContentFormats" Type="Collection(Edm.String)" Nullable="false" Unicode="false" />
+        <ReturnType Type="graph.computeRightsAndInheritanceResult" />
+      </Action>
+      <Function Name="computeInheritance" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.sensitivityLabel)" />
+        <Parameter Name="labelIds" Type="Collection(Edm.String)" Nullable="false" Unicode="false" />
+        <Parameter Name="locale" Type="Edm.String" Unicode="false" />
+        <Parameter Name="contentFormats" Type="Collection(Edm.String)" Unicode="false" />
+        <ReturnType Type="graph.sensitivityLabel" />
+      </Function>
       <Action Name="processContent" IsBound="true">
         <Parameter Name="bindingParameter" Type="graph.userDataSecurityAndGovernance" />
         <Parameter Name="contentToProcess" Type="graph.processContentRequest" />
