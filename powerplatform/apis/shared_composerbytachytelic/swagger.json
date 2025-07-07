@@ -1,0 +1,5394 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Composer by Tachytelic",
+    "description": "Composer is a set of actions to simplify building flows. It helps with text, arrays, CSVs, PDFs, Word files, JSONPath, regex, zip files, and batch operations for SharePoint and Dataverse. Designed to reduce complexity and speed up automation, Composer makes it easier to build powerful, efficient flows.\n",
+    "version": "1",
+    "contact": {
+      "name": "Paul Murana",
+      "url": "https://composer.tachytelic.net",
+      "email": "composerhelp@tachytelic.net"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://composer.tachytelic.net"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://composer.tachytelic.net/privacy"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Data"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/composerbytachytelic",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/array/aggregate": {
+      "post": {
+        "summary": "Array - Aggregate Data",
+        "description": "Aggregates values from an array of numbers or objects (Sum, Average etc)",
+        "operationId": "Aggregate",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for aggregation",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "Numbers",
+                "AggregationMethod"
+              ],
+              "properties": {
+                "Numbers": {
+                  "type": "array",
+                  "description": "An array of numbers or objects to aggregate",
+                  "title": "Numbers",
+                  "items": {
+                    "additionalProperties": true
+                  },
+                  "example": [
+                    5,
+                    10
+                  ]
+                },
+                "AggregationField": {
+                  "type": "string",
+                  "title": "Aggregation Field",
+                  "description": "The field to aggregate on",
+                  "x-ms-visibility": "important"
+                },
+                "AggregationMethod": {
+                  "type": "string",
+                  "title": "Aggregation Method",
+                  "description": "The method to use for aggregation",
+                  "x-ms-visibility": "important",
+                  "enum": [
+                    "sum",
+                    "average",
+                    "min",
+                    "max",
+                    "count",
+                    "concatenate"
+                  ],
+                  "default": "sum",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Sum",
+                      "value": "sum"
+                    },
+                    {
+                      "displayName": "Average",
+                      "value": "average"
+                    },
+                    {
+                      "displayName": "Min",
+                      "value": "min"
+                    },
+                    {
+                      "displayName": "Max",
+                      "value": "max"
+                    },
+                    {
+                      "displayName": "Count",
+                      "value": "count"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The result of the aggregation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Result": {
+                  "type": "number",
+                  "title": "Result",
+                  "description": "The result of the aggregation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "x-examples": {
+          "application/json": {
+            "request": {
+              "Numbers": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "AggregationMethod": "sum"
+            },
+            "response_200": {
+              "Result": 150
+            },
+            "response_400": {
+              "error": "Numbers array was not provided."
+            },
+            "response_500": {
+              "error": "An unexpected error occurred."
+            }
+          }
+        },
+        "tags": [
+          "Array Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#array---aggregate-data"
+        }
+      }
+    },
+    "/{connectionId}/array/merge": {
+      "post": {
+        "summary": "Array - Merge Two Arrays",
+        "description": "Merges two arrays into a single array on a common property",
+        "operationId": "ArrayMerge",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for merging arrays",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "Array1",
+                "Array2",
+                "CommonProperty",
+                "MergeMode"
+              ],
+              "properties": {
+                "Array1": {
+                  "type": "string",
+                  "title": "Array 1",
+                  "description": "The first array to merge"
+                },
+                "Array2": {
+                  "type": "string",
+                  "title": "Array 2",
+                  "description": "The second array to merge"
+                },
+                "CommonProperty": {
+                  "type": "string",
+                  "title": "Common Property",
+                  "description": "The property to use for merging the arrays"
+                },
+                "MergeMode": {
+                  "type": "string",
+                  "title": "Merge Mode",
+                  "description": "The mode to use for merging the arrays",
+                  "enum": [
+                    "RetainArray1",
+                    "IntersectionOnly"
+                  ],
+                  "default": "RetainArray1",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Retain All from Array 1",
+                      "value": "RetainArray1"
+                    },
+                    {
+                      "displayName": "Intersection Only (Drop All Unmatched)",
+                      "value": "IntersectionOnly"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The merged array",
+            "schema": {
+              "type": "array",
+              "title": "Merged Array",
+              "x-ms-summary": "Merged Array",
+              "description": "An array of merged items",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Array Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#array---merge-two-arrays"
+        }
+      }
+    },
+    "/{connectionId}/batch/dataverse/create": {
+      "post": {
+        "summary": "Dataverse - Batch Create Records",
+        "description": "Prepares a Dataverse Create Batch request which can be used as the input for an Invoke a HTTP Request (preauthorized)",
+        "operationId": "BatchCreateDataverseRecords",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a SharePoint Create Batch request",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "OrganizationID",
+                "TableName",
+                "BatchSize",
+                "Items"
+              ],
+              "properties": {
+                "OrganizationID": {
+                  "type": "string",
+                  "title": "Site Address",
+                  "description": "Address of Dataverse environment - e.g. org7a1b6b7d.crm4.dynamics.com"
+                },
+                "TableName": {
+                  "type": "string",
+                  "title": "Table Name",
+                  "description": "The name of the Dataverse Table"
+                },
+                "TablePrefix": {
+                  "type": "string",
+                  "title": "Table Prefix",
+                  "description": "The prefix for the table",
+                  "x-ms-visibility": "important"
+                },
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "description": "The number of items to include in each batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "description": "The items to create in the Dataverse Table",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Dataverse Create Batch request",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "type": "string",
+                    "title": "API Endpoint",
+                    "description": "The URI endpoint for the Dataverse batch request"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "All headers for the batch request",
+                    "properties": {
+                      "Content-Type": {
+                        "title": "Content Type",
+                        "x-ms-summary": "Content Type",
+                        "type": "string",
+                        "description": "Content type of the request"
+                      },
+                      "OData-Version": {
+                        "title": "OData version",
+                        "x-ms-summary": "OData version",
+                        "type": "string",
+                        "description": "The OData version of the request"
+                      },
+                      "OData-MaxVersion": {
+                        "title": "OData Max Version",
+                        "x-ms-summary": "OData Max Version",
+                        "type": "string",
+                        "description": "The maximum OData version of the request"
+                      },
+                      "Accept": {
+                        "title": "Accept",
+                        "x-ms-summary": "Accept",
+                        "type": "string",
+                        "description": "The content type of the response"
+                      }
+                    }
+                  },
+                  "BatchBody": {
+                    "title": "Batch Body",
+                    "x-ms-summary": "Batch Body",
+                    "type": "string",
+                    "description": "The body of the batch create request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#dataverse---batch-create-records"
+        }
+      }
+    },
+    "/{connectionId}/batch/dataverse/deleteadvanced": {
+      "post": {
+        "summary": "Dataverse - Batch Delete Records (Advanced)",
+        "description": "Prepares a Dataverse Delete Batch request which can be used as the input for an Invoke a HTTP Request (preauthorized)",
+        "operationId": "BatchDeleteDataverseRecordsAdvanced",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a SharePoint Create Batch request",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "OrganizationID",
+                "TableName",
+                "BatchSize",
+                "Items"
+              ],
+              "properties": {
+                "OrganizationID": {
+                  "type": "string",
+                  "title": "Site Address",
+                  "description": "Address of Dataverse environment - e.g. org7a1b6b7d.crm4.dynamics.com"
+                },
+                "TableName": {
+                  "type": "string",
+                  "title": "Table Name",
+                  "description": "The name of the Dataverse Table"
+                },
+                "TablePrefix": {
+                  "type": "string",
+                  "title": "Table Prefix",
+                  "description": "The prefix for the table",
+                  "x-ms-visibility": "important"
+                },
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "description": "The number of items to include in each batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "description": "Simple array of record GUIDs to delete in the Dataverse Table",
+                  "items": {
+                    "type": "string",
+                    "format": "guid"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Dataverse Delete Batch request",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "type": "string",
+                    "title": "API Endpoint",
+                    "description": "The URI endpoint for the Dataverse batch request"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "x-ms-summary": "Headers",
+                    "description": "All headers for the batch request",
+                    "properties": {
+                      "Content-Type": {
+                        "title": "Content Type",
+                        "x-ms-summary": "Content Type",
+                        "type": "string",
+                        "description": "Content type of the request"
+                      },
+                      "OData-Version": {
+                        "title": "OData Version",
+                        "x-ms-summary": "OData Version",
+                        "type": "string",
+                        "description": "The OData version of the request"
+                      },
+                      "OData-MaxVersion": {
+                        "title": "OData Max Version",
+                        "x-ms-summary": "OData Max Version",
+                        "type": "string",
+                        "description": "The maximum OData version of the request"
+                      },
+                      "Accept": {
+                        "title": "Accept",
+                        "x-ms-summary": "Accept",
+                        "type": "string",
+                        "description": "The content type of the response"
+                      }
+                    }
+                  },
+                  "BatchBody": {
+                    "title": "Batch Body",
+                    "x-ms-summary": "Batch Body",
+                    "type": "string",
+                    "description": "The body of the batch delete request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#dataverse---batch-delete-records-(advanced)"
+        }
+      }
+    },
+    "/{connectionId}/batch/dataverse/deletesimple": {
+      "post": {
+        "summary": "Dataverse - Batch Delete Records (Simple)",
+        "description": "Generates a Dataverse Delete Batch request",
+        "operationId": "BatchDeleteDataverseRecordsSimple",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a SharePoint Create Batch request",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "BatchSize",
+                "Items"
+              ],
+              "properties": {
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "x-ms-summary": "Batch Size",
+                  "description": "The number of items to include in each batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "x-ms-summary": "Items",
+                  "description": "Output from List Rows Action",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Dataverse Delete Batch request",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "type": "string",
+                    "title": "API Endpoint",
+                    "x-ms-summary": "API Endpoint",
+                    "description": "The URI endpoint for the Dataverse batch request"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "All headers for the batch request",
+                    "properties": {
+                      "Content-Type": {
+                        "title": "Content Type",
+                        "x-ms-summary": "Content Type",
+                        "type": "string",
+                        "description": "Content type of the request"
+                      },
+                      "OData-Version": {
+                        "title": "OData Version",
+                        "x-ms-summary": "OData Version",
+                        "type": "string",
+                        "description": "The OData version of the request"
+                      },
+                      "OData-MaxVersion": {
+                        "title": "OData Max Version",
+                        "x-ms-summary": "OData Max Version",
+                        "type": "string",
+                        "description": "The maximum OData version of the request"
+                      },
+                      "Accept": {
+                        "title": "Accept",
+                        "x-ms-summary": "Accept",
+                        "type": "string",
+                        "description": "The content type of the response"
+                      }
+                    }
+                  },
+                  "BatchBody": {
+                    "title": "Batch Body",
+                    "x-ms-summary": "Batch Body",
+                    "type": "string",
+                    "description": "The body of the batch delete request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#dataverse---batch-delete-records-(simple)"
+        }
+      }
+    },
+    "/{connectionId}/batch/sharepoint/create": {
+      "post": {
+        "summary": "SharePoint - Batch Create Items",
+        "description": "Generates a SharePoint Create Batch request",
+        "operationId": "BatchCreateSharePointItems",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a SharePoint Create Batch request",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "SiteName",
+                "ListName",
+                "BatchSize",
+                "Items",
+                "ODataLevel"
+              ],
+              "properties": {
+                "SiteName": {
+                  "type": "string",
+                  "title": "Site Address",
+                  "x-ms-summary": "Site Address",
+                  "description": "The address of the SharePoint site"
+                },
+                "ListName": {
+                  "type": "string",
+                  "title": "List Name",
+                  "x-ms-summary": "List Name",
+                  "description": "The name of the SharePoint list"
+                },
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "x-ms-summary": "Batch Size",
+                  "description": "The number of items to include in each batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "ODataLevel": {
+                  "type": "string",
+                  "title": "OData Level",
+                  "description": "The OData level of the request",
+                  "enum": [
+                    "verbose",
+                    "nometadata"
+                  ],
+                  "default": "verbose",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Verbose",
+                      "value": "verbose"
+                    },
+                    {
+                      "displayName": "No Metadata",
+                      "value": "nometadata"
+                    }
+                  ],
+                  "x-ms-visibility": "advanced"
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "description": "The items to create in the SharePoint list",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The SharePoint Create Batch request",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "type": "string",
+                    "title": "API Endpoint",
+                    "x-ms-summary": "API Endpoint",
+                    "description": "The URI endpoint for the SharePoint batch request"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "The headers for the batch request",
+                    "properties": {
+                      "X-RequestDigest": {
+                        "type": "string",
+                        "description": "The request digest for authentication"
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Content type and boundary of the request"
+                      },
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "The length of the batch request content in bytes"
+                      }
+                    }
+                  },
+                  "BatchBody": {
+                    "title": "Batch Body",
+                    "x-ms-summary": "Batch Body",
+                    "type": "string",
+                    "description": "The body of the batch request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#sharepoint---batch-create-items"
+        }
+      }
+    },
+    "/{connectionId}/batch/sharepoint/delete": {
+      "post": {
+        "summary": "SharePoint - Batch Delete Items",
+        "description": "Generates a SharePoint Batch Delete request",
+        "operationId": "BatchDeleteSharePointItems",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a SharePoint Delete Batch request",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "SiteName",
+                "ListName",
+                "BatchSize",
+                "Items",
+                "ODataLevel"
+              ],
+              "properties": {
+                "SiteName": {
+                  "type": "string",
+                  "title": "Site Address",
+                  "description": "The address of the SharePoint site"
+                },
+                "ListName": {
+                  "type": "string",
+                  "title": "List Name",
+                  "description": "The name of the SharePoint list"
+                },
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "description": "The number of items to include in each batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "ODataLevel": {
+                  "type": "string",
+                  "title": "OData Level",
+                  "description": "The OData level of the request",
+                  "enum": [
+                    "verbose",
+                    "nometadata"
+                  ],
+                  "default": "verbose",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Verbose",
+                      "value": "verbose"
+                    },
+                    {
+                      "displayName": "No Metadata",
+                      "value": "nometadata"
+                    }
+                  ],
+                  "x-ms-visibility": "advanced"
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "x-ms-summary": "Items",
+                  "description": "The items to create in the SharePoint list",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The SharePoint Delete Batch request",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "type": "string",
+                    "title": "API Endpoint",
+                    "x-ms-summary": "API Endpoint",
+                    "description": "The URI endpoint for the SharePoint batch request"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "The headers for the batch request",
+                    "properties": {
+                      "X-RequestDigest": {
+                        "type": "string",
+                        "description": "The request digest for authentication"
+                      },
+                      "Content-Type": {
+                        "type": "string",
+                        "description": "Content type and boundary of the request"
+                      },
+                      "Content-Length": {
+                        "type": "string",
+                        "description": "The length of the batch request content in bytes"
+                      }
+                    }
+                  },
+                  "BatchBody": {
+                    "title": "Batch Body",
+                    "x-ms-summary": "Batch Body",
+                    "type": "string",
+                    "description": "The body of the batch request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#sharepoint---batch-delete-items"
+        }
+      }
+    },
+    "/{connectionId}/batch/sharepoint/update": {
+      "post": {
+        "summary": "SharePoint - Batch Update List Items",
+        "operationId": "BatchUpdateSharePointItems",
+        "description": "Updates multiple items in a SharePoint list using a batch request. Each item must include its ID.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "SiteName",
+                "ListName",
+                "Items"
+              ],
+              "properties": {
+                "SiteName": {
+                  "type": "string",
+                  "title": "Site Name",
+                  "x-ms-summary": "Site Name",
+                  "description": "The full URL of the SharePoint site (e.g., https://contoso.sharepoint.com/sites/dev)"
+                },
+                "ListName": {
+                  "type": "string",
+                  "title": "List Name",
+                  "x-ms-summary": "List Name",
+                  "description": "The name of the SharePoint list"
+                },
+                "ODataLevel": {
+                  "type": "string",
+                  "title": "OData Level",
+                  "x-ms-summary": "OData Level",
+                  "default": "verbose",
+                  "enum": [
+                    "verbose",
+                    "nometadata"
+                  ],
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Verbose",
+                      "value": "verbose"
+                    },
+                    {
+                      "displayName": "No Metadata",
+                      "value": "nometadata"
+                    }
+                  ],
+                  "x-ms-visibility": "advanced",
+                  "description": "The OData level of the response"
+                },
+                "BatchSize": {
+                  "type": "integer",
+                  "title": "Batch Size",
+                  "x-ms-summary": "Batch Size",
+                  "description": "Maximum number of items per batch",
+                  "enum": [
+                    100,
+                    250,
+                    500,
+                    750,
+                    1000
+                  ],
+                  "default": 250,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "100",
+                      "value": 100
+                    },
+                    {
+                      "displayName": "250 (Recommended)",
+                      "value": 250
+                    },
+                    {
+                      "displayName": "500",
+                      "value": 500
+                    },
+                    {
+                      "displayName": "750",
+                      "value": 750
+                    },
+                    {
+                      "displayName": "1000 (Maximum)",
+                      "value": 1000
+                    }
+                  ]
+                },
+                "Items": {
+                  "type": "array",
+                  "title": "Items",
+                  "x-ms-summary": "Items",
+                  "description": "The items to update. Each must include an ID property.",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch update payloads generated successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "URI": {
+                    "title": "URI",
+                    "x-ms-summary": "URI",
+                    "description": "The URI of the request",
+                    "type": "string"
+                  },
+                  "Headers": {
+                    "title": "Headers",
+                    "x-ms-summary": "Headers",
+                    "description": "The headers for the batch update request",
+                    "type": "object"
+                  },
+                  "BatchBody": {
+                    "title": "Batch Update Body",
+                    "x-ms-summary": "Batch Update Body",
+                    "description": "The HTTP Content for the batch update",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields"
+          },
+          "500": {
+            "description": "Error generating batch update request"
+          }
+        },
+        "tags": [
+          "Batching"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#sharepoint---batch-update-list-items"
+        }
+      }
+    },
+    "/{connectionId}/csv/tojson": {
+      "post": {
+        "summary": "CSV - Parse CSV Content",
+        "description": "Parses a CSV file and returns its content as a structured JSON array.",
+        "operationId": "CsvToJson",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The CSV content and optional parsing parameters.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "CSV"
+              ],
+              "properties": {
+                "CSV": {
+                  "type": "string",
+                  "description": "The CSV content as a raw string or Base64-encoded.",
+                  "title": "CSV Content"
+                },
+                "Delimiter": {
+                  "type": "string",
+                  "description": "The character used as the column delimiter (default is comma `,`).",
+                  "title": "Delimiter",
+                  "default": ",",
+                  "x-ms-visibility": "important"
+                },
+                "SkipLines": {
+                  "type": "integer",
+                  "description": "The number of lines to skip before reading the data.",
+                  "title": "Skip Lines",
+                  "default": 0,
+                  "x-ms-visibility": "important"
+                },
+                "ColumnHeaders": {
+                  "type": "string",
+                  "description": "Comma-separated list of column headers. If not provided, the first row will be used.",
+                  "title": "Column Headers",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The parsed CSV data as an array of objects.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "title": "Parsed CSV",
+                "x-ms-summary": "Parsed CSV",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "x-RowCount": {
+                "x-ms-summary": "Row Count",
+                "type": "integer",
+                "description": "The number of rows parsed."
+              },
+              "x-Base64Input": {
+                "x-ms-summary": "Input was base64",
+                "type": "boolean",
+                "description": "Indicates if the input was provided as Base64."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Misc Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#csv---parse-csv-content"
+        }
+      }
+    },
+    "/{connectionId}/dates/nextworkingday": {
+      "post": {
+        "summary": "Date - Calculate Next Working Day",
+        "description": "Calculates the next working day given a date and working day preferences.",
+        "operationId": "dateNextWorkingDay",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for date calculation.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "date",
+                "addDays"
+              ],
+              "properties": {
+                "date": {
+                  "x-ms-summary": "Start Date",
+                  "type": "string",
+                  "format": "date",
+                  "description": "The starting date for the calculation.",
+                  "title": "Start Date",
+                  "x-ms-visibility": "important"
+                },
+                "mondayWorking": {
+                  "type": "boolean",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-summary": "Work on Monday?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "tuesdayWorking": {
+                  "type": "boolean",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-summary": "Work on Tuesday?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "wednesdayWorking": {
+                  "type": "boolean",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-summary": "Work on Wednesday?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "thursdayWorking": {
+                  "type": "boolean",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-summary": "Work on Thursday?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "fridayWorking": {
+                  "type": "boolean",
+                  "default": true,
+                  "x-ms-summary": "Work on Friday?",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "saturdayWorking": {
+                  "type": "boolean",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": false,
+                  "x-ms-summary": "Work on Saturday?",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "sundayWorking": {
+                  "type": "boolean",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": false,
+                  "x-ms-summary": "Work on Sunday?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "addDays": {
+                  "type": "number",
+                  "default": 0,
+                  "x-ms-summary": "In X days time."
+                },
+                "excludeDays": {
+                  "type": "array",
+                  "x-ms-visibility": "advanced",
+                  "description": "Array of additional holiday dates.",
+                  "title": "Additional Holidays",
+                  "items": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Holiday Date",
+                    "title": "Holiday Date",
+                    "required": [
+                      "Date"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The next working day after the given date.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nextWorkingDay": {
+                  "type": "string",
+                  "format": "date",
+                  "title": "Next Working Day",
+                  "x-ms-summary": "Next Working Day",
+                  "description": "The next working day calculated (YYYY-MM-DD).",
+                  "example": "2025-02-21"
+                },
+                "year": {
+                  "type": "integer",
+                  "title": "Year",
+                  "x-ms-summary": "Year",
+                  "description": "The year of the next working day.",
+                  "example": 2025
+                },
+                "month": {
+                  "type": "integer",
+                  "title": "Month",
+                  "x-ms-summary": "Month",
+                  "description": "The month of the next working day.",
+                  "example": 2
+                },
+                "day": {
+                  "type": "integer",
+                  "title": "Day",
+                  "x-ms-summary": "Day",
+                  "description": "The day of the month for the next working day.",
+                  "example": 21
+                },
+                "dayOfWeek": {
+                  "type": "string",
+                  "title": "Day of Week",
+                  "x-ms-summary": "Day of Week",
+                  "description": "The day of the week for the next working day.",
+                  "example": "Friday"
+                },
+                "isoWeek": {
+                  "type": "integer",
+                  "title": "ISO Week",
+                  "x-ms-summary": "ISO Week",
+                  "description": "The ISO 8601 week number.",
+                  "example": 8
+                },
+                "elapsedCalendarDays": {
+                  "type": "integer",
+                  "title": "Elapsed Calendar Days",
+                  "x-ms-summary": "Elapsed Calendar Days",
+                  "description": "Total calendar days from the start date to the next working day.",
+                  "example": 2
+                },
+                "nonWorkingDaysSkipped": {
+                  "type": "integer",
+                  "title": "Non-Working Days Skipped",
+                  "x-ms-summary": "Non-Working Days Skipped",
+                  "description": "Number of non-working days skipped.",
+                  "example": 1
+                },
+                "holidaysSkipped": {
+                  "type": "array",
+                  "title": "Holidays Skipped",
+                  "x-ms-summary": "Holidays Skipped",
+                  "items": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "description": "List of holidays that were skipped.",
+                  "example": [
+                    "2025-02-20"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue."
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Date Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#date---calculate-next-working-day"
+        }
+      }
+    },
+    "/{connectionId}/dates/generateworkingdays": {
+      "post": {
+        "summary": "Date - Generate Working Days",
+        "description": "Generates an array of working days based on start date and preferences.",
+        "operationId": "dateGenerateWorkingDays",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for generating a list of working days.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "date",
+                "addDays"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "title": "Start Date",
+                  "description": "The starting date for generating working days.",
+                  "x-ms-summary": "Start Date",
+                  "x-ms-visibility": "important",
+                  "example": "2025-02-20"
+                },
+                "addDays": {
+                  "type": "integer",
+                  "title": "Number of Working Days",
+                  "description": "The number of working days to generate.",
+                  "x-ms-summary": "Number of Working Days",
+                  "default": 5,
+                  "example": 5
+                },
+                "mondayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Monday?",
+                  "description": "Should Monday be considered a working day?",
+                  "x-ms-summary": "Work on Monday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "tuesdayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Tuesday?",
+                  "description": "Should Tuesday be considered a working day?",
+                  "x-ms-summary": "Work on Tuesday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "wednesdayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Wednesday?",
+                  "description": "Should Wednesday be considered a working day?",
+                  "x-ms-summary": "Work on Wednesday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "thursdayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Thursday?",
+                  "description": "Should Thursday be considered a working day?",
+                  "x-ms-summary": "Work on Thursday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "fridayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Friday?",
+                  "description": "Should Friday be considered a working day?",
+                  "x-ms-summary": "Work on Friday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "saturdayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Saturday?",
+                  "description": "Should Saturday be considered a working day?",
+                  "x-ms-summary": "Work on Saturday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": false,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "sundayWorking": {
+                  "type": "boolean",
+                  "title": "Work on Sunday?",
+                  "description": "Should Sunday be considered a working day?",
+                  "x-ms-summary": "Work on Sunday?",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": false,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "excludeDays": {
+                  "type": "array",
+                  "title": "Exclude Specific Dates",
+                  "description": "Array of dates to exclude from the working days.",
+                  "x-ms-summary": "Exclude Specific Dates",
+                  "items": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-02-21"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of generated working days.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "workingDay": {
+                    "type": "string",
+                    "format": "date",
+                    "title": "Working Day",
+                    "x-ms-summary": "Working Day",
+                    "description": "The generated working day (YYYY-MM-DD)."
+                  },
+                  "year": {
+                    "type": "integer",
+                    "title": "Year",
+                    "x-ms-summary": "Year",
+                    "description": "The year of the working day."
+                  },
+                  "month": {
+                    "type": "integer",
+                    "title": "Month",
+                    "x-ms-summary": "Month",
+                    "description": "The month of the working day."
+                  },
+                  "day": {
+                    "type": "integer",
+                    "title": "Day",
+                    "x-ms-summary": "Day",
+                    "description": "The day of the month for the working day."
+                  },
+                  "dayOfWeek": {
+                    "type": "string",
+                    "title": "Day of Week",
+                    "x-ms-summary": "Day of Week",
+                    "description": "The name of the weekday."
+                  },
+                  "isoWeek": {
+                    "type": "integer",
+                    "title": "ISO Week",
+                    "x-ms-summary": "ISO Week",
+                    "description": "The ISO 8601 week number."
+                  },
+                  "elapsedCalendarDays": {
+                    "type": "integer",
+                    "title": "Elapsed Calendar Days",
+                    "x-ms-summary": "Elapsed Calendar Days",
+                    "description": "Total calendar days from the start date to each working day."
+                  },
+                  "nonWorkingDaysSkipped": {
+                    "type": "integer",
+                    "title": "Non-Working Days Skipped",
+                    "x-ms-summary": "Non-Working Days Skipped",
+                    "description": "The number of non-working days skipped."
+                  },
+                  "holidaysSkipped": {
+                    "type": "array",
+                    "title": "Holidays Skipped",
+                    "x-ms-summary": "Holidays Skipped",
+                    "items": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "description": "List of excluded holidays skipped."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the issue."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue."
+                }
+              }
+            }
+          }
+        },
+        "x-ms-examples": {
+          "GenerateWorkingDays": {
+            "summary": "Example request for generating working days",
+            "value": {
+              "date": "2025-02-20",
+              "addDays": 5,
+              "mondayWorking": true,
+              "tuesdayWorking": true,
+              "wednesdayWorking": true,
+              "thursdayWorking": true,
+              "fridayWorking": true,
+              "saturdayWorking": false,
+              "sundayWorking": false,
+              "excludeDays": [
+                "2025-02-21"
+              ]
+            }
+          }
+        },
+        "tags": [
+          "Date Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#date---generate-working-days"
+        }
+      }
+    },
+    "/{connectionId}/extractformattachments": {
+      "post": {
+        "summary": "Forms - Extract Attachments from Submission",
+        "description": "Extract Attachments from Submission",
+        "operationId": "ExtractFormAttachments",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Form Response",
+            "x-ms-summary": "Form Response",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The files in the form response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "File Name",
+                    "x-ms-summary": "File Name",
+                    "description": "Filename with Extension"
+                  },
+                  "link": {
+                    "type": "string",
+                    "title": "Link",
+                    "x-ms-summary": "Link",
+                    "description": "Full path to the file"
+                  },
+                  "id": {
+                    "type": "string",
+                    "title": "ID",
+                    "x-ms-summary": "ID",
+                    "description": "File Identifier"
+                  },
+                  "type": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "title": "Type"
+                  },
+                  "size": {
+                    "type": "integer",
+                    "title": "File Size",
+                    "x-ms-summary": "File Size",
+                    "description": "File Size in Bytes"
+                  },
+                  "referenceId": {
+                    "type": "string",
+                    "title": "Reference ID"
+                  },
+                  "driveId": {
+                    "type": "string",
+                    "title": "Drive ID",
+                    "x-ms-summary": "Drive ID",
+                    "description": "Drive where the file is stored"
+                  },
+                  "status": {
+                    "type": "integer",
+                    "title": "Status"
+                  },
+                  "uploadSessionUrl": {
+                    "type": "string",
+                    "title": "Upload Session URL",
+                    "x-nullable": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Misc Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#forms---extract-attachments-from-submission"
+        }
+      }
+    },
+    "/{connectionId}/json/path": {
+      "post": {
+        "summary": "Execute JSONPath Query",
+        "description": "Executes a JSONPath query on the provided JSON",
+        "operationId": "jsonPath",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON and JSONPath query",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "Json",
+                "JsonPath"
+              ],
+              "properties": {
+                "Json": {
+                  "type": "string",
+                  "description": "The JSON content to query",
+                  "x-ms-summary": "Input JSON"
+                },
+                "JsonPath": {
+                  "type": "string",
+                  "description": "The JSONPath query to execute",
+                  "x-ms-summary": "JSON Path Query"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The result of the JSONPath query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "title": "JSONPath Result",
+                  "x-ms-summary": "JSONPath Result",
+                  "items": {
+                    "additionalProperties": true
+                  },
+                  "description": "Array of objects based on the JSONPath query result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Misc Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#execute-jsonpath-query"
+        }
+      }
+    },
+    "/{connectionId}/msword/extracttext": {
+      "post": {
+        "summary": "Word - Extract Text from Document",
+        "description": "Extracts Text from Word Document",
+        "operationId": "ExtractTextFromWord",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "WordFileContent"
+              ],
+              "properties": {
+                "WordFileContent": {
+                  "type": "string",
+                  "description": "The content of the word file",
+                  "title": "File Content",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The content of the Word document",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "title": "Text",
+                  "x-ms-summary": "Text",
+                  "description": "Text extracted from the Word document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Microsoft Word"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#word---extract-text-from-document"
+        }
+      }
+    },
+    "/{connectionId}/msword/extractcomments": {
+      "post": {
+        "summary": "Word - Extract Comments from Document",
+        "description": "Extract Comments from Document",
+        "operationId": "ExtractCommentsFromWord",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "WordFileContent"
+              ],
+              "properties": {
+                "WordFileContent": {
+                  "type": "string",
+                  "description": "The base64-encoded content of the Word file",
+                  "title": "File Content",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The comments extracted from the Word document",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comments": {
+                  "title": "Comments",
+                  "x-ms-summary": "Comments",
+                  "type": "array",
+                  "description": "A list of comments found in the Word document",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Author": {
+                        "type": "string",
+                        "description": "The author of the comment"
+                      },
+                      "Initials": {
+                        "type": "string",
+                        "description": "The initials of the author"
+                      },
+                      "Date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The date the comment was made"
+                      },
+                      "Text": {
+                        "type": "string",
+                        "description": "The comment text"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No comments found in the Word document",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "No Comments found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue",
+                  "example": "An internal server error occurred."
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Microsoft Word"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#word---extract-comments-from-document"
+        }
+      }
+    },
+    "/{connectionId}/regex/regexmatch": {
+      "post": {
+        "summary": "Regex - Perform Match on Input String",
+        "description": "Searches a given input string with a specified regex pattern.",
+        "operationId": "RegexMatch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for performing regex match",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "InputString",
+                "Pattern"
+              ],
+              "properties": {
+                "InputString": {
+                  "type": "string",
+                  "description": "The input text to search within.",
+                  "title": "Input String"
+                },
+                "Pattern": {
+                  "type": "string",
+                  "description": "The regex pattern to match against the input string.",
+                  "title": "Pattern"
+                },
+                "CaseSensitive": {
+                  "type": "string",
+                  "description": "Whether the match should be case sensitive.",
+                  "title": "Case Sensitive",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "Multiline": {
+                  "type": "string",
+                  "description": "Whether the match should consider multiple lines.",
+                  "title": "Multiline",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "GlobalSearch": {
+                  "type": "string",
+                  "description": "Whether to find all matches or just the first.",
+                  "title": "Global Search",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "IgnoreWhitespace": {
+                  "title": "Ignore Whitespace",
+                  "x-ms-visibility": "advanced",
+                  "type": "string",
+                  "description": "Whether to ignore whitespace in the regex pattern.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "SingleLine": {
+                  "title": "Single Line",
+                  "x-ms-visibility": "advanced",
+                  "type": "string",
+                  "description": "Whether dot matches any character including newline.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of detailed match data.",
+            "schema": {
+              "type": "array",
+              "title": "Regular Expression Matches",
+              "x-ms-summary": "Regular Expression Matches",
+              "description": "Array of all matches from the regular expression",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Match": {
+                    "type": "string",
+                    "description": "The matched string."
+                  },
+                  "Index": {
+                    "type": "integer",
+                    "description": "The starting index of the match."
+                  },
+                  "Length": {
+                    "type": "integer",
+                    "description": "The length of the matched string."
+                  },
+                  "End": {
+                    "type": "integer",
+                    "description": "The ending index of the matched string."
+                  },
+                  "Groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of captured groups within the match."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Regular Expression Operations"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#regex---perform-match-on-input-string"
+        }
+      }
+    },
+    "/{connectionId}/regex/regexreplace": {
+      "post": {
+        "summary": "Regex - Replace in Text",
+        "description": "Replace a string with a regex pattern and a new value.",
+        "operationId": "RegexReplace",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The input string, regex pattern and replacement string.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "InputString",
+                "Pattern",
+                "Replacement"
+              ],
+              "properties": {
+                "InputString": {
+                  "type": "string",
+                  "description": "The input text to search within.",
+                  "title": "Input String"
+                },
+                "Pattern": {
+                  "type": "string",
+                  "description": "The regex pattern to match against the input string.",
+                  "title": "Pattern"
+                },
+                "Replacement": {
+                  "type": "string",
+                  "description": "The replacement string.",
+                  "title": "Replacement String"
+                },
+                "CaseSensitive": {
+                  "type": "string",
+                  "description": "Whether the match should be case sensitive.",
+                  "title": "Case Sensitive",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "Multiline": {
+                  "type": "string",
+                  "description": "Whether the match should consider multiple lines.",
+                  "title": "Multiline",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "GlobalSearch": {
+                  "type": "string",
+                  "description": "Whether to find all matches or just the first.",
+                  "title": "Global Search",
+                  "x-ms-visibility": "advanced",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "IgnoreWhitespace": {
+                  "title": "Ignore Whitespace",
+                  "x-ms-visibility": "advanced",
+                  "type": "string",
+                  "description": "Whether to ignore whitespace in the regex pattern.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "SingleLine": {
+                  "title": "Single Line",
+                  "x-ms-visibility": "advanced",
+                  "type": "string",
+                  "description": "Whether dot matches any character including newline.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The string after performing the regex replace operation.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Result": {
+                  "title": "Replaced String",
+                  "x-ms-summary": "Replaced String",
+                  "type": "string",
+                  "description": "The result of the regex replace operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Regular Expression Operations"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#regex---replace-in-text"
+        }
+      }
+    },
+    "/{connectionId}/regex/regexmatchbatch": {
+      "post": {
+        "summary": "Regex - Batch Match in Text",
+        "description": "Searches a given input string with multiple specified regex patterns.",
+        "operationId": "RegexMatchBatch",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for performing batch regex match",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "InputString",
+                "RegexOperations"
+              ],
+              "properties": {
+                "InputString": {
+                  "type": "string",
+                  "title": "Input String",
+                  "x-ms-summary": "Input Text",
+                  "description": "The input text to search within."
+                },
+                "RegexOperations": {
+                  "type": "array",
+                  "title": "RX",
+                  "x-ms-summary": "RX",
+                  "description": "Array of regex operations to be performed.",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "Pattern",
+                      "PropertyName"
+                    ],
+                    "properties": {
+                      "PropertyName": {
+                        "type": "string",
+                        "title": "Name",
+                        "x-ms-summary": "Name",
+                        "description": "The name to assign the match result in the output."
+                      },
+                      "Pattern": {
+                        "type": "string",
+                        "title": "Pattern",
+                        "x-ms-summary": "Pattern",
+                        "description": "The regular expression pattern to use for matching."
+                      }
+                    }
+                  }
+                },
+                "CaseSensitive": {
+                  "type": "string",
+                  "title": "Case Sensitive",
+                  "x-ms-summary": "Case Sensitive",
+                  "description": "Whether the match should be case sensitive.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "Multiline": {
+                  "type": "string",
+                  "title": "Multiline Mode",
+                  "x-ms-summary": "Multiline Mode",
+                  "description": "Whether the match should consider multiple lines (affects `^` and `$`).",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "GlobalSearch": {
+                  "type": "string",
+                  "title": "Global Search",
+                  "x-ms-summary": "Match All Occurrences?",
+                  "description": "Return all matches (`True`) or just the first (`False`).",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "SingleLine": {
+                  "type": "string",
+                  "title": "Single Line Mode",
+                  "x-ms-summary": "Single Line Mode",
+                  "description": "Whether the dot `.` matches newline characters.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-visibility": "advanced",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Regex match results mapped to their respective property names.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "title": "Result of the batch match",
+              "x-ms-summary": "Result of the batch match",
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Regular Expression Operations"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#regex---batch-match-in-text"
+        }
+      }
+    },
+    "/{connectionId}/string/extractemails": {
+      "post": {
+        "summary": "Text - Extract Email Addresses",
+        "description": "Extracts email addresses from the provided text",
+        "operationId": "ExtractEmailsFromText",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Text to search for email addresses",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "TextToSearch"
+              ],
+              "properties": {
+                "TextToSearch": {
+                  "type": "string",
+                  "description": "The text content to search for email addresses",
+                  "x-ms-summary": "Text to Search"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of email addresses found in the text",
+            "x-ms-summary": "An array of email addresses found in the text",
+            "schema": {
+              "type": "array",
+              "title": "Email Addresses",
+              "x-ms-summary": "Email Addresses",
+              "description": "An array of email addresses",
+              "items": {
+                "type": "string",
+                "title": "Email Address",
+                "x-ms-summary": "Email Address",
+                "description": "Email address found in the text"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "String Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#text---extract-email-addresses"
+        }
+      }
+    },
+    "/{connectionId}/string/cleantext": {
+      "post": {
+        "summary": "Text - Clean Text",
+        "description": "Cleans the input text by removing specified characters.",
+        "operationId": "CleanText",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for cleaning text",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stringToClean"
+              ],
+              "properties": {
+                "stringToClean": {
+                  "type": "string",
+                  "title": "String to Clean",
+                  "description": "The text content to be cleaned"
+                },
+                "charactersToRemove": {
+                  "type": "string",
+                  "title": "Characters to Remove",
+                  "description": "Characters to remove from the text content"
+                },
+                "trimString": {
+                  "type": "string",
+                  "title": "Trim String",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "description": "Should whitespace be trimmed from the string",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "removeControlCharacters": {
+                  "type": "string",
+                  "title": "Remove Control Characters",
+                  "default": "False",
+                  "enum": [
+                    "True",
+                    "False",
+                    "RetainNewLines"
+                  ],
+                  "description": "Remove control characters be removed from the string?",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    },
+                    {
+                      "displayName": "Remove control characters but retain new lines",
+                      "value": "RetainNewLines"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cleaned text",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cleanedString": {
+                  "title": "Cleaned String",
+                  "type": "string",
+                  "description": "The text after cleaning"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "String Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#text---clean-text"
+        }
+      }
+    },
+    "/{connectionId}/string/extracttext": {
+      "post": {
+        "summary": "Text - Extract Between Two Strings",
+        "description": "Extracts text between two specified strings from the provided text.",
+        "operationId": "ExtractText",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for extracting text",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "textToSearch",
+                "startString",
+                "endString"
+              ],
+              "properties": {
+                "textToSearch": {
+                  "title": "Text to Search",
+                  "type": "string",
+                  "description": "The text content to search within."
+                },
+                "startString": {
+                  "title": "Start Text",
+                  "type": "string",
+                  "description": "The starting string to look for."
+                },
+                "endString": {
+                  "title": "End Text",
+                  "type": "string",
+                  "description": "The ending string to look for."
+                },
+                "includeBounds": {
+                  "type": "string",
+                  "title": "Include Bounds",
+                  "description": "Include the Start and End Text in the extracted text.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "ignoreCase": {
+                  "type": "string",
+                  "title": "Ignore Case",
+                  "description": "Whether the search should ignore case.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "False",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                },
+                "trimResult": {
+                  "type": "string",
+                  "title": "Trim Result",
+                  "description": "Whether to trim the extracted text.",
+                  "enum": [
+                    "True",
+                    "False"
+                  ],
+                  "default": "True",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "True"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "False"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The extracted text",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "extractedText": {
+                  "title": "Extracted Text",
+                  "type": "string",
+                  "description": "Text extracted between the specified start and end strings."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "String Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#text---extract-between-two-strings"
+        }
+      }
+    },
+    "/{connectionId}/string/extractmultipletexts": {
+      "post": {
+        "summary": "Text - Extract Multiple Texts Between Strings",
+        "description": "Extracts all occurrences of text between specified strings.",
+        "operationId": "ExtractMultipleTexts",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Parameters for extracting multiple texts",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "textToSearch",
+                "startString",
+                "endString"
+              ],
+              "properties": {
+                "textToSearch": {
+                  "title": "Text to Search",
+                  "type": "string",
+                  "description": "The text content to search within."
+                },
+                "startString": {
+                  "title": "Start Text",
+                  "type": "string",
+                  "description": "The starting string to look for."
+                },
+                "endString": {
+                  "title": "End Text",
+                  "type": "string",
+                  "description": "The ending string to look for."
+                },
+                "includeBounds": {
+                  "type": "boolean",
+                  "title": "Include Bounds",
+                  "description": "Include the Start and End Text in the extracted texts.",
+                  "default": false,
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "ignoreCase": {
+                  "type": "boolean",
+                  "title": "Ignore Case",
+                  "description": "Whether the search should ignore case.",
+                  "default": false,
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                },
+                "trimResult": {
+                  "type": "boolean",
+                  "title": "Trim Result",
+                  "description": "Whether to trim the extracted texts.",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true,
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": true
+                    },
+                    {
+                      "displayName": "No",
+                      "value": false
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of extracted texts",
+            "schema": {
+              "type": "array",
+              "title": "Array of extracted text",
+              "x-ms-summary": "Array of extracted text",
+              "items": {
+                "title": "Extracted Text Item",
+                "x-ms-summary": "Extracted Text Item",
+                "type": "string",
+                "description": "A single extracted text occurrence"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "String Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#text---extract-multiple-texts-between-strings"
+        }
+      }
+    },
+    "/{connectionId}/string/hashstring": {
+      "post": {
+        "summary": "Hash",
+        "description": "Hashes a string using the specified algorithm",
+        "operationId": "hashstring",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Parameters for hasing",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "StringToHash": {
+                  "type": "string",
+                  "title": "String to Hash",
+                  "description": "The string to has"
+                },
+                "Algorithm": {
+                  "type": "string",
+                  "title": "Algorithm",
+                  "description": "The algorithm to use for hashing",
+                  "enum": [
+                    "MD5",
+                    "SHA1",
+                    "SHA256",
+                    "SHA384",
+                    "SHA512"
+                  ],
+                  "default": "MD5",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "MD5",
+                      "value": "MD5"
+                    },
+                    {
+                      "displayName": "SHA1",
+                      "value": "SHA1"
+                    },
+                    {
+                      "displayName": "SHA256",
+                      "value": "SHA256"
+                    },
+                    {
+                      "displayName": "SHA384",
+                      "value": "SHA384"
+                    },
+                    {
+                      "displayName": "SHA512",
+                      "value": "SHA512"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The result of the Hash operation.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "title": "Hashed String",
+                  "x-ms-summary": "Hashed String",
+                  "type": "string",
+                  "description": "The hashed string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue."
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "String Functions"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#hash"
+        }
+      }
+    },
+    "/{connectionId}/xslttransform": {
+      "post": {
+        "summary": "Transform XML using XSLT",
+        "description": "Transforms an XML document using an XSLT stylesheet",
+        "operationId": "XSLTTransform",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The XML and XSLT content with optional parameters",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "XmlString",
+                "XsltString"
+              ],
+              "properties": {
+                "XmlString": {
+                  "type": "string",
+                  "title": "XML String",
+                  "description": "The XML content to be transformed."
+                },
+                "XsltString": {
+                  "type": "string",
+                  "title": "XSLT String",
+                  "description": "The XSLT stylesheet content."
+                },
+                "XsltParameters": {
+                  "type": "object",
+                  "title": "XSLT Parameters",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "JSON object containing parameters for the XSLT transformation."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The result of the XSLT transformation.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "title": "XSLT Output",
+                  "x-ms-summary": "XSLT Output",
+                  "type": "string",
+                  "description": "The XSLT-transformed output"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue."
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Misc Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#transform-xml-using-xslt"
+        }
+      }
+    },
+    "/{connectionId}/zip/zipcontent": {
+      "post": {
+        "summary": "Archive - Create a Zip file",
+        "description": "Creates a Zip File from JSON Content",
+        "operationId": "ZipContent",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON payload containing the zip file parameters",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "Files"
+              ],
+              "properties": {
+                "CompressionLevel": {
+                  "type": "string",
+                  "description": "Compression level for the Zip file",
+                  "enum": [
+                    "ZIP_DEFLATED",
+                    "ZIP_STORED",
+                    "ZIP_LZMA"
+                  ],
+                  "default": "ZIP_DEFLATED",
+                  "x-ms-summary": "Compression Level",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "ZIP_DEFLATED - Best balance of compression and speed (default)",
+                      "value": "ZIP_DEFLATED"
+                    },
+                    {
+                      "displayName": "ZIP_STORED - No compression, just stores files",
+                      "value": "ZIP_STORED"
+                    },
+                    {
+                      "displayName": "ZIP_LZMA - Highest compression, but slowest",
+                      "value": "ZIP_LZMA"
+                    }
+                  ]
+                },
+                "Files": {
+                  "type": "array",
+                  "description": "Array of filenames and content",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "Name",
+                      "Content"
+                    ],
+                    "properties": {
+                      "Name": {
+                        "type": "string",
+                        "description": "The name of the file"
+                      },
+                      "Content": {
+                        "type": "string",
+                        "format": "byte",
+                        "description": "File Content in base64 encoding"
+                      }
+                    }
+                  }
+                },
+                "Password": {
+                  "type": "string",
+                  "description": "(Optional) Password for encrypting the ZIP file",
+                  "x-ms-summary": "Password",
+                  "x-ms-visibility": "advanced"
+                },
+                "EncryptionLevel": {
+                  "type": "string",
+                  "description": "Sets the encryption level for the ZIP file.",
+                  "enum": [
+                    "None",
+                    "ZIP_STANDARD",
+                    "AES128",
+                    "AES192",
+                    "AES256"
+                  ],
+                  "default": "None",
+                  "x-ms-summary": "Encryption Level",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "None - No Encryption",
+                      "value": "None"
+                    },
+                    {
+                      "displayName": "ZIP_STANDARD - Weak legacy encryption (not recommended)",
+                      "value": "ZIP_STANDARD"
+                    },
+                    {
+                      "displayName": "AES128 Encryption (secure)",
+                      "value": "AES128"
+                    },
+                    {
+                      "displayName": "AES192 Encryption (more secure)",
+                      "value": "AES192"
+                    },
+                    {
+                      "displayName": "AES256 Encryption (strongest)",
+                      "value": "AES256"
+                    }
+                  ],
+                  "x-ms-visibility": "advanced"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The content of the Zip file",
+            "schema": {
+              "type": "string",
+              "format": "binary",
+              "title": "File Content",
+              "x-ms-summary": "File Content",
+              "x-ms-description": "The content of the Zip file."
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters or invalid inputs",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Error message describing the server issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Compression"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#archive---create-a-zip-file"
+        }
+      }
+    },
+    "/{connectionId}/zip/extractarchive": {
+      "post": {
+        "summary": "Archive - Extract All Files from Archive",
+        "description": "Extracts all files from a supported archive (ZIP, 7Z, RAR, TAR, GZIP, BZIP2, XZ), with optional password decryption and content type inference.",
+        "operationId": "ExtractArchive",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON payload containing the base64 encoded archive file",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "ArchiveFileContent"
+              ],
+              "properties": {
+                "ArchiveFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Archive File Content",
+                  "x-ms-summary": "Archive File Content",
+                  "description": "Base64 encoded content of the archive file"
+                },
+                "Password": {
+                  "type": "string",
+                  "title": "Password",
+                  "x-ms-summary": "Password",
+                  "description": "Optional password for encrypted archives",
+                  "x-ms-visibility": "advanced"
+                },
+                "InferContentType": {
+                  "type": "string",
+                  "title": "Infer Content Type",
+                  "x-ms-summary": "Infer Content Type",
+                  "description": "Should the content type be inferred from the file extension?",
+                  "enum": [
+                    "Yes",
+                    "No"
+                  ],
+                  "default": "Yes",
+                  "x-ms-visibility": "important",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "Yes"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "No"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of extracted files",
+            "schema": {
+              "type": "array",
+              "title": "Extracted Files",
+              "x-ms-summary": "Extracted Files",
+              "description": "Array of Extracted Files and Properties",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "FolderPath": {
+                    "type": "string",
+                    "title": "Folder Path",
+                    "x-ms-summary": "Folder Path",
+                    "description": "The relative path of the folder inside the archive"
+                  },
+                  "FullPath": {
+                    "type": "string",
+                    "title": "Full Path",
+                    "x-ms-summary": "Full Path",
+                    "description": "The full path to the file inside the archive"
+                  },
+                  "Filename": {
+                    "type": "string",
+                    "title": "Filename",
+                    "x-ms-summary": "Filename",
+                    "description": "The name of the extracted file"
+                  },
+                  "Size": {
+                    "type": "integer",
+                    "format": "int64",
+                    "title": "Size",
+                    "x-ms-summary": "Size",
+                    "description": "The size of the extracted file in bytes"
+                  },
+                  "PackedSize": {
+                    "type": "integer",
+                    "format": "int64",
+                    "title": "Packed Size",
+                    "x-ms-summary": "Packed Size",
+                    "description": "The packed (compressed) size of the file in bytes"
+                  },
+                  "Content": {
+                    "type": "string",
+                    "title": "Content",
+                    "x-ms-summary": "Content",
+                    "description": "Base64-encoded file content or plain text if content type is inferred",
+                    "x-ms-property-name-alias": "Content"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or incorrect password",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Compression"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#archive---extract-all-files-from-archive"
+        }
+      }
+    },
+    "/{connectionId}/zip/listarchivecontent": {
+      "post": {
+        "summary": "Archive - List Archive Content",
+        "description": "Lists all files inside a supported archive (ZIP, 7Z, RAR, TAR, GZIP, BZIP2, XZ) without extracting the contents.",
+        "operationId": "ListArchiveContent",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON payload containing the base64 encoded archive file",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "ArchiveFileContent"
+              ],
+              "properties": {
+                "ArchiveFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Archive File Content",
+                  "x-ms-summary": "Archive File Content",
+                  "description": "Base64 encoded content of the archive file"
+                },
+                "Password": {
+                  "type": "string",
+                  "title": "Password",
+                  "x-ms-summary": "Password",
+                  "description": "Optional password for encrypted archives",
+                  "x-ms-visibility": "advanced"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of files in the archive",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Files": {
+                  "type": "array",
+                  "title": "Files",
+                  "x-ms-summary": "Files",
+                  "description": "Array of files found in the archive file",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "FolderPath": {
+                        "type": "string",
+                        "title": "Folder Path",
+                        "x-ms-summary": "Folder Path",
+                        "description": "The relative path of the folder inside the archive"
+                      },
+                      "FullPath": {
+                        "type": "string",
+                        "title": "Full Path",
+                        "x-ms-summary": "Full Path",
+                        "description": "The full path to the file inside the archive"
+                      },
+                      "Filename": {
+                        "type": "string",
+                        "title": "Filename",
+                        "x-ms-summary": "Filename",
+                        "description": "The name of the file inside the archive"
+                      },
+                      "Size": {
+                        "type": "integer",
+                        "format": "int64",
+                        "title": "Size",
+                        "x-ms-summary": "Size",
+                        "description": "The uncompressed size of the file in bytes"
+                      },
+                      "PackedSize": {
+                        "type": "integer",
+                        "format": "int64",
+                        "title": "Packed Size",
+                        "x-ms-summary": "Packed Size",
+                        "description": "The compressed size of the file in bytes"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or unsupported archive",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Compression"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#archive---list-archive-content"
+        }
+      }
+    },
+    "/{connectionId}/zip/extractfilefromarchive": {
+      "post": {
+        "summary": "Archive - Extract a Single File from Archive",
+        "description": "Extracts a single file from a supported archive (ZIP, 7Z, RAR, TAR, GZIP, BZIP2, XZ), with optional password decryption and content type inference.",
+        "operationId": "ExtractFileFromArchive",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "JSON payload containing the base64 encoded archive file",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "ArchiveFileContent",
+                "FileNameToExtract"
+              ],
+              "properties": {
+                "ArchiveFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Archive File Content",
+                  "x-ms-summary": "Archive File Content",
+                  "description": "Base64 encoded content of the archive file"
+                },
+                "FileNameToExtract": {
+                  "type": "string",
+                  "title": "File Name to Extract",
+                  "x-ms-summary": "File Name to Extract",
+                  "description": "Name of the file to extract from the archive"
+                },
+                "Password": {
+                  "type": "string",
+                  "title": "Password",
+                  "x-ms-summary": "Password",
+                  "description": "Optional password for decrypting the archive",
+                  "x-ms-visibility": "advanced"
+                },
+                "InferContentType": {
+                  "type": "string",
+                  "title": "Infer Content Type",
+                  "x-ms-summary": "Infer Content Type",
+                  "description": "Should the content type be inferred from the file extension?",
+                  "enum": [
+                    "Yes",
+                    "No"
+                  ],
+                  "default": "Yes",
+                  "x-ms-visibility": "important",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Yes",
+                      "value": "Yes"
+                    },
+                    {
+                      "displayName": "No",
+                      "value": "No"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The content of the extracted file",
+            "schema": {
+              "type": "string",
+              "format": "binary",
+              "title": "File content",
+              "x-ms-property-name-alias": "body"
+            }
+          },
+          "400": {
+            "description": "Invalid request or incorrect password",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found in the archive",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Explanation of the issue"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Compression"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#archive---extract-a-single-file-from-archive"
+        }
+      }
+    },
+    "/{connectionId}/pdf/extractpages": {
+      "post": {
+        "summary": "PDF - Extract Specific Pages",
+        "description": "Extract specific pages from a PDF file using a page range (e.g., \"1-3,7\").",
+        "operationId": "ExtractPdfPages",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Base64-encoded PDF content and the page range to extract.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFileContent",
+                "PageRange"
+              ],
+              "properties": {
+                "PdfFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "PDF File Content",
+                  "description": "Base64-encoded content of the PDF file."
+                },
+                "PageRange": {
+                  "type": "string",
+                  "title": "Page Range",
+                  "description": "Page range to extract (e.g., \"1-3,7\")"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extracted PDF content",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ExtractedPdf": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Extracted PDF",
+                  "description": "Base64-encoded content of the extracted PDF file."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string",
+                  "description": "Error message"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string",
+                  "description": "Error message"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---extract-specific-pages"
+        }
+      }
+    },
+    "/{connectionId}/pdf/getinfo": {
+      "post": {
+        "summary": "PDF - Extract Info",
+        "description": "Extracts detailed metadata from a PDF file (e.g., Title, Author, CreationDate, PDF version, File size, etc.).",
+        "operationId": "GetPdfInfo",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Base64-encoded PDF file content",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFileContent"
+              ],
+              "properties": {
+                "PdfFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "description": "The base64-encoded content of the PDF file",
+                  "title": "PDF File Content"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The metadata information of the PDF",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Title": {
+                  "type": "string",
+                  "title": "Document Title",
+                  "description": "The PDF's Title metadata"
+                },
+                "Author": {
+                  "type": "string",
+                  "title": "Document Author",
+                  "description": "The PDF's Author metadata"
+                },
+                "Subject": {
+                  "type": "string",
+                  "title": "Document Subject",
+                  "description": "The PDF's Subject metadata"
+                },
+                "Keywords": {
+                  "type": "string",
+                  "title": "Document Keywords",
+                  "description": "The PDF's Keywords metadata"
+                },
+                "IsEncrypted": {
+                  "type": "boolean",
+                  "title": "Is Encrypted?",
+                  "description": "Indicates whether the PDF is encrypted"
+                },
+                "HasText": {
+                  "type": "boolean",
+                  "title": "Has Extractable Text?",
+                  "description": "Indicates whether the PDF pages contain extractable text"
+                },
+                "Creator": {
+                  "type": "string",
+                  "title": "Creator Application",
+                  "description": "The name of the application used to create the PDF"
+                },
+                "Producer": {
+                  "type": "string",
+                  "title": "Producer",
+                  "description": "The software that produced the PDF"
+                },
+                "CreationDate": {
+                  "type": "string",
+                  "title": "Creation Date",
+                  "description": "The date the PDF was originally created"
+                },
+                "ModDate": {
+                  "type": "string",
+                  "title": "Modification Date",
+                  "description": "The date the PDF was last modified"
+                },
+                "PageCount": {
+                  "type": "integer",
+                  "title": "Page Count",
+                  "description": "The total number of pages in the PDF"
+                },
+                "PDFVersion": {
+                  "type": "string",
+                  "title": "PDF Version",
+                  "description": "The PDF specification version (e.g., 1.4, 1.7)"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, such as missing required parameters",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---extract-info"
+        }
+      }
+    },
+    "/{connectionId}/pdf/setmetadata": {
+      "post": {
+        "summary": "PDF - Set Metadata",
+        "description": "Sets metadata values (title, author, dates, etc.) on a PDF file.",
+        "operationId": "SetPdfMetadata",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Base64-encoded PDF and metadata values to set.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFileContent"
+              ],
+              "properties": {
+                "PdfFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "PDF File Content",
+                  "description": "Base64-encoded PDF content"
+                },
+                "Title": {
+                  "type": "string",
+                  "title": "Title",
+                  "description": "The document title"
+                },
+                "Author": {
+                  "type": "string",
+                  "title": "Author",
+                  "description": "The document author"
+                },
+                "Subject": {
+                  "type": "string",
+                  "title": "Subject",
+                  "description": "The document subject"
+                },
+                "Keywords": {
+                  "type": "string",
+                  "title": "Keywords",
+                  "description": "Document keywords"
+                },
+                "CreationDate": {
+                  "type": "string",
+                  "title": "Creation Date",
+                  "description": "Date the PDF was created"
+                },
+                "ModificationDate": {
+                  "type": "string",
+                  "title": "Modification Date",
+                  "description": "Date the PDF was modified"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The PDF with updated metadata",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "UpdatedPdf": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Updated PDF",
+                  "description": "Base64-encoded PDF with updated metadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---set-metadata"
+        }
+      }
+    },
+    "/{connectionId}/pdf/extracttext": {
+      "post": {
+        "summary": "PDF - Extract Text",
+        "description": "Extracts all text from a PDF file, with optional StartPage and EndPage.",
+        "operationId": "ExtractTextFromPdf",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "PDF file content and optional page range",
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFileContent"
+              ],
+              "properties": {
+                "PdfFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "PDF File Content",
+                  "description": "Base64-encoded PDF file"
+                },
+                "StartPage": {
+                  "type": "integer",
+                  "title": "Start Page",
+                  "description": "Page number to start extraction from"
+                },
+                "EndPage": {
+                  "type": "integer",
+                  "title": "End Page",
+                  "description": "Page number to stop extraction at (inclusive)"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extracted PDF text",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ExtractedText": {
+                  "type": "string",
+                  "title": "Extracted Text",
+                  "description": "Combined text from all selected pages"
+                },
+                "ExtractedTextByPage": {
+                  "type": "array",
+                  "title": "Text by Page",
+                  "description": "Array of extracted text objects per page",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Page": {
+                        "type": "integer",
+                        "title": "Page Number",
+                        "description": "Page number of the PDF"
+                      },
+                      "Text": {
+                        "type": "string",
+                        "title": "Text Content",
+                        "description": "Text extracted from that page"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---extract-text"
+        }
+      }
+    },
+    "/{connectionId}/pdf/split": {
+      "post": {
+        "summary": "PDF - Split PDF",
+        "description": "Splits a PDF file either by a fixed number of pages or by specified page ranges.",
+        "operationId": "SplitPdf",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "PDF content and split parameters.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFileContent",
+                "SplitType"
+              ],
+              "properties": {
+                "PdfFileContent": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "PDF File Content",
+                  "description": "Base64-encoded content of the PDF file."
+                },
+                "SplitType": {
+                  "type": "string",
+                  "title": "Split Type",
+                  "description": "Choose how to split the PDF.",
+                  "enum": [
+                    "NumberOfPages",
+                    "SpecifiedRanges"
+                  ],
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Split by Number of Pages",
+                      "value": "NumberOfPages"
+                    },
+                    {
+                      "displayName": "Split by Specified Ranges",
+                      "value": "SpecifiedRanges"
+                    }
+                  ]
+                },
+                "PagesPerSplit": {
+                  "type": "integer",
+                  "title": "Pages Per Split",
+                  "description": "Number of pages per output file (required if Split Type is Number Of Pages)."
+                },
+                "PageRanges": {
+                  "type": "string",
+                  "title": "Page Ranges",
+                  "description": "Page ranges to split by (e.g., \"1-2,4\") (required if Split Type is Specified Ranges)."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of split PDF files (Base64-encoded).",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "SplitPdfs": {
+                  "title": "Split PDF File",
+                  "x-ms-summary": "Split PDF File",
+                  "description": "Array of split PDF files.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte",
+                    "description": "Base64-encoded content of a split PDF part."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---split-pdf"
+        }
+      }
+    },
+    "/{connectionId}/pdf/merge": {
+      "post": {
+        "summary": "PDF - Merge PDFs",
+        "description": "Merges multiple PDF files provided as base64 strings into a single PDF.",
+        "operationId": "MergePdfs",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "PdfFiles"
+              ],
+              "properties": {
+                "PdfFiles": {
+                  "type": "array",
+                  "format": "byte",
+                  "description": "An array of base64-encoded PDF files to merge",
+                  "title": "PDF Files",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The merged PDF content",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "MergedPdf": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Merged PDF",
+                  "x-ms-summary": "Merged PDF",
+                  "description": "Base64-encoded content of the merged PDF"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PDF Tools"
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#pdf---merge-pdfs"
+        }
+      }
+    },
+    "/{connectionId}/image/resize": {
+      "post": {
+        "operationId": "ResizeImage",
+        "summary": "Image - Resize",
+        "description": "Resizes an image to the specified dimensions",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Image Content",
+                  "x-ms-summary": "Image Content",
+                  "description": "Base64-encoded image."
+                },
+                "Width": {
+                  "type": "integer",
+                  "title": "Width",
+                  "x-ms-summary": "Width",
+                  "description": "Target width in pixels."
+                },
+                "Height": {
+                  "type": "integer",
+                  "title": "Height",
+                  "x-ms-summary": "Height",
+                  "x-ms-visibility": "important",
+                  "description": "Target height in pixels (optional)."
+                },
+                "MaintainAspectRatio": {
+                  "type": "string",
+                  "x-ms-summary": "Maintain Aspect Ratio",
+                  "x-ms-visibility": "important",
+                  "enum": [
+                    "Yes",
+                    "No"
+                  ],
+                  "default": "Yes",
+                  "description": "Whether to maintain original aspect ratio.",
+                  "title": "Maintain Aspect Ratio"
+                }
+              },
+              "required": [
+                "Image",
+                "Width"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resized image.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "title": "Resized Image",
+                  "x-ms-summary": "Resized Image",
+                  "description": "Resized Image Data",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#image---resize"
+        }
+      }
+    },
+    "/{connectionId}/image/compress": {
+      "post": {
+        "operationId": "CompressImage",
+        "summary": "Image - Compress a JPEG or PNG image",
+        "description": "Compresses an image to reduce the file size.",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "type": "string",
+                  "format": "byte",
+                  "title": "Image",
+                  "x-ms-summary": "Image",
+                  "description": "Base64-encoded image."
+                },
+                "FileType": {
+                  "title": "File Type",
+                  "x-ms-summary": "File Type",
+                  "type": "string",
+                  "default": "JPEG",
+                  "enum": [
+                    "JPEG",
+                    "PNG"
+                  ],
+                  "description": "Target file format."
+                },
+                "Quality": {
+                  "title": "Quality",
+                  "x-ms-summary": "Quality",
+                  "x-ms-visibility": "important",
+                  "default": "Medium",
+                  "type": "string",
+                  "enum": [
+                    "Low",
+                    "Medium",
+                    "High",
+                    "Best"
+                  ],
+                  "description": "Compression quality preset."
+                }
+              },
+              "required": [
+                "Image"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compressed image.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "title": "Compressed Image",
+                  "x-ms-summary": "Compressed Image",
+                  "description": "The compressed image data",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#image---compress-a-jpeg-or-png-image"
+        }
+      }
+    },
+    "/{connectionId}/image/flip": {
+      "post": {
+        "operationId": "FlipImage",
+        "summary": "Image - Flip horizontally or vertically",
+        "description": "Flips an image horizontally or vertically",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "type": "string",
+                  "format": "byte",
+                  "description": "Base64-encoded image."
+                },
+                "Direction": {
+                  "type": "string",
+                  "x-ms-visibility": "important",
+                  "description": "Direction to flip the image.",
+                  "enum": [
+                    "horizontal",
+                    "vertical"
+                  ],
+                  "default": "horizontal",
+                  "x-ms-enum-values": [
+                    {
+                      "displayName": "Horizontal",
+                      "value": "horizontal"
+                    },
+                    {
+                      "displayName": "Vertical",
+                      "value": "vertical"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "Image"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flipped image.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "title": "Flipped Image",
+                  "x-ms-summary": "Flipped Image",
+                  "description": "The flipped image content",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#image---flip-horizontally-or-vertically"
+        }
+      }
+    },
+    "/{connectionId}/image/rotate": {
+      "post": {
+        "operationId": "RotateImage",
+        "summary": "Image - Rotate clockwise by the specified angle",
+        "description": "Rotates a base64 supplied image by the specified angle.",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "type": "string",
+                  "format": "byte",
+                  "description": "Base64-encoded image."
+                },
+                "Angle": {
+                  "type": "number",
+                  "description": "Rotation angle in degrees (clockwise)"
+                }
+              },
+              "required": [
+                "Image",
+                "Angle"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rotated image.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Image": {
+                  "title": "Rotated Image",
+                  "x-ms-summary": "Rotated Image",
+                  "description": "The rotated image content",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/composerbytachytelic/#image---rotate-clockwise-by-the-specified-angle"
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-ApiKey"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Array Functions",
+      "description": "Functions related to array manipulation"
+    },
+    {
+      "name": "Batching",
+      "description": "Functions related to SharePoint or Dataverse API Batching"
+    },
+    {
+      "name": "Microsoft Word",
+      "description": "Microsoft Word Functions"
+    },
+    {
+      "name": "Regular Expression Operations",
+      "description": "Regular Expression Functions"
+    },
+    {
+      "name": "String Functions",
+      "description": "Functions to perform string operations"
+    },
+    {
+      "name": "Compression",
+      "description": "Functions to create or extract from Zip archives"
+    },
+    {
+      "name": "Date Functions"
+    },
+    {
+      "name": "Misc Tools"
+    },
+    {
+      "name": "PDF Tools"
+    },
+    {
+      "name": "Image",
+      "description": "Actions for Image manipulation"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/composerbytachytelic"
+  }
+}
