@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26211 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26225 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -175,6 +175,7 @@
         <Property Name="AssociateSiteId" Type="Edm.Guid" />
         <Property Name="ItemUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SecondsInDB" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SemanticSearchServiceEndPointJson" Type="Edm.String" />
         <Property Name="WorkItemId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ContentTypeId">
@@ -1115,6 +1116,7 @@
         <Property Name="ItemFailure" Type="SP.ListDataValidationFailure" />
       </ComplexType>
       <ComplexType Name="ListForm">
+        <Property Name="HasSourceField" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Id" Type="Edm.String" />
         <Property Name="SchemaJSON" Type="Edm.String" />
       </ComplexType>
@@ -2046,6 +2048,7 @@
       <EntityType Name="PropertyValues" Abstract="true" OpenType="true" />
       <EntityType Name="SecurableObject" Abstract="true">
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <NavigationProperty Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" ContainsTarget="true" />
         <NavigationProperty Name="RoleAssignments" Type="Collection(SP.RoleAssignment)" ContainsTarget="true" />
       </EntityType>
@@ -2898,6 +2901,7 @@
         <Property Name="ItemType" Type="Edm.Int32" Nullable="false" />
         <Property Name="LeafName" Type="Edm.String" />
         <Property Name="LeafNamePath" Type="SP.ResourcePath" />
+        <Property Name="RecycleBinListId" Type="Edm.Guid" />
         <Property Name="Size" Type="Edm.Int64" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
         <NavigationProperty Name="Author" Type="SP.User" ContainsTarget="true" />
@@ -5973,6 +5977,10 @@
         <Parameter Name="state" Type="Edm.String" />
         <ReturnType Type="SP.UploadDocumentInfo" />
       </Action>
+      <Action Name="AssignContributorRoleToUser" IsBound="true">
+        <Parameter Name="this" Type="SP.ListItem" />
+        <Parameter Name="userEmail" Type="Edm.String" />
+      </Action>
       <Function Name="DoesUserHaveEditAccessOnParent" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.ListItem" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
@@ -8597,7 +8605,13 @@
       <Annotations Target="SP.Publishing.AcronymInformation">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.AmplifiedChannels">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.AmplifyPublishingHistoryResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.AmplifyPublishingHistoryResult/AmplifyId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.AmplifyPublishingHistoryResult/PageId">
@@ -9365,6 +9379,9 @@
       <Annotations Target="Microsoft.SharePoint.SiteManager.RetirablePagesQueryResult/Files">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.SiteManager.SuggestionItem">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.SiteManager.TopSiteFilesResult">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -9885,6 +9902,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/SecondsInDB">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/SemanticSearchServiceEndPointJson">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/WorkItemId">
@@ -14022,7 +14042,7 @@
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SetAutofillColumnSettings(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.Office.Server.ContentCenter.SetColumnLLMInfo(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.Guid, Edm.String, Edm.Boolean, Edm.String, Edm.Boolean)">
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SetColumnLLMInfo(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.Guid, Edm.String, Edm.Boolean, Edm.String, Edm.Boolean, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SetMachineLearningFlags(Microsoft.Office.Server.ContentCenter.SPMachineLearningHub, Edm.Guid, Edm.Int32)">
@@ -14397,6 +14417,9 @@
       <Annotations Target="SP.Publishing.RejectApprovalRequest(SP.Publishing.CampaignPublication, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Publishing.RepairMissingSharePointDestinationWebIds(SP.Publishing.CampaignPublication, Collection(SP.Publishing.MissingSharePointDestinationWebIdRepairItem))">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Publishing.ResetEndpoint(SP.Publishing.CampaignPublication, SP.Publishing.CampaignPublicationResetEndpointParam)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14743,6 +14766,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.SharePageByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Collection(Edm.String), Edm.String, Edm.String, Collection(Edm.String), Collection(Edm.String), Edm.Int32, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Publishing.SharePageByEmailStream(SP.Publishing.RichSharing, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.ShareSiteByEmail(SP.Publishing.RichSharing, Edm.String, Edm.String, Edm.String, Edm.String, Collection(Edm.String))">
@@ -15276,7 +15302,7 @@
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Create(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Microsoft.SharePoint.Publishing.Campaigns.Models.CampaignMetadata)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetAll(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign))">
+      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetAll(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Edm.Int32, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.GetAssociationsByCampaignId(Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign), Edm.Int32)">
@@ -15291,7 +15317,7 @@
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Delete(Microsoft.SharePoint.Publishing.Campaigns.Campaign)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Publications(Microsoft.SharePoint.Publishing.Campaigns.Campaign)">
+      <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Publications(Microsoft.SharePoint.Publishing.Campaigns.Campaign, Edm.Int32, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Publishing.Campaigns.Update(Microsoft.SharePoint.Publishing.Campaigns.Campaign, Microsoft.SharePoint.Publishing.Campaigns.Models.CampaignMetadata)">
@@ -16656,7 +16682,7 @@
       <Annotations Target="SP.SearchResultItemCollection.GetSearchSuggestionsAsStream(Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.SemanticSearchItemCollection.GetSemanticSearchResults(Edm.String)">
+      <Annotations Target="SP.SemanticSearchItemCollection.GetSearchResults(Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SensitivityLabelCollection.GetSensitivityLabelsAsStream(Edm.String, Edm.String)">
@@ -18117,6 +18143,7 @@
         <Parameter Name="isEnabled" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="customModelId" Type="Edm.String" />
         <Parameter Name="analyzeImageWithVision" Type="Edm.Boolean" />
+        <Parameter Name="autofillColumnType" Type="Edm.String" />
       </Action>
       <Action Name="SetMachineLearningFlags" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Office.Server.ContentCenter.SPMachineLearningHub" />
@@ -23498,7 +23525,14 @@
         <Property Name="SubmittedAt" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="SubmittedQuestion" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="AmplifiedChannels">
+        <Property Name="WasAmplifiedToEmail" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="WasAmplifiedToSharePoint" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="WasAmplifiedToTeams" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="WasAmplifiedToVivaEngage" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="AmplifyPublishingHistoryResult">
+        <Property Name="AmplifyId" Type="Edm.Guid" Nullable="false" />
         <Property Name="PageId" Type="Edm.Int32" Nullable="false" />
         <Property Name="PublicationMetadata" Type="Edm.String" />
         <Property Name="publishingStatusResponse" Type="SP.Publishing.PublishingStatusResponse" />
@@ -23965,6 +23999,18 @@
         <Property Name="ErrorCode" Type="Edm.Int32" Nullable="false" />
         <Property Name="Response" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="SharePageByEmailData">
+        <Property Name="BccEmails" Type="Collection(Edm.String)" />
+        <Property Name="CcEmails" Type="Collection(Edm.String)" />
+        <Property Name="EmailSize" Type="Edm.String" />
+        <Property Name="Message" Type="Edm.String" />
+        <Property Name="PageContent" Type="Edm.String" />
+        <Property Name="PageItemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="RecipientEmails" Type="Collection(Edm.String)" />
+        <Property Name="ScenarioTag" Type="Edm.String" />
+        <Property Name="Subject" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SharePagePreviewByEmailFieldsData">
         <Property Name="message" Type="Edm.String" />
         <Property Name="recipientEmails" Type="Collection(Edm.String)" />
@@ -24069,6 +24115,11 @@
       </ComplexType>
       <ComplexType Name="CampaignPublicationLoadMailDraftParam">
         <Property Name="IsPreview" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="MissingSharePointDestinationWebIdRepairItem">
+        <Property Name="SiteId" Type="Edm.String" />
+        <Property Name="SiteUrl" Type="Edm.String" />
+        <Property Name="WebId" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CampaignPublicationResetEndpointParam">
         <Property Name="EmailTranspileContent" Type="Edm.String" />
@@ -24285,6 +24336,7 @@
         <Property Name="ErrorMessage" Type="Edm.String" />
         <Property Name="ErrorType" Type="Edm.Int32" Nullable="false" />
         <Property Name="JobState" Type="Edm.Int32" Nullable="false" />
+        <Property Name="NewPageId" Type="Edm.Int32" Nullable="false" />
         <Property Name="NewPageUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="NewPageUrl" Type="Edm.String" />
         <Property Name="TotalAssetsToMove" Type="Edm.Int32" Nullable="false" />
@@ -24782,6 +24834,10 @@
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
         <Parameter Name="comment" Type="Edm.String" />
         <ReturnType Type="SP.Publishing.ApprovalRequestResponse" />
+      </Action>
+      <Action Name="RepairMissingSharePointDestinationWebIds" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="repairItems" Type="Collection(SP.Publishing.MissingSharePointDestinationWebIdRepairItem)" />
       </Action>
       <Action Name="ResetEndpoint" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
@@ -25452,6 +25508,10 @@
         <Parameter Name="pageItemId" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="scenarioTag" Type="Edm.String" />
         <Parameter Name="emailSize" Type="Edm.String" />
+      </Action>
+      <Action Name="SharePageByEmailStream" IsBound="true">
+        <Parameter Name="this" Type="SP.Publishing.RichSharing" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
       </Action>
       <Action Name="ShareSiteByEmail" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.RichSharing" />
@@ -26415,6 +26475,7 @@
         <Property Name="ErrorMessage" Type="Edm.String" />
         <Property Name="ErrorType" Type="Edm.Int32" Nullable="false" />
         <Property Name="JobState" Type="Edm.Int32" Nullable="false" />
+        <Property Name="NewPageId" Type="Edm.Int32" Nullable="false" />
         <Property Name="NewPageUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="NewPageUrl" Type="Edm.String" />
         <Property Name="TotalAssetsToCopy" Type="Edm.Int32" Nullable="false" />
@@ -26506,11 +26567,12 @@
       </ComplexType>
       <ComplexType Name="CampaignMetadata">
         <Property Name="Color" Type="Edm.String" />
+        <Property Name="Description" Type="Edm.String" />
         <Property Name="Logo" Type="Edm.String" />
-        <Property Name="Objective" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="PublicationMetadata">
+        <Property Name="AmplifiedChannels" Type="SP.Publishing.AmplifiedChannels" />
         <Property Name="Id" Type="Edm.Int32" Nullable="false" />
         <Property Name="Status" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
@@ -26527,10 +26589,12 @@
         <Property Name="code" Type="Edm.String" />
         <Property Name="endpoint" Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyEndpointInfo" />
         <Property Name="eventId" Type="Edm.String" />
+        <Property Name="expected" Type="Edm.Boolean" />
         <Property Name="extraProperties" Type="Collection(Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyExtraProperty)" />
         <Property Name="internalDescription" Type="Edm.String" />
         <Property Name="origin" Type="Edm.String" />
         <Property Name="stage" Type="Edm.String" />
+        <Property Name="statusIndicative" Type="Edm.Boolean" Nullable="false" />
         <Property Name="step" Type="Edm.String" />
         <Property Name="timestampUTC" Type="Edm.String" />
         <Property Name="upstreamErrorCode" Type="Edm.String" />
@@ -26539,6 +26603,7 @@
       <ComplexType Name="ClientAmplifyEndpointInfo">
         <Property Name="endpointSubType" Type="Edm.String" />
         <Property Name="endpointType" Type="Edm.String" />
+        <Property Name="extraProperties" Type="Collection(Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyExtraProperty)" />
         <Property Name="href" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
@@ -27176,6 +27241,7 @@
         <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="sourceDatabaseId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="targetDatabaseId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="clientIdentifier" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
       </Function>
       <Action Name="AcquireSystemSiteLock" IsBound="true">
@@ -27191,6 +27257,9 @@
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="ClearSiteRelocationMarker" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="CommitSessionToken" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
       </Action>
       <Action Name="ExtendSystemSiteLockExpiration" IsBound="true">
@@ -27217,6 +27286,10 @@
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="GetDataChunks" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDataChunksIterator" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.String" />
       </Action>
@@ -27313,6 +27386,15 @@
       <Action Name="SourceCleanupAfterMove" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="isDeleted" Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="StartLockableSession" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="StartSnapshotIsolation" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="StopSessionToken" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
       </Action>
       <Action Name="UnlockSiteOnFailure" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
@@ -28258,6 +28340,12 @@
       <ComplexType Name="RetirablePagesQueryResult">
         <Property Name="Files" Type="Collection(Microsoft.SharePoint.SiteManager.RetirablePageMetadata)" />
       </ComplexType>
+      <ComplexType Name="SuggestionItem">
+        <Property Name="DismissedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Identifier" Type="Edm.String" />
+        <Property Name="State" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SuggestionType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
       <ComplexType Name="TopSiteFilesResult">
         <Property Name="Files" Type="Collection(Microsoft.SharePoint.SiteManager.TopSiteFile)" />
       </ComplexType>
@@ -28288,6 +28376,7 @@
         <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="skipToken" Type="Edm.String" />
         <Parameter Name="isDebug" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="snoozedPaths" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.SiteManager.RetirablePagesQueryResult" />
       </Function>
       <Action Name="RetiredPagesView" IsBound="true">
@@ -28301,6 +28390,7 @@
       <Function Name="TopMissingLinks" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.SiteManager.SiteManagerService" />
         <Parameter Name="maxCount" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="snoozedLinks" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.SiteManager.MissingLinksResult" />
       </Function>
     </Schema>
@@ -29981,6 +30071,7 @@
       <ComplexType Name="SitePermissionsReportDetails">
         <Property Name="anyoneLinksSiteCount" Type="Edm.Int32" />
         <Property Name="eeeuPermissionSiteCount" Type="Edm.Int32" />
+        <Property Name="reportTotalSiteCount" Type="Edm.Int32" />
         <Property Name="uniquePermissionSiteCount" Type="Edm.Int32" />
         <Property Name="uniqueSiteCount" Type="Edm.Int32" />
       </ComplexType>
@@ -30120,6 +30211,7 @@
         <Property Name="policyVersion" Type="Edm.Int32" Nullable="false" />
         <Property Name="reportCreationTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="reportUpdationTime" Type="Edm.DateTimeOffset" />
+        <Property Name="usersToExclude" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="TenantAdminRansomwareActivitiesOverview">
         <Property Name="categoryThresholdLimit" Type="Edm.Int32" Nullable="false" />
@@ -31201,6 +31293,7 @@
       </ComplexType>
       <ComplexType Name="LLMColumnInfo">
         <Property Name="AnalyzeImageWithVision" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AutofillColumnType" Type="Edm.String" />
         <Property Name="CustomModelId" Type="Edm.String" />
         <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Prompt" Type="Edm.String" />
@@ -31799,6 +31892,7 @@
         <Property Name="LogMessage" Type="Edm.String" />
         <Property Name="LogType" Type="Edm.Int32" Nullable="false" />
         <Property Name="Operation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="OperationStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="ShowNextGenerationSyncClientOnTeamSite">
         <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false" />
@@ -32643,6 +32737,7 @@
         <Property Name="CoreRequestFilesLinkExpirationInDays" Type="Edm.Int32" Nullable="false" />
         <Property Name="CoreSharingCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="CustomizedExternalSharingServiceUrl" Type="Edm.String" />
+        <Property Name="CustomScriptsRestrictMode" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DataverseUsageConsentEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DefaultContentCenterSite" Type="Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker" />
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
@@ -36796,9 +36891,9 @@
       <EntityType Name="Campaign">
         <Property Name="uniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="color" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
         <Property Name="id" Type="Edm.Int32" Nullable="false" />
         <Property Name="logo" Type="Edm.String" />
-        <Property Name="objective" Type="Edm.String" />
         <Property Name="status" Type="Edm.String" />
         <Property Name="title" Type="Edm.String" />
       </EntityType>
@@ -36809,6 +36904,8 @@
       </Action>
       <Function Name="GetAll" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign)" />
+        <Parameter Name="offset" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="limit" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.SharePoint.Publishing.Campaigns.Campaign)" />
       </Function>
       <Function Name="GetAssociationsByCampaignId" IsBound="true" IsComposable="true">
@@ -36830,6 +36927,8 @@
       </Action>
       <Function Name="Publications" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Publishing.Campaigns.Campaign" />
+        <Parameter Name="offset" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="limit" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.SharePoint.Publishing.Campaigns.Models.PublicationMetadata)" />
       </Function>
       <Action Name="Update" IsBound="true">
@@ -40457,8 +40556,9 @@
       </Function>
     </Schema>
     <Schema Namespace="SP.SemanticSearchItemCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <Action Name="GetSemanticSearchResults">
-        <Parameter Name="search" Type="Edm.String" />
+      <Action Name="GetSearchResults">
+        <Parameter Name="payload" Type="Edm.String" />
+        <Parameter Name="option" Type="Edm.String" />
         <ReturnType Type="Edm.Stream" />
       </Action>
     </Schema>
@@ -41470,6 +41570,7 @@
         <Property Name="Editor" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -41603,6 +41704,7 @@
         <Property Name="Editor" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -41695,6 +41797,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -41784,6 +41887,7 @@
         <Property Name="Editor" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -41874,6 +41978,7 @@
         <Property Name="Editor" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -41969,6 +42074,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42075,6 +42181,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42187,6 +42294,7 @@
         <Property Name="ParticipantsPicker" Type="Collection(SP.Data.UserInfoItem)" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42302,6 +42410,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42405,6 +42514,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42497,6 +42607,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42611,6 +42722,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42729,6 +42841,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42827,6 +42940,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -42933,6 +43047,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -43126,6 +43241,7 @@
         <Property Name="Editor" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -43220,6 +43336,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
@@ -43321,6 +43438,7 @@
         <Property Name="CheckoutUser" Type="SP.Data.UserInfoItem" />
         <Property Name="FirstUniqueAncestorSecurableObject" Type="SP.SecurableObject" />
         <Property Name="HasUniqueRoleAssignments" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShieldAddRoleAssignmentPushdown" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsDisabledScope" Type="Edm.Int32" Nullable="false" />
         <Property Name="ComplianceInfo" Type="SP.ListItemComplianceInfo" />
