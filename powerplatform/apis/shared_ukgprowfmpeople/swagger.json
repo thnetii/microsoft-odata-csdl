@@ -1,0 +1,805 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "UKG Pro WFM People",
+    "description": "Pulls person Current User Information (Logged In User)",
+    "version": "1.0",
+    "contact": {
+      "name": "KGS",
+      "url": "https://www.ukg.com/support",
+      "email": "support@ukg.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.ukg.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.ukg.com/privacy"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Human Resources"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/ukgprowfmpeople",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [],
+  "paths": {
+    "/{connectionId}/api/v1/commons/persons/current_user_info": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/getCurrentUserInfo"
+          },
+          "403": {
+            "$ref": "#/responses/unauthorizedAccess"
+          },
+          "500": {
+            "$ref": "#/responses/internalServerError"
+          }
+        },
+        "summary": "Retrieve Current User",
+        "operationId": "GetCurrentUserInfo",
+        "description": "This operation returns information about the currently logged-in user.",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          },
+          {
+            "$ref": "#/parameters/include-contact-information"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmpeople/#retrieve-current-user"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/commons/persons/base_persons/multi_read": {
+      "post": {
+        "responses": {
+          "200": {
+            "$ref": "#/responses/getBasePersonInformation"
+          },
+          "400": {
+            "$ref": "#/responses/badRequest"
+          },
+          "500": {
+            "$ref": "#/responses/internalServerError"
+          }
+        },
+        "summary": "Retrieve Base Person",
+        "description": "It returns base summary of person information for all matched records.",
+        "operationId": "RetrieveBasePerson",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "where": {
+                  "type": "object",
+                  "properties": {
+                    "employees": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "The key associated with employee information.",
+                          "title": "key",
+                          "enum": [
+                            "personid",
+                            "personnumber",
+                            "jobassignmentid",
+                            "username",
+                            "useraccountid",
+                            "badgenumber"
+                          ],
+                          "default": "personid"
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "description": "Values associated with employee information.",
+                            "title": "values"
+                          },
+                          "description": "values"
+                        }
+                      },
+                      "description": "employees",
+                      "required": [
+                        "key",
+                        "values"
+                      ]
+                    }
+                  },
+                  "description": "where",
+                  "required": [
+                    "employees"
+                  ]
+                }
+              },
+              "required": [
+                "where"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmpeople/#retrieve-base-person"
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {
+    "content-type": {
+      "name": "Content-Type",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "default": "application/json",
+      "x-ms-visibility": "internal",
+      "x-ms-summary": "Content-Type"
+    },
+    "access-token": {
+      "name": "accessToken",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "description": "Token to access API.",
+      "x-ms-summary": "Access Token"
+    },
+    "include-contact-information": {
+      "name": "include_contact_information",
+      "in": "query",
+      "required": false,
+      "type": "boolean",
+      "description": "A boolean indicator of whether to include contact info in the response.",
+      "x-ms-summary": "include_contact_information",
+      "enum": [
+        true,
+        false
+      ]
+    }
+  },
+  "responses": {
+    "getCurrentUserInfo": {
+      "description": "User information retrieved successfully.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "emailContacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "contactData": {
+                  "type": "string",
+                  "description": "The contact data of an employee"
+                },
+                "contactType": {
+                  "type": "string",
+                  "description": "The contact type of an employee"
+                },
+                "contactTypeId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The contact type ID of an employee"
+                },
+                "hasEmailNotificationDelivery": {
+                  "type": "boolean",
+                  "description": "A Boolean indicator of whether or not employee has email notification delivery"
+                },
+                "smsswitch": {
+                  "type": "boolean",
+                  "description": "smsswitch"
+                }
+              }
+            },
+            "description": "The email contact information of the current user"
+          },
+          "employeeId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The employee ID of the current user, which is an ID that uniquely identifies an employee. This is not a person number"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the current user"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the current user"
+          },
+          "middleInitial": {
+            "type": "string",
+            "description": "The middle initial of the current user"
+          },
+          "personNumber": {
+            "type": "string",
+            "description": "The person number of the current user, which is A number that uniquely identifies a person. This is not an employee ID"
+          },
+          "postalAddresses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "description": "The city associated with a postal address"
+                },
+                "contactType": {
+                  "type": "string",
+                  "description": "The contact type associated with a postal address"
+                },
+                "contactTypeId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The ID of a contact type associated with a postal address"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "The country associated with a postal address"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "The state associated with a postal address"
+                },
+                "street": {
+                  "type": "string",
+                  "description": "The street associated with a postal address"
+                },
+                "zipCode": {
+                  "type": "string",
+                  "description": "The zip code associated with a postal address"
+                }
+              }
+            },
+            "description": "The postal addresses of the current user"
+          },
+          "telephoneContacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "contactData": {
+                  "type": "string",
+                  "description": "The contact data of an employee"
+                },
+                "contactType": {
+                  "type": "string",
+                  "description": "The contact type of an employee"
+                },
+                "contactTypeId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The contact type ID of an employee"
+                },
+                "hasEmailNotificationDelivery": {
+                  "type": "boolean",
+                  "description": "A Boolean indicator of whether or not an employee has email notification delivery"
+                },
+                "smsswitch": {
+                  "type": "boolean",
+                  "description": "smsswitch"
+                }
+              }
+            },
+            "description": "The telephone contact information of the current user"
+          },
+          "timeZone": {
+            "type": "object",
+            "properties": {
+              "dateFormat": {
+                "type": "string",
+                "description": "dateFormat"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "displayName"
+              },
+              "gmtOffset": {
+                "type": "integer",
+                "format": "int32",
+                "description": "gmtOffset"
+              },
+              "shortName": {
+                "type": "string",
+                "description": "shortName"
+              },
+              "timeZoneId": {
+                "type": "string",
+                "description": "timeZoneId"
+              }
+            },
+            "description": "timeZone"
+          },
+          "userLocale": {
+            "type": "string",
+            "description": "The locale assigned to the current user"
+          },
+          "userName": {
+            "type": "string",
+            "description": "The username of the current user"
+          }
+        }
+      }
+    },
+    "getBasePersonInformation": {
+      "description": "default",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "description": "The display name of an employee"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "argsDetail": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "argsDetail"
+                },
+                "cause": {
+                  "type": "object",
+                  "properties": {
+                    "cause": {
+                      "type": "string",
+                      "description": "A circular reference to Throwable"
+                    },
+                    "localizedMessage": {
+                      "type": "string",
+                      "description": "localizedMessage"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "message"
+                    },
+                    "stackTrace": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "className": {
+                            "type": "string",
+                            "description": "className"
+                          },
+                          "fileName": {
+                            "type": "string",
+                            "description": "fileName"
+                          },
+                          "lineNumber": {
+                            "type": "integer",
+                            "format": "int32",
+                            "description": "lineNumber"
+                          },
+                          "methodName": {
+                            "type": "string",
+                            "description": "methodName"
+                          },
+                          "nativeMethod": {
+                            "type": "boolean",
+                            "description": "nativeMethod"
+                          }
+                        }
+                      },
+                      "description": "stackTrace"
+                    },
+                    "suppressed": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "suppressed"
+                    }
+                  },
+                  "description": "cause"
+                },
+                "errorCode": {
+                  "type": "string",
+                  "description": "errorCode"
+                },
+                "errorsDetails": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "errorsDetails"
+                },
+                "extraDetails": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "extraDetails"
+                },
+                "inputDetail": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "inputDetail"
+                },
+                "limitsDetail": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "limitsDetail"
+                },
+                "locale": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "string",
+                      "description": "country"
+                    },
+                    "displayCountry": {
+                      "type": "string",
+                      "description": "displayCountry"
+                    },
+                    "displayLanguage": {
+                      "type": "string",
+                      "description": "displayLanguage"
+                    },
+                    "displayName": {
+                      "type": "string",
+                      "description": "displayName"
+                    },
+                    "displayScript": {
+                      "type": "string",
+                      "description": "displayScript"
+                    },
+                    "displayVariant": {
+                      "type": "string",
+                      "description": "displayVariant"
+                    },
+                    "extensionKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "extensionKeys"
+                    },
+                    "iso3Country": {
+                      "type": "string",
+                      "description": "iso3Country"
+                    },
+                    "iso3Language": {
+                      "type": "string",
+                      "description": "iso3Language"
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "language"
+                    },
+                    "script": {
+                      "type": "string",
+                      "description": "script"
+                    },
+                    "unicodeLocaleAttributes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "unicodeLocaleAttributes"
+                    },
+                    "unicodeLocaleKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "unicodeLocaleKeys"
+                    },
+                    "variant": {
+                      "type": "string",
+                      "description": "variant"
+                    }
+                  },
+                  "description": "locale"
+                },
+                "localizedMessage": {
+                  "type": "string",
+                  "description": "localizedMessage"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "message"
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {},
+                  "description": "metadata"
+                },
+                "multiOpsResults": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "multiOpsResults"
+                },
+                "overridable": {
+                  "type": "boolean",
+                  "description": "overridable"
+                },
+                "overrideHTTPStatusCode": {
+                  "type": "string",
+                  "description": "overrideHTTPStatusCode"
+                },
+                "overrideMessage": {
+                  "type": "string",
+                  "description": "overrideMessage"
+                },
+                "reportingAttribute": {
+                  "type": "string",
+                  "description": "reportingAttribute"
+                },
+                "reportingValue": {
+                  "type": "string",
+                  "description": "reportingValue"
+                },
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "results"
+                },
+                "stackTrace": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "className": {
+                        "type": "string",
+                        "description": "className"
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "description": "fileName"
+                      },
+                      "lineNumber": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "lineNumber"
+                      },
+                      "methodName": {
+                        "type": "string",
+                        "description": "methodName"
+                      },
+                      "nativeMethod": {
+                        "type": "boolean",
+                        "description": "nativeMethod"
+                      }
+                    }
+                  },
+                  "description": "stackTrace"
+                },
+                "suppressed": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cause": {
+                        "type": "string",
+                        "description": "cause"
+                      },
+                      "localizedMessage": {
+                        "type": "string",
+                        "description": "localizedMessage"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "message"
+                      },
+                      "stackTrace": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "className": {
+                              "type": "string",
+                              "description": "className"
+                            },
+                            "fileName": {
+                              "type": "string",
+                              "description": "fileName"
+                            },
+                            "lineNumber": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "lineNumber"
+                            },
+                            "methodName": {
+                              "type": "string",
+                              "description": "methodName"
+                            },
+                            "nativeMethod": {
+                              "type": "boolean",
+                              "description": "nativeMethod"
+                            }
+                          }
+                        },
+                        "description": "stackTrace"
+                      },
+                      "suppressed": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "suppressed"
+                      }
+                    }
+                  },
+                  "description": "suppressed"
+                },
+                "userParameters": {
+                  "type": "object",
+                  "properties": {
+                    "additionalProp": {
+                      "type": "string",
+                      "description": "additionalProp"
+                    }
+                  },
+                  "description": "userParameters"
+                }
+              },
+              "description": "error"
+            },
+            "fullName": {
+              "type": "string",
+              "description": "The full name of an employee"
+            },
+            "name": {
+              "type": "string",
+              "description": "name"
+            },
+            "personId": {
+              "type": "integer",
+              "format": "int32",
+              "description": "An ID that uniquely identifies an employee. This ID is the same as employeeId and is not a person number"
+            },
+            "personNumber": {
+              "type": "string",
+              "description": "A number that uniquely identifies a person.This is not an employee ID"
+            }
+          }
+        }
+      }
+    },
+    "badRequest": {
+      "description": "Bad Request.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Bad Request."
+        }
+      }
+    },
+    "unauthorizedAccess": {
+      "description": "User does not have access to this operation.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "errorCode": "WCO-101344",
+          "message": "The current user is not authorized to access this functionality."
+        }
+      }
+    },
+    "internalServerError": {
+      "description": "Internal server error.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Internal Server Error."
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "PRO WFM Vanity URL": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "vanityURL"
+    }
+  },
+  "security": [
+    {
+      "PRO WFM Vanity URL": []
+    }
+  ],
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/ukgprowfmpeople"
+  }
+}
