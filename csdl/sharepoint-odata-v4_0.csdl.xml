@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26302 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26309 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -14372,10 +14372,10 @@
       <Annotations Target="SP.Publishing.AmplifySchedule(SP.Publishing.CampaignPublication, Edm.DateTimeOffset)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.AmplifySendTestEmailMessage(SP.Publishing.CampaignPublication)">
+      <Annotations Target="SP.Publishing.AmplifySendTestEmailMessage(SP.Publishing.CampaignPublication, Edm.Stream)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Publishing.AmplifySendTestTeamsMessage(SP.Publishing.CampaignPublication, SP.Publishing.TestTeamsMessageChannel)">
+      <Annotations Target="SP.Publishing.AmplifySendTestTeamsMessage(SP.Publishing.CampaignPublication, Edm.String, Edm.String, Edm.Guid, Edm.String, Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Publishing.AmplifyValidate(SP.Publishing.CampaignPublication)">
@@ -24134,12 +24134,6 @@
       <ComplexType Name="ViewProgressAnalyticsData" BaseType="SP.Publishing.ViewData">
         <Property Name="PercentageViewed" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
-      <ComplexType Name="TestTeamsMessageChannel">
-        <Property Name="ChannelName" Type="Edm.String" />
-        <Property Name="GroupId" Type="Edm.Guid" Nullable="false" />
-        <Property Name="TeamName" Type="Edm.String" />
-        <Property Name="ThreadId" Type="Edm.String" />
-      </ComplexType>
       <ComplexType Name="ApprovalRequestResponse">
         <Property Name="ApprovalStatus" Type="Edm.Int32" Nullable="false" />
         <Property Name="PublicationStatus" Type="Edm.Int32" Nullable="false" />
@@ -24799,11 +24793,16 @@
       </Action>
       <Action Name="AmplifySendTestEmailMessage" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
+        <Parameter Name="contentStream" Type="Edm.Stream" />
         <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
       </Action>
       <Action Name="AmplifySendTestTeamsMessage" IsBound="true">
         <Parameter Name="this" Type="SP.Publishing.CampaignPublication" />
-        <Parameter Name="channel" Type="SP.Publishing.TestTeamsMessageChannel" />
+        <Parameter Name="audienceId" Type="Edm.String" />
+        <Parameter Name="channelName" Type="Edm.String" />
+        <Parameter Name="groupId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="teamName" Type="Edm.String" />
+        <Parameter Name="transpileContent" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.Publishing.Amplify.Client.ClientAmplifyResults" />
       </Action>
       <Action Name="AmplifyValidate" IsBound="true">
@@ -26613,9 +26612,13 @@
       </ComplexType>
       <ComplexType Name="PublicationMetadata">
         <Property Name="AmplifiedChannels" Type="SP.Publishing.AmplifiedChannels" />
+        <Property Name="BannerImageUrl" Type="Edm.String" />
+        <Property Name="CreationDate" Type="Edm.String" />
         <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ModifiedDate" Type="Edm.String" />
         <Property Name="Status" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
       </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Publishing.Amplify.Client" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -27384,6 +27387,10 @@
         <ReturnType Type="Collection(Edm.String)" />
       </Action>
       <Action Name="GetValidationChunks" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetWorkItem" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.String" />
       </Action>
@@ -29227,6 +29234,7 @@
         <Parameter Name="ExtraProperties" Type="Microsoft.SharePoint.Internal.LogActivityExtraProperties" />
         <Parameter Name="AuditCreationTime" Type="Edm.String" />
         <Parameter Name="IsOffline" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="UserIdList" Type="Collection(Edm.String)" />
       </Action>
       <Action Name="LogActivityBulk" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Internal.ActivityLogger" />
@@ -29341,6 +29349,7 @@
         <Property Name="shouldRemoveEntry" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="UpdateWriteBackFileModel">
+        <Property Name="fileName" Type="Edm.String" />
         <Property Name="listItemId" Type="Edm.String" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="workItemId" Type="Edm.String" />
@@ -30085,6 +30094,10 @@
         <Property Name="totalOneDrives" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalSites" Type="Edm.Int32" Nullable="false" />
         <Property Name="totalUsers" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="ContentManagementAssessmentOperationResult">
+        <Property Name="dataAccessGovernanceErrorMessage" Type="Edm.String" />
+        <Property Name="siteLifecycleManagementErrorMessage" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ContentManagementAssessmentPolicyReportDetails">
         <Property Name="totalImpactedSites" Type="Edm.Int32" Nullable="false" />
@@ -34458,6 +34471,7 @@
       </Action>
       <Action Name="RequestContentManagementAssessment" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentManagementAssessmentOperationResult" />
       </Action>
       <Action Name="RestoreContainer" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -37792,6 +37806,7 @@
         <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="siteType" Type="Edm.String" />
         <Parameter Name="section" Type="Edm.String" />
+        <Parameter Name="isFullDetails" Type="Edm.String" />
         <ReturnType Type="Collection(Edm.String)" />
       </Function>
     </Schema>
