@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26302 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26309 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1457,6 +1457,7 @@
         <Property Name="error" Type="oneDrive.error" />
         <Property Name="vroomCorrelationId" Type="Edm.Guid" />
         <Property Name="restoreType" Type="oneDrive.RestoreType" />
+        <Property Name="granularRestoreOptions" Type="oneDrive.granularRestoreOptions" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="browseSession" OpenType="true">
@@ -1504,6 +1505,8 @@
         <Property Name="syncAction" Type="oneDrive.SyncAction" />
         <Property Name="previousSyncAction" Type="oneDrive.SyncAction" />
         <Property Name="syncStatus" Type="oneDrive.SyncStatus" />
+        <Property Name="billingProfileId" Type="Edm.Guid" />
+        <Property Name="backupPolicyId" Type="Edm.Guid" />
         <Property Name="retentionSettings" Type="oneDrive.retentionSettings" />
         <Property Name="error" Type="oneDrive.ebarError" />
         <Property Name="createdDateTimeUtc" Type="Edm.DateTimeOffset" />
@@ -1522,6 +1525,9 @@
         <Property Name="BackupServiceConsumer" Type="oneDrive.BackupServiceConsumer" />
         <Property Name="FeatureStatus" Type="oneDrive.FeatureStatus" />
         <Property Name="BillingProfiles" Type="Collection(oneDrive.localBillingProfileFacet)" />
+        <Property Name="DefaultBillingProfileId" Type="Edm.Guid" />
+        <Property Name="BillingSource" Type="oneDrive.BillingSource" />
+        <Property Name="LastModifiedDateTimeUtc" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="odbUser" OpenType="true">
@@ -1819,6 +1825,15 @@
         <Property Name="createdate" Type="Edm.DateTimeOffset" />
         <Property Name="lastmodifieddate" Type="Edm.DateTimeOffset" />
         <Property Name="budgets" Type="Collection(oneDrive.budget)" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="billingFeature" OpenType="true">
+        <Key>
+          <PropertyRef Name="featureName" />
+        </Key>
+        <Property Name="featureName" Type="Edm.String" Nullable="false" />
+        <Property Name="migrationCompletedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="isMigrationComplete" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="policyAutomation" OpenType="true">
@@ -6906,6 +6921,7 @@
         <Property Name="autofillColumnSettings" Type="oneDrive.autofillColumnSettings" />
         <Property Name="templatedPrebuiltModels" Type="Collection(oneDrive.templatedPrebuiltModel)" />
         <Property Name="machineLearningFlags" Type="oneDrive.MachineLearningFlags" />
+        <Property Name="associatedItems" Type="Collection(oneDrive.machineLearningAssociatedItem)" />
       </ComplexType>
       <ComplexType Name="mainLink" OpenType="true">
         <Property Name="audience" Type="Edm.String" />
@@ -7470,6 +7486,11 @@
       <ComplexType Name="inAppPositioningMessages" OpenType="true">
         <Property Name="messageIds" Type="Collection(Edm.Int32)" Nullable="false" />
         <Property Name="errors" Type="Collection(Edm.String)" />
+      </ComplexType>
+      <ComplexType Name="machineLearningAssociatedItem" OpenType="true">
+        <Property Name="itemReference" Type="oneDrive.itemReference" />
+        <Property Name="associationType" Type="oneDrive.MachineLearningAssociationType" />
+        <Property Name="authorizationCode" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="machineLearningModelInfo" OpenType="true">
         <Property Name="parentReference" Type="oneDrive.itemReference" />
@@ -8143,6 +8164,7 @@
         <Property Name="florenceSearchIngestion" Type="Edm.Boolean" />
         <Property Name="odcMigratedFaceAndFlorenceData" Type="Edm.Boolean" />
         <Property Name="albumVersion" Type="Edm.String" />
+        <Property Name="faceAIState" Type="oneDrive.FaceAIState" />
       </ComplexType>
       <ComplexType Name="notificationPreferences">
         <Property Name="eTag" Type="Edm.String" />
@@ -8645,6 +8667,9 @@
         <Member Name="GranularBrowse" Value="2" />
         <Member Name="GranularRestore" Value="3" />
       </EnumType>
+      <EnumType Name="NameConflictBehavior">
+        <Member Name="Fail" Value="0" />
+      </EnumType>
       <EnumType Name="RestorePointType">
         <Member Name="None" Value="0" />
         <Member Name="PitrExpress" Value="1" />
@@ -8702,6 +8727,10 @@
         <Member Name="Unknown" Value="0" />
         <Member Name="None" Value="1" />
         <Member Name="Active" Value="2" />
+      </EnumType>
+      <EnumType Name="BillingSource">
+        <Member Name="Global" Value="0" />
+        <Member Name="ProtectionUnit" Value="1" />
       </EnumType>
       <EnumType Name="ItemType">
         <Member Name="File" Value="0" />
@@ -8844,6 +8873,12 @@
         <Member Name="unset" Value="0" />
         <Member Name="skipClassificationOnFileUpdate" Value="1" />
         <Member Name="unknownFutureValue" Value="1073741824" />
+      </EnumType>
+      <EnumType Name="MachineLearningAssociationType" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="Amendment" Value="1" />
+        <Member Name="Attachment" Value="2" />
+        <Member Name="UnknownFutureValue" Value="1073741824" />
       </EnumType>
       <EnumType Name="VirusStatus">
         <Member Name="Clean" Value="0" />
@@ -9353,9 +9388,6 @@
         <Member Name="Oldest" Value="1" />
         <Member Name="Latest" Value="2" />
       </EnumType>
-      <EnumType Name="NameConflictBehavior">
-        <Member Name="Fail" Value="0" />
-      </EnumType>
       <EnumType Name="AgreementsSolutionFieldValueType">
         <Member Name="singleLineOfText" Value="0" />
         <Member Name="multiLinesOfText" Value="1" />
@@ -9389,9 +9421,9 @@
         <Member Name="Site" Value="3" />
       </EnumType>
       <EnumType Name="LimitHandlingStrategy">
-        <Member Name="Unknown" Value="0" />
-        <Member Name="Truncate" Value="1" />
-        <Member Name="Throw" Value="2" />
+        <Member Name="None" Value="0" />
+        <Member Name="ReturnError" Value="1" />
+        <Member Name="Truncate" Value="2" />
         <Member Name="ReturnMinimumData" Value="3" />
       </EnumType>
       <EnumType Name="TenantActionType">
@@ -9491,6 +9523,11 @@
         <Member Name="Extracted" Value="1" />
         <Member Name="NotExtracted" Value="2" />
         <Member Name="Error" Value="3" />
+      </EnumType>
+      <EnumType Name="FaceAIState">
+        <Member Name="ShowConsent" Value="0" />
+        <Member Name="Enabled" Value="1" />
+        <Member Name="Hide" Value="2" />
       </EnumType>
       <EnumType Name="docFormatOption" />
       <EnumType Name="GroupTypeEnum">
@@ -9605,6 +9642,17 @@
         </Parameter>
         <ReturnType Type="oneDrive.diagnosticRecycleBinItemCollectionFacet" />
       </Function>
+      <Action Name="restoreRecycleBinItems" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
+        <Parameter Name="ids" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Parameter Name="ignoreExistingItems" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="renameExistingItems" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
       <Function Name="getByPath" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="oneDrive.diagnosticSite" />
         <Parameter Name="path" Type="Edm.String" />
@@ -11021,9 +11069,6 @@
       <Action Name="getAudienceSizeEstimate" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.campaign)" />
         <Parameter Name="audienceSizeEstimateQuery" Type="oneDrive.audienceSizeEstimateQuery" />
-        <Parameter Name="testBearerToken" Type="Edm.String">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
         <ReturnType Type="oneDrive.audienceSizeEstimateReports" />
       </Action>
       <Action Name="getCampaignPreaggregatedAnalyticsReport" IsBound="true">
@@ -11485,6 +11530,7 @@
         <EntitySet Name="orglinks" EntityType="oneDrive.orglink" />
         <EntitySet Name="billingEvents" EntityType="oneDrive.billingEvent" />
         <EntitySet Name="billingpolicies" EntityType="oneDrive.billingPolicy" />
+        <EntitySet Name="billingFeatures" EntityType="oneDrive.billingFeature" />
         <EntitySet Name="actionableMessages" EntityType="oneDrive.actionableMessage" />
         <EntitySet Name="storageContainers" EntityType="oneDrive.storageContainer" />
         <EntitySet Name="storagecontainertypes" EntityType="oneDrive.storageContainerType" />
