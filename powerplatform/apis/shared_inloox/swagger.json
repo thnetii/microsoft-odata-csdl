@@ -1,0 +1,824 @@
+{
+  "host": "europe-002.azure-apim.net",
+  "info": {
+    "description": "The InLoox Connector helps teams streamline project workflows by automating common tasks such as creating and updating projects, tasks, and contacts within their InLoox workspace. Use this connector to integrate InLoox with Microsoft services like Outlook, SharePoint, or Teams, enabling seamless process automation for project planning, collaboration, and resource tracking.",
+    "title": "InLoox",
+    "contact": {
+      "name": "InLoox",
+      "email": "support@inloox.com",
+      "url": "https://www.inloox.com"
+    },
+    "version": "1.0.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.inloox.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.inloox.com/privacy-policy/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Collaboration;Productivity"
+    }
+  ],
+  "basePath": "/apim/inloox",
+  "consumes": [],
+  "definitions": {
+    "AddProjectMemberInput": {
+      "properties": {
+        "contactId": {
+          "description": "The ID of the contact to be added to the project",
+          "format": "uuid",
+          "type": "string"
+        },
+        "role": {
+          "description": "The numeric role identifier for the member. Possible values: 2=Project Manager, 4=Team Member, 8=Partner, 16=Customer, 32=Other, 128=AdditionalRole1, 256=AdditionalRole2, 512=AdditionalRole3, 1024=AdditionalRole4, 2048=AdditionalRole5",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contactId",
+        "role"
+      ],
+      "type": "object"
+    },
+    "ApiContact": {
+      "properties": {
+        "CompanyName": {
+          "type": "string"
+        },
+        "ContactId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "DescriptionHTML": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "IsIdentity": {
+          "type": "boolean"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Title": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApiProject": {
+      "properties": {
+        "ProjectId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApiProjectInput": {
+      "properties": {
+        "ClientId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "DescriptionHTML": {
+          "type": "string"
+        },
+        "DivisionId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "EndDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "IsArchived": {
+          "type": "boolean"
+        },
+        "IsRecycled": {
+          "type": "boolean"
+        },
+        "LockMode": {
+          "type": "integer"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "NumberIncremential": {
+          "type": "integer"
+        },
+        "NumberPrefix": {
+          "type": "string"
+        },
+        "NumberSuffix": {
+          "type": "string"
+        },
+        "PortfolioId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "Priority": {
+          "type": "integer"
+        },
+        "ProjectStatusId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "RiskScore": {
+          "type": "integer"
+        },
+        "SizeScore": {
+          "type": "integer"
+        },
+        "StartDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "ValueScore": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "ApiTask": {
+      "properties": {
+        "DescriptionHTML": {
+          "type": "string"
+        },
+        "EndDateTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "ProjectId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "StartDateTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "TaskId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ApiTaskInput": {
+      "properties": {
+        "DescriptionHTML": {
+          "type": "string"
+        },
+        "EndDateTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "GroupId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "ProjectId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "StartDateTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "WorkAmount": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {},
+  "paths": {
+    "/{connectionId}/Contact": {
+      "get": {
+        "description": "Returns all contacts based on the specified OData filter and pagination parameters.",
+        "operationId": "getContacts",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "OData filter string",
+            "description": "An OData filter string to filter the returned contacts.",
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Maximum number of contacts",
+            "description": "The maximum number of contacts to return.",
+            "in": "query",
+            "name": "$top",
+            "type": "number"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful. Returns a list of contacts.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiContact"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Retrieves a list of contacts",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#retrieves-a-list-of-contacts"
+        }
+      }
+    },
+    "/{connectionId}/Project": {
+      "get": {
+        "description": "Returns all projects based on the specified OData filter and pagination parameters.",
+        "operationId": "getProjects",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "OData filter string",
+            "description": "An OData filter string to filter the returned projects.",
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Maximum number of projects",
+            "description": "The maximum number of projects to return.",
+            "in": "query",
+            "name": "$top",
+            "type": "number"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful. Returns a list of projects.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiProject"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Retrieves a list of projects",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#retrieves-a-list-of-projects"
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Creates a new project with the provided information.",
+        "operationId": "postProjects",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Project details",
+            "description": "The project details to create.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiProjectInput"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "The project was created successfully.",
+            "schema": {
+              "$ref": "#/definitions/ApiProject"
+            }
+          }
+        },
+        "summary": "Creates a new project",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#creates-a-new-project"
+        }
+      }
+    },
+    "/{connectionId}/Project/{projectId}": {
+      "delete": {
+        "description": "Deletes the specified project by its unique identifier.",
+        "operationId": "deleteProject",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the project",
+            "description": "The unique identifier of the project to delete.",
+            "format": "uuid",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The project was deleted successfully."
+          },
+          "404": {
+            "description": "The project was not found."
+          }
+        },
+        "summary": "Deletes a project by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#deletes-a-project-by-id"
+        }
+      },
+      "get": {
+        "description": "Retrieves a specific project by its unique identifier.",
+        "operationId": "getProjectById",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the project",
+            "description": "The unique identifier of the project to retrieve.",
+            "format": "uuid",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful. Returns the project.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiProject"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "404": {
+            "description": "The project was not found."
+          }
+        },
+        "summary": "Retrieves a project by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#retrieves-a-project-by-id"
+        }
+      },
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Updates the specified project with new information.",
+        "operationId": "updateProject",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the project",
+            "description": "The unique identifier of the project to update.",
+            "format": "uuid",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Project details",
+            "description": "The project details to update.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiProjectInput"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The project was updated successfully.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiProject"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "404": {
+            "description": "The project was not found."
+          }
+        },
+        "summary": "Updates a project by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#updates-a-project-by-id"
+        }
+      }
+    },
+    "/{connectionId}/Project/{projectId}/AddMember": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Adds a member to the specified project.",
+        "operationId": "addProjectMember",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "identifier of the project",
+            "description": "The unique identifier of the project to which the member will be added.",
+            "format": "uuid",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Contact details and role of the member",
+            "description": "The contact details and role of the member to add.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddProjectMemberInput"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The member was successfully added to the project."
+          },
+          "400": {
+            "description": "The request was invalid."
+          },
+          "404": {
+            "description": "The project was not found."
+          }
+        },
+        "summary": "Adds a member to a project",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#adds-a-member-to-a-project"
+        }
+      }
+    },
+    "/{connectionId}/Task": {
+      "get": {
+        "description": "Returns all tasks based on the specified OData filter and pagination parameters.",
+        "operationId": "getTasks",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "OData filter string",
+            "description": "An OData filter string to filter the returned tasks.",
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Maximum number of tasks",
+            "description": "The maximum number of tasks to return.",
+            "in": "query",
+            "name": "$top",
+            "type": "number"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful. Returns a list of tasks.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiTask"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "summary": "Retrieves a list of tasks",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#retrieves-a-list-of-tasks"
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Creates a new task with the provided information.",
+        "operationId": "postTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Task details",
+            "description": "The task details to create.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiTaskInput"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "The task was created successfully.",
+            "schema": {
+              "$ref": "#/definitions/ApiTask"
+            }
+          }
+        },
+        "summary": "Creates a new task",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#creates-a-new-task"
+        }
+      }
+    },
+    "/{connectionId}/Task/{taskId}": {
+      "delete": {
+        "description": "Deletes the specified task by its unique identifier.",
+        "operationId": "deleteTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the task",
+            "description": "The unique identifier of the task to delete.",
+            "format": "uuid",
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The task was deleted successfully."
+          },
+          "404": {
+            "description": "The task was not found."
+          }
+        },
+        "summary": "Deletes a task by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#deletes-a-task-by-id"
+        }
+      },
+      "get": {
+        "description": "Retrieves a specific task by its unique identifier.",
+        "operationId": "getTaskById",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the task",
+            "description": "The unique identifier of the task to retrieve.",
+            "format": "uuid",
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful. Returns the task.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiTask"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "404": {
+            "description": "The task was not found."
+          }
+        },
+        "summary": "Retrieves a task by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#retrieves-a-task-by-id"
+        }
+      },
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Updates the specified task with new details.",
+        "operationId": "updateTask",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "x-ms-summary": "Identifier of the task",
+            "description": "The unique identifier of the task to update.",
+            "format": "uuid",
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "x-ms-summary": "Task details",
+            "description": "The task details to update.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiTaskInput"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The task was updated successfully.",
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/ApiTask"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "404": {
+            "description": "The task was not found."
+          }
+        },
+        "summary": "Updates a task by ID",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/inloox/#updates-a-task-by-id"
+        }
+      }
+    }
+  },
+  "produces": [],
+  "responses": {},
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
+  "securityDefinitions": {
+    "apiKey": {
+      "in": "header",
+      "name": "X-API-KEY",
+      "type": "apiKey"
+    }
+  },
+  "swagger": "2.0",
+  "tags": [],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/inloox"
+  }
+}
