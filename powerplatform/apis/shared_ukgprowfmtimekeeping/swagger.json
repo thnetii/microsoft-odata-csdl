@@ -1,0 +1,2724 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "UKG Pro WFM Timekeeping",
+    "description": "Employee Self Service Actions for Timekeeping.",
+    "version": "1.0",
+    "contact": {
+      "name": "KGS",
+      "url": "https://www.ukg.com/support",
+      "email": "support@ukg.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.ukg.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.ukg.com/privacy"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Human Resources"
+    }
+  ],
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/ukgprowfmtimekeeping",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{connectionId}/api/v1/timekeeping/timestamps": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the last recorded timestamp.",
+            "schema": {
+              "$ref": "#/definitions/getTimeStamps"
+            }
+          },
+          "400": {
+            "description": "An error occurred while retrieving last recorded timestamp.",
+            "schema": {
+              "$ref": "#/definitions/badRequest"
+            }
+          },
+          "500": {
+            "description": "Error retrieving the last recorded timestamp.",
+            "schema": {
+              "$ref": "#/definitions/internalServerError"
+            }
+          }
+        },
+        "summary": "Retrieve Timestamp",
+        "description": "This operation returns the last recorded timestamp.",
+        "operationId": "GetLastTimestamp",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmtimekeeping/#retrieve-timestamp"
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successfully added timestamp to a punch.",
+            "schema": {
+              "$ref": "#/definitions/getTimeStamps"
+            }
+          },
+          "400": {
+            "description": "A general error occurred while recording to a timestamp.",
+            "schema": {
+              "$ref": "#/definitions/badRequest"
+            }
+          },
+          "500": {
+            "description": "Error adding timestamp.",
+            "schema": {
+              "$ref": "#/definitions/internalServerError"
+            }
+          }
+        },
+        "summary": "Add Timestamp",
+        "description": "This operation records a timestamp for a punch transaction.",
+        "operationId": "AddTimestamp",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transferString": {
+                  "type": "string",
+                  "description": "List of Labor Category Entries and Cost Center.",
+                  "title": "transferString"
+                },
+                "cancelDeduct": {
+                  "type": "boolean",
+                  "description": "A boolean value.",
+                  "title": "cancelDeduct",
+                  "enum": [
+                    true,
+                    false
+                  ]
+                },
+                "employee": {
+                  "type": "object",
+                  "properties": {
+                    "qualifier": {
+                      "type": "integer",
+                      "description": "A number that uniquely identifies a person. This is not an employee ID.",
+                      "title": "Person Number"
+                    }
+                  },
+                  "description": "Employee Identifier.",
+                  "required": [
+                    "qualifier"
+                  ]
+                },
+                "position": {
+                  "type": "object",
+                  "properties": {
+                    "qualifier": {
+                      "type": "string",
+                      "description": "Name of the Position.",
+                      "title": "Position Name"
+                    }
+                  },
+                  "description": "Position Identifier."
+                }
+              },
+              "required": [
+                "employee"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmtimekeeping/#add-timestamp"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/timekeeping/employee_timecard": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successfully retrived timecard by employee.",
+            "schema": {
+              "$ref": "#/definitions/getEmployeeTimeCard"
+            }
+          },
+          "400": {
+            "description": "A general error occurred while retrieving timecard.",
+            "schema": {
+              "$ref": "#/definitions/badRequest"
+            }
+          },
+          "500": {
+            "description": "Error retrieving timecard by employee.",
+            "schema": {
+              "$ref": "#/definitions/internalServerError"
+            }
+          }
+        },
+        "summary": "Retrieve Timecard",
+        "description": "This operation returns an employee timecard.",
+        "operationId": "GetTimecard",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "default": "PUNCHES",
+            "description": "Determines the objects returned in the timecard request response.",
+            "x-ms-summary": "select",
+            "enum": [
+              "PROCESSED_SEGMENTS",
+              "PROJECTS",
+              "PUNCHES",
+              "WORKED_SHIFTS",
+              "PAYCODE_EDITS",
+              "MOVE_AMOUNTS",
+              "HOURS_WORKED",
+              "HOLIDAY_CREDITS",
+              "EXCEPTIONS",
+              "EXTENDED_EXCEPTIONS",
+              "TOTAL_SUMMARY",
+              "DAILY_TOTAL_SUMMARY",
+              "ITEM_TOTAL_SUMMARY",
+              "TOTALS",
+              "SIGNOFF",
+              "REMOVE_SIGNOFF",
+              "APPROVAL",
+              "REMOVE_APPROVAL",
+              "TOTALIZE",
+              "SAVE",
+              "HISTORICAL_CORRECTIONS",
+              "OVERTIME_SUMMARY",
+              "OVERTIME_DETAILS",
+              "TIMECARD_LAST_UPDATED_BY_SOMEELSE",
+              "OTA",
+              "HAS_PENDING_CHANGES",
+              "HAS_MOVE_AMOUNTS",
+              "MISSINGTIME_GROUP",
+              "TOTALIZATION_STATUS",
+              "ACTIVITY_SEGMENTS",
+              "ACTIVITY_SHIFTS",
+              "ACTIVITY_TOTALS"
+            ]
+          },
+          {
+            "name": "person_number",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "A number that uniquely identifies a person",
+            "x-ms-summary": "person_number"
+          },
+          {
+            "name": "symbolic_period_id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "Previous_Payperiod",
+              "Current_Payperiod",
+              "Next_Payperiod",
+              "Current_SchedPeriod",
+              "Previous_SchedPeriod",
+              "Next_SchedPeriod",
+              "Week_to_Date",
+              "Last_Week",
+              "Yesterday",
+              "Range_Of_Dates",
+              "Range_of_Relative_Dates",
+              "Specific_Date",
+              "Relative_Specific_Date",
+              "Today",
+              "Month_to_Date"
+            ],
+            "x-ms-summary": "Symbolic Period ID",
+            "description": "A symbolic identifier that represents a timeframe or a span of time"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "The start date in ISO_LOCAL_DATE format (YYYY-MM-DD). Mutually exclusive with symbolic period, but either a symbolic period or a date range consisting of a start date and end date is required.",
+            "x-ms-summary": "start_date"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "The end date in ISO_LOCAL_DATE format (YYYY-MM-DD). Mutually exclusive with symbolic period, but either a symbolic period or a date range consisting of a start date and end date is required.",
+            "x-ms-summary": "end_date"
+          },
+          {
+            "name": "breakUpAtMidnight",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not to break up a worked shift at calendar day midnight when the shift crosses from one calendar day to another.",
+            "x-ms-summary": "breakUpAtMidnight"
+          },
+          {
+            "name": "include_phantom_punches",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not to include phantom punches.",
+            "x-ms-summary": "include_phantom_punches"
+          },
+          {
+            "name": "include_kind_of_time_segments",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not to include Kinds Of Time segments.",
+            "x-ms-summary": "include_kind_of_time_segments"
+          },
+          {
+            "name": "show_totals_with_hidden_paycodes",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not totals should be shown when they are for for paycodes that have been configured to be hidden.",
+            "x-ms-summary": "show_totals_with_hidden_paycodes"
+          },
+          {
+            "name": "activity_name",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "The name of the desired activity for retrieval of the activity data types.",
+            "x-ms-summary": "activity_name"
+          },
+          {
+            "name": "consolidate_schedule_segments",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not to consolidate scheduled segments of a worked shift.",
+            "x-ms-summary": "consolidate_schedule_segments"
+          },
+          {
+            "name": "shift_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "The ID of the desired shift for retrieval of the activity data types.",
+            "x-ms-summary": "shift_id"
+          },
+          {
+            "name": "totals_rollup_by",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "ALL",
+              "SHIFT",
+              "TIMEITEM",
+              "DAILY",
+              "PERIOD_TO_DATE",
+              "ACTIVITY_EVENT",
+              "RAW"
+            ],
+            "description": "The criteria by which totals have been rolled up.",
+            "x-ms-summary": "totals_rollup_by"
+          },
+          {
+            "name": "context_date",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "The date for which or until which totals are calculated in ISO_LOCAL_DATE format (YYYY-MM-DD). Must be within the given start_date and end_date or the time frame represented by a provided symbolic timeframe ID.",
+            "x-ms-summary": "context_date"
+          },
+          {
+            "name": "totals_include_combined_paycodes",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not totals include combined paycodes.",
+            "x-ms-summary": "totals_include_combined_paycodes"
+          },
+          {
+            "name": "retrieve_full_labor_categories",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not totals include full labor categories.",
+            "x-ms-summary": "retrieve_full_labor_categories"
+          },
+          {
+            "name": "return_true_cost_center_id",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "A Boolean indicator of whether or not to return the true cost center ID in the response.",
+            "x-ms-summary": "return_true_cost_center_id"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmtimekeeping/#retrieve-timecard"
+        }
+      }
+    },
+    "/{connectionId}/api/v1/timekeeping/timecard_metrics/multi_read": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved accrual summary.",
+            "schema": {
+              "$ref": "#/definitions/viewAccruals"
+            }
+          },
+          "400": {
+            "description": "A general error occurred attempting to retrieve accrual summary.",
+            "schema": {
+              "$ref": "#/definitions/badRequest"
+            }
+          },
+          "500": {
+            "description": "Error retrieving accrual summary.",
+            "schema": {
+              "$ref": "#/definitions/internalServerError"
+            }
+          }
+        },
+        "summary": "View Accruals",
+        "description": "This operation returns Accrual Summary.",
+        "operationId": "ViewAccruals",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "$ref": "#/parameters/content-type"
+          },
+          {
+            "$ref": "#/parameters/access-token"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "select": {
+                  "type": "string",
+                  "description": "Select Criteria",
+                  "title": "select",
+                  "default": "ACCRUAL_SUMMARY",
+                  "x-ms-visibility": "internal"
+                },
+                "where": {
+                  "type": "object",
+                  "properties": {
+                    "employeeSet": {
+                      "type": "object",
+                      "properties": {
+                        "dateRange": {
+                          "type": "object",
+                          "properties": {
+                            "startDate": {
+                              "type": "string",
+                              "description": "Start date of date range in format(YYYY-MM-DD).",
+                              "title": "Start Date"
+                            },
+                            "endDate": {
+                              "type": "string",
+                              "description": "End date of date range in format(YYYY-MM-DD).",
+                              "title": "End Date"
+                            }
+                          },
+                          "description": "dateRange",
+                          "required": [
+                            "endDate",
+                            "startDate"
+                          ]
+                        },
+                        "employees": {
+                          "type": "object",
+                          "properties": {
+                            "refs": {
+                              "type": "array",
+                              "title": "Person",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "qualifier": {
+                                    "type": "string",
+                                    "title": "Number",
+                                    "description": "The person number of the employee."
+                                  }
+                                },
+                                "required": [
+                                  "qualifier"
+                                ]
+                              },
+                              "description": "The person number of the employee."
+                            }
+                          },
+                          "description": "employees",
+                          "required": [
+                            "refs"
+                          ]
+                        }
+                      },
+                      "description": "employeeSet",
+                      "required": [
+                        "dateRange",
+                        "employees"
+                      ]
+                    }
+                  },
+                  "description": "where",
+                  "required": [
+                    "employeeSet"
+                  ]
+                }
+              },
+              "required": [
+                "where",
+                "select"
+              ]
+            }
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/ukgprowfmtimekeeping/#view-accruals"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "getTimeStamps": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The ID of the punch transaction."
+        },
+        "employee": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Employee Ref Id"
+            },
+            "qualifier": {
+              "type": "string",
+              "description": "Employee Ref Unique qualifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "name"
+            }
+          },
+          "description": "Employee object with id and qualifier to uniquely identify an employee."
+        },
+        "timeZone": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Employee Ref Id"
+            },
+            "qualifier": {
+              "type": "string",
+              "description": "Employee Ref Unique qualifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "name"
+            }
+          },
+          "description": "Employee object with id and qualifier to uniquely identify an employee."
+        },
+        "transferString": {
+          "type": "string",
+          "description": "An ordered, semi-colon separated list of Labor Category Entries and Cost Center."
+        },
+        "punchDtm": {
+          "type": "string",
+          "description": "Punch date and time in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss)."
+        },
+        "cancelDeduct": {
+          "type": "boolean",
+          "description": "cancelDeduct"
+        }
+      }
+    },
+    "getEmployeeTimeCard": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "description": "The earliest start date associated with a timecard in format(YYYY-MM-DD)."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The latest end date associated with a timecard in format(YYYY-MM-DD)."
+        },
+        "punches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32",
+                "description": "The ID of this set of Comments and attached Notes"
+              },
+              "employee": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "description": "Object Ref Unique qualifier"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "punchDtm": {
+                "type": "string",
+                "description": "The date and time stamp for the punch in ISO_LOCAL_DATE_TIME"
+              },
+              "roundedPunchDtm": {
+                "type": "string",
+                "description": "The rounded punch date and time"
+              },
+              "timeZone": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "description": "Object Ref Unique qualifier"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "enteredOnDtm": {
+                "type": "string",
+                "description": "The date and time stamp for when this punch transaction was entered through the API"
+              },
+              "hasComments": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not a Comment is associated with an activity segment"
+              },
+              "editByType": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "description": "Object Ref Unique qualifier"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "dataSource": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "description": "Object Ref Unique qualifier"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "description": "displayName"
+                  },
+                  "functionalAreaName": {
+                    "type": "string",
+                    "description": "functionalAreaName"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "exceptions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "employee": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "startDateTime": {
+                      "type": "string",
+                      "description": "The date and time of the start of the activity in ISO_LOCAL_DATE_TIME format (yyyy-MM-dd HH:mm:ss.SSS)"
+                    },
+                    "endDateTime": {
+                      "type": "string",
+                      "description": "The date and time of the end of the activity in ISO_LOCAL_DATE_TIME format (yyyy-MM-dd HH:mm:ss.SSS)"
+                    },
+                    "applyDate": {
+                      "type": "string",
+                      "description": "The apply date for an activity processed segment date range in ISO_LOCAL_DATE format (YYYY-MM-DD)."
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    },
+                    "endTimeZone": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "exceptionType": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "The ID of a Timekeeping exception type"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of a Timekeeping exception type"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "The description of a Timekeeping exception typ"
+                        },
+                        "displayName": {
+                          "type": "string",
+                          "description": "The display name of a Timekeeping exception type"
+                        },
+                        "category": {
+                          "type": "string",
+                          "description": "The category of a Timekeeping exception type"
+                        }
+                      },
+                      "description": "The Timekeeping exception type"
+                    },
+                    "orgJob": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "overLimitInHours": {
+                      "type": "number",
+                      "description": "The amount (in hours) that exceeds the limit defined by the exception associated with the pay code edit. This property is read only"
+                    },
+                    "startTimeZone": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "violationInHours": {
+                      "type": "number",
+                      "description": "The total number of hours violated which caused an exception. This property is read only"
+                    },
+                    "workRule": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "commentsNotes": {
+                      "type": "array",
+                      "items": {},
+                      "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment"
+                    },
+                    "punchEvent": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "isExcusedAbsence": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the exception involves an excused absence. This property is read only"
+                    },
+                    "isUnExcusedAbsence": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the exception involves an unexcused absence. This property is read only"
+                    },
+                    "missingTimeStatus": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "The ID of the missing time status ranging from 1 to 4"
+                        },
+                        "displayName": {
+                          "type": "string",
+                          "description": "The localized missing time status display name"
+                        }
+                      },
+                      "description": "Object describing the missing time status of an exception"
+                    },
+                    "justifications": {
+                      "type": "array",
+                      "items": {},
+                      "description": "A list of missing time justifications for this exception. This property is read only"
+                    },
+                    "justifiedTimes": {
+                      "type": "array",
+                      "items": {},
+                      "description": "A list of justified times for this exception. This property is read only"
+                    },
+                    "transfer": {
+                      "type": "boolean",
+                      "description": "transfer"
+                    },
+                    "eventDate": {
+                      "type": "string",
+                      "description": "eventDate"
+                    },
+                    "startException": {
+                      "type": "boolean",
+                      "description": "startException"
+                    },
+                    "endException": {
+                      "type": "boolean",
+                      "description": "endException"
+                    },
+                    "reviewed": {
+                      "type": "boolean",
+                      "description": "reviewed"
+                    }
+                  }
+                },
+                "description": "A list of exception objects associated with a timecard"
+              },
+              "commentsNotes": {
+                "type": "array",
+                "items": {},
+                "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment. This property is read only"
+              },
+              "isPhantom": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not the punch is a phantom punch"
+              },
+              "isScheduled": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not the punch is generated from a scheduled worked span"
+              },
+              "updatedOnDtm": {
+                "type": "string",
+                "description": "The date and time stamp for when this punch transaction was last updated"
+              },
+              "validateAsTimestamp": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not the punch is entered as a timestamp"
+              },
+              "attestationPunchEdit": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not the punch is entered as an Attestation punch edit"
+              },
+              "markRelatedExceptionsAsReviewed": {
+                "type": "boolean",
+                "description": "If an Exception exists for a punch, a Boolean indicator of whether or not that Exception is resolved"
+              },
+              "editable": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not a pay code edit is editable"
+              },
+              "cancelDeduct": {
+                "type": "boolean",
+                "description": "cancelDeduct"
+              },
+              "fromPhantomEdited": {
+                "type": "boolean",
+                "description": "fromPhantomEdited"
+              },
+              "exceptionResolved": {
+                "type": "boolean",
+                "description": "exceptionResolved"
+              },
+              "typeOverride": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  },
+                  "qualifier": {
+                    "type": "string",
+                    "description": "Object Ref Unique qualifier"
+                  },
+                  "typeOverrideId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The ID of the type override"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the type override"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                },
+                "description": "Entity describing a rule override for a timecard"
+              }
+            }
+          },
+          "description": "A list of the punches associated with a timecard"
+        },
+        "workedShifts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Object Ref Id"
+              },
+              "employee": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "startDateTime": {
+                "type": "string",
+                "description": "The date and time of the start of the activity in ISO_LOCAL_DATE_TIME format (yyyy-MM-dd HH:mm:ss.SSS)"
+              },
+              "endDateTime": {
+                "type": "string",
+                "description": "The end date and time of a date range in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss)"
+              },
+              "startTimezone": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "endTimezone": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "roundedStartDateTime": {
+                "type": "string",
+                "description": "An optional field containing the start date and time based on configured rounding rules"
+              },
+              "roundedEndDateTime": {
+                "type": "string",
+                "description": "An optional field containing the end date and time based on configured rounding rules"
+              },
+              "roundedStartTimezone": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "roundedEndTimezone": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Object Ref Id"
+                  }
+                },
+                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+              },
+              "transactionDateTime": {
+                "type": "string",
+                "description": "The date and time stamp for when this worked shift transaction was entered through the API"
+              },
+              "inProgress": {
+                "type": "boolean",
+                "description": "A Boolean indicator that shows whether or not a Processed Segment is in progress"
+              },
+              "consolidatedScheduleSegments": {
+                "type": "boolean",
+                "description": "A Boolean indicator of whether or not schedule segments of the worked shift have been consolidated"
+              },
+              "workedSpans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    },
+                    "itemId": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The ID of the time item"
+                    },
+                    "spanId": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The ID of the worked span"
+                    },
+                    "startDateTime": {
+                      "type": "string",
+                      "description": "The start date and time of a date range in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss)"
+                    },
+                    "endDateTime": {
+                      "type": "string",
+                      "description": "The end date and time of a date range in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss)"
+                    },
+                    "roundedStartDateTime": {
+                      "type": "string",
+                      "description": "An optional field containing the start date and time based on configured rounding rules"
+                    },
+                    "roundedEndDateTime": {
+                      "type": "string",
+                      "description": "An optional field containing the end date and time based on configured rounding rules"
+                    },
+                    "startTimezone": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "endTimezone": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "primaryOrgJob": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "workRule": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "primaryWorkRule": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "orderNumber": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The order number associated with an activity segment"
+                    },
+                    "startPunch": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "employee": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "punchDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for the punch in ISO_LOCAL_DATE_TIME"
+                        },
+                        "roundedPunchDtm": {
+                          "type": "string",
+                          "description": "The rounded punch date and time"
+                        },
+                        "timeZone": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "enteredOnDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for when this punch transaction was entered through the API"
+                        },
+                        "hasComments": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not a Comment is associated with an activity segment"
+                        },
+                        "editByType": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "dataSource": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "displayName": {
+                              "type": "string",
+                              "description": "displayName"
+                            },
+                            "functionalAreaName": {
+                              "type": "string",
+                              "description": "functionalAreaName"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "exceptions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "employee": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  },
+                                  "qualifier": {
+                                    "type": "string",
+                                    "description": "Object Ref Unique qualifier"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "name"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "startDateTime": {
+                                "type": "string",
+                                "description": "The date and time of the start of the activity in ISO_LOCAL_DATE_TIME format (yyyy-MM-dd HH:mm:ss.SSS)"
+                              },
+                              "endDateTime": {
+                                "type": "string",
+                                "description": "The date and time of the end of the activity in ISO_LOCAL_DATE_TIME format (yyyy-MM-dd HH:mm:ss.SSS)"
+                              },
+                              "applyDate": {
+                                "type": "string",
+                                "description": "The apply date for an activity processed segment date range in ISO_LOCAL_DATE format (YYYY-MM-DD)"
+                              },
+                              "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "id"
+                              },
+                              "endTimeZone": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "exceptionType": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "The ID of a Timekeeping exception type"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "The name of a Timekeeping exception type"
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "description": "The description of a Timekeeping exception type"
+                                  },
+                                  "displayName": {
+                                    "type": "string",
+                                    "description": "The display name of a Timekeeping exception type"
+                                  },
+                                  "category": {
+                                    "type": "string",
+                                    "description": "category"
+                                  }
+                                },
+                                "description": "The Timekeeping exception type"
+                              },
+                              "orgJob": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "overLimitInHours": {
+                                "type": "number",
+                                "description": "The amount (in hours) that exceeds the limit defined by the exception associated with the pay code edit. This property is read only"
+                              },
+                              "startTimeZone": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "violationInHours": {
+                                "type": "number",
+                                "description": "The total number of hours violated which caused an exception. This property is read only"
+                              },
+                              "workRule": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  },
+                                  "qualifier": {
+                                    "type": "string",
+                                    "description": "Object Ref Unique qualifier"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "name"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "commentsNotes": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment. This property is read only"
+                              },
+                              "punchEvent": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "isExcusedAbsence": {
+                                "type": "boolean",
+                                "description": "A Boolean indicator of whether or not the exception involves an excused absence. This property is read only"
+                              },
+                              "isUnExcusedAbsence": {
+                                "type": "boolean",
+                                "description": "A Boolean indicator of whether or not the exception involves an unexcused absence. This property is read only"
+                              },
+                              "missingTimeStatus": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "The ID of the missing time status ranging from 1 to 4"
+                                  },
+                                  "displayName": {
+                                    "type": "string",
+                                    "description": "The localized missing time status display name"
+                                  }
+                                },
+                                "description": "Object describing the missing time status of an exception"
+                              },
+                              "justifications": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A list of missing time justifications for this exception. This property is read only"
+                              },
+                              "justifiedTimes": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A list of justified times for this exception. This property is read only"
+                              },
+                              "transfer": {
+                                "type": "boolean",
+                                "description": "transfer"
+                              },
+                              "eventDate": {
+                                "type": "string",
+                                "description": "eventDate"
+                              },
+                              "startException": {
+                                "type": "boolean",
+                                "description": "startException"
+                              },
+                              "endException": {
+                                "type": "boolean",
+                                "description": "endException"
+                              },
+                              "reviewed": {
+                                "type": "boolean",
+                                "description": "reviewed"
+                              }
+                            }
+                          },
+                          "description": "A list of exception objects associated with a punch"
+                        },
+                        "commentsNotes": {
+                          "type": "array",
+                          "items": {},
+                          "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment"
+                        },
+                        "isPhantom": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is a phantom punch"
+                        },
+                        "isScheduled": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is generated from a scheduled worked span"
+                        },
+                        "updatedOnDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for when this punch transaction was last updated"
+                        },
+                        "validateAsTimestamp": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is entered as a timestamp"
+                        },
+                        "attestationPunchEdit": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is entered as an Attestation punch edit"
+                        },
+                        "markRelatedExceptionsAsReviewed": {
+                          "type": "boolean",
+                          "description": "If an Exception exists for a punch, a Boolean indicator of whether or not that Exception is resolved"
+                        },
+                        "editable": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not a pay code edit is editable"
+                        },
+                        "cancelDeduct": {
+                          "type": "boolean",
+                          "description": "cancelDeduct"
+                        },
+                        "fromPhantomEdited": {
+                          "type": "boolean",
+                          "description": "fromPhantomEdited"
+                        },
+                        "exceptionResolved": {
+                          "type": "boolean",
+                          "description": "exceptionResolved"
+                        },
+                        "workRule": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "typeOverride": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "typeOverrideId": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "The ID of the type override"
+                            },
+                            "description": {
+                              "type": "string",
+                              "description": "dDescription of the type override"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "Entity describing a rule override for a timecard"
+                        }
+                      },
+                      "description": "Entity describing a punch object for the timecard resource"
+                    },
+                    "endPunch": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "employee": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "punchDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for the punch in ISO_LOCAL_DATE_TIME"
+                        },
+                        "roundedPunchDtm": {
+                          "type": "string",
+                          "description": "The rounded punch date and time"
+                        },
+                        "timeZone": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "enteredOnDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for when this punch transaction was entered through the API"
+                        },
+                        "hasComments": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not a Comment is associated with an activity segment"
+                        },
+                        "editByType": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "dataSource": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "displayName": {
+                              "type": "string",
+                              "description": "displayName"
+                            },
+                            "functionalAreaName": {
+                              "type": "string",
+                              "description": "functionalAreaName"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "exceptions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "employee": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  },
+                                  "qualifier": {
+                                    "type": "string",
+                                    "description": "Object Ref Unique qualifier"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "name"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "startDateTime": {
+                                "type": "string",
+                                "description": "The start date and time of a justification in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss)"
+                              },
+                              "endDateTime": {
+                                "type": "string",
+                                "description": "The end date and time of a date range in ISO_LOCAL_DATE_TIME format (yyyy-mm-ddThh:mm:ss.sss). This property is read only"
+                              },
+                              "applyDate": {
+                                "type": "string",
+                                "description": "The date to which an exception applies in ISO_LOCAL_DATE format (YYYY-MM-DD). This property is read only"
+                              },
+                              "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "id"
+                              },
+                              "endTimeZone": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "exceptionType": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "The ID of a Timekeeping exception type"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "The name of a Timekeeping exception type"
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "description": "The description of a Timekeeping exception type"
+                                  },
+                                  "displayName": {
+                                    "type": "string",
+                                    "description": "The display name of a Timekeeping exception type"
+                                  },
+                                  "category": {
+                                    "type": "string",
+                                    "description": "The category of a Timekeeping exception type"
+                                  }
+                                },
+                                "description": "The Timekeeping exception type"
+                              },
+                              "orgJob": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "overLimitInHours": {
+                                "type": "number",
+                                "description": "The amount (in hours) that exceeds the limit defined by the exception associated with the pay code edit. This property is read only"
+                              },
+                              "startTimeZone": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "violationInHours": {
+                                "type": "number",
+                                "description": "The total number of hours violated which caused an exception. This property is read only"
+                              },
+                              "workRule": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "Object Ref Id"
+                                  },
+                                  "qualifier": {
+                                    "type": "string",
+                                    "description": "Object Ref Unique qualifier"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "name"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "commentsNotes": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment. This property is read only"
+                              },
+                              "punchEvent": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "description": "Object Ref Id"
+                                  }
+                                },
+                                "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                              },
+                              "isExcusedAbsence": {
+                                "type": "boolean",
+                                "description": "A Boolean indicator of whether or not the exception involves an excused absence. This property is read only"
+                              },
+                              "isUnExcusedAbsence": {
+                                "type": "boolean",
+                                "description": "A Boolean indicator of whether or not the exception involves an unexcused absence. This property is read only"
+                              },
+                              "missingTimeStatus": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "The ID of the missing time status ranging from 1 to 4"
+                                  },
+                                  "displayName": {
+                                    "type": "string",
+                                    "description": "The localized missing time status display name"
+                                  }
+                                },
+                                "description": "Object describing the missing time status of an exception"
+                              },
+                              "justifications": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A list of missing time justifications for this exception. This property is read only"
+                              },
+                              "justifiedTimes": {
+                                "type": "array",
+                                "items": {},
+                                "description": "A list of justified times for this exception. This property is read only"
+                              },
+                              "transfer": {
+                                "type": "boolean",
+                                "description": "transfer"
+                              },
+                              "eventDate": {
+                                "type": "string",
+                                "description": "eventDate"
+                              },
+                              "startException": {
+                                "type": "boolean",
+                                "description": "startException"
+                              },
+                              "endException": {
+                                "type": "boolean",
+                                "description": "endException"
+                              },
+                              "reviewed": {
+                                "type": "boolean",
+                                "description": "reviewed"
+                              }
+                            }
+                          },
+                          "description": "A list of exception objects associated with a timecard"
+                        },
+                        "commentsNotes": {
+                          "type": "array",
+                          "items": {},
+                          "description": "A reference to a list of Comments. This object can have multiple Comments with multiple Notes for each Comment"
+                        },
+                        "isPhantom": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is a phantom punch"
+                        },
+                        "isScheduled": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is generated from a scheduled worked span"
+                        },
+                        "updatedOnDtm": {
+                          "type": "string",
+                          "description": "The date and time stamp for when this punch transaction was last updated"
+                        },
+                        "validateAsTimestamp": {
+                          "type": "boolean",
+                          "description": "validateAsTimestamp"
+                        },
+                        "attestationPunchEdit": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not the punch is entered as an Attestation punch edit"
+                        },
+                        "markRelatedExceptionsAsReviewed": {
+                          "type": "boolean",
+                          "description": "markRelatedExceptionsAsReviewed"
+                        },
+                        "editable": {
+                          "type": "boolean",
+                          "description": "A Boolean indicator of whether or not a pay code edit is editable"
+                        },
+                        "cancelDeduct": {
+                          "type": "boolean",
+                          "description": "cancelDeduct"
+                        },
+                        "fromPhantomEdited": {
+                          "type": "boolean",
+                          "description": "fromPhantomEdited"
+                        },
+                        "exceptionResolved": {
+                          "type": "boolean",
+                          "description": "exceptionResolved"
+                        },
+                        "workRule": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                        },
+                        "typeOverride": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "Object Ref Id"
+                            },
+                            "qualifier": {
+                              "type": "string",
+                              "description": "Object Ref Unique qualifier"
+                            },
+                            "typeOverrideId": {
+                              "type": "integer",
+                              "description": "The ID of the type override"
+                            },
+                            "description": {
+                              "type": "string",
+                              "description": "Description of the type override"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "name"
+                            }
+                          },
+                          "description": "Entity describing a rule override for a timecard"
+                        }
+                      },
+                      "description": "Entity describing a punch object for the timecard resource"
+                    },
+                    "approvableByManager": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the worked span item is approvable by the logged-in manager"
+                    },
+                    "scheduledOrgJob": {
+                      "type": "boolean",
+                      "description": "scheduledOrgJob"
+                    },
+                    "scheduledWorkRule": {
+                      "type": "boolean",
+                      "description": "scheduledWorkRule"
+                    },
+                    "userEnteredOrgJob": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not a business structure job for this shift segment was entered by the user"
+                    },
+                    "transferOrgJob": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the business structure job is a transfer"
+                    },
+                    "userEnteredWorkRule": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not a work rule for this shift segment was entered by the user"
+                    },
+                    "transferWorkRule": {
+                      "type": "boolean",
+                      "description": "transferWorkRule"
+                    },
+                    "projected": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator that shows whether or not a Processed Segment is projected"
+                    }
+                  }
+                },
+                "description": "Contains a list of workedSpan objects"
+              },
+              "shiftTotalHours": {
+                "type": "number",
+                "description": "Total number of hours for a worked shift"
+              },
+              "scheduledShiftIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "A list of scheduled shift IDs assiciated with pay code edits"
+              },
+              "projected": {
+                "type": "boolean",
+                "description": "projected"
+              },
+              "fromSchedule": {
+                "type": "boolean",
+                "description": "fromSchedule"
+              },
+              "unscheduledStartDateTime": {
+                "type": "string",
+                "description": "A string parameter that represents the start date and time for an unscheduled shift"
+              },
+              "unscheduledEndDateTime": {
+                "type": "string",
+                "description": "A string parameter that represents the end date and time for an unscheduled shift"
+              }
+            }
+          },
+          "description": "A list of worked shift objects"
+        },
+        "payCodeEdits": {
+          "type": "array",
+          "items": {},
+          "description": "A list of paycode edit objects"
+        },
+        "totals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "employeeContext": {
+                "type": "object",
+                "properties": {
+                  "employee": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Object Ref Id"
+                      },
+                      "qualifier": {
+                        "type": "string",
+                        "description": "Object Ref Unique qualifier"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name"
+                      }
+                    },
+                    "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                  },
+                  "timezone": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Object Ref Id"
+                      },
+                      "qualifier": {
+                        "type": "string",
+                        "description": "Object Ref Unique qualifier"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name"
+                      }
+                    },
+                    "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                  }
+                },
+                "description": "Entity describing an employee context object"
+              },
+              "totalContext": {
+                "type": "object",
+                "properties": {
+                  "totalType": {
+                    "type": "string",
+                    "description": "totalType"
+                  },
+                  "totalAggregationType": {
+                    "type": "string",
+                    "description": "totalAggregationType"
+                  },
+                  "totalGroupByType": {
+                    "type": "string",
+                    "description": "totalGroupByType"
+                  }
+                },
+                "description": "Entity describing a total context object"
+              },
+              "aggregatedTotals": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "approvableByManager": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the aggregated total is approvable by the logged-in manager"
+                    },
+                    "employee": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "location": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "payCode": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Object Ref Id"
+                        },
+                        "qualifier": {
+                          "type": "string",
+                          "description": "Object Ref Unique qualifier"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      },
+                      "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+                    },
+                    "amountType": {
+                      "type": "string",
+                      "description": "Reference to the AmountType object"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The amount of time of a worked shift"
+                    },
+                    "wages": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The money amount calculated in totals as wages"
+                    },
+                    "wagesCurrency": {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number",
+                          "format": "float",
+                          "description": "Monetary value"
+                        },
+                        "currencyCode": {
+                          "type": "string",
+                          "description": "Associate currency ISO code"
+                        }
+                      },
+                      "description": "Currency data object contains an amount value and currency code and either field should be able to uniquely identify an Object"
+                    },
+                    "jobTransfer": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the totals object contains a job transfer"
+                    },
+                    "laborCategoryTransfer": {
+                      "type": "boolean",
+                      "description": "A Boolean indicator of whether or not the totals object contains a labor category"
+                    },
+                    "timeItemType": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "timeItemType"
+                    },
+                    "rate": {
+                      "type": "number",
+                      "description": "The rate of the correlation between wage and amount"
+                    }
+                  }
+                },
+                "description": "A list of aggregated totals objects"
+              }
+            }
+          },
+          "description": "A list of timecard totals associated with a timecard"
+        }
+      }
+    },
+    "viewAccruals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uniqueId": {
+            "type": "string",
+            "description": "The unique identifier for an absenceExceptionWithPosition object."
+          },
+          "employee": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Object Ref Id"
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "Object Ref Unique qualifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "name"
+              }
+            },
+            "description": "ObjectRef contains an id and qualifier and either field should be able to uniquely identify an Object"
+          },
+          "startDateTime": {
+            "type": "string",
+            "description": "The start date/time of the summary."
+          },
+          "endDateTime": {
+            "type": "string",
+            "description": "The end date/time of the summary."
+          },
+          "accrualCode": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32",
+                "description": "id"
+              },
+              "name": {
+                "type": "string",
+                "description": "name"
+              },
+              "shortName": {
+                "type": "string",
+                "description": "shortName"
+              },
+              "hoursPerDayInSeconds": {
+                "type": "integer",
+                "format": "int32",
+                "description": "hoursPerDayInSeconds"
+              },
+              "typeId": {
+                "type": "integer",
+                "format": "int32",
+                "description": "typeId"
+              },
+              "allowEdit": {
+                "type": "boolean",
+                "description": "allowEdit"
+              },
+              "typeName": {
+                "type": "string",
+                "description": "typeName"
+              },
+              "hoursPerDay": {
+                "type": "integer",
+                "format": "int32",
+                "description": "hoursPerDay"
+              }
+            },
+            "description": "Entity containing necessary data for Accrual Transaction Data."
+          },
+          "effectiveDateRange": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The effective date range of the accrual summary data."
+          },
+          "dailySummaries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "balanceDate": {
+                  "type": "string",
+                  "description": "The date and time associated with the accrual daily summary data."
+                },
+                "reportingPeriod": {
+                  "type": "string",
+                  "description": "The reporting period of the accrual daily summary data."
+                },
+                "currentBalance": {
+                  "type": "object",
+                  "properties": {
+                    "balanceDate": {
+                      "type": "string",
+                      "description": "The date and time associated with the accrual balance data."
+                    },
+                    "vestedHoursAmount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The vested duration (in hours) of the accrual balance data."
+                    },
+                    "probationHoursAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The probation duration (in hours) of the accrual balance data."
+                    },
+                    "vestedDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The vested duration (in days) of the accrual balance data."
+                    },
+                    "probationDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The number of probation days."
+                    }
+                  },
+                  "description": "Entity containing necessary data for Accrual Balance Data."
+                },
+                "plannedTakingHours": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The planned taking (in hours) of the accrual daily summary data."
+                },
+                "pendingGrantHours": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "The pending grant (in hours) of the accrual daily summary data."
+                },
+                "takingToDateHours": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The taking to date (in days) of the accrual daily summary data."
+                },
+                "earnedToDateHours": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The earned to date (in days) of the accrual daily summary data."
+                },
+                "availableBalanceHours": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "The available balance (in hours) of the accrual daily summary data."
+                },
+                "plannedTakingDays": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The planned taking (in days) of the accrual daily summary data."
+                },
+                "pendingGrantDays": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The pending grant (in days) of the accrual daily summary data."
+                },
+                "takingToDateDays": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The taking to date (in days) of the accrual daily summary data."
+                },
+                "earnedToDateDays": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The earned to date (in days) of the accrual daily summary data."
+                },
+                "availableBalanceDays": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The available balance (in days) of the accrual daily summary data."
+                }
+              }
+            },
+            "description": "A reference to a list of AccrualDailySummaryData objects."
+          },
+          "reportingPeriodSummaries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reportingPeriodSpan": {
+                  "type": "string",
+                  "description": "The reporting period span of the accrual reporting period summary data."
+                },
+                "priorEndingBalance": {
+                  "type": "object",
+                  "properties": {
+                    "balanceDate": {
+                      "type": "string",
+                      "description": "The date and time associated with the accrual balance data."
+                    },
+                    "vestedHoursAmount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The vested duration (in hours) of the accrual balance data."
+                    },
+                    "probationHoursAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The probation duration (in hours) of the accrual balance data."
+                    },
+                    "vestedDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The number of probation days."
+                    },
+                    "probationDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The number of probation days."
+                    }
+                  },
+                  "description": "Entity containing necessary data for Accrual Balance Data."
+                },
+                "openingBalance": {
+                  "type": "object",
+                  "properties": {
+                    "balanceDate": {
+                      "type": "string",
+                      "description": "The date and time associated with the accrual balance data."
+                    },
+                    "vestedHoursAmount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The vested duration (in hours) of the accrual balance data."
+                    },
+                    "probationHoursAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The probation duration (in hours) of the accrual balance data."
+                    },
+                    "vestedDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The vested duration (in days) of the accrual balance data."
+                    },
+                    "probationDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The number of probation days."
+                    }
+                  },
+                  "description": "Entity containing necessary data for Accrual Balance Data."
+                },
+                "endingBalance": {
+                  "type": "object",
+                  "properties": {
+                    "balanceDate": {
+                      "type": "string",
+                      "description": "The date and time associated with the accrual balance data."
+                    },
+                    "vestedHoursAmount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "The vested duration (in hours) of the accrual balance data."
+                    },
+                    "probationHoursAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The probation duration (in hours) of the accrual balance data."
+                    },
+                    "vestedDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The vested duration (in days) of the accrual balance data."
+                    },
+                    "probationDaysAmount": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The number of probation days."
+                    }
+                  },
+                  "description": "Entity containing necessary data for Accrual Balance Data."
+                }
+              }
+            },
+            "description": "A reference to a list of AccrualReportingPeriodSummaryData objects."
+          },
+          "startingBalanceForPeriod": {
+            "type": "object",
+            "properties": {
+              "balanceDate": {
+                "type": "string",
+                "description": "The date and time associated with the accrual balance data."
+              },
+              "vestedHoursAmount": {
+                "type": "number",
+                "format": "float",
+                "description": "The vested duration (in hours) of the accrual balance data."
+              },
+              "probationHoursAmount": {
+                "type": "integer",
+                "format": "int32",
+                "description": "The probation duration (in hours) of the accrual balance data."
+              },
+              "vestedDaysAmount": {
+                "type": "integer",
+                "format": "int32",
+                "description": "The vested duration (in days) of the accrual balance data."
+              },
+              "probationDaysAmount": {
+                "type": "integer",
+                "format": "int32",
+                "description": "The number of probation days."
+              }
+            },
+            "description": "Entity containing necessary data for Accrual Balance Data."
+          }
+        }
+      }
+    },
+    "internalServerError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "message": "Internal Server Error."
+      }
+    },
+    "badRequest": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "message": "Bad Request."
+      }
+    }
+  },
+  "parameters": {
+    "content-type": {
+      "name": "Content-Type",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "default": "application/json",
+      "x-ms-visibility": "internal",
+      "x-ms-summary": "Content-Type"
+    },
+    "access-token": {
+      "name": "accessToken",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "description": "Token to access API.",
+      "x-ms-summary": "Access Token"
+    }
+  },
+  "responses": {},
+  "tags": [],
+  "securityDefinitions": {
+    "PRO WFM Vanity URL": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "vanityURL"
+    }
+  },
+  "security": [
+    {
+      "PRO WFM Vanity URL": []
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/ukgprowfmtimekeeping"
+  }
+}
