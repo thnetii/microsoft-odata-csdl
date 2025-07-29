@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26309 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26316 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -189,6 +189,7 @@
         <Property Name="appInstanceId" Type="Edm.Guid" />
         <Property Name="applicationRightsMask" Type="Edm.String" />
         <Property Name="archived" Type="Edm.Boolean" />
+        <Property Name="archiveStatus" Type="oneDrive.ArchiveStatusType" />
         <Property Name="associatedMemberGroup" Type="oneDrive.DiagnosticGroupPrincipalFacet" />
         <Property Name="associatedOwnerGroup" Type="oneDrive.DiagnosticGroupPrincipalFacet" />
         <Property Name="associatedVisitorGroup" Type="oneDrive.DiagnosticGroupPrincipalFacet" />
@@ -1814,6 +1815,7 @@
         <Property Name="scopemetadata" Type="Collection(Edm.String)" />
         <Property Name="feature" Type="Edm.String" />
         <Property Name="featureset" Type="Collection(Edm.String)" />
+        <Property Name="migratedfeatureset" Type="Collection(Edm.String)" />
         <Property Name="tenantid" Type="Edm.Guid" />
         <Property Name="subscriptionid" Type="Edm.Guid" />
         <Property Name="subscriptionstate" Type="Edm.String" />
@@ -1834,6 +1836,7 @@
         <Property Name="featureName" Type="Edm.String" Nullable="false" />
         <Property Name="migrationCompletedAt" Type="Edm.DateTimeOffset" />
         <Property Name="isMigrationComplete" Type="Edm.Boolean" />
+        <Property Name="isCapacityPackEnabled" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="policyAutomation" OpenType="true">
@@ -2100,6 +2103,7 @@
         <Property Name="specialFolder" Type="oneDrive.specialFolder" />
         <Property Name="title" Type="Edm.String" />
         <Property Name="unifiedDomainDirectAccessUrl" Type="Edm.String" />
+        <Property Name="unifiedDomainDownloadUrlNoAuth" Type="Edm.String" />
         <Property Name="unifiedDomainWebDavUrl" Type="Edm.String" />
         <Property Name="uploadSession" Type="oneDrive.uploadSession" />
         <Property Name="vault" Type="oneDrive.vault" />
@@ -3100,6 +3104,7 @@
         <NavigationProperty Name="activityItems" Type="Collection(oneDrive.listItemDetails)" ContainsTarget="true" />
         <NavigationProperty Name="plannerActivityItems" Type="Collection(oneDrive.plannerActivity)" ContainsTarget="true" />
         <NavigationProperty Name="emailActivityItems" Type="Collection(oneDrive.emailActivity)" ContainsTarget="true" />
+        <NavigationProperty Name="customIndexSearchItems" Type="Collection(oneDrive.customIndexSearchItem)" ContainsTarget="true" />
         <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" ContainsTarget="true" />
         <NavigationProperty Name="contentModels" Type="Collection(oneDrive.contentModel)" ContainsTarget="true" />
         <NavigationProperty Name="documentProcessingJobs" Type="Collection(oneDrive.documentProcessingJob)" ContainsTarget="true" />
@@ -3400,7 +3405,11 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="appId" Type="Edm.String" />
         <Property Name="appPageData" Type="oneDrive.appPageData" />
+        <Property Name="errorStatus" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="status" Type="oneDrive.AppStatus" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="contentType" OpenType="true">
@@ -3517,6 +3526,11 @@
         <Property Name="subject" Type="Edm.String" />
         <Property Name="sentDateTime" Type="Edm.DateTimeOffset" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
+      <EntityType Name="customIndexSearchItem" BaseType="oneDrive.baseItem" OpenType="true">
+        <Property Name="snippets" Type="Collection(Edm.String)" />
+        <Property Name="file" Type="oneDrive.file" />
+        <Property Name="searchScore" Type="Edm.Int64" />
       </EntityType>
       <EntityType Name="contentModel" OpenType="true">
         <Key>
@@ -4247,6 +4261,7 @@
         <Property Name="syntexAzureKeyVaultName" Type="Edm.String" />
         <Property Name="syntexAzureStorageAccountContainerUrl" Type="Edm.String" />
         <Property Name="syntexAutofillColumnsCustomModelSettings" Type="oneDrive.syntexCustomModelSettingsFacet" />
+        <Property Name="isESignatureEnabled" Type="Edm.Boolean" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="tenantStore" OpenType="true">
@@ -4329,7 +4344,6 @@
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
-        <Property Name="messages" Type="Collection(oneDrive.accessRequestMessage)" />
         <Property Name="requestorIdentity" Type="oneDrive.sharePointIdentity" />
       </EntityType>
       <ComplexType Name="badgerAnonymousUserInfo" OpenType="true">
@@ -6270,6 +6284,7 @@
         <Property Name="root" Type="oneDrive.root" />
         <Property Name="customRoot" Type="oneDrive.customRoot" />
         <Property Name="archivalDetails" Type="oneDrive.siteArchivalDetails" />
+        <Property Name="mySiteRoot" Type="oneDrive.mySiteRoot" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="siteIbSettings" OpenType="true">
@@ -7043,6 +7058,7 @@
         <Property Name="conversationId" Type="Edm.String" />
         <Property Name="sentTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="mySiteRoot" OpenType="true" />
       <ComplexType Name="notificationDeliveryDestination" OpenType="true" />
       <ComplexType Name="notificationDelivery" OpenType="true">
         <Property Name="pushNotification" Type="oneDrive.notificationDeliveryDestination" />
@@ -7695,7 +7711,7 @@
       </ComplexType>
       <ComplexType Name="accessRequestInfo" OpenType="true">
         <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
-        <Property Name="messages" Type="Collection(oneDrive.accessRequestMessage)" />
+        <Property Name="activities" Type="Collection(oneDrive.accessRequestActivity)" />
         <Property Name="requestorIdentity" Type="oneDrive.sharePointIdentity" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
@@ -7993,10 +8009,16 @@
         <Property Name="addExistingExternalUsers" Type="oneDrive.sharingOperationStatus" />
         <Property Name="addInternalUsers" Type="oneDrive.sharingOperationStatus" />
       </ComplexType>
-      <ComplexType Name="accessRequestMessage">
-        <Property Name="conversationParticipant" Type="oneDrive.accessRequestConversationParticipant" />
+      <ComplexType Name="accessRequestActivity">
+        <Property Name="activityParticipant" Type="oneDrive.accessRequestActivityParticipant" />
         <Property Name="message" Type="Edm.String" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="roleOrGroupRequested" Type="oneDrive.roleOrGroupRequested" />
+        <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
+      </ComplexType>
+      <ComplexType Name="roleOrGroupRequested">
+        <Property Name="role" Type="Edm.String" />
+        <Property Name="siteGroup" Type="oneDrive.sharePointIdentity" />
       </ComplexType>
       <ComplexType Name="wacHostFlightStatus">
         <Property Name="key" Type="Edm.String" />
@@ -8301,6 +8323,12 @@
         <Member Name="Disabled" Value="0" />
         <Member Name="Enabled" Value="1" />
         <Member Name="On" Value="2" />
+      </EnumType>
+      <EnumType Name="ArchiveStatusType">
+        <Member Name="NotArchived" Value="0" />
+        <Member Name="FullyArchived" Value="1" />
+        <Member Name="RecentlyArchived" Value="2" />
+        <Member Name="Reactivating" Value="3" />
       </EnumType>
       <EnumType Name="SPObjectStatus">
         <Member Name="Online" Value="0" />
@@ -8787,7 +8815,7 @@
       <EnumType Name="SPPAYGFeature">
         <Member Name="Unknown" Value="0" />
         <Member Name="Archive" Value="1" />
-        <Member Name="Backup" Value="2" />
+        <Member Name="M365Backup" Value="2" />
         <Member Name="ContentAssembly" Value="3" />
         <Member Name="EBAR" Value="4" />
         <Member Name="ESign" Value="5" />
@@ -8893,7 +8921,7 @@
         <Member Name="unknownFutureValue" Value="4" />
       </EnumType>
       <EnumType Name="accessRequestStatus" />
-      <EnumType Name="accessRequestConversationParticipant" />
+      <EnumType Name="accessRequestActivityParticipant" />
       <EnumType Name="SearchRelevanceTiers">
         <Member Name="veryLow" Value="0" />
         <Member Name="low" Value="1" />
@@ -9068,6 +9096,12 @@
         <Member Name="shoppingCart" Value="17" />
         <Member Name="birthdayCake" Value="18" />
         <Member Name="unknownFutureValue" Value="19" />
+      </EnumType>
+      <EnumType Name="AppStatus">
+        <Member Name="Installing" Value="0" />
+        <Member Name="WaitingForFirstRunConfiguration" Value="1" />
+        <Member Name="Ready" Value="2" />
+        <Member Name="Error" Value="3" />
       </EnumType>
       <EnumType Name="PageLayoutType">
         <Member Name="microsoftReserved" Value="0" />
@@ -9587,6 +9621,9 @@
         <ReturnType Type="Edm.String" />
       </Function>
       <Action Name="badgerToken">
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="badgerExchangeToken">
         <ReturnType Type="Edm.String" />
       </Action>
       <Function Name="getSiteDeleteEvents" IsBound="true">
@@ -10705,6 +10742,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="oneDrive.labelPolicyResult" />
       </Action>
+      <Function Name="searchCustomIndex" IsBound="true" EntitySetPath="bindingParameter/customIndexSearchItems">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+        <ReturnType Type="Collection(oneDrive.customIndexSearchItem)" />
+      </Function>
       <Function Name="getAllSites" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.site)" />
         <ReturnType Type="Collection(oneDrive.site)" />
@@ -11594,6 +11635,7 @@
         <FunctionImport Name="badgerQos" Function="oneDrive.badgerQos" IncludeInServiceDocument="true" />
         <FunctionImport Name="badgerCert" Function="oneDrive.badgerCert" IncludeInServiceDocument="true" />
         <ActionImport Name="badgerToken" Action="oneDrive.badgerToken" />
+        <ActionImport Name="badgerExchangeToken" Action="oneDrive.badgerExchangeToken" />
         <FunctionImport Name="speedOfLight" Function="oneDrive.speedOfLight" IncludeInServiceDocument="true" />
         <ActionImport Name="getItems" Action="oneDrive.getItems" />
         <FunctionImport Name="getWebPartsByPosition" Function="oneDrive.getWebPartsByPosition" IncludeInServiceDocument="true" />
