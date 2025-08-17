@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26330 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26406 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1798,6 +1798,7 @@
         <Property Name="resourceUri" Type="Edm.String" />
         <Property Name="resourceRegion" Type="Edm.String" />
         <Property Name="meterId" Type="Edm.Guid" />
+        <Property Name="meterName" Type="Edm.String" />
         <Property Name="quantity" Type="Edm.Int64" />
         <Property Name="tags" Type="oneDrive.billingEventTags" />
         <Property Name="id" Type="Edm.Guid" Nullable="false" />
@@ -2076,6 +2077,7 @@
         <Property Name="machineLearning" Type="oneDrive.machineLearning" />
         <Property Name="malware" Type="oneDrive.malware" />
         <Property Name="media" Type="oneDrive.media" />
+        <Property Name="cdnMedia" Type="oneDrive.cdnmedia" />
         <Property Name="mediaAlbum" Type="oneDrive.mediaAlbum" />
         <Property Name="mainLink" Type="oneDrive.mainLink" />
         <Property Name="metaSettings" Type="oneDrive.metaSettings" />
@@ -2601,6 +2603,7 @@
         <Property Name="file" Type="oneDrive.file" />
         <Property Name="streamContent" Type="Edm.Stream" />
         <Property Name="media" Type="oneDrive.media" />
+        <Property Name="cdnmedia" Type="oneDrive.cdnmedia" />
         <NavigationProperty Name="opStream" Type="oneDrive.opStream" ContainsTarget="true" />
         <NavigationProperty Name="streams" Type="Collection(oneDrive.stream)" ContainsTarget="true" />
       </EntityType>
@@ -3852,6 +3855,7 @@
         <Property Name="copilotInsightsParameters" Type="oneDrive.copilotInsightsParameters" />
         <Property Name="eduSiteQuotaParameters" Type="oneDrive.eduSiteQuotaParameters" />
         <Property Name="permissionsParameters" Type="oneDrive.permissionsParameters" />
+        <Property Name="m365AgentInsightsParameters" Type="oneDrive.m365AgentInsightsParameters" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="analyticsReportsConfig" OpenType="true">
@@ -6685,6 +6689,12 @@
         <Property Name="childCount" Type="Edm.Int32" />
         <Property Name="album" Type="oneDrive.album" />
       </ComplexType>
+      <ComplexType Name="cdnmedia" OpenType="true">
+        <NavigationProperty Name="thumbnails" Type="Collection(oneDrive.mediaThumbnailSet)" ContainsTarget="true" />
+        <NavigationProperty Name="transcripts" Type="Collection(oneDrive.transcript)" ContainsTarget="true" />
+        <NavigationProperty Name="timelineEventStream" Type="oneDrive.timelineeventstream" ContainsTarget="true" />
+        <NavigationProperty Name="previewThumbnailsSpriteContent" Type="Collection(oneDrive.mediaPreviewThumbnailsSprite)" ContainsTarget="true" />
+      </ComplexType>
       <ComplexType Name="chunkedUploadSessionDescriptor" OpenType="true">
         <Property Name="description" Type="Edm.String" />
         <Property Name="expiration" Type="oneDrive.driveItemExpiration" />
@@ -6946,6 +6956,7 @@
         <Property Name="templatedPrebuiltModels" Type="Collection(oneDrive.templatedPrebuiltModel)" />
         <Property Name="machineLearningFlags" Type="oneDrive.MachineLearningFlags" />
         <Property Name="associatedItems" Type="Collection(oneDrive.machineLearningAssociatedItem)" />
+        <Property Name="lastModifiedByUserLicenseInfo" Type="oneDrive.lastModifiedByUserLicenseInfo" />
       </ComplexType>
       <ComplexType Name="mainLink" OpenType="true">
         <Property Name="audience" Type="Edm.String" />
@@ -7599,6 +7610,10 @@
       <ComplexType Name="ibInsightsParameters" OpenType="true">
         <Property Name="section" Type="oneDrive.AnalyticsReportIBInsightsSection" />
       </ComplexType>
+      <ComplexType Name="m365AgentInsightsParameters" OpenType="true">
+        <Property Name="reportDuration" Type="Edm.Int32" />
+        <Property Name="reportName" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="analyticsReportAccessGroup" OpenType="true">
         <Property Name="id" Type="Edm.String" />
         <Property Name="name" Type="Edm.String" />
@@ -8004,6 +8019,10 @@
       <ComplexType Name="prebuiltColumnMapping">
         <Property Name="azureFieldName" Type="Edm.String" />
         <Property Name="columnName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="lastModifiedByUserLicenseInfo">
+        <Property Name="userObjectId" Type="Edm.String" />
+        <Property Name="userLicenseType" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="officeBundle">
         <Property Name="version" Type="Edm.String" />
@@ -8844,6 +8863,8 @@
         <Member Name="SPOServicePrioritization" Value="13" />
         <Member Name="CopilotTuning" Value="14" />
         <Member Name="M365CopilotRetrievalAPI" Value="15" />
+        <Member Name="TestFeature1" Value="16" />
+        <Member Name="None" Value="17" />
       </EnumType>
       <EnumType Name="StorageContainerStatus">
         <Member Name="inactive" Value="0" />
@@ -9219,6 +9240,7 @@
         <Member Name="UserPermissions" Value="16" />
         <Member Name="GroupPermissions" Value="17" />
         <Member Name="DetailedEEEU" Value="18" />
+        <Member Name="M365AgentInsights" Value="19" />
       </EnumType>
       <EnumType Name="AnalyticsReportFormat">
         <Member Name="FullDetails" Value="0" />
@@ -11389,7 +11411,7 @@
         </Parameter>
         <ReturnType Type="oneDrive.session" />
       </Action>
-      <Function Name="getRecommendations" IsBound="true" EntitySetPath="bindingParameter">
+      <Function Name="getRecommendations" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.photoRecommendation)" />
         <Parameter Name="recommendationTypes" Type="Edm.String">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
