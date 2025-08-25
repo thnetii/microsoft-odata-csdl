@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26406 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26413 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -196,17 +196,44 @@
         <Property Name="spacing" Type="Edm.String" />
         <Property Name="type" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="Container" BaseType="SP.CardElement">
-        <Property Name="backgroundImage" Type="Edm.String" />
-        <Property Name="items" Type="Collection(SP.CardElement)" />
+      <ComplexType Name="AdaptiveCardAction" BaseType="SP.CardElement">
+        <Property Name="isPrimary" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ActionOpenUrl" BaseType="SP.AdaptiveCardAction">
+        <Property Name="url" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ActionSet" BaseType="SP.CardElement">
+        <Property Name="actions" Type="Collection(SP.AdaptiveCardAction)" />
+        <Property Name="horizontalAlignment" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ActionShowCard" BaseType="SP.AdaptiveCardAction">
+        <Property Name="card" Type="SP.AdaptiveCard" />
+      </ComplexType>
+      <ComplexType Name="AdaptiveCard">
+        <Property Name="body" Type="Collection(SP.CardElement)" />
+        <Property Name="correlationId" Type="Edm.String" />
+        <Property Name="hideOriginalBody" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="originator" Type="Edm.String" />
         <Property Name="padding" Type="SP.Padding" />
-        <Property Name="verticalContentAlignment" Type="Edm.String" />
+        <Property Name="rtl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="type" Type="Edm.String" />
+        <Property Name="version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="Padding">
         <Property Name="bottom" Type="Edm.String" />
         <Property Name="left" Type="Edm.String" />
         <Property Name="right" Type="Edm.String" />
         <Property Name="top" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ActionSubmit" BaseType="SP.AdaptiveCardAction">
+        <Property Name="data" Type="Collection(SP.KeyValue)" />
+      </ComplexType>
+      <ComplexType Name="Container" BaseType="SP.CardElement">
+        <Property Name="backgroundImage" Type="Edm.String" />
+        <Property Name="items" Type="Collection(SP.CardElement)" />
+        <Property Name="padding" Type="SP.Padding" />
+        <Property Name="verticalContentAlignment" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AdaptiveCardColumn" BaseType="SP.Container">
         <Property Name="width" Type="Edm.String" />
@@ -220,16 +247,6 @@
         <Property Name="style" Type="Edm.String" />
         <Property Name="url" Type="Edm.String" />
         <Property Name="width" Type="Edm.String" />
-      </ComplexType>
-      <ComplexType Name="AdaptiveCard">
-        <Property Name="body" Type="Collection(SP.CardElement)" />
-        <Property Name="correlationId" Type="Edm.String" />
-        <Property Name="hideOriginalBody" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="originator" Type="Edm.String" />
-        <Property Name="padding" Type="SP.Padding" />
-        <Property Name="rtl" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="type" Type="Edm.String" />
-        <Property Name="version" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AdditionalAccessStatusResponse">
         <Property Name="AdditionalAccessRequestStatus" Type="Edm.Int32" Nullable="false" />
@@ -432,6 +449,7 @@
         <Property Name="ApproversFixed" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ApproverSourceType" Type="Edm.Int32" Nullable="false" />
         <Property Name="ApproverSourceValue" Type="Edm.String" />
+        <Property Name="NotificationsEnabled" Type="Edm.Boolean" />
         <Property Name="ProvisioningError" Type="Edm.String" />
         <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
@@ -4207,8 +4225,39 @@
       <Function Name="DynamicContentUpdateService">
         <ReturnType Type="SP.DynamicContentUpdateService" />
       </Function>
+      <Action Name="AddFAQUserSubmittedQuestions" IsBound="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="data" Type="Microsoft.SharePoint.DynamicContent.AddRawQuestionsPayload" />
+      </Action>
+      <Action Name="DeleteFAQAggregatedQuestion" IsBound="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="data" Type="Microsoft.SharePoint.DynamicContent.DeleteAggregatedQuestionsPayload" />
+      </Action>
       <Action Name="EnsureDynamicContentUpdateListFeature" IsBound="true">
         <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+      </Action>
+      <Action Name="EnsureFAQAggregatedQuestionsListItem" IsBound="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="data" Type="Microsoft.SharePoint.DynamicContent.FAQRequestPayload" />
+        <ReturnType Type="Microsoft.SharePoint.DynamicContent.EnsureListItemResult" />
+      </Action>
+      <Function Name="FAQAggregatedQuestions" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="pageListItemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="webPartInstanceId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="uniqueId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.DynamicContent.AggregatedQuestionsResult" />
+      </Function>
+      <Function Name="FAQUserSubmittedQuestions" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="pageListItemId" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="webPartInstanceId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="uniqueId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.DynamicContent.RawQuestionsResult" />
+      </Function>
+      <Action Name="UpdateFAQAggregatedQuestions" IsBound="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="aggregatedData" Type="Microsoft.SharePoint.DynamicContent.AggregatedQuestionsPayload" />
       </Action>
       <Action Name="ApplyTransitiveSharingToCopilot" IsBound="true">
         <Parameter Name="this" Type="SP.ListItem" />
@@ -9854,6 +9903,33 @@
       <Annotations Target="SP.VivaConnectionsUrlConfiguration">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.FAQRequestPayload">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.AddRawQuestionsPayload">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.AggregatedQuestionsPayload">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.Question">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.AggregatedQuestion">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.AggregatedQuestionsResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.DeleteAggregatedQuestionsPayload">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.EnsureListItemResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.RawQuestionsResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Deployment.ShortcutInformation">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10025,19 +10101,34 @@
       <Annotations Target="SP.CardElement">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="SP.Container">
+      <Annotations Target="SP.AdaptiveCardAction">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ActionOpenUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ActionSet">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ActionShowCard">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.AdaptiveCard">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Padding">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ActionSubmit">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Container">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.AdaptiveCardColumn">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.AdaptiveCardImage">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.AdaptiveCard">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.AdditionalAccessStatusResponse">
@@ -11244,6 +11335,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningEnabled">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningEnabled/IsCopilotLicenseEnabled">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Office.Server.ContentCenter.SPMachineLearningEnabled/IsSyntexPAYGEnabled">
@@ -18018,6 +18112,7 @@
         <Property Name="WebId" Type="Edm.Guid" Nullable="false" />
       </EntityType>
       <EntityType Name="SPMachineLearningEnabled">
+        <Property Name="IsCopilotLicenseEnabled" Type="Edm.Boolean" />
         <Property Name="IsSyntexPAYGEnabled" Type="Edm.Boolean" />
         <Property Name="MachineLearningCaptureEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="MachineLearningExperienceEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -27529,6 +27624,10 @@
         <Parameter Name="sqlCommandText" Type="Edm.String" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="GetDBActivities" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="GetEventCacheDataChunk" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
@@ -29804,6 +29903,41 @@
         <Property Name="UserCards" Type="Edm.String" />
       </ComplexType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.DynamicContent" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="FAQRequestPayload">
+        <Property Name="PageListItemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UniqueId" Type="Edm.Guid" />
+        <Property Name="WebPartInstanceId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="AddRawQuestionsPayload" BaseType="Microsoft.SharePoint.DynamicContent.FAQRequestPayload">
+        <Property Name="Questions" Type="Collection(Edm.String)" />
+      </ComplexType>
+      <ComplexType Name="AggregatedQuestionsPayload" BaseType="Microsoft.SharePoint.DynamicContent.FAQRequestPayload">
+        <Property Name="AggregatedQuestions" Type="Collection(Microsoft.SharePoint.DynamicContent.AggregatedQuestion)" />
+        <Property Name="AggregatedRawQuestionIds" Type="Collection(Edm.Guid)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="Question">
+        <Property Name="CreatedTime" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="QuestionText" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="AggregatedQuestion" BaseType="Microsoft.SharePoint.DynamicContent.Question">
+        <Property Name="AskedCount" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="AggregatedQuestionsResult">
+        <Property Name="AggregatedQuestions" Type="Collection(Microsoft.SharePoint.DynamicContent.AggregatedQuestion)" />
+      </ComplexType>
+      <ComplexType Name="DeleteAggregatedQuestionsPayload" BaseType="Microsoft.SharePoint.DynamicContent.FAQRequestPayload">
+        <Property Name="QuestionIds" Type="Collection(Edm.Guid)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="EnsureListItemResult">
+        <Property Name="ListItemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UniqueId" Type="Edm.Guid" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="RawQuestionsResult">
+        <Property Name="Questions" Type="Collection(Microsoft.SharePoint.DynamicContent.Question)" />
+      </ComplexType>
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Deployment" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="ShortcutInformation">
         <Property Name="AddedById" Type="Edm.Int32" Nullable="false" />
@@ -30836,6 +30970,7 @@
         <Property Name="updatePassword" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="InheritedFrom">
+        <Property Name="directUrl" Type="Edm.String" />
         <Property Name="driveId" Type="Edm.String" />
         <Property Name="driveType" Type="Edm.String" />
         <Property Name="id" Type="Edm.String" />
@@ -32316,6 +32451,7 @@
         <Property Name="LastArchivedDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="LimitedAccessFileType" Type="Edm.Int32" Nullable="false" />
         <Property Name="Managers" Type="Collection(Edm.String)" />
+        <Property Name="NewPrincipalOwnerIdentifier" Type="Edm.String" />
         <Property Name="Owners" Type="Collection(Edm.String)" />
         <Property Name="OwnersCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="OwnershipType" Type="Edm.String" />
@@ -32331,6 +32467,7 @@
         <Property Name="SharingDomainRestrictionMode" Type="Edm.Int32" Nullable="false" />
         <Property Name="Status" Type="Edm.String" />
         <Property Name="StorageUsed" Type="Edm.Int64" Nullable="false" />
+        <Property Name="TransferFromPrincipalOwnerIdentifier" Type="Edm.String" />
         <Property Name="Writers" Type="Collection(Edm.String)" />
       </ComplexType>
       <ComplexType Name="SPContainerFilterOrder">
@@ -32419,6 +32556,7 @@
         <Property Name="CountOfSitesInTenantUserPermissions" Type="Edm.Int32" Nullable="false" />
         <Property Name="CreatedDateTime" Type="Edm.String" />
         <Property Name="EEEUType" Type="Edm.String" />
+        <Property Name="InvalidUserEntries" Type="Collection(Edm.String)" />
         <Property Name="LabelId" Type="Edm.Guid" Nullable="false" />
         <Property Name="LabelName" Type="Edm.String" />
         <Property Name="PrivacyEEEU" Type="Collection(Edm.String)" />
@@ -32443,9 +32581,11 @@
         <Property Name="TemplatesEEEU" Type="Collection(Edm.String)" />
         <Property Name="TemplatesSitePermissions" Type="Collection(Edm.String)" />
         <Property Name="TriggeredDateTime" Type="Edm.String" />
+        <Property Name="UserEmailList" Type="Collection(Edm.String)" />
         <Property Name="UserID" Type="Edm.Guid" Nullable="false" />
         <Property Name="UserIDList" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="UserLimit" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Variation" Type="Edm.String" />
         <Property Name="Version" Type="Edm.String" />
         <Property Name="Workload" Type="Edm.String" />
       </ComplexType>
@@ -32816,6 +32956,7 @@
         <Property Name="IBSegmentsToAdd" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="IBSegmentsToRemove" Type="Collection(Edm.Guid)" Nullable="false" />
         <Property Name="InheritVersionPolicyFromTenant" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsAuthoritative" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsGroupOwnerSiteAdmin" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsHubSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsTeamsChannelConnected" Type="Edm.Boolean" Nullable="false" />
@@ -33074,7 +33215,9 @@
         <Property Name="EnableMipSiteLabel" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnablePromotedFileHandlers" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableRestrictedAccessControl" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnableSensitivityLabelForOneNote" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSensitivityLabelForPDF" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnableSensitivityLabelForVideoFiles" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableSiteArchive" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnableTenantRestrictionsInsights" Type="Edm.Boolean" Nullable="false" />
         <Property Name="EnforceRequestDigest" Type="Edm.Boolean" Nullable="false" />
@@ -33133,6 +33276,10 @@
         <Property Name="IsVivaHomeFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsVivaHomeGAFlightEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsWBFluidEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KnowledgeAgentEnabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KnowledgeAgentSiteInfoList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteInfoForSitePicker)" />
+        <Property Name="KnowledgeAgentSiteList" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Property Name="KnowledgeAgentSiteListFileName" Type="Edm.String" />
         <Property Name="LabelMismatchEmailHelpLink" Type="Edm.String" />
         <Property Name="LegacyAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="LegacyBrowserAuthProtocolsEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -33390,12 +33537,32 @@
         <Parameter Name="userIDList" Type="Collection(Edm.Guid)" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightMetadata" />
       </Action>
+      <Action Name="CreateDataAccessGovernanceReportV3" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightRestApiClient" />
+        <Parameter Name="reportEntity" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="workload" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="reportType" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="fileSensitivityLabelName" Type="Edm.String" />
+        <Parameter Name="fileSensitivityLabelGUID" Type="Edm.String" />
+        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="template" Type="Collection(Edm.Int32)" Nullable="false" />
+        <Parameter Name="privacy" Type="Edm.String" />
+        <Parameter Name="siteSensitivityLabelGUID" Type="Collection(Edm.Guid)" Nullable="false" />
+        <Parameter Name="countOfUsersMoreThan" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="userEmailList" Type="Collection(Edm.String)" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightMetadata" />
+      </Action>
       <Action Name="ExportSPODataAccessGovernanceInsight" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightRestApiClient" />
         <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Edm.String" />
       </Action>
       <Action Name="ExportSPODataAccessGovernanceInsightV2" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightRestApiClient" />
+        <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="ExportSPODataAccessGovernanceInsightV3" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceInsightRestApiClient" />
         <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Edm.String" />
@@ -41745,6 +41912,11 @@
       </Action>
     </Schema>
     <Schema Namespace="Microsoft.Online.SharePoint.TenantAdministration.SPSyntexManagementUtilities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="ConvertKnowledgeAgentScopeToTenantSettings">
+        <Parameter Name="input" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="parameterName" Type="Edm.String" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SyntexFeatureScopeSettingsValues" />
+      </Action>
       <Action Name="ConvertScopeToTenantSettings">
         <Parameter Name="input" Type="Edm.Int32" Nullable="false" />
         <Parameter Name="parameterName" Type="Edm.String" />
