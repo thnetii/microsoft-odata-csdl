@@ -75,6 +75,7 @@
       "x-ms-notification-content": {
         "description": "Result of Job Completion",
         "schema": {
+          "type": "object",
           "x-ms-dynamic-schema": {
             "operationId": "GetProcessOutputSchema",
             "parameters": {
@@ -101,7 +102,10 @@
       "post": {
         "responses": {
           "201": {
-            "description": "Success"
+            "description": "Success",
+            "schema": {
+              "type": "object"
+            }
           }
         },
         "x-ms-summary": "Start job and wait for completion",
@@ -136,7 +140,7 @@
             "name": "processId",
             "in": "path",
             "required": true,
-            "type": "integer",
+            "type": "number",
             "x-ms-summary": "Process Name",
             "description": "Select the process name",
             "x-ms-dynamic-values": {
@@ -149,7 +153,8 @@
                   "parameter": "X-UIPATH-OrganizationUnitId"
                 }
               }
-            }
+            },
+            "x-ms-url-encoding": "single"
           },
           {
             "name": "url",
@@ -165,6 +170,7 @@
             "name": "dynamicListSchema",
             "in": "body",
             "description": "Get the schema of the selected process.",
+            "required": true,
             "schema": {
               "type": "object",
               "x-ms-dynamic-schema": {
@@ -200,6 +206,7 @@
       "x-ms-notification-content": {
         "description": "Result of Job Completion",
         "schema": {
+          "type": "object",
           "x-ms-dynamic-schema": {
             "operationId": "GetProcessOutputSchema",
             "parameters": {
@@ -224,22 +231,25 @@
         ]
       },
       "post": {
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false",
+          "application/json;odata.metadata=minimal",
+          "application/json;odata.metadata=full;odata.streaming=true",
+          "application/json;odata.metadata=full;odata.streaming=false",
+          "application/json;odata.metadata=full",
+          "application/json;odata.metadata=none;odata.streaming=true",
+          "application/json;odata.metadata=none;odata.streaming=false",
+          "application/json;odata.metadata=none",
+          "application/json;odata.streaming=true",
+          "application/json;odata.streaming=false",
+          "application/json"
+        ],
         "responses": {
-          "default": {
-            "description": "default",
+          "201": {
+            "description": "Success",
             "schema": {
-              "x-ms-dynamic-schema": {
-                "operationId": "GetProcessOutputSchema",
-                "parameters": {
-                  "processId": {
-                    "parameter": "processId"
-                  },
-                  "X-UIPATH-OrganizationUnitId": {
-                    "parameter": "X-UIPATH-OrganizationUnitId"
-                  }
-                },
-                "value-path": "schema"
-              }
+              "type": "object"
             }
           }
         },
@@ -271,9 +281,29 @@
             }
           },
           {
+            "name": "processId",
+            "in": "path",
+            "description": "Select the process name",
+            "required": true,
+            "type": "number",
+            "x-ms-summary": "Process Name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetReleases",
+              "value-path": "Id",
+              "value-collection": "value",
+              "value-title": "Name",
+              "parameters": {
+                "X-UIPATH-OrganizationUnitId": {
+                  "parameter": "X-UIPATH-OrganizationUnitId"
+                }
+              }
+            },
+            "x-ms-url-encoding": "single"
+          },
+          {
             "name": "body",
             "in": "body",
-            "required": false,
+            "required": true,
             "x-ms-summary": "Webhook URL",
             "schema": {
               "type": "object",
@@ -289,33 +319,13 @@
                   "type": "string",
                   "description": "Job Id",
                   "title": "Job Id",
-                  "x-ms-summary": "Job Id",
-                  "x-ms-visibility": "important"
+                  "x-ms-summary": "Job Id"
                 }
               },
               "required": [
                 "url",
                 "jobKey"
               ]
-            }
-          },
-          {
-            "name": "processId",
-            "in": "path",
-            "description": "Select the process name",
-            "required": true,
-            "type": "integer",
-            "x-ms-summary": "Process Name",
-            "x-ms-dynamic-values": {
-              "operationId": "GetReleases",
-              "value-path": "Id",
-              "value-collection": "value",
-              "value-title": "Name",
-              "parameters": {
-                "X-UIPATH-OrganizationUnitId": {
-                  "parameter": "X-UIPATH-OrganizationUnitId"
-                }
-              }
             }
           }
         ],
@@ -393,7 +403,7 @@
             "x-ms-summary": "Process Name",
             "description": "Select the process you want to run",
             "required": true,
-            "type": "integer",
+            "type": "number",
             "x-ms-dynamic-values": {
               "operationId": "GetReleases",
               "value-path": "Id",
@@ -511,16 +521,17 @@
             "type": "integer",
             "format": "int64",
             "x-ms-summary": "Folder Id",
-            "required": false,
+            "required": true,
             "x-ms-visibility": "important"
           },
           {
             "name": "processId",
-            "type": "integer",
+            "type": "number",
             "in": "path",
             "description": "Process Id of the selected process",
             "required": true,
-            "x-ms-summary": "Process Name"
+            "x-ms-summary": "Process Name",
+            "x-ms-url-encoding": "single"
           }
         ],
         "responses": {
@@ -557,16 +568,17 @@
             "type": "integer",
             "format": "int64",
             "x-ms-summary": "Folder Id",
-            "required": false,
+            "required": true,
             "x-ms-visibility": "important"
           },
           {
             "name": "processId",
-            "type": "integer",
+            "type": "number",
             "in": "path",
             "description": "Process Id of the selected process",
             "required": true,
-            "x-ms-summary": "Process Name"
+            "x-ms-summary": "Process Name",
+            "x-ms-url-encoding": "single"
           }
         ],
         "responses": {
@@ -660,9 +672,327 @@
           "url": "https://docs.microsoft.com/connectors/uipath/#get-folders-for-current-user"
         }
       }
+    },
+    "/{connectionId}/odata/QueueDefinitions": {
+      "get": {
+        "tags": [
+          "QueueDefinitions"
+        ],
+        "summary": "Gets Queues",
+        "description": "Gets a list of queues.",
+        "operationId": "GetQueueDefinitions",
+        "x-ms-visibility": "internal",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "query",
+            "name": "mandatoryPermissions",
+            "description": "All permissions in this set must be met",
+            "type": "array",
+            "x-ms-summary": "Mandatory Permissions",
+            "x-ms-visibility": "advanced",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "atLeastOnePermissions",
+            "description": "At least one permission in this set must be met",
+            "type": "array",
+            "x-ms-summary": "At Least One Permission",
+            "x-ms-visibility": "advanced",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/parameters/filter"
+          },
+          {
+            "$ref": "#/parameters/orderBy"
+          },
+          {
+            "$ref": "#/parameters/top"
+          },
+          {
+            "$ref": "#/parameters/skip"
+          },
+          {
+            "in": "header",
+            "name": "X-UIPATH-OrganizationUnitId",
+            "description": "Folder/OrganizationUnit Id",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "GetFoldersForCurrentUser",
+              "value-path": "Id",
+              "value-collection": "PageItems",
+              "value-title": "DisplayName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ODataValueOfIEnumerableOfQueueDefinitionDto"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uipath/#gets-queues"
+        }
+      }
+    },
+    "/{connectionId}/queue/schema/input/{queueId}": {
+      "get": {
+        "summary": "Gets Queue Input Schema",
+        "description": "Gets Queue Input Schema.",
+        "operationId": "GetQueueSpecificDataJsonSchema",
+        "x-ms-visibility": "internal",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "header",
+            "name": "X-UIPATH-OrganizationUnitId",
+            "description": "Folder/OrganizationUnit Id",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "GetFoldersForCurrentUser",
+              "value-path": "Id",
+              "value-collection": "PageItems",
+              "value-title": "DisplayName"
+            }
+          },
+          {
+            "name": "queueId",
+            "type": "integer",
+            "in": "path",
+            "description": "Queue Id of the selected queue",
+            "required": true,
+            "x-ms-summary": "Queue Name",
+            "x-ms-url-encoding": "single"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/QueueInputSchemaMetadata"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uipath/#gets-queue-input-schema"
+        }
+      }
+    },
+    "/{connectionId}/queue/addQueueItem": {
+      "post": {
+        "tags": [
+          "Queues"
+        ],
+        "summary": "Add Queue Item",
+        "description": "Add a new queue item for processing.",
+        "operationId": "AddQueueItem",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false",
+          "application/json;odata.metadata=minimal",
+          "application/json;odata.metadata=full;odata.streaming=true",
+          "application/json;odata.metadata=full;odata.streaming=false",
+          "application/json;odata.metadata=full",
+          "application/json;odata.metadata=none;odata.streaming=true",
+          "application/json;odata.metadata=none;odata.streaming=false",
+          "application/json;odata.metadata=none",
+          "application/json;odata.streaming=true",
+          "application/json;odata.streaming=false",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "header",
+            "name": "X-UIPATH-OrganizationUnitId",
+            "description": "Folder/OrganizationUnit Id",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "x-ms-summary": "Folder",
+            "x-ms-dynamic-values": {
+              "operationId": "GetFoldersForCurrentUser",
+              "value-path": "Id",
+              "value-collection": "PageItems",
+              "value-title": "DisplayName"
+            }
+          },
+          {
+            "name": "dynamicListSchema",
+            "in": "body",
+            "description": "Get the schema of the selected queue.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-ms-dynamic-schema": {
+                "operationId": "GetQueueSpecificDataJsonSchema",
+                "parameters": {
+                  "queueId": {
+                    "parameter": "queueId"
+                  },
+                  "X-UIPATH-OrganizationUnitId": {
+                    "parameter": "X-UIPATH-OrganizationUnitId"
+                  }
+                },
+                "value-path": "schema"
+              }
+            },
+            "x-ms-summary": "Queue Input Schema"
+          },
+          {
+            "name": "queueId",
+            "in": "query",
+            "description": "Queue Name of the selected queue",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Queue Name",
+            "x-ms-dynamic-values": {
+              "operationId": "GetQueueDefinitions",
+              "value-path": "Id",
+              "value-collection": "value",
+              "value-title": "Name",
+              "parameters": {
+                "X-UIPATH-OrganizationUnitId": {
+                  "parameter": "X-UIPATH-OrganizationUnitId"
+                }
+              }
+            }
+          },
+          {
+            "name": "deferDate",
+            "in": "query",
+            "description": "The earliest date and time at which the item is available for processing. If empty the item can be processed as soon as possible.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Defer Date",
+            "format": "date-time"
+          },
+          {
+            "name": "dueDate",
+            "in": "query",
+            "description": "The latest date and time at which the item should be processed. If empty the item can be processed at any given time.",
+            "required": false,
+            "x-ms-summary": "Due Date",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "riskSlaDate",
+            "in": "query",
+            "description": "The RiskSla date at the time which is considered as a risk zone for the item to be processed.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Risk Sla Date",
+            "format": "date-time"
+          },
+          {
+            "name": "reference",
+            "in": "query",
+            "description": "An optional, user-specified value for queue item identification.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Reference",
+            "maxLength": 128,
+            "minLength": 0
+          },
+          {
+            "name": "progress",
+            "in": "query",
+            "description": "String field which is used to keep track of the business flow progress.",
+            "required": false,
+            "type": "string",
+            "x-ms-summary": "Progress"
+          },
+          {
+            "name": "parentOperationId",
+            "in": "query",
+            "description": "Operation id which started the job.",
+            "required": false,
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 0,
+            "x-ms-summary": "Parent Operation Id"
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Sets the processing importance for a given item.",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "High",
+              "Normal",
+              "Low"
+            ],
+            "x-ms-summary": "Priority"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/QueueItemDto"
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/uipath/#add-queue-item"
+        }
+      }
     }
   },
   "definitions": {
+    "QueueInputSchemaMetadata": {
+      "description": "Queue Input Schema metadata",
+      "type": "object",
+      "properties": {
+        "schema": {
+          "$ref": "#/definitions/Object"
+        }
+      }
+    },
     "ProcessSchemaMetadata": {
       "description": "Process Schema metadata",
       "type": "object",
@@ -789,11 +1119,6 @@
           "type": "integer",
           "description": "The Unique Job Id",
           "x-ms-summary": "Job Id"
-        },
-        "Key": {
-          "description": "The unique job identifier.",
-          "type": "string",
-          "x-ms-summary": "Job Key"
         },
         "StartTime": {
           "description": "The date and time when the job execution started or null if the job hasn't started yet.",
@@ -1000,6 +1325,10 @@
             "name": "JobDtoProcessType",
             "modelAsString": false
           }
+        },
+        "Key": {
+          "description": "The unique job identifier.",
+          "type": "string"
         },
         "Machine": {
           "$ref": "#/definitions/MachineDto"
@@ -1654,6 +1983,392 @@
           "type": "integer"
         }
       }
+    },
+    "QueueDefinitionDto": {
+      "description": "The definition of a work queue. A work queue contains work items that are processed by robots.",
+      "required": [
+        "Name"
+      ],
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "A custom name for the queue.",
+          "type": "string"
+        },
+        "Description": {
+          "description": "Used to add additional information about a queue in order to better identify it.",
+          "type": "string"
+        },
+        "MaxNumberOfRetries": {
+          "format": "int32",
+          "description": "An integer value representing the number of times an item of this queue can be retried if its processing fails with application exception and auto retry is on.",
+          "type": "integer"
+        },
+        "AcceptAutomaticallyRetry": {
+          "description": "States whether a robot should retry to process an item if, after processing, it failed with application exception.",
+          "type": "boolean"
+        },
+        "EnforceUniqueReference": {
+          "description": "States whether Item Reference field should be unique per Queue. Deleted and retried items are not checked against this rule.",
+          "type": "boolean"
+        },
+        "SpecificDataJsonSchema": {
+          "description": "JSON schema enforced onto the specific data field.",
+          "type": "string"
+        },
+        "OutputDataJsonSchema": {
+          "description": "JSON schema enforced onto the output data field.",
+          "type": "string"
+        },
+        "AnalyticsDataJsonSchema": {
+          "description": "JSON schema enforced onto the analytics data field.",
+          "type": "string"
+        },
+        "CreationTime": {
+          "format": "date-time",
+          "description": "The date and time when the queue was created.",
+          "type": "string"
+        },
+        "ProcessScheduleId": {
+          "format": "int64",
+          "description": "The Id of the process schedule associated with the queue.",
+          "type": "integer"
+        },
+        "SlaInMinutes": {
+          "format": "int32",
+          "description": "Queue item processing SLA on the QueueDefinition level.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "RiskSlaInMinutes": {
+          "format": "int32",
+          "description": "Queue Item processing Risk SLA on the QueueDefinition level.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "ReleaseId": {
+          "format": "int64",
+          "description": "The ProcessId Queue is associated with.",
+          "type": "integer"
+        },
+        "IsProcessInCurrentFolder": {
+          "description": "Flag to determine if the release is in the current folder",
+          "type": "boolean"
+        },
+        "FoldersCount": {
+          "format": "int32",
+          "description": "Number of folders where the queue is shared.",
+          "type": "integer"
+        },
+        "OrganizationUnitId": {
+          "format": "int64",
+          "description": "DEPRECATED. ",
+          "type": "integer",
+          "x-deprecated": true
+        },
+        "OrganizationUnitFullyQualifiedName": {
+          "description": "DEPRECATED. ",
+          "type": "string",
+          "x-deprecated": true
+        },
+        "Id": {
+          "description": "The unique identifier for the queue definition.",
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "QueueItemDataDto": {
+      "description": "Defines the work item content.",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "The name of the queue into which the item will be added.",
+          "type": "string"
+        },
+        "Priority": {
+          "description": "Sets the processing importance for a given item.",
+          "enum": [
+            "High",
+            "Normal",
+            "Low"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "QueueItemDataDtoPriority",
+            "modelAsString": false
+          }
+        },
+        "SpecificContent": {
+          "description": "A collection of key value pairs containing custom data configured in the Add Queue Item activity, in UiPath Studio.",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "DeferDate": {
+          "format": "date-time",
+          "description": "The earliest date and time at which the item is available for processing. If empty the item can be processed as soon as possible.",
+          "type": "string"
+        },
+        "DueDate": {
+          "format": "date-time",
+          "description": "The latest date and time at which the item should be processed. If empty the item can be processed at any given time.",
+          "type": "string"
+        },
+        "RiskSlaDate": {
+          "format": "date-time",
+          "description": "The RiskSla date at time which is considered as risk zone for the item to be processed.",
+          "type": "string"
+        },
+        "Reference": {
+          "description": "An optional, user-specified value for queue item identification.",
+          "maxLength": 128,
+          "minLength": 0,
+          "type": "string"
+        },
+        "Progress": {
+          "description": "String field which is used to keep track of the business flow progress.",
+          "type": "string"
+        }
+      }
+    },
+    "QueueItemDto": {
+      "description": "Defines a piece of data that can be processed by a robot and the information associated with its processing status. Queue items are grouped in queues.",
+      "type": "object",
+      "properties": {
+        "QueueDefinitionId": {
+          "format": "int64",
+          "description": "The Id of the parent queue.",
+          "type": "integer",
+          "x-ms-summary": "Queue Definition Id"
+        },
+        "ProcessingException": {
+          "$ref": "#/definitions/ProcessingExceptionDto"
+        },
+        "SpecificContent": {
+          "description": "A collection of key value pairs containing custom data configured in the Add Queue Item activity, in UiPath Studio.",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "Output": {
+          "description": "A collection of key value pairs containing custom data resulted after successful processing.",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "OutputData": {
+          "description": "A JSON representation of the output data generated by the item's processing.",
+          "type": "string"
+        },
+        "Analytics": {
+          "description": "A collection of key value pairs containing custom data for further analytics processing.",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "AnalyticsData": {
+          "description": "A JSON representation of the analytics data generated by the item's processing.",
+          "type": "string"
+        },
+        "Status": {
+          "description": "The processing state of the item.",
+          "enum": [
+            "New",
+            "InProgress",
+            "Failed",
+            "Successful",
+            "Abandoned",
+            "Retried",
+            "Deleted"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "QueueItemDtoStatus",
+            "modelAsString": false
+          }
+        },
+        "ReviewStatus": {
+          "description": "The review state of the item - applicable only for failed items.",
+          "enum": [
+            "None",
+            "InReview",
+            "Verified",
+            "Retried"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "QueueItemDtoReviewStatus",
+            "modelAsString": false
+          }
+        },
+        "ReviewerUserId": {
+          "format": "int64",
+          "description": "The UserId of the Reviewer, if any.",
+          "type": "integer"
+        },
+        "Key": {
+          "format": "uuid",
+          "description": "The unique identifier of a queue item.",
+          "type": "string"
+        },
+        "Reference": {
+          "description": "An optional, user-specified value for queue item identification.",
+          "maxLength": 128,
+          "minLength": 0,
+          "type": "string"
+        },
+        "ProcessingExceptionType": {
+          "description": "The processing exception. If the item has not been processed or has been processed successfully it will be null.",
+          "enum": [
+            "ApplicationException",
+            "BusinessException"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "QueueItemDtoProcessingExceptionType",
+            "modelAsString": false
+          }
+        },
+        "DueDate": {
+          "format": "date-time",
+          "description": "The latest date and time at which the item should be processed. If empty the item can be processed at any given time.",
+          "type": "string"
+        },
+        "RiskSlaDate": {
+          "format": "date-time",
+          "description": "The RiskSla date at time which is considered as risk zone for the item to be processed.",
+          "type": "string"
+        },
+        "Priority": {
+          "description": "Sets the processing importance for a given item.",
+          "enum": [
+            "High",
+            "Normal",
+            "Low"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "QueueItemDtoPriority",
+            "modelAsString": false
+          }
+        },
+        "DeferDate": {
+          "format": "date-time",
+          "description": "The earliest date and time at which the item is available for processing. If empty the item can be processed as soon as possible.",
+          "type": "string"
+        },
+        "StartProcessing": {
+          "format": "date-time",
+          "description": "The date and time at which the item processing started. This is null if the item was not processed.",
+          "type": "string"
+        },
+        "EndProcessing": {
+          "format": "date-time",
+          "description": "The date and time at which the item processing ended. This is null if the item was not processed.",
+          "type": "string"
+        },
+        "SecondsInPreviousAttempts": {
+          "format": "int32",
+          "description": "The number of seconds that the last failed processing lasted.",
+          "type": "integer"
+        },
+        "AncestorId": {
+          "format": "int64",
+          "description": "The Id of an ancestor item connected to the current item.",
+          "type": "integer"
+        },
+        "RetryNumber": {
+          "format": "int32",
+          "description": "The number of times this work item has been processed. This can be higher than 0 only if MaxRetried number is set and the item processing failed at least once with ApplicationException.",
+          "type": "integer"
+        },
+        "SpecificData": {
+          "description": "A JSON representation of the specific content.",
+          "type": "string"
+        },
+        "CreationTime": {
+          "format": "date-time",
+          "description": "The date and time when the item was created.",
+          "type": "string"
+        },
+        "Progress": {
+          "description": "String field which is used to keep track of the business flow progress.",
+          "type": "string"
+        },
+        "RowVersion": {
+          "format": "byte",
+          "description": "Identifier used for optimistic concurrency, so Orchestrator can figure whether data is out of date or not.",
+          "type": "string"
+        },
+        "OrganizationUnitId": {
+          "format": "int64",
+          "description": "DEPRECATED. ",
+          "type": "integer",
+          "x-deprecated": true
+        },
+        "OrganizationUnitFullyQualifiedName": {
+          "description": "DEPRECATED. ",
+          "type": "string",
+          "x-deprecated": true
+        },
+        "Id": {
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "QueuesAddQueueItemParameters": {
+      "type": "object",
+      "properties": {
+        "itemData": {
+          "$ref": "#/definitions/QueueItemDataDto"
+        }
+      }
+    },
+    "ODataValueOfIEnumerableOfQueueDefinitionDto": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QueueDefinitionDto"
+          }
+        }
+      }
+    },
+    "ProcessingExceptionDto": {
+      "description": "Stores information about exceptions thrown while processing failed queue items.",
+      "type": "object",
+      "properties": {
+        "Reason": {
+          "description": "The reason the processing failed.",
+          "type": "string"
+        },
+        "Details": {
+          "description": "Stores additional details about the exception.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "The processing exception type, if any.",
+          "enum": [
+            "ApplicationException",
+            "BusinessException"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "ProcessingExceptionDtoType",
+            "modelAsString": false
+          }
+        },
+        "AssociatedImageFilePath": {
+          "description": "A path on the robot running computer to an image file that stores relevant information about the exception - e.g. a system print screen.",
+          "type": "string"
+        },
+        "CreationTime": {
+          "format": "date-time",
+          "description": "Time when the exception occurred",
+          "type": "string"
+        }
+      }
     }
   },
   "responses": {},
@@ -1664,14 +2379,14 @@
       "authorizationUrl": "https://cloud.uipath.com/identity_/connect/authorize",
       "tokenUrl": "https://cloud.uipath.com/identity_/connect/token",
       "scopes": {
-        "openid profile email OrchestratorApiUserAccess IdentityServerApi offline_access": "openid profile email OrchestratorApiUserAccess IdentityServerApi offline_access"
+        "OR.Execution.Read OR.Folders.Read OR.Jobs OR.Queues OR.Machines.Read": "OR.Execution.Read OR.Folders.Read OR.Jobs OR.Queues OR.Machines.Read"
       }
     }
   },
   "security": [
     {
       "oauth2-auth": [
-        "openid profile email OrchestratorApiUserAccess IdentityServerApi offline_access"
+        "OR.Execution.Read OR.Folders.Read OR.Jobs OR.Queues OR.Machines.Read"
       ]
     }
   ],
