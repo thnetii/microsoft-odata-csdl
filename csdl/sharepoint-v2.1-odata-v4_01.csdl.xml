@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26406 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26413 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1383,6 +1383,22 @@
         <Property Name="workPhone" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="crossOrganizationMigrationRoot" OpenType="true">
+        <NavigationProperty Name="identityMappingUsers" Type="Collection(oneDrive.identityMappingUser)" ContainsTarget="true" />
+        <NavigationProperty Name="crossOrganizationMigrationTasks" Type="Collection(oneDrive.crossOrganizationMigrationTask)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="identityMappingUser" OpenType="true">
+        <Key>
+          <PropertyRef Name="sourceUserUpn" />
+        </Key>
+        <Property Name="sourceTenantCompanyId" Type="Edm.Guid" />
+        <Property Name="sourceUserUpn" Type="Edm.String" Nullable="false" />
+        <Property Name="targetUserUpn" Type="Edm.String" />
+        <Property Name="targetUserEmail" Type="Edm.String" />
+        <Property Name="userType" Type="Edm.String" />
+        <Property Name="updateStatus" Type="Edm.String" />
+        <Property Name="error" Type="oneDrive.mnaError" />
+      </EntityType>
       <EntityType Name="crossOrganizationMigrationTask" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2135,6 +2151,7 @@
         <NavigationProperty Name="commands" Type="oneDrive.commands" ContainsTarget="true" />
         <NavigationProperty Name="comments" Type="Collection(oneDrive.comment)" ContainsTarget="true" />
         <NavigationProperty Name="conversationSet" Type="oneDrive.conversationSet" ContainsTarget="true" />
+        <NavigationProperty Name="cortex" Type="oneDrive.cortex" ContainsTarget="true" />
         <NavigationProperty Name="detectedEntities" Type="Collection(oneDrive.detectedEntity)" ContainsTarget="true" />
         <NavigationProperty Name="formats" Type="Collection(oneDrive.itemFormat)" ContainsTarget="true" />
         <NavigationProperty Name="insights" Type="oneDrive.contentInsights" ContainsTarget="true" />
@@ -2293,6 +2310,7 @@
         <NavigationProperty Name="meetingConversations" Type="Collection(oneDrive.meetingConversationInstance)" ContainsTarget="true" />
         <NavigationProperty Name="teamsConversations" Type="Collection(oneDrive.teamsConversationInstance)" ContainsTarget="true" />
       </EntityType>
+      <EntityType Name="cortex" OpenType="true" />
       <EntityType Name="detectedEntity" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -2340,6 +2358,7 @@
         <Property Name="remoteItem" Type="oneDrive.remoteItem" />
         <Property Name="shared" Type="oneDrive.shared" />
         <Property Name="machineLearning" Type="oneDrive.machineLearning" />
+        <Property Name="viewpoint" Type="oneDrive.listItemViewpoint" />
         <NavigationProperty Name="allAnalytics" Type="oneDrive.aggregatedAnalytics" ContainsTarget="true" />
         <NavigationProperty Name="attachments" Type="Collection(oneDrive.attachment)" ContainsTarget="true" />
         <NavigationProperty Name="children" Type="Collection(oneDrive.listItem)" ContainsTarget="true" />
@@ -2792,6 +2811,7 @@
         <Property Name="isTrending" Type="Edm.Boolean" />
         <Property Name="incompleteData" Type="oneDrive.incompleteData" />
         <Property Name="aggregateActivities" Type="Collection(oneDrive.aggregateActivity)" />
+        <Property Name="citation" Type="oneDrive.itemActionStat" />
         <NavigationProperty Name="activities" Type="Collection(oneDrive.itemActivity)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="topItems" OpenType="true">
@@ -3065,6 +3085,7 @@
         <Property Name="owner" Type="oneDrive.identitySet" />
         <Property Name="settings" Type="oneDrive.siteSettings" />
         <Property Name="siteCollection" Type="oneDrive.siteCollection" />
+        <Property Name="viewpoint" Type="oneDrive.siteViewpoint" />
         <Property Name="root" Type="oneDrive.root" />
         <Property Name="template" Type="oneDrive.siteTemplate" />
         <Property Name="siteTemplate" Type="Edm.String" />
@@ -3387,6 +3408,7 @@
         <Property Name="icon" Type="Edm.String" />
         <Property Name="itemCount" Type="Edm.Int32" />
         <Property Name="list" Type="oneDrive.listInfo" />
+        <Property Name="viewpoint" Type="oneDrive.listViewpoint" />
         <Property Name="schemaVersion" Type="Edm.Int32" />
         <Property Name="system" Type="oneDrive.system" />
         <Property Name="validation" Type="oneDrive.listItemValidation" />
@@ -4824,6 +4846,11 @@
         <Property Name="xslLink" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
+      <ComplexType Name="mnaError" OpenType="true">
+        <Property Name="code" Type="Edm.String" />
+        <Property Name="innerError" Type="oneDrive.mnaError" />
+        <Property Name="message" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="crossOrganizationResourceMigrationParameters" OpenType="true">
         <Property Name="targetOrganizationId" Type="Edm.Guid" />
         <Property Name="targetOrganizationHost" Type="Edm.String" />
@@ -5042,6 +5069,7 @@
       <ComplexType Name="groundingResourcesRequest" OpenType="true">
         <Property Name="customCopilotItemReferences" Type="Collection(oneDrive.customCopilotItemReference)" />
         <Property Name="groundingOptions" Type="oneDrive.groundingOptions" />
+        <Property Name="naturalLanguageQuery" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="avertActionRequest" OpenType="true">
         <Property Name="actionId" Type="Edm.String" Nullable="false" />
@@ -5055,6 +5083,13 @@
         <Property Name="type" Type="oneDrive.WorkflowType" Nullable="false" />
         <Property Name="eventTime" Type="Edm.String" Nullable="false" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </ComplexType>
+      <ComplexType Name="CortexCacheWriteRequest" OpenType="true">
+        <Property Name="contentId" Type="Edm.String" />
+        <Property Name="source" Type="oneDrive.CortexGraphConsistencyToken" />
+        <Property Name="enrichments" Type="Collection(Edm.String)" />
+        <Property Name="errorStatusCode" Type="Edm.Int32" />
+        <Property Name="level" Type="oneDrive.SPFileLevel" />
       </ComplexType>
       <ComplexType Name="cortexGetSummaries" OpenType="true">
         <Property Name="requestedSummaries" Type="Collection(oneDrive.CortexNode)" />
@@ -5168,6 +5203,12 @@
         <Property Name="info" Type="oneDrive.exceptionInfo" />
         <Property Name="failedOperation" Type="Edm.String" />
         <Property Name="responseCode" Type="oneDrive.HttpStatusCode" />
+      </ComplexType>
+      <ComplexType Name="CortexGraphConsistencyToken" OpenType="true">
+        <Property Name="bsn" Type="Edm.Int64" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="eTag" Type="Edm.String" />
+        <Property Name="hash" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="pinnedTerm" OpenType="true" />
       <ComplexType Name="reusedTerm" OpenType="true" />
@@ -7610,6 +7651,12 @@
       <ComplexType Name="ibInsightsParameters" OpenType="true">
         <Property Name="section" Type="oneDrive.AnalyticsReportIBInsightsSection" />
       </ComplexType>
+      <ComplexType Name="listItemViewpoint" OpenType="true">
+        <Property Name="accessRequest" Type="oneDrive.accessRequestInfo" />
+      </ComplexType>
+      <ComplexType Name="listViewpoint" OpenType="true">
+        <Property Name="accessRequest" Type="oneDrive.accessRequestInfo" />
+      </ComplexType>
       <ComplexType Name="m365AgentInsightsParameters" OpenType="true">
         <Property Name="reportDuration" Type="Edm.Int32" />
         <Property Name="reportName" Type="Edm.String" />
@@ -7642,6 +7689,9 @@
         <Property Name="sharingLinkType" Type="oneDrive.AnalyticsReportSharingLinkType" />
         <Property Name="sitesCount" Type="Edm.Int32" />
         <Property Name="crawledSitesCount" Type="Edm.Int64" />
+      </ComplexType>
+      <ComplexType Name="siteViewpoint" OpenType="true">
+        <Property Name="accessRequest" Type="oneDrive.accessRequestInfo" />
       </ComplexType>
       <ComplexType Name="format" OpenType="true">
         <Property Name="extensions" Type="Collection(Edm.String)" />
@@ -7737,8 +7787,10 @@
       </ComplexType>
       <ComplexType Name="accessRequestInfo" OpenType="true">
         <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
+        <Property Name="activityHistory" Type="Collection(oneDrive.accessRequestActivity)" />
         <Property Name="activities" Type="Collection(oneDrive.accessRequestActivity)" />
         <Property Name="requestorIdentity" Type="oneDrive.sharePointIdentity" />
+        <Property Name="roleOrGroupRequested" Type="oneDrive.roleOrGroupRequested" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
       <ComplexType Name="subpoenaMoveParameters" OpenType="true">
@@ -8863,8 +8915,10 @@
         <Member Name="SPOServicePrioritization" Value="13" />
         <Member Name="CopilotTuning" Value="14" />
         <Member Name="M365CopilotRetrievalAPI" Value="15" />
-        <Member Name="TestFeature1" Value="16" />
-        <Member Name="None" Value="17" />
+        <Member Name="Microsoft365APIsExtendedUsage" Value="16" />
+        <Member Name="Windows365ForAgents" Value="17" />
+        <Member Name="TestFeature1" Value="18" />
+        <Member Name="None" Value="19" />
       </EnumType>
       <EnumType Name="StorageContainerStatus">
         <Member Name="inactive" Value="0" />
@@ -9525,6 +9579,11 @@
         <Member Name="WebRac" Value="5" />
         <Member Name="Appeal" Value="6" />
       </EnumType>
+      <EnumType Name="SPFileLevel" UnderlyingType="Edm.Byte">
+        <Member Name="Published" Value="1" />
+        <Member Name="Draft" Value="2" />
+        <Member Name="Checkout" Value="255" />
+      </EnumType>
       <EnumType Name="HttpStatusCode">
         <Member Name="Continue" Value="100" />
         <Member Name="SwitchingProtocols" Value="101" />
@@ -9778,6 +9837,11 @@
       <Action Name="addOrUpdateSingleUser" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.crossOrganizationIdentityMappingUser)" />
         <ReturnType Type="oneDrive.crossOrganizationIdentityMappingUser" />
+      </Action>
+      <Action Name="addOrUpdateUsers" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.identityMappingUser)" />
+        <Parameter Name="value" Type="Collection(oneDrive.identityMappingUser)" />
+        <ReturnType Type="Collection(oneDrive.identityMappingUser)" />
       </Action>
       <Action Name="restore" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.documentSetVersion" />
@@ -10585,6 +10649,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.groundingItem" />
         <ReturnType Type="Collection(oneDrive.groundingItem)" />
       </Action>
+      <Action Name="searchCustomMetadataByNaturalLanguage" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.groundingItem" />
+        <ReturnType Type="Collection(oneDrive.groundingItem)" />
+      </Action>
       <Action Name="getItems">
         <Parameter Name="items" Type="Collection(oneDrive.itemReference)" />
         <Parameter Name="filterByAudience" Type="Edm.Boolean">
@@ -10992,16 +11060,19 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Edm.Stream" />
       </Function>
+      <Action Name="writeCache" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+      </Action>
       <Action Name="getCortexSummaries" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexResult" />
       </Action>
       <Action Name="getSummaries" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexResult" />
       </Action>
       <Action Name="setSummaries" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexResult" />
       </Action>
       <Action Name="setCortexIndexing" IsBound="true">
@@ -11501,13 +11572,6 @@
         </Parameter>
         <ReturnType Type="Collection(oneDrive.itemResult)" />
       </Action>
-      <Action Name="requestAccess" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
-        <Parameter Name="message" Type="Edm.String">
-          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
-        </Parameter>
-        <ReturnType Type="oneDrive.AccessRequest" />
-      </Action>
       <Function Name="getSiteInfo" IsBound="true" EntitySetPath="bindingParameter/siteInfo">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.memberOf)" />
         <ReturnType Type="Collection(oneDrive.siteInfo)" />
@@ -11667,6 +11731,7 @@
         <Singleton Name="capRecycleBin" Type="oneDrive.capRecycleBin" />
         <Singleton Name="certs" Type="oneDrive.certs" />
         <Singleton Name="diagnostic" Type="oneDrive.Diagnostic" />
+        <Singleton Name="crossOrganizationMigration" Type="oneDrive.crossOrganizationMigrationRoot" />
         <Singleton Name="ebar" Type="oneDrive.ebar" />
         <Singleton Name="v1" Type="oneDrive.v1" />
         <Singleton Name="list" Type="oneDrive.ebarList" />
