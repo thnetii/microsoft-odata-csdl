@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26413 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26420 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1898,9 +1898,9 @@
         <NavigationProperty Name="drive" Type="oneDrive.drive" ContainsTarget="true" />
         <NavigationProperty Name="permissions" Type="Collection(oneDrive.permission)" ContainsTarget="true" />
         <NavigationProperty Name="sharePointGroups" Type="Collection(oneDrive.sharePointGroup)" ContainsTarget="true" />
+        <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" ContainsTarget="true" />
         <NavigationProperty Name="columns" Type="Collection(oneDrive.columnDefinition)" ContainsTarget="true" />
         <NavigationProperty Name="migrationJobs" Type="Collection(oneDrive.sharePointMigrationJob)" ContainsTarget="true" />
-        <NavigationProperty Name="recycleBin" Type="oneDrive.recycleBin" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="permission" OpenType="true">
@@ -1947,6 +1947,16 @@
             </Record>
           </Collection>
         </Annotation>
+      </EntityType>
+      <EntityType Name="recycleBin" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="settings" Type="oneDrive.recycleBinSettings">
+          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+        </Property>
+        <NavigationProperty Name="items" Type="Collection(oneDrive.recycleBinItem)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="columnDefinition" OpenType="true">
         <Key>
@@ -3338,16 +3348,6 @@
         <Property Name="distributionLists" Type="Collection(oneDrive.identity)" />
         <Property Name="incompleteData" Type="oneDrive.incompleteData" />
       </EntityType>
-      <EntityType Name="recycleBin" OpenType="true">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="settings" Type="oneDrive.recycleBinSettings">
-          <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
-        </Property>
-        <NavigationProperty Name="items" Type="Collection(oneDrive.recycleBinItem)" ContainsTarget="true" />
-      </EntityType>
       <EntityType Name="recycleBinItem" BaseType="oneDrive.baseItem" OpenType="true">
         <Property Name="deletedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="deletedFromLocation" Type="Edm.String" />
@@ -3355,6 +3355,20 @@
         <Property Name="title" Type="Edm.String" />
         <Property Name="driveItemId" Type="Edm.String" />
         <Property Name="itemType" Type="oneDrive.ItemType" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="driveItemId" />
+                    <PropertyValue Property="Name" PropertyPath="driveItemId" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
       </EntityType>
       <EntityType Name="richLongRunningOperation" OpenType="true">
         <Key>
@@ -7345,6 +7359,7 @@
         <Property Name="alias" Type="Edm.String" />
         <Property Name="loginName" Type="Edm.String" />
         <Property Name="provider" Type="Edm.String" />
+        <Property Name="permissionIdentityTypeInput" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="referralInfoFacet" OpenType="true">
         <Property Name="inviterCid" Type="Edm.String" />
@@ -9547,6 +9562,17 @@
         <Member Name="Fraud" Value="9" />
         <Member Name="HateSpeech" Value="10" />
         <Member Name="ImminentHarmToPersonsOrProperty" Value="11" />
+        <Member Name="SexualSolicitation" Value="12" />
+        <Member Name="SuicideSelfHarm" Value="13" />
+        <Member Name="GraphicViolenceHumanGore" Value="14" />
+        <Member Name="NonConsensualAdultImages" Value="15" />
+        <Member Name="ThreatsOrPraiseOfViolence" Value="16" />
+        <Member Name="Trafficking" Value="17" />
+        <Member Name="Spam" Value="18" />
+        <Member Name="AdultNudity" Value="19" />
+        <Member Name="ProfanityVulgarity" Value="20" />
+        <Member Name="AlcoholTobaccoDrugs" Value="21" />
+        <Member Name="CoordinationOfHarm" Value="22" />
       </EnumType>
       <EnumType Name="CustomCopilotItemReferenceType">
         <Member Name="File" Value="0" />
@@ -9850,6 +9876,10 @@
         <Parameter Name="bindingParameter" Type="oneDrive.deletedStorageContainer" />
         <ReturnType Type="oneDrive.storageContainer" />
       </Action>
+      <Action Name="restore" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.recycleBinItem" />
+        <ReturnType Type="oneDrive.recycleBinItem" />
+      </Action>
       <Action Name="restore" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.recycleBinItem)" />
         <Parameter Name="ids" Type="Collection(Edm.String)" />
@@ -9994,6 +10024,42 @@
         </Parameter>
         <Parameter Name="fieldValues" Type="oneDrive.fieldValuesSet" />
         <ReturnType Type="oneDrive.documentPackage" />
+      </Action>
+      <Action Name="requestAccess" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.list" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+      </Action>
+      <Action Name="requestAccess" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+      </Action>
+      <Action Name="requestAccess" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+      </Action>
+      <Action Name="requestAccess" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+        <Parameter Name="message" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="role" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
       </Action>
       <Action Name="setAutoQueueConfig" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.analyticsReportsConfig" />
@@ -10645,6 +10711,26 @@
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="archive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
+      </Action>
+      <Action Name="archive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+      </Action>
+      <Action Name="archive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+      </Action>
+      <Action Name="unarchive" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.listItem" />
+        <ReturnType Type="oneDrive.listItem" />
+      </Action>
+      <Action Name="unarchive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.site" />
+      </Action>
+      <Action Name="unarchive" IsBound="true" EntitySetPath="bindingParameter">
+        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <ReturnType Type="oneDrive.item" />
+      </Action>
       <Action Name="fetchResources" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="oneDrive.groundingItem" />
         <ReturnType Type="Collection(oneDrive.groundingItem)" />
@@ -10878,12 +10964,6 @@
       <Action Name="getSites">
         <Parameter Name="sites" Type="Collection(Edm.String)" />
         <ReturnType Type="Collection(oneDrive.site)" />
-      </Action>
-      <Action Name="archive" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.site" />
-      </Action>
-      <Action Name="unarchive" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.site" />
       </Action>
       <Action Name="requestAccessByEvents" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
