@@ -1,0 +1,283 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Houdin.io",
+    "description": "Houdin.io provides automated AI cyber threat analysis, reducing the time and effort required to analyze and respond to cyber threats.\n\nThis connector allows you to connect Houdin.io with your SOAR platform, enabling automated threat analysis and response workflows.",
+    "contact": {
+      "email": "support@houdin.io",
+      "name": "Houdin.io Support",
+      "url": "https://houdin.io"
+    },
+    "version": "1.0.0",
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/houdinio",
+  "schemes": [
+    "https"
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://houdin.io"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://houdin.io/pp"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "AI;Security"
+    }
+  ],
+  "paths": {
+    "/{connectionId}/scan/launch": {
+      "post": {
+        "tags": [
+          "scan"
+        ],
+        "summary": "Launch Houdin scan",
+        "description": "This action launches a scan on Houdin.io",
+        "operationId": "LaunchScan",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/scan"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scan launched",
+            "schema": {
+              "$ref": "#/definitions/scanResponse"
+            }
+          },
+          "400": {
+            "description": "No compatible scanners found for this artifact"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/houdinio/#launch-houdin-scan"
+        }
+      }
+    },
+    "/{connectionId}/scan/result": {
+      "get": {
+        "tags": [
+          "scan"
+        ],
+        "summary": "Retrieve Houdin results",
+        "description": "Based on a given scanID, retrieve the results of a scan from Houdin.io",
+        "operationId": "RetrieveScan",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "scanID",
+            "in": "query",
+            "description": "A scan ID you want to retrieve results for",
+            "x-ms-summary": "A scan ID you want to retrieve results for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/scanResult"
+            }
+          },
+          "202": {
+            "description": "Scan is still in progress"
+          },
+          "400": {
+            "description": "Invalid scanID"
+          },
+          "404": {
+            "description": "Scan not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/houdinio/#retrieve-houdin-results"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "scan": {
+      "type": "object",
+      "required": [
+        "artifact"
+      ],
+      "properties": {
+        "artifact": {
+          "type": "string",
+          "description": "Any artifact you want to scan (can be URL, domain, IPv4, IPv6, MD5, SHA1, SHA256)"
+        },
+        "scanOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scanResponse": {
+      "type": "object",
+      "properties": {
+        "scanID": {
+          "type": "string",
+          "description": "The unique identifier of your Houdin scan"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of your scan"
+        }
+      }
+    },
+    "scanResult": {
+      "type": "object",
+      "properties": {
+        "scanID": {
+          "type": "string",
+          "description": "The unique identifier of your Houdin scan"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status for your scan"
+        },
+        "artifact": {
+          "type": "string",
+          "description": "The scanned artifact"
+        },
+        "scanOn": {
+          "type": "array",
+          "description": "Array of scanners involved in the Houdin scan",
+          "items": {
+            "type": "string",
+            "description": "Individual scanner involved in the Houdin scan"
+          }
+        },
+        "scanResults": {
+          "type": "object",
+          "description": "All results of a Houdin scan",
+          "properties": {
+            "mesmer": {
+              "type": "object",
+              "description": "Results from MesmerAI analysis",
+              "properties": {
+                "summary": {
+                  "type": "string",
+                  "description": "The MesmerAI threat report for your artifact"
+                },
+                "globalScore": {
+                  "type": "string",
+                  "description": "The MesmerAI global score for your artifact"
+                },
+                "relatedIOCs": {
+                  "type": "array",
+                  "description": "The MesmerAI list of IOCs in relationship with your artifact",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "tags": {
+                  "type": "array",
+                  "description": "The MesmerAI list of context tags for your artifact",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "vt": {
+              "type": "object",
+              "description": "Object containing VirusTotal results"
+            },
+            "urlscan": {
+              "type": "object",
+              "description": "Object containing URLScan results"
+            },
+            "alienvault": {
+              "type": "object",
+              "description": "Object containing AlienVault results"
+            },
+            "abuseipdb": {
+              "type": "object",
+              "description": "Object containing AbuseIPDB results"
+            }
+          }
+        },
+        "scanTime": {
+          "type": "string",
+          "description": "Date and time at which the scan was launched"
+        },
+        "expiresAfter": {
+          "type": "string",
+          "description": "Expiration date for the Houdin scan"
+        }
+      }
+    }
+  },
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-API-Key"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "scan",
+      "description": "Main route to handle Houdin.io scans via API"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/houdinio"
+  }
+}
