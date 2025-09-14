@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26427 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26503 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -173,6 +173,7 @@
       </ComplexType>
       <ComplexType Name="SemanticSearchCrawlerEnqueueItem">
         <Property Name="AssociateSiteId" Type="Edm.Guid" />
+        <Property Name="ItemId" Type="Edm.Int32" />
         <Property Name="ItemUniqueId" Type="Edm.Guid" Nullable="false" />
         <Property Name="ItemUrl" Type="Edm.String" />
         <Property Name="ListId" Type="Edm.Guid" />
@@ -3128,7 +3129,6 @@
         <Property Name="VersionString" Type="Edm.String" />
       </EntityType>
       <EntityType Name="SemanticSearchEnqueueProxy" Abstract="true" />
-      <EntityType Name="SemanticSearchCrawlerUtility" Abstract="true" />
       <EntityType Name="AlternateUrl">
         <Property Name="Uri" Type="Edm.String" />
         <Property Name="UrlZone" Type="Edm.Int32" Nullable="false" />
@@ -4443,9 +4443,6 @@
       <Action Name="Upgrade" IsBound="true">
         <Parameter Name="this" Type="SP.AppInstance" />
         <Parameter Name="appPackageStream" Type="Edm.Stream" />
-      </Action>
-      <Action Name="EnableSemanticSearch" IsBound="true">
-        <Parameter Name="this" Type="SP.Web" />
       </Action>
       <Function Name="GetPlacesInformation" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.List" />
@@ -9339,9 +9336,6 @@
       <Annotations Target="Microsoft.SharePoint.Portal.Home.SharePointHomePageContext/MySiteUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Portal.Home.SharePointHomePageContext/PreferredLocationRootSiteUrl">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.Home.SharePointHomePageContext/SearchCenterUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10090,6 +10084,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/AssociateSiteId">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/ItemId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SemanticSearchCrawlerEnqueueItem/ItemUniqueId">
@@ -16421,9 +16418,6 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SemanticSearchEnqueueProxy.SemanticSearchProperties()">
-        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
-      </Annotations>
-      <Annotations Target="SP.EnableSemanticSearch(SP.Web)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.GetPlacesInformation(SP.List, Edm.String)">
@@ -28493,7 +28487,6 @@
         <Property Name="MicroserviceFlights" Type="Collection(Edm.String)" />
         <Property Name="MicroserviceUrl" Type="Edm.String" />
         <Property Name="MySiteUrl" Type="Edm.String" />
-        <Property Name="PreferredLocationRootSiteUrl" Type="Edm.String" />
         <Property Name="SearchCenterUrl" Type="Edm.String" />
         <Property Name="ShowCreateNewsTeachingBubble" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ShowFirstRunExperience" Type="Edm.Boolean" Nullable="false" />
@@ -30634,6 +30627,12 @@
         <Property Name="uALNumberOfRecords" Type="Edm.Int64" Nullable="false" />
         <Property Name="users" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SiteOwnerData">
+        <Property Name="department" Type="Edm.String" />
+        <Property Name="jobTitle" Type="Edm.String" />
+        <Property Name="preferredLanguage" Type="Edm.String" />
+        <Property Name="userPrincipalName" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPContentEventsCustomEmailProperty">
         <Property Name="Category" Type="Edm.Int32" Nullable="false" />
         <Property Name="EmailAddresses" Type="Collection(Edm.String)" />
@@ -32529,6 +32528,7 @@
         <Property Name="FilteringApplicationName" Type="Edm.String" />
         <Property Name="FilteringContainerTypeId" Type="Edm.String" />
         <Property Name="FilteringField" Type="Edm.Int32" Nullable="false" />
+        <Property Name="FilteringSensitivityLabels" Type="Collection(Edm.String)" />
         <Property Name="OpticalCharacterRecognitionEnabled" Type="Edm.Boolean" />
         <Property Name="OwnersCount" Type="Edm.Int32" Nullable="false" />
         <Property Name="OwnershipType" Type="Edm.Int32" Nullable="false" />
@@ -32686,6 +32686,11 @@
         <Property Name="SubscriptionId" Type="Edm.Guid" Nullable="false" />
         <Property Name="SubscriptionState" Type="Edm.String" />
         <Property Name="UsageCharges" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="SPOContainerQueryParams">
+        <Property Name="FilterByColumnsList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPContainerFilterOrder)" />
+        <Property Name="OrderByColumnsList" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPContainerSortOrder)" />
+        <Property Name="PagingToken" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="SPOContentSecurityPolicyEntry">
         <Property Name="Manual" Type="Edm.Boolean" />
@@ -34107,6 +34112,11 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="startIndex" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.DeletedSiteProperties)" />
+      </Action>
+      <Action Name="GetAllSPOContainersFromAdminList" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="queryParams" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOContainerQueryParams" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPContainerCollection" />
       </Action>
       <Action Name="GetArchivableContainerTypes" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
