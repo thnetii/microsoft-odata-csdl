@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26427 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26503 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1921,6 +1921,7 @@
         <Property Name="hasPassword" Type="Edm.Boolean" />
         <Property Name="password" Type="Edm.String" />
         <Property Name="failedRecipientResults" Type="Collection(oneDrive.sharingRecipientResult)" />
+        <Property Name="mainLink" Type="oneDrive.mainLink" />
         <Property Name="email" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
         <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
@@ -3926,6 +3927,9 @@
       <EntityType Name="augLoopApis" OpenType="true">
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
+      <EntityType Name="bingApis" OpenType="true">
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="canvasLayout" BaseType="oneDrive.baseItem" OpenType="true">
         <NavigationProperty Name="horizontalSections" Type="Collection(oneDrive.horizontalSection)" ContainsTarget="true" />
         <NavigationProperty Name="verticalSection" Type="oneDrive.verticalSection" ContainsTarget="true" />
@@ -4157,6 +4161,7 @@
         <NavigationProperty Name="pac" Type="oneDrive.pacApis" ContainsTarget="true" />
         <NavigationProperty Name="spoExpansionRequest" Type="oneDrive.spoExpansionRequestApis" ContainsTarget="true" />
         <NavigationProperty Name="storageContainerTypes" Type="oneDrive.storageContainerTypesApis" ContainsTarget="true" />
+        <NavigationProperty Name="bing" Type="oneDrive.bingApis" ContainsTarget="true" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="teamsChannelManagementApis" OpenType="true">
@@ -5137,6 +5142,7 @@
         <Property Name="snippet" Type="Edm.String" />
         <Property Name="index" Type="Edm.Int32" Nullable="false" />
         <Property Name="embedding" Type="Collection(Edm.Single)" Nullable="false" />
+        <Property Name="pageNumbers" Type="Collection(Edm.Int64)" Nullable="false" />
       </ComplexType>
       <ComplexType Name="CortexResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
@@ -5181,6 +5187,7 @@
         <Property Name="isOcrEnabled" Type="Edm.Boolean" />
         <Property Name="itemMajorVersionLimit" Type="Edm.Int32" />
         <Property Name="isItemVersioningEnabled" Type="Edm.Boolean" />
+        <Property Name="itemDefaultSensitivityLabel" Type="Edm.String" />
         <Property Name="isHiddenForAdmin" Type="Edm.Boolean" />
       </ComplexType>
       <ComplexType Name="sharePointMigrationContainerInfo" OpenType="true">
@@ -5825,6 +5832,48 @@
       <ComplexType Name="augLoopResponse" OpenType="true">
         <Property Name="augLoopResponseBlob" Type="oneDrive.json" />
       </ComplexType>
+      <ComplexType Name="bingImageSearchError" OpenType="true">
+        <Property Name="code" Type="Edm.String" />
+        <Property Name="subCode" Type="Edm.String" />
+        <Property Name="message" Type="Edm.String" />
+        <Property Name="moreDetails" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="bingImageSearchItem" OpenType="true">
+        <Property Name="contentSize" Type="Edm.String" />
+        <Property Name="contentUrl" Type="Edm.String" />
+        <Property Name="encodingFormat" Type="Edm.String" />
+        <Property Name="hostPageUrl" Type="Edm.String" />
+        <Property Name="imageId" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="thumbnail" Type="oneDrive.bingImageSearchThumbnail" />
+        <Property Name="thumbnailUrl" Type="Edm.String" />
+        <Property Name="width" Type="Edm.Int32" />
+        <Property Name="height" Type="Edm.Int32" />
+      </ComplexType>
+      <ComplexType Name="bingImageSearchResponse" OpenType="true">
+        <Property Name="nextOffset" Type="Edm.Int32" />
+        <Property Name="value" Type="Collection(oneDrive.bingImageSearchItem)" />
+        <Property Name="errors" Type="Collection(oneDrive.bingImageSearchError)" />
+      </ComplexType>
+      <ComplexType Name="bingImageSearchThumbnail" OpenType="true">
+        <Property Name="width" Type="Edm.Int32" />
+        <Property Name="height" Type="Edm.Int32" />
+      </ComplexType>
+      <ComplexType Name="bingLocation" OpenType="true">
+        <Property Name="address" Type="oneDrive.bingLocationAddress" />
+        <Property Name="geo" Type="oneDrive.bingLocationGeoCoordinates" />
+      </ComplexType>
+      <ComplexType Name="bingLocationAddress" OpenType="true">
+        <Property Name="addressLocality" Type="Edm.String" />
+        <Property Name="addressRegion" Type="Edm.String" />
+        <Property Name="addressCountry" Type="Edm.String" />
+        <Property Name="countryIso" Type="Edm.String" />
+        <Property Name="text" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="bingLocationGeoCoordinates" OpenType="true">
+        <Property Name="latitude" Type="Edm.Double" />
+        <Property Name="longitude" Type="Edm.Double" />
+      </ComplexType>
       <ComplexType Name="contentModelUsage" OpenType="true">
         <Property Name="modelId" Type="Edm.String" />
         <Property Name="driveId" Type="Edm.String" />
@@ -5843,7 +5892,7 @@
       <ComplexType Name="extractSensitivityLabelsResult" OpenType="true">
         <Property Name="labels" Type="Collection(oneDrive.sensitivityLabelAssignment)" />
       </ComplexType>
-      <ComplexType Name="fileStorageContainerAgentSettings" OpenType="true">
+      <ComplexType Name="fileStorageContainerTypeAgentSettings" OpenType="true">
         <Property Name="chatEmbedAllowedHosts" Type="Collection(Edm.String)" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
@@ -5856,7 +5905,7 @@
         <Property Name="itemMajorVersionLimit" Type="Edm.Int32" />
         <Property Name="maxStoragePerContainerInBytes" Type="Edm.Int64" />
         <Property Name="isSharingRestricted" Type="Edm.Boolean" />
-        <Property Name="agent" Type="oneDrive.fileStorageContainerAgentSettings" />
+        <Property Name="agent" Type="oneDrive.fileStorageContainerTypeAgentSettings" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="fileStorageContainerTypeSettings" OpenType="true">
@@ -5869,7 +5918,7 @@
         <Property Name="maxStoragePerContainerInBytes" Type="Edm.Int64" />
         <Property Name="isSharingRestricted" Type="Edm.Boolean" />
         <Property Name="consumingTenantOverridables" Type="Edm.String" />
-        <Property Name="agent" Type="oneDrive.fileStorageContainerAgentSettings" />
+        <Property Name="agent" Type="oneDrive.fileStorageContainerTypeAgentSettings" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="irmCapabilities" OpenType="true">
@@ -7014,10 +7063,28 @@
         <Property Name="associatedItems" Type="Collection(oneDrive.machineLearningAssociatedItem)" />
         <Property Name="lastModifiedByUserLicenseInfo" Type="oneDrive.lastModifiedByUserLicenseInfo" />
       </ComplexType>
+      <ComplexType Name="mainLinkAbilities" OpenType="true">
+        <Property Name="retrieveLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="updateLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="resetLink" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="audienceAbilities" Type="oneDrive.mainLinkAudienceAbilities" />
+        <Property Name="roleAbilities" Type="oneDrive.mainLinkRoleAbilities" />
+      </ComplexType>
+      <ComplexType Name="mainLinkAudienceAbilities" OpenType="true">
+        <Property Name="onlyPeopleAddedLinkAvailable" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="organizationLinkAvailable" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="anyoneLinkAvailable" Type="oneDrive.sharingOperationStatus" />
+      </ComplexType>
       <ComplexType Name="mainLink" OpenType="true">
         <Property Name="audience" Type="Edm.String" />
         <Property Name="role" Type="Edm.String" />
         <Property Name="webUrl" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="mainLinkRoleAbilities" OpenType="true">
+        <Property Name="viewRoleAvailable" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="editRoleAvailable" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="commentRoleAvailable" Type="oneDrive.sharingOperationStatus" />
+        <Property Name="restrictedViewRoleAvailable" Type="oneDrive.sharingOperationStatus" />
       </ComplexType>
       <ComplexType Name="malware" OpenType="true">
         <Property Name="description" Type="Edm.String" />
@@ -7429,6 +7496,7 @@
         <Property Name="organizationLinkAbilities" Type="oneDrive.linkScopeAbilities" />
         <Property Name="specificPeopleLinkAbilities" Type="oneDrive.linkScopeAbilities" />
         <Property Name="directSharingAbilities" Type="oneDrive.directSharingAbilities" />
+        <Property Name="mainLinkAbilities" Type="oneDrive.mainLinkAbilities" />
       </ComplexType>
       <ComplexType Name="sharingInvitation" OpenType="true">
         <Property Name="email" Type="Edm.String" />
@@ -7620,6 +7688,8 @@
         <Property Name="siteSensitivityLabel" Type="Edm.String" />
         <Property Name="scopes" Type="Edm.String" />
         <Property Name="countOfCalls" Type="Edm.Int32" />
+        <Property Name="callType" Type="oneDrive.AnalyticsReportCallType" />
+        <Property Name="policiesOnSite" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="appInsightsParameters" OpenType="true">
         <Property Name="reportDuration" Type="Edm.Int32" />
@@ -9370,6 +9440,14 @@
       <EnumType Name="AnalyticsReportAccessGroupType">
         <Member Name="M365Group" Value="0" />
         <Member Name="SecurityGroup" Value="1" />
+      </EnumType>
+      <EnumType Name="AnalyticsReportCallType">
+        <Member Name="NotSet" Value="0" />
+        <Member Name="UserOnly" Value="1" />
+        <Member Name="ApplicationOnly" Value="2" />
+        <Member Name="UserAndApplication" Value="3" />
+        <Member Name="AnonymousUser" Value="4" />
+        <Member Name="AnonymousUserAndApplication" Value="5" />
       </EnumType>
       <EnumType Name="AnalyticsReportSharingLinkType">
         <Member Name="anonymousLink" Value="0" />
