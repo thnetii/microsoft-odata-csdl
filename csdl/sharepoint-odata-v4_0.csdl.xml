@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26503 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26510 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -542,6 +542,12 @@
       <ComplexType Name="CreateReviewRequestDTO">
         <Property Name="DocumentUri" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="CreateTemplateResponse">
+        <Property Name="ServerRelativeUrl" Type="Edm.String" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="UniqueID" Type="Edm.String" />
+        <Property Name="Url" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="CurrencyInformationCollection">
         <Property Name="Items" Type="Collection(SP.CurrencyInformation)" />
       </ComplexType>
@@ -682,6 +688,11 @@
       <ComplexType Name="RequestedTranslation">
         <Property Name="LanguageCode" Type="Edm.String" />
         <Property Name="WebRelativePath" Type="SP.ResourcePath" />
+      </ComplexType>
+      <ComplexType Name="RestrictAccessControlUpdate">
+        <Property Name="EnableRestrictedAccessPolicy" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Justification" Type="Edm.String" />
+        <Property Name="RestrictedAccessControlGroups" Type="Collection(Edm.String)" />
       </ComplexType>
       <ComplexType Name="RestrictContentOrgWidePolicyUpdate">
         <Property Name="IsPolicyEnabled" Type="Edm.Boolean" Nullable="false" />
@@ -2012,6 +2023,7 @@
         <Property Name="RelatedGroupId" Type="Edm.Guid" Nullable="false" />
         <Property Name="RequiredDesignerVersion" Type="Edm.String" />
         <Property Name="RestrictContentOrgWideSearchUpdate" Type="SP.RestrictContentOrgWidePolicyUpdate" />
+        <Property Name="RestrictedAccessControlGroupsDelegatedOnSite" Type="SP.RestrictAccessControlUpdate" />
         <Property Name="RestrictedAccessControlGroupsEnforcedOnSite" Type="Collection(Edm.String)" />
         <Property Name="SandboxedCodeActivationCapability" Type="Edm.Int32" Nullable="false" />
         <Property Name="ScheduledDateForRemoval" Type="Edm.String" />
@@ -5997,6 +6009,11 @@
         <Parameter Name="LibraryCategoryName" Type="Edm.String" />
         <Parameter Name="Description" Type="Edm.String" />
         <ReturnType Type="SP.List" />
+      </Action>
+      <Action Name="CreateTemplate" IsBound="true">
+        <Parameter Name="this" Type="SP.Web" />
+        <Parameter Name="templateCreationParameters" Type="Microsoft.SharePoint.Agreements.Models.TemplateCreationParameters" />
+        <ReturnType Type="SP.CreateTemplateResponse" />
       </Action>
       <Action Name="EnableContentSolutionApprovals" IsBound="true">
         <Parameter Name="this" Type="SP.List" />
@@ -11256,6 +11273,15 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOListParameters">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsM365AgentsOnSitesDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsReportMetadata">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsSiteDistributionDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPORestrictedContentDiscoverabilitySiteDetails">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -12760,6 +12786,9 @@
       <Annotations Target="SP.Site/RelatedGroupId">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.Site/RestrictedAccessControlGroupsDelegatedOnSite">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.Site/RestrictedAccessControlGroupsEnforcedOnSite">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -13874,6 +13903,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOGroup">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SPOPortalLaunchValidator">
@@ -27595,191 +27627,6 @@
         <Parameter Name="signals" Type="Collection(Microsoft.SharePoint.Client.Search.Analytics.AnalyticsSignal)" />
       </Action>
     </Schema>
-    <Schema Namespace="Microsoft.SharePoint.Administration.SiteMove.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <ComplexType Name="SiteMoveServiceInfo">
-        <Property Name="ServiceCapabilities" Type="Collection(Edm.Int32)" Nullable="false" />
-      </ComplexType>
-      <EntityType Name="SiteMoveService" />
-      <Function Name="SiteMoveService">
-        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="sourceDatabaseId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="targetDatabaseId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="clientIdentifier" Type="Edm.String" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Function>
-      <Action Name="AcquireSystemSiteLock" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lockRequestor" Type="Edm.String" />
-        <Parameter Name="lockType" Type="Edm.Byte" Nullable="false" />
-        <Parameter Name="leaseDurationInMinutes" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="SP.SystemSiteLockExpirationResult" />
-      </Action>
-      <Action Name="CheckSPSiteContentDatabase" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
-        <ReturnType Type="Edm.Boolean" Nullable="false" />
-      </Action>
-      <Action Name="ClearSiteRelocationMarker" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="CommitSessionToken" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="ExtendSystemSiteLockExpiration" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="leaseDurationInMinute" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="SP.SystemSiteLockExpirationResult" />
-      </Action>
-      <Action Name="GetCPSChangeToken" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.Int64" Nullable="false" />
-      </Action>
-      <Action Name="GetCPSSiteDeleteReason" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.Int16" Nullable="false" />
-      </Action>
-      <Action Name="GetDatabaseProperties" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetDataChunk" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="tableName" Type="Edm.String" />
-        <Parameter Name="schemaName" Type="Edm.String" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetDataChunks" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetDataChunksIterator" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetDataReader" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="sqlCommandText" Type="Edm.String" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetDBActivities" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetEventCacheDataChunk" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
-        <Parameter Name="searchChangeToken" Type="Edm.Int64" Nullable="false" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetEventCacheExColumns" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetEventCacheExDataChunk" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetEventCacheIds" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetFarmProperties" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetMarker" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetScalarValue" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="sqlCommandText" Type="Edm.String" />
-        <ReturnType Type="Edm.Int64" />
-      </Action>
-      <Action Name="GetServiceInfo" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveServiceInfo" />
-      </Action>
-      <Action Name="GetSiteMoveState" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetSiteProperties" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetTenantWorkflows" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Collection(Edm.String)" />
-      </Action>
-      <Action Name="GetValidationChunks" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="GetWorkItem" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.String" />
-      </Action>
-      <Action Name="IsDbReadOnly" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.Boolean" Nullable="false" />
-      </Action>
-      <Action Name="IsSystemSiteLocked" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lockRequestor" Type="Edm.String" />
-        <ReturnType Type="Edm.Boolean" Nullable="false" />
-      </Action>
-      <Action Name="LockSite" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <ReturnType Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="PauseCrawling" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="originalCPSDeleteReason" Type="Edm.Int16" Nullable="false" />
-      </Action>
-      <Action Name="ProcessStorageMetricsChanges" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="ReleaseSystemSiteLock" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="lockRequestor" Type="Edm.String" />
-        <ReturnType Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="RemoveSiteMapEntry" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="ResumeCrawling" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="originalCPSDeleteReason" Type="Edm.Int16" Nullable="false" />
-      </Action>
-      <Action Name="SetSiteMoveState" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="state" Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="SourceCleanupAfterMove" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="isDeleted" Type="Edm.Boolean" Nullable="false" />
-      </Action>
-      <Action Name="StartLockableSession" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="StartSnapshotIsolation" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="StopSessionToken" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-      <Action Name="UnlockSiteOnFailure" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-        <Parameter Name="originalLockFlags" Type="Edm.Int32" Nullable="false" />
-      </Action>
-      <Action Name="UpdateAbsBlobDates" IsBound="true">
-        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
-      </Action>
-    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Yammer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="WacToken">
         <Property Name="AccessToken" Type="Edm.String" />
@@ -30386,6 +30233,11 @@
         <Property Name="url" Type="Edm.String" />
         <Property Name="version" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="TemplateCreationParameters">
+        <Property Name="SourceFileUniqueId" Type="Edm.String" />
+        <Property Name="SourceLibraryId" Type="Edm.String" />
+        <Property Name="TemplateName" Type="Edm.String" />
+      </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="PolicyResourceStorage">
@@ -31067,6 +30919,7 @@
         <Property Name="accessors" Type="Collection(SP.Sharing.Principal)" />
         <Property Name="audience" Type="Edm.Int32" Nullable="false" />
         <Property Name="role" Type="Edm.Int32" Nullable="false" />
+        <Property Name="shareId" Type="Edm.Guid" Nullable="false" />
         <Property Name="url" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="MainLinkAbilities">
@@ -32584,6 +32437,7 @@
       </ComplexType>
       <ComplexType Name="SPContainerTypeStatus">
         <Property Name="ContainerTypeId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="IsActiveBillingProfile" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IsArchivable" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SPDataGovernanceInsightExportedReport">
@@ -32791,6 +32645,36 @@
         <Property Name="Id" Type="Edm.Guid" Nullable="false" />
         <Property Name="Title" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="SPOM365AgentInsightsM365AgentsOnSitesDetails">
+        <Property Name="AgentID" Type="Edm.String" />
+        <Property Name="AgentName" Type="Edm.String" />
+        <Property Name="AgentType" Type="Edm.String" />
+        <Property Name="AgentVersion" Type="Edm.String" />
+        <Property Name="ExternalSharing" Type="Edm.String" />
+        <Property Name="RequestVolume" Type="Edm.Int64" Nullable="false" />
+        <Property Name="RestrictSiteAccessEnabled" Type="Edm.String" />
+        <Property Name="RestrictSiteDiscoveryEnabled" Type="Edm.String" />
+        <Property Name="Sensitivity" Type="Edm.String" />
+        <Property Name="SiteID" Type="Edm.String" />
+        <Property Name="SiteName" Type="Edm.String" />
+        <Property Name="SiteOwner" Type="Edm.String" />
+        <Property Name="SiteType" Type="Edm.String" />
+        <Property Name="SiteURL" Type="Edm.String" />
+        <Property Name="TotalAgents" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TotalRequestVolume" Type="Edm.Int64" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="SPOM365AgentInsightsReportMetadata">
+        <Property Name="CreatedDateTimeInUtc" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="ReportPeriodInDays" Type="Edm.Int32" />
+        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="SPOM365AgentInsightsSiteDistributionDetails">
+        <Property Name="Agents" Type="Edm.Int32" Nullable="false" />
+        <Property Name="RequestVolume" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Sites" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Template" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPORestrictedContentDiscoverabilitySiteDetails">
         <Property Name="LastModified" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="SiteOwnerEmail" Type="Edm.String" />
@@ -32979,6 +32863,7 @@
         <Property Name="ApplyToExistingDocumentLibraries" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ApplyToNewDocumentLibraries" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ArchivedBy" Type="Edm.String" />
+        <Property Name="ArchivedFileDiskUsed" Type="Edm.Int64" Nullable="false" />
         <Property Name="ArchivedTime" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="ArchiveStatus" Type="Edm.String" />
         <Property Name="AuthContextStrength" Type="Edm.String" />
@@ -33108,6 +32993,7 @@
       </EntityType>
       <EntityType Name="SPOCopilotAgentInsightsRestApiClient" BaseType="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceRestApiClientBase" />
       <EntityType Name="SPOGroup" />
+      <EntityType Name="SPOM365AgentInsightsRestApiClient" BaseType="Microsoft.Online.SharePoint.TenantAdministration.SPDataGovernanceRestApiClientBase" />
       <EntityType Name="SPOMalwareFile">
         <Property Name="FilePath" Type="SP.ResourcePath" />
         <Property Name="MalwareInfo" Type="Edm.String" />
@@ -33179,6 +33065,7 @@
         <Property Name="AllowEditing" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowEveryoneExceptExternalUsersClaimInPrivateSite" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowGuestUserShareToUsersNotInSiteCollection" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AllowLegacyAuthProtocolsEnabledSetting" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowLegacyBrowserAuthProtocolsEnabledSetting" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowLimitedAccessOnUnmanagedDevices" Type="Edm.Boolean" Nullable="false" />
         <Property Name="AllowOverrideForBlockUserInfoVisibility" Type="Edm.Boolean" Nullable="false" />
@@ -33219,6 +33106,7 @@
         <Property Name="BlockUserInfoVisibilityInSharePoint" Type="Edm.Int32" Nullable="false" />
         <Property Name="BonusStorageQuotaMB" Type="Edm.Int64" Nullable="false" />
         <Property Name="BusinessConnectivityServiceDisabled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ClassicPagesRestrictMode" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnFilesDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnListItemsDisabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="CommentsOnSitePagesDisabled" Type="Edm.Boolean" Nullable="false" />
@@ -33812,6 +33700,40 @@
         <Parameter Name="groupId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="displayName" Type="Edm.String" />
+      </Action>
+      <Function Name="SPOM365AgentInsightsRestApiClient">
+        <Parameter Name="authorizationHeader" Type="Edm.String" />
+        <Parameter Name="url" Type="Edm.String" />
+        <Parameter Name="userAgent" Type="Edm.String" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+      </Function>
+      <Action Name="CreateM365AgentInsightsReport" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+        <Parameter Name="reportPeriod" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsReportMetadata" />
+      </Action>
+      <Action Name="GetAllM365AgentInsightsReportsMetadata" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsReportMetadata)" />
+      </Action>
+      <Action Name="GetM365AgentInsightsFullReportContent" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+        <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="reportSubType" Type="Edm.String" />
+        <Parameter Name="isFullDetails" Type="Edm.Boolean" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetM365AgentsOnSitesTopDetails" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+        <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="isFullDetails" Type="Edm.Boolean" Nullable="false" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsM365AgentsOnSitesDetails)" />
+      </Action>
+      <Action Name="GetSiteDistributionsTopDetails" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsRestApiClient" />
+        <Parameter Name="reportId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="isFullDetails" Type="Edm.Boolean" Nullable="false" />
+        <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SPOM365AgentInsightsSiteDistributionDetails)" />
       </Action>
       <Action Name="GetMalwareFileStream" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.SPOMalwareFile" />
@@ -37741,6 +37663,188 @@
         <Parameter Name="customSettings" Type="Collection(SP.KeyValue)" />
         <ReturnType Type="Microsoft.BusinessData.Infrastructure.SecureStore.ConnectionSettings" />
       </Function>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.SiteMove.Service" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="SiteMoveService" />
+      <Function Name="SiteMoveService">
+        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="sourceDatabaseId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="targetDatabaseId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="clientIdentifier" Type="Edm.String" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Function>
+      <Action Name="AcquireSystemSiteLock" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lockRequestor" Type="Edm.String" />
+        <Parameter Name="lockType" Type="Edm.Byte" Nullable="false" />
+        <Parameter Name="leaseDurationInMinutes" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="SP.SystemSiteLockExpirationResult" />
+      </Action>
+      <Action Name="CheckSPSiteContentDatabase" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="ClearSiteRelocationMarker" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="CommitSessionToken" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="ExtendSystemSiteLockExpiration" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="leaseDurationInMinute" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="SP.SystemSiteLockExpirationResult" />
+      </Action>
+      <Action Name="GetCPSChangeToken" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.Int64" Nullable="false" />
+      </Action>
+      <Action Name="GetCPSSiteDeleteReason" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.Int16" Nullable="false" />
+      </Action>
+      <Action Name="GetDatabaseProperties" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDataChunk" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="tableName" Type="Edm.String" />
+        <Parameter Name="schemaName" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDataChunks" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDataChunksIterator" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDataReader" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="sqlCommandText" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetDBActivities" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetEventCacheDataChunk" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
+        <Parameter Name="searchChangeToken" Type="Edm.Int64" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetEventCacheExColumns" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetEventCacheExDataChunk" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetEventCacheIds" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lastCopiedId" Type="Edm.Int64" Nullable="false" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetFarmProperties" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetMarker" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetScalarValue" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="sqlCommandText" Type="Edm.String" />
+        <ReturnType Type="Edm.Int64" />
+      </Action>
+      <Action Name="GetServiceVersion" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="GetSiteMoveState" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetSiteProperties" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetTenantWorkflows" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Collection(Edm.String)" />
+      </Action>
+      <Action Name="GetValidationChunks" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="GetWorkItem" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
+      <Action Name="IsDbReadOnly" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="IsSystemSiteLocked" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lockRequestor" Type="Edm.String" />
+        <ReturnType Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="LockSite" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="PauseCrawling" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="originalCPSDeleteReason" Type="Edm.Int16" Nullable="false" />
+      </Action>
+      <Action Name="ProcessStorageMetricsChanges" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="ReleaseSystemSiteLock" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="lockRequestor" Type="Edm.String" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="RemoveSiteMapEntry" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="ResumeCrawling" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="originalCPSDeleteReason" Type="Edm.Int16" Nullable="false" />
+      </Action>
+      <Action Name="SetSiteMoveState" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="state" Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="SourceCleanupAfterMove" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="isDeleted" Type="Edm.Boolean" Nullable="false" />
+      </Action>
+      <Action Name="StartLockableSession" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="StartSnapshotIsolation" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="StopSessionToken" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
+      <Action Name="UnlockSiteOnFailure" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <Parameter Name="originalLockFlags" Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="UpdateAbsBlobDates" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+      </Action>
     </Schema>
     <Schema Namespace="SP.OAuth" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityType Name="TokenResponse">
