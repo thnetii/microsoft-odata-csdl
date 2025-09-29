@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26510 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26517 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -594,6 +594,10 @@
         <Property Name="FieldValues" Type="Collection(SP.CAFieldValue)" />
         <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="FollowedSitesParams">
+        <Property Name="Skip" Type="Edm.Int32" />
+        <Property Name="Top" Type="Edm.Int32" />
+      </ComplexType>
       <ComplexType Name="FontOption">
         <Property Name="fontFace" Type="Edm.String" />
         <Property Name="fontFamilyKey" Type="Edm.String" />
@@ -635,6 +639,9 @@
         <Property Name="binaryPayload" Type="Edm.Binary" />
         <Property Name="jobId" Type="Edm.Guid" Nullable="false" />
         <Property Name="userId" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="NgspRequestParams">
+        <Property Name="FollowedSites" Type="SP.FollowedSitesParams" />
       </ComplexType>
       <ComplexType Name="Placeholder">
         <Property Name="DataType" Type="Edm.String" />
@@ -690,7 +697,8 @@
         <Property Name="WebRelativePath" Type="SP.ResourcePath" />
       </ComplexType>
       <ComplexType Name="RestrictAccessControlUpdate">
-        <Property Name="EnableRestrictedAccessPolicy" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsPolicyEnabledAtSite" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsPolicyEnabledAtTenant" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Justification" Type="Edm.String" />
         <Property Name="RestrictedAccessControlGroups" Type="Collection(Edm.String)" />
       </ComplexType>
@@ -3194,6 +3202,7 @@
       </EntityType>
       <EntityType Name="ListHomeItemCollection" Abstract="true" />
       <EntityType Name="NewsCollection" Abstract="true" />
+      <EntityType Name="NgspDataCollection" Abstract="true" />
       <EntityType Name="ObjectSharingSettings">
         <Property Name="AccessRequestMode" Type="Edm.Boolean" Nullable="false" />
         <Property Name="BlockPeoplePickerAndSharing" Type="Edm.Boolean" Nullable="false" />
@@ -15771,7 +15780,7 @@
       <Annotations Target="Microsoft.SharePoint.Portal.ArchiveTeamChannelSite(Microsoft.SharePoint.Portal.SPSiteManager, Edm.Guid, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.SharePoint.Portal.ArchiveTeamConnectedSite(Microsoft.SharePoint.Portal.SPSiteManager, Edm.Guid, Edm.Boolean)">
+      <Annotations Target="Microsoft.SharePoint.Portal.ArchiveTeamConnectedSite(Microsoft.SharePoint.Portal.SPSiteManager, Edm.Guid, Edm.Boolean, Microsoft.SharePoint.Portal.GroupMoveOperation, Microsoft.SharePoint.Portal.GroupMoveOperation)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Portal.AreSegmentsCompatible(Microsoft.SharePoint.Portal.SPSiteManager, Collection(Edm.Guid))">
@@ -16930,6 +16939,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.NewsCollection.MultiSiteNews(Edm.String, Edm.Int32, Edm.Int32, Edm.Boolean, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.NgspDataCollection.GetNgspData(SP.NgspRequestParams)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.OneDriveItemCollection.GetSmartCacheData(Collection(Edm.String))">
@@ -19270,12 +19282,6 @@
         <Parameter Name="location" Type="Edm.String" />
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.AllowedDataLocation" />
       </Function>
-      <Function Name="CompatibleDB">
-        <Parameter Name="dbSchemaVersion" Type="Edm.String" />
-        <Parameter Name="siteSubscriptionId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="siteUrl" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.CompatibleDB" />
-      </Function>
       <Function Name="GetByMoveId" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.CrossFarmGroupMoveJob)" />
         <Parameter Name="moveId" Type="Edm.Guid" Nullable="false" />
@@ -19312,12 +19318,6 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.CrossFarmUserMoveJob" />
       </Action>
-      <Function Name="CrossGeoTenantBYOK">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.CrossGeoTenantBYOK" />
-      </Function>
-      <Function Name="CrossGeoTenantCompatibility">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.CrossGeoTenantCompatibility" />
-      </Function>
       <Function Name="GetByPropertyNameAndGeoLocation" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.CrossGeoTenantProperty)" />
         <Parameter Name="propertyName" Type="Edm.String" />
@@ -19352,9 +19352,6 @@
       </Function>
       <Function Name="DBLevelWorkItem">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.DBLevelWorkItem" />
-      </Function>
-      <Function Name="DBSchemaCompatibilityCheck">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.DBSchemaCompatibilityCheck" />
       </Function>
       <Function Name="DeleteTargetSiteEntity">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.DeleteTargetSiteEntity" />
@@ -19401,9 +19398,6 @@
       <Action Name="DeleteObject" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.GeoAdministrator" />
       </Action>
-      <Function Name="GeoExperience">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.GeoExperience" />
-      </Function>
       <Action Name="UpgradeAllInstancesToSPOMode" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.GeoExperience" />
       </Action>
@@ -19412,9 +19406,6 @@
       </Action>
       <Function Name="GeoLocationData">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.GeoLocationData" />
-      </Function>
-      <Function Name="GeoMoveCompatibilityChecks">
-        <ReturnType Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.GeoMoveTenantCompatibilityCheck)" />
       </Function>
       <Function Name="GetByGeoLocation" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.GeoTenantInstanceInformation)" />
@@ -19456,26 +19447,9 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.GroupMoveJob" />
       </Action>
-      <Function Name="HasMnALicense">
-        <Parameter Name="mnALicenseType" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.HasMnALicense" />
-      </Function>
-      <Function Name="MnAGroupMoveValidationResult">
-        <Parameter Name="encodedQuery" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.MnAGroupMoveValidationResult" />
-      </Function>
-      <Function Name="MoveSites">
-        <ReturnType Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.MoveSiteROState)" />
-      </Function>
       <Function Name="GetBySiteId" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.MoveSiteROState)" />
         <Parameter Name="siteId" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.MoveSiteROState" />
-      </Function>
-      <Function Name="MoveSiteROStateEntity">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.MoveSiteROStateEntity" />
-      </Function>
-      <Function Name="MoveSiteROState">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.MoveSiteROState" />
       </Function>
       <Action Name="UpdateSiteROState" IsBound="true">
@@ -19557,26 +19531,6 @@
         <Parameter Name="targetTenantHostUrl" Type="Edm.String" />
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.XTenantMoveCompatibilityCheck" />
       </Function>
-      <Function Name="OrgRelationGroupManagedPath">
-        <Parameter Name="encodedNotificationQuery" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.OrgRelationGroupManagedPath" />
-      </Function>
-      <Function Name="OrgRelationNotification">
-        <Parameter Name="encodedNotificationQuery" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.OrgRelationNotification" />
-      </Function>
-      <Function Name="OrgRelationVerification">
-        <Parameter Name="encodedVerificationQuery" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.OrgRelationVerification" />
-      </Function>
-      <Function Name="ResolveUserUpnByUserObjectId">
-        <Parameter Name="userObjectId" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.ResolveUserUpnByUserObjectId" />
-      </Function>
-      <Function Name="RestoreWorkflowCount">
-        <Parameter Name="isCrossTenant" Type="Edm.Boolean" Nullable="false" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.RestoreWorkflowCount" />
-      </Function>
       <Function Name="SBSiteMoveJob">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.SBSiteMoveJob" />
       </Function>
@@ -19646,9 +19600,6 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.StorageQuota" />
       </Action>
-      <Function Name="TaxonomyReplicationParameters">
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.TaxonomyReplicationParameters" />
-      </Function>
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.TaxonomyReplicationParameters" />
       </Action>
@@ -19662,10 +19613,6 @@
       </Function>
       <Function Name="UpdateGLSRegistrationEntity">
         <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.UpdateGLSRegistrationEntity" />
-      </Function>
-      <Function Name="UserMnAODMoveValidationResult">
-        <Parameter Name="encodedQuery" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.UserMnAODMoveValidationResult" />
       </Function>
       <Function Name="GetByDirection" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Collection(Microsoft.Online.SharePoint.MultiGeo.Service.UserMoveJob)" />
@@ -19711,18 +19658,6 @@
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.MultiGeo.Service.UserMoveJob" />
       </Action>
-      <Function Name="UserPersonalSiteId">
-        <Parameter Name="userPrincipalName" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.UserPersonalSiteId" />
-      </Function>
-      <Function Name="UserPersonalSiteLocation">
-        <Parameter Name="userPrincipalName" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.UserPersonalSiteLocation" />
-      </Function>
-      <Function Name="XTenantMoveCompatibilityCheck">
-        <Parameter Name="targetTenantHostUrl" Type="Edm.String" />
-        <ReturnType Type="Microsoft.Online.SharePoint.MultiGeo.Service.XTenantMoveCompatibilityCheck" />
-      </Function>
     </Schema>
     <Schema Namespace="SP.Directory.Provider" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="AlternateIdData">
@@ -27761,6 +27696,10 @@
         <Property Name="IsAlreadyAdded" Type="Edm.Boolean" Nullable="false" />
         <Property Name="SiteUrl" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="GroupMoveOperation">
+        <Property Name="SourceGroup" Type="Edm.String" />
+        <Property Name="TargetGroup" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="SPSiteCreationResponse">
         <Property Name="SiteId" Type="Edm.String" />
         <Property Name="SiteStatus" Type="Edm.Int32" Nullable="false" />
@@ -28047,8 +27986,10 @@
       </Action>
       <Action Name="ArchiveTeamConnectedSite" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Portal.SPSiteManager" />
-        <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
-        <Parameter Name="archive" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="SiteId" Type="Edm.Guid" Nullable="false" />
+        <Parameter Name="IsArchive" Type="Edm.Boolean" Nullable="false" />
+        <Parameter Name="ModernGroupMemberMove" Type="Microsoft.SharePoint.Portal.GroupMoveOperation" />
+        <Parameter Name="AllTenantUserMove" Type="Microsoft.SharePoint.Portal.GroupMoveOperation" />
       </Action>
       <Function Name="AreSegmentsCompatible" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Portal.SPSiteManager" />
@@ -32291,6 +32232,7 @@
         <Property Name="IncludeDetail" Type="Edm.Boolean" Nullable="false" />
         <Property Name="IncludePersonalSite" Type="Edm.Int32" Nullable="false" />
         <Property Name="IncludeSystemUserSite" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsAuthoritative" Type="Edm.Boolean" Nullable="false" />
         <Property Name="StartIndex" Type="Edm.String" />
         <Property Name="Template" Type="Edm.String" />
       </ComplexType>
@@ -33997,6 +33939,13 @@
       </Action>
       <Action Name="EnsureBrandCenterFeature" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+      </Action>
+      <Action Name="ExecuteSliceAndDiceRequest" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="reportFeatureId" Type="Edm.String" />
+        <Parameter Name="jsonQuery" Type="Edm.String" />
+        <Parameter Name="filters" Type="Collection(SP.KeyValue)" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.ReportDetails" />
       </Action>
       <Action Name="ExecuteTranspilerRequest" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -41112,6 +41061,12 @@
         <Parameter Name="languageOverride" Type="Edm.String" />
         <ReturnType Type="Microsoft.SharePoint.News.DataModel.ItemsList" />
       </Action>
+    </Schema>
+    <Schema Namespace="SP.NgspDataCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="GetNgspData" IsComposable="true">
+        <Parameter Name="request" Type="SP.NgspRequestParams" />
+        <ReturnType Type="Edm.String" />
+      </Function>
     </Schema>
     <Schema Namespace="SP.OneDriveItemCollection" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <Function Name="GetSmartCacheData" IsComposable="true">
