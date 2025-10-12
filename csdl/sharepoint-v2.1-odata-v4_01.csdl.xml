@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26524 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26601 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1833,6 +1833,7 @@
         <Property Name="feature" Type="Edm.String" />
         <Property Name="featureset" Type="Collection(Edm.String)" />
         <Property Name="migratedfeatureset" Type="Collection(Edm.String)" />
+        <Property Name="subfeatures" Type="Collection(oneDrive.subfeaturemapping)" />
         <Property Name="tenantid" Type="Edm.Guid" />
         <Property Name="subscriptionid" Type="Edm.Guid" />
         <Property Name="subscriptionstate" Type="Edm.String" />
@@ -5062,6 +5063,10 @@
         <Property Name="agId" Type="Edm.Guid" />
         <Property Name="lastNotification" Type="oneDrive.AmountAndDate" />
       </ComplexType>
+      <ComplexType Name="subfeaturemapping" OpenType="true">
+        <Property Name="feature" Type="Edm.String" />
+        <Property Name="subfeatures" Type="Collection(Edm.String)" />
+      </ComplexType>
       <ComplexType Name="elementUpdate" OpenType="true">
         <Property Name="action" Type="Edm.String" />
         <Property Name="elementId" Type="Edm.String" />
@@ -5142,6 +5147,31 @@
         <Property Name="value" Type="Edm.String" />
         <Property Name="createdTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="CortexPage" OpenType="true">
+        <Property Name="snippet" Type="Edm.String" />
+        <Property Name="pageNumber" Type="Edm.Int32" Nullable="false" />
+        <Property Name="thumbnail" Type="oneDrive.CortexPageThumbnail" />
+      </ComplexType>
+      <ComplexType Name="cortexPagesRequest" OpenType="true">
+        <Property Name="semanticModel" Type="Edm.String" />
+        <Property Name="pageNumbers" Type="Collection(Edm.Int32)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="CortexPagesResult" OpenType="true">
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="fileName" Type="Edm.String" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="reference" Type="oneDrive.itemReference" />
+        <Property Name="sensitivityLabel" Type="Edm.String" />
+        <Property Name="pages" Type="Collection(oneDrive.CortexPage)" />
+        <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="semanticModel" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CortexPageThumbnail" OpenType="true">
+        <Property Name="thumbnailBase64" Type="Edm.String" />
+        <Property Name="mimeType" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="CortexQueryResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
@@ -5171,6 +5201,17 @@
         <Property Name="embedding" Type="Collection(Edm.Single)" Nullable="false" />
         <Property Name="pageNumbers" Type="Collection(Edm.Int64)" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="CortexImagesResult" OpenType="true">
+        <Property Name="cortexImages" Type="Collection(oneDrive.CortexImage)" />
+      </ComplexType>
+      <ComplexType Name="CortexImage" OpenType="true">
+        <Property Name="signature" Type="Edm.String" />
+        <Property Name="imgBase64" Type="Edm.String" />
+        <Property Name="mimeType" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="cortexImagesRequest" OpenType="true">
+        <Property Name="imageSignatures" Type="Collection(Edm.String)" />
+      </ComplexType>
       <ComplexType Name="CortexResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
@@ -5188,6 +5229,21 @@
       </ComplexType>
       <ComplexType Name="CortexSetSummariesResult" OpenType="true">
         <Property Name="count" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="cortexTocRequest" OpenType="true">
+        <Property Name="semanticModel" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="CortexTocResult" OpenType="true">
+        <Property Name="createdBy" Type="oneDrive.identitySet" />
+        <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="fileName" Type="Edm.String" />
+        <Property Name="lastModifiedBy" Type="oneDrive.identitySet" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="reference" Type="oneDrive.itemReference" />
+        <Property Name="sensitivityLabel" Type="Edm.String" />
+        <Property Name="tableOfContents" Type="Edm.String" />
+        <Property Name="webUrl" Type="Edm.String" />
+        <Property Name="semanticModel" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="agentQuery" OpenType="true">
         <Property Name="query" Type="Edm.String" />
@@ -5676,6 +5732,7 @@
         <Property Name="payload" Type="Edm.String" />
         <Property Name="timestamp" Type="Edm.Int64" />
         <Property Name="messageId" Type="Edm.String" />
+        <Property Name="batchType" Type="oneDrive.BatchTypes" />
       </ComplexType>
       <ComplexType Name="searchSuggestion" OpenType="true">
         <Property Name="suggestion" Type="Edm.String" />
@@ -9838,6 +9895,11 @@
         <Member Name="NotExtracted" Value="2" />
         <Member Name="Error" Value="3" />
       </EnumType>
+      <EnumType Name="BatchTypes">
+        <Member Name="PHASE1" Value="0" />
+        <Member Name="PHASE2" Value="1" />
+        <Member Name="unknownFutureValue" Value="2" />
+      </EnumType>
       <EnumType Name="FaceAIState">
         <Member Name="ShowConsent" Value="0" />
         <Member Name="Enabled" Value="1" />
@@ -11009,6 +11071,12 @@
         <Parameter Name="applicationId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
+      <Action Name="executeAuthorizationCheckOnResources" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.userCapabilityApis" />
+        <Parameter Name="userPrincipalNames" Type="Collection(Edm.String)" />
+        <Parameter Name="resourceURLs" Type="Collection(Edm.String)" />
+        <ReturnType Type="oneDrive.authorizationUserCapabilityResponse" />
+      </Action>
       <Function Name="getSasToken" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.privateApis" />
         <ReturnType Type="oneDrive.azureMapSASTokenResponse" />
@@ -11326,6 +11394,18 @@
       <Action Name="setSummaries" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexResult" />
+      </Action>
+      <Action Name="getTableOfContents" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <ReturnType Type="oneDrive.CortexTocResult" />
+      </Action>
+      <Action Name="getPages" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <ReturnType Type="oneDrive.CortexPagesResult" />
+      </Action>
+      <Action Name="getImages" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <ReturnType Type="oneDrive.CortexImagesResult" />
       </Action>
       <Action Name="setCortexIndexing" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
@@ -11860,6 +11940,9 @@
       <Action Name="createTmrUploadSession" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.item" />
         <Parameter Name="item" Type="oneDrive.chunkedUploadSessionDescriptor">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="deferCommit" Type="Edm.Boolean">
           <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
         </Parameter>
         <ReturnType Type="oneDrive.tmrUploadSession" />

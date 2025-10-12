@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26524 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26601 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -214,6 +214,8 @@
         <Property Name="card" Type="SP.AdaptiveCard" />
       </ComplexType>
       <ComplexType Name="AdaptiveCard">
+        <Property Name="autoInvokeAction" Type="Microsoft.SharePoint.QuickActionMessageCard.AutoInvokeAction" />
+        <Property Name="autoInvokeOptions" Type="Microsoft.SharePoint.QuickActionMessageCard.AutoInvokeOptions" />
         <Property Name="body" Type="Collection(SP.CardElement)" />
         <Property Name="correlationId" Type="Edm.String" />
         <Property Name="hideOriginalBody" Type="Edm.Boolean" Nullable="false" />
@@ -642,7 +644,11 @@
       </ComplexType>
       <ComplexType Name="NgspRequestParams">
         <Property Name="FollowedSites" Type="SP.FollowedSitesParams" />
+        <Property Name="OwnedByMe" Type="SP.OwnedByMeParams" />
         <Property Name="RecentFiles" Type="SP.RecentFilesParams" />
+      </ComplexType>
+      <ComplexType Name="OwnedByMeParams">
+        <Property Name="Top" Type="Edm.Int32" />
       </ComplexType>
       <ComplexType Name="RecentFilesParams">
         <Property Name="Top" Type="Edm.Int32" />
@@ -4274,6 +4280,10 @@
         <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
         <Parameter Name="data" Type="Microsoft.SharePoint.DynamicContent.AddRawQuestionsPayload" />
       </Action>
+      <Action Name="AddOrUpdateFAQContentUpdateSuggestion" IsBound="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="suggestion" Type="Microsoft.SharePoint.DynamicContent.SuggestionItemParameters" />
+      </Action>
       <Action Name="DeleteFAQAggregatedQuestion" IsBound="true">
         <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
         <Parameter Name="data" Type="Microsoft.SharePoint.DynamicContent.DeleteAggregatedQuestionsPayload" />
@@ -4292,6 +4302,12 @@
         <Parameter Name="webPartInstanceId" Type="Edm.Guid" Nullable="false" />
         <Parameter Name="uniqueId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.DynamicContent.AggregatedQuestionsResult" />
+      </Function>
+      <Function Name="FAQContentUpdateSuggestions" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
+        <Parameter Name="maxItemCount" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="snoozedIdentifiers" Type="Edm.String" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.DynamicContent.FaqSuggestionItem)" />
       </Function>
       <Function Name="FAQUserSubmittedQuestions" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.DynamicContentUpdateService" />
@@ -9975,7 +9991,13 @@
       <Annotations Target="Microsoft.SharePoint.DynamicContent.EnsureListItemResult">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.FaqSuggestionItem">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.SharePoint.DynamicContent.RawQuestionsResult">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.DynamicContent.SuggestionItemParameters">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Deployment.ShortcutInformation">
@@ -10108,6 +10130,15 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Administration.CustomFontsResource">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.FileRequestBrandingAssetConfig">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.FileRequestBrandingProfile">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.SharePoint.Administration.FileRequestBrandingCdnInfo">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.SharePoint.Administration.TenantAdmin.InsightsSummaryResponse">
@@ -17737,6 +17768,9 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.GetCopilotPromoOptInStatus(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.GetFileRequestBrandingProfiles(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.GetOrgAssets(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -17776,7 +17810,13 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.GetTrackViewFeatureAlwaysVisible(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.RemoveFileRequestBrandingProfile(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.Int32)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.RemoveFromOrgAssets(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.String, Edm.Guid)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SaveFileRequestBrandingAssetConfig(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.String, Edm.String, Edm.String, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SetCopilotPromoOptInStatus(Microsoft.Online.SharePoint.TenantAdministration.Tenant, Edm.Boolean)">
@@ -17804,6 +17844,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SetTrackViewFeatureAlwaysVisible(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.SwitchFileRequestBrandingProfiles(Microsoft.Online.SharePoint.TenantAdministration.Tenant)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.UpdateSyntexCustomModelSetting(Microsoft.Online.SharePoint.TenantAdministration.Tenant, SP.SyntexCustomModelSetting, Edm.Int32)">
@@ -28448,6 +28491,7 @@
       <ComplexType Name="SuggestionItem">
         <Property Name="DismissedDate" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="Identifier" Type="Edm.String" />
+        <Property Name="Metadata" Type="Edm.String" />
         <Property Name="State" Type="Edm.Int32" Nullable="false" />
         <Property Name="SuggestionType" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
@@ -28545,6 +28589,7 @@
         <Property Name="hideCardOnInvoke" Type="Edm.String" />
         <Property Name="target" Type="Edm.String" />
         <Property Name="type" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="Header">
         <Property Name="name" Type="Edm.String" />
@@ -29680,8 +29725,20 @@
         <Property Name="ListItemId" Type="Edm.Int32" Nullable="false" />
         <Property Name="UniqueId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="FaqSuggestionItem">
+        <Property Name="Identifier" Type="Edm.String" />
+        <Property Name="Metadata" Type="Edm.String" />
+        <Property Name="PageItemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PageUrl" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="RawQuestionsResult">
         <Property Name="Questions" Type="Collection(Microsoft.SharePoint.DynamicContent.Question)" />
+      </ComplexType>
+      <ComplexType Name="SuggestionItemParameters">
+        <Property Name="Metadata" Type="Edm.String" />
+        <Property Name="PageItemId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="State" Type="Edm.String" />
+        <Property Name="WebPartInstanceId" Type="Edm.Guid" Nullable="false" />
       </ComplexType>
     </Schema>
     <Schema Namespace="Microsoft.SharePoint.Deployment" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -29893,6 +29950,24 @@
         <Property Name="fullPath" Type="Edm.String" />
         <Property Name="MajVer" Type="Edm.Int32" Nullable="false" />
         <Property Name="type" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="FileRequestBrandingAssetConfig">
+        <Property Name="AssetLibraryRelativeUrl" Type="Edm.String" />
+        <Property Name="AssetLibraryUrl" Type="Edm.String" />
+        <Property Name="BrandedProfiles" Type="Collection(Microsoft.SharePoint.Administration.FileRequestBrandingProfile)" />
+      </ComplexType>
+      <ComplexType Name="FileRequestBrandingProfile">
+        <Property Name="BackgroundFileId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="BackgroundFileName" Type="Edm.String" />
+        <Property Name="BackgroundFileUrl" Type="Edm.String" />
+        <Property Name="LogoFileId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="LogoFileName" Type="Edm.String" />
+        <Property Name="LogoFileUrl" Type="Edm.String" />
+        <Property Name="ProfileType" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="FileRequestBrandingCdnInfo">
+        <Property Name="BackgroundFilePublicCdnUrl" Type="Edm.String" />
+        <Property Name="LogoFilePublicCdnUrl" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="UsageEntry">
         <Property Name="EventTypeId" Type="Edm.Int32" Nullable="false" />
@@ -33858,6 +33933,11 @@
       <Action Name="EnsureBrandCenterFeature" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
+      <Action Name="ExecuteGetReportDetailsRequest" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="reportFeatureId" Type="Edm.String" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.ReportDetails" />
+      </Action>
       <Action Name="ExecuteSliceAndDiceRequest" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="reportFeatureId" Type="Edm.String" />
@@ -33964,6 +34044,10 @@
         <Parameter Name="startIndex" Type="Edm.String" />
         <ReturnType Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.DeletedSiteProperties)" />
       </Action>
+      <Function Name="GetFileRequestBrandingProfiles" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.FileRequestBrandingAssetConfig" />
+      </Function>
       <Action Name="GetFileSensitivityLabelInfo" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="fileUrl" Type="Edm.String" />
@@ -34456,6 +34540,10 @@
         <Parameter Name="siteId" Type="Edm.Guid" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SpoOperation" />
       </Action>
+      <Action Name="RemoveFileRequestBrandingProfile" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="profileType" Type="Edm.Int32" Nullable="false" />
+      </Action>
       <Action Name="RemoveFileTypeVersionPolicy" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="fileTypes" Type="Collection(Edm.String)" />
@@ -34802,6 +34890,13 @@
         <Parameter Name="principals" Type="Collection(Edm.String)" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.HubSiteProperties" />
       </Action>
+      <Action Name="SaveFileRequestBrandingAssetConfig" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="assetLibraryUrl" Type="Edm.String" />
+        <Parameter Name="logoFileUrl" Type="Edm.String" />
+        <Parameter Name="backgroundFileUrl" Type="Edm.String" />
+        <Parameter Name="profileType" Type="Edm.Int32" Nullable="false" />
+      </Action>
       <Action Name="SendEmail" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="siteUrl" Type="Edm.String" />
@@ -34976,6 +35071,9 @@
         <Parameter Name="includeSmartGestures" Type="Edm.Boolean" Nullable="false" />
         <Parameter Name="force" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.Online.SharePoint.TenantAdministration.SpoOperation" />
+      </Action>
+      <Action Name="SwitchFileRequestBrandingProfiles" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
       </Action>
       <Action Name="SyncVersionPolicyForLibrary" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -38668,6 +38766,7 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <Parameter Name="name" Type="Edm.String" />
         <Parameter Name="themeJson" Type="Edm.String" />
+        <Parameter Name="shouldParseColorPair" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="AddToOrgAssetsLibAndCdn" IsBound="true">
@@ -38901,6 +39000,7 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantManagement.Office365Tenant" />
         <Parameter Name="name" Type="Edm.String" />
         <Parameter Name="themeJson" Type="Edm.String" />
+        <Parameter Name="shouldParseColorPair" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Edm.Boolean" Nullable="false" />
       </Action>
       <Action Name="UploadCustomFontsAndCatalogLib" IsBound="true">
