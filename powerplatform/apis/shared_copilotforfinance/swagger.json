@@ -355,13 +355,26 @@
             "required": false,
             "x-ms-summary": "Reconciliation template id",
             "description": "Reconciliation template id"
+          },
+          {
+            "in": "query",
+            "name": "summaryFormat",
+            "type": "string",
+            "required": false,
+            "x-ms-summary": "Summary format",
+            "description": "Format for the reconciliation summary",
+            "enum": [
+              "HTML",
+              "Markdown",
+              "PlainText"
+            ]
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully generated reconciliation report file.",
+            "description": "Successfully generated reconciliation report file, summary and metrics.",
             "schema": {
-              "$ref": "#/definitions/ReconciliationReportWithSummary"
+              "$ref": "#/definitions/ReconciliationReportWithSummaryV2"
             }
           },
           "default": {
@@ -662,9 +675,51 @@
         "reconciliationReport": {
           "$ref": "#/definitions/ReconciliationReport"
         },
-        "reconciliationSummary": {
+        "summary": {
           "type": "string",
           "description": "Reconciliation report summary"
+        }
+      }
+    },
+    "ReconciliationReportWithSummaryV2": {
+      "type": "object",
+      "properties": {
+        "reconciliationReport": {
+          "$ref": "#/definitions/ReconciliationReport"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Reconciliation report summary"
+        },
+        "reconciliationMetrics": {
+          "type": "object",
+          "properties": {
+            "matchedTransactions": {
+              "$ref": "#/definitions/AggregationResult"
+            },
+            "potentiallyMatchedTransactions": {
+              "$ref": "#/definitions/AggregationResult"
+            },
+            "primaryUnmatchedTransactions": {
+              "$ref": "#/definitions/AggregationResult"
+            },
+            "secondaryUnmatchedTransactions": {
+              "$ref": "#/definitions/AggregationResult"
+            }
+          }
+        }
+      }
+    },
+    "AggregationResult": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sum": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
