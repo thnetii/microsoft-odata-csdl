@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26601 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26608 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1386,6 +1386,8 @@
       <EntityType Name="crossOrganizationMigrationRoot" OpenType="true">
         <NavigationProperty Name="identityMappingUsers" Type="Collection(oneDrive.identityMappingUser)" ContainsTarget="true" />
         <NavigationProperty Name="crossOrganizationMigrationTasks" Type="Collection(oneDrive.crossOrganizationMigrationTask)" ContainsTarget="true" />
+        <NavigationProperty Name="userMappings" Type="Collection(oneDrive.crossOrganizationUserIdentityMapping)" ContainsTarget="true" />
+        <NavigationProperty Name="groupMappings" Type="Collection(oneDrive.crossOrganizationGroupIdentityMapping)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="identityMappingUser" OpenType="true">
         <Key>
@@ -1410,6 +1412,55 @@
         <Property Name="lastUpdatedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="finishedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="errors" Type="Collection(Edm.String)" />
+      </EntityType>
+      <EntityType Name="crossOrganizationIdentityMapping" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="sourceOrganizationId" Type="Edm.Guid" />
+      </EntityType>
+      <EntityType Name="crossOrganizationUserIdentityMapping" BaseType="oneDrive.crossOrganizationIdentityMapping" OpenType="true">
+        <Property Name="sourceUserPrincipalName" Type="Edm.String" />
+        <Property Name="sourceUserIdentity" Type="oneDrive.userIdentity" />
+        <Property Name="targetUserIdentity" Type="oneDrive.userIdentity" />
+        <Property Name="userType" Type="oneDrive.CrossOrganizationIdentityMappingUserType" />
+        <Property Name="targetUserMigrationData" Type="oneDrive.crossOrganizationIdentityMappingUserMigrationData" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="sourceUserPrincipalName" />
+                    <PropertyValue Property="Name" PropertyPath="sourceUserPrincipalName" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
+      </EntityType>
+      <EntityType Name="crossOrganizationGroupIdentityMapping" BaseType="oneDrive.crossOrganizationIdentityMapping" OpenType="true">
+        <Property Name="sourceGroupObjectId" Type="Edm.String" />
+        <Property Name="sourceGroupIdentity" Type="oneDrive.identity" />
+        <Property Name="targetGroupIdentity" Type="oneDrive.identity" />
+        <Property Name="groupType" Type="oneDrive.CrossOrganizationIdentityMappingGroupType" />
+        <Property Name="targetGroupMigrationData" Type="oneDrive.crossOrganizationIdentityMappingGroupMigrationData" />
+        <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+          <Collection>
+            <Record Type="OData.Community.Keys.V1.AlternateKey">
+              <PropertyValue Property="Key">
+                <Collection>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
+                    <PropertyValue Property="Alias" String="sourceGroupObjectId" />
+                    <PropertyValue Property="Name" PropertyPath="sourceGroupObjectId" />
+                  </Record>
+                </Collection>
+              </PropertyValue>
+            </Record>
+          </Collection>
+        </Annotation>
       </EntityType>
       <EntityType Name="crossOrganizationIdentityMappingUser" OpenType="true">
         <Key>
@@ -1833,7 +1884,7 @@
         <Property Name="feature" Type="Edm.String" />
         <Property Name="featureset" Type="Collection(Edm.String)" />
         <Property Name="migratedfeatureset" Type="Collection(Edm.String)" />
-        <Property Name="subfeatures" Type="Collection(oneDrive.subfeaturemapping)" />
+        <Property Name="subfeaturemappings" Type="Collection(oneDrive.subfeaturemapping)" />
         <Property Name="tenantid" Type="Edm.Guid" />
         <Property Name="subscriptionid" Type="Edm.Guid" />
         <Property Name="subscriptionstate" Type="Edm.String" />
@@ -4886,6 +4937,12 @@
         <Property Name="innerError" Type="oneDrive.mnaError" />
         <Property Name="message" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="crossOrganizationIdentityMappingUserMigrationData" OpenType="true">
+        <Property Name="email" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="crossOrganizationIdentityMappingGroupMigrationData" OpenType="true">
+        <Property Name="mailNickname" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="crossOrganizationResourceMigrationParameters" OpenType="true">
         <Property Name="targetOrganizationId" Type="Edm.Guid" />
         <Property Name="targetOrganizationHost" Type="Edm.String" />
@@ -5307,6 +5364,15 @@
         <Property Name="info" Type="oneDrive.exceptionInfo" />
         <Property Name="failedOperation" Type="Edm.String" />
         <Property Name="responseCode" Type="oneDrive.HttpStatusCode" />
+      </ComplexType>
+      <ComplexType Name="CortexStatus" OpenType="true">
+        <Property Name="generatedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="id" Type="Edm.Guid" />
+        <Property Name="path" Type="Edm.String" />
+        <Property Name="queuedAt" Type="Edm.DateTimeOffset" />
+        <Property Name="scenarios" Type="Collection(Edm.String)" />
+        <Property Name="type" Type="Edm.String" />
+        <Property Name="version" Type="oneDrive.CortexStatusVersion" />
       </ComplexType>
       <ComplexType Name="CortexGraphConsistencyToken" OpenType="true">
         <Property Name="bsn" Type="Edm.Int64" />
@@ -8441,6 +8507,11 @@
         <Property Name="code" Type="Edm.String" />
         <Property Name="message" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="CortexStatusVersion">
+        <Property Name="bsn" Type="Edm.Int64" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="quickXorHash" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="sharePointEndpoint">
         <Property Name="siteId" Type="Edm.String" />
         <Property Name="webId" Type="Edm.String" />
@@ -8928,6 +8999,18 @@
         <Member Name="CancelNotPossible" Value="8" />
         <Member Name="Failed" Value="9" />
         <Member Name="UnknownFutureValue" Value="10" />
+      </EnumType>
+      <EnumType Name="CrossOrganizationIdentityMappingUserType">
+        <Member Name="None" Value="0" />
+        <Member Name="RegularUser" Value="1" />
+        <Member Name="GuestUser" Value="2" />
+        <Member Name="UnknownFutureValue" Value="3" />
+      </EnumType>
+      <EnumType Name="CrossOrganizationIdentityMappingGroupType">
+        <Member Name="None" Value="0" />
+        <Member Name="RegularGroup" Value="1" />
+        <Member Name="M365Group" Value="2" />
+        <Member Name="UnknownFutureValue" Value="3" />
       </EnumType>
       <EnumType Name="TenantIdentityMappingUserType">
         <Member Name="None" Value="0" />
@@ -11382,6 +11465,17 @@
       </Function>
       <Action Name="writeCache" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+      </Action>
+      <Function Name="getStatus" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <ReturnType Type="Collection(oneDrive.CortexStatus)" />
+      </Function>
+      <Action Name="registerScenario" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <Parameter Name="isHighValue" Type="Edm.Boolean">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="scenario" Type="Edm.String" />
       </Action>
       <Action Name="getCortexSummaries" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
