@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26608 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26615 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -361,6 +361,7 @@
         <NavigationProperty Name="diagnosticItems" Type="Collection(oneDrive.diagnosticItem)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticLists" Type="Collection(oneDrive.diagnosticList)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticPages" Type="Collection(oneDrive.diagnosticPage)" ContainsTarget="true" />
+        <NavigationProperty Name="recalculateStorage" Type="Collection(oneDrive.diagnosticSite)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteCollectionFeatures" Type="Collection(oneDrive.diagnosticFeature)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteComplianceTags" Type="Collection(oneDrive.diagnosticComplianceTag)" ContainsTarget="true" />
         <NavigationProperty Name="diagnosticSiteFeatures" Type="Collection(oneDrive.diagnosticFeature)" ContainsTarget="true" />
@@ -1295,6 +1296,16 @@
           <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
         </NavigationProperty>
       </EntityType>
+      <EntityType Name="diagnosticSiteStorage" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="result" Type="Edm.Boolean" />
+        <Property Name="storageUsedBeforeRecalc" Type="Edm.Int64" />
+        <Property Name="storageUsedAfterRecalc" Type="Edm.Int64" />
+        <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
+      </EntityType>
       <EntityType Name="diagnosticTenantRenameJob" OpenType="true">
         <Property Name="jobState" Type="Edm.String" />
         <Property Name="jobId" Type="Edm.Guid" />
@@ -1386,6 +1397,7 @@
       <EntityType Name="crossOrganizationMigrationRoot" OpenType="true">
         <NavigationProperty Name="identityMappingUsers" Type="Collection(oneDrive.identityMappingUser)" ContainsTarget="true" />
         <NavigationProperty Name="crossOrganizationMigrationTasks" Type="Collection(oneDrive.crossOrganizationMigrationTask)" ContainsTarget="true" />
+        <NavigationProperty Name="tasks" Type="Collection(oneDrive.crossOrganizationMigrationTask)" ContainsTarget="true" />
         <NavigationProperty Name="userMappings" Type="Collection(oneDrive.crossOrganizationUserIdentityMapping)" ContainsTarget="true" />
         <NavigationProperty Name="groupMappings" Type="Collection(oneDrive.crossOrganizationGroupIdentityMapping)" ContainsTarget="true" />
       </EntityType>
@@ -1412,6 +1424,7 @@
         <Property Name="lastUpdatedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="finishedDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="errors" Type="Collection(Edm.String)" />
+        <Property Name="error" Type="oneDrive.error" />
       </EntityType>
       <EntityType Name="crossOrganizationIdentityMapping" OpenType="true">
         <Key>
@@ -4971,6 +4984,19 @@
         <Property Name="preferredStartDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="preferredLatestStartDateTime" Type="Edm.DateTimeOffset" />
       </ComplexType>
+      <ComplexType Name="crossOrganizationMigrationTaskParameters" BaseType="oneDrive.crossOrganizationMigrationParameters" OpenType="true">
+        <Property Name="targetOrganizationId" Type="Edm.Guid" />
+        <Property Name="targetOrganizationHost" Type="Edm.String" />
+        <Property Name="targetDataLocationCode" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="crossOrganizationUserMigrationTaskParameters" BaseType="oneDrive.crossOrganizationMigrationTaskParameters" OpenType="true">
+        <Property Name="sourceUserIdentity" Type="oneDrive.userIdentity" />
+        <Property Name="targetUserIdentity" Type="oneDrive.userIdentity" />
+      </ComplexType>
+      <ComplexType Name="crossOrganizationSiteMigrationTaskParameters" BaseType="oneDrive.crossOrganizationMigrationTaskParameters" OpenType="true">
+        <Property Name="sourceSiteUrl" Type="Edm.String" />
+        <Property Name="targetSiteUrl" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ebarItemsPage" OpenType="true">
         <Property Name="token" Type="Edm.String" />
         <Property Name="pageSize" Type="Edm.Int64" />
@@ -5289,6 +5315,10 @@
       </ComplexType>
       <ComplexType Name="cortexTocRequest" OpenType="true">
         <Property Name="semanticModel" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="cortexTocTuningRequest" OpenType="true">
+        <Property Name="semanticModel" Type="Edm.String" />
+        <Property Name="prompt" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="CortexTocResult" OpenType="true">
         <Property Name="createdBy" Type="oneDrive.identitySet" />
@@ -7051,6 +7081,7 @@
         <Property Name="iCalUid" Type="Edm.String" />
         <Property Name="groupId" Type="Edm.String" />
         <Property Name="supportsTeamsPremiumFeatures" Type="Edm.Boolean" />
+        <NavigationProperty Name="meetingLicenseStatuses" Type="Collection(oneDrive.licenseStatus)" />
       </ComplexType>
       <ComplexType Name="driveItemViewpoint" OpenType="true">
         <Property Name="isFavorite" Type="Edm.Boolean" />
@@ -8381,6 +8412,14 @@
         <Property Name="role" Type="Edm.String" />
         <Property Name="siteGroup" Type="oneDrive.sharePointIdentity" />
       </ComplexType>
+      <EntityType Name="licenseStatus">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="enabled" Type="Edm.Boolean" />
+      </EntityType>
       <ComplexType Name="wacHostFlightStatus">
         <Property Name="key" Type="Edm.String" />
         <Property Name="isEnabled" Type="Edm.Boolean" />
@@ -10040,6 +10079,7 @@
         <Member Name="Failed" Value="4" />
         <Member Name="LogEntryCreated" Value="5" />
         <Member Name="NoCspSite" Value="6" />
+        <Member Name="NoLogsFound" Value="7" />
       </EnumType>
       <EnumType Name="OperationType">
         <Member Name="Add" Value="0" />
@@ -10160,6 +10200,16 @@
       <Function Name="getMigrationTaskBySourceUserId" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.crossOrganizationMigrationTask)" />
         <Parameter Name="sourceUserId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="oneDrive.crossOrganizationMigrationTask" />
+      </Function>
+      <Function Name="getBySourceUserPrincipalName" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.crossOrganizationMigrationTask)" />
+        <Parameter Name="sourcePrincipalName" Type="Edm.String" />
+        <ReturnType Type="oneDrive.crossOrganizationMigrationTask" />
+      </Function>
+      <Function Name="getBySourceSiteUrl" IsBound="true" EntitySetPath="bindingParameter" IsComposable="true">
+        <Parameter Name="bindingParameter" Type="Collection(oneDrive.crossOrganizationMigrationTask)" />
+        <Parameter Name="sourceSiteUrl" Type="Edm.String" />
         <ReturnType Type="oneDrive.crossOrganizationMigrationTask" />
       </Function>
       <Action Name="addOrUpdateSingleUser" IsBound="true" EntitySetPath="bindingParameter">
@@ -11500,6 +11550,10 @@
       <Action Name="getImages" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexImagesResult" />
+      </Action>
+      <Action Name="getTableOfContentsTuning" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
+        <ReturnType Type="oneDrive.CortexTocResult" />
       </Action>
       <Action Name="setCortexIndexing" IsBound="true">
         <Parameter Name="bindingParameter" Type="oneDrive.site" />
