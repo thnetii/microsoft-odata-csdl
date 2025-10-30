@@ -204,6 +204,12 @@
         <Property Name="isPrimary" Type="Edm.Boolean" Nullable="false" />
         <Property Name="title" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="ActionHttp" BaseType="SP.AdaptiveCardAction">
+        <Property Name="body" Type="Edm.String" />
+        <Property Name="headers" Type="Collection(Microsoft.SharePoint.QuickActionMessageCard.Header)" />
+        <Property Name="method" Type="Edm.String" />
+        <Property Name="url" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ActionOpenUrl" BaseType="SP.AdaptiveCardAction">
         <Property Name="url" Type="Edm.String" />
       </ComplexType>
@@ -235,10 +241,14 @@
       <ComplexType Name="ActionSubmit" BaseType="SP.AdaptiveCardAction">
         <Property Name="data" Type="Collection(SP.KeyValue)" />
       </ComplexType>
+      <ComplexType Name="ActionToggleVisibility" BaseType="SP.AdaptiveCardAction">
+        <Property Name="targetElements" Type="Collection(Edm.String)" />
+      </ComplexType>
       <ComplexType Name="Container" BaseType="SP.CardElement">
         <Property Name="backgroundImage" Type="Edm.String" />
         <Property Name="items" Type="Collection(SP.CardElement)" />
         <Property Name="padding" Type="SP.Padding" />
+        <Property Name="selectAction" Type="SP.AdaptiveCardAction" />
         <Property Name="verticalContentAlignment" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="AdaptiveCardColumn" BaseType="SP.Container">
@@ -460,6 +470,9 @@
         <Property Name="ProvisioningError" Type="Edm.String" />
         <Property Name="ProvisioningStatus" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
+      <ComplexType Name="BaseRequestParams">
+        <Property Name="Top" Type="Edm.Int32" />
+      </ComplexType>
       <ComplexType Name="CAAEFieldElement">
         <Property Name="Id" Type="Edm.String" />
         <Property Name="Version" Type="Edm.String" />
@@ -597,10 +610,7 @@
         <Property Name="FieldValues" Type="Collection(SP.CAFieldValue)" />
         <Property Name="ServerRedirectedEmbedUrl" Type="Edm.String" />
       </ComplexType>
-      <ComplexType Name="FollowedSitesParams">
-        <Property Name="Skip" Type="Edm.Int32" />
-        <Property Name="Top" Type="Edm.Int32" />
-      </ComplexType>
+      <ComplexType Name="FollowedSitesParams" BaseType="SP.BaseRequestParams" />
       <ComplexType Name="FontOption">
         <Property Name="fontFace" Type="Edm.String" />
         <Property Name="fontFamilyKey" Type="Edm.String" />
@@ -629,6 +639,25 @@
         <Property Name="TaskId" Type="Edm.String" />
         <Property Name="TenantName" Type="Edm.String" />
       </ComplexType>
+      <ComplexType Name="InputChoiceSet" BaseType="SP.CardElement">
+        <Property Name="choices" Type="Collection(SP.InputChoice)" />
+        <Property Name="isMultiSelect" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isRequired" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="style" Type="Edm.String" />
+        <Property Name="value" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="InputChoice" BaseType="SP.CardElement">
+        <Property Name="isSelected" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="value" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="InputText" BaseType="SP.CardElement">
+        <Property Name="isMultiline" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isRequired" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="maxLength" Type="Edm.Int32" Nullable="false" />
+        <Property Name="placeholder" Type="Edm.String" />
+        <Property Name="style" Type="Edm.String" />
+      </ComplexType>
       <ComplexType Name="ItemOrderUpdateValue">
         <Property Name="HasException" Type="Edm.Boolean" Nullable="false" />
         <Property Name="ItemId" Type="Edm.Int32" Nullable="false" />
@@ -637,6 +666,10 @@
       <ComplexType Name="LockFileData">
         <Property Name="lockExpireTimeStamp" Type="Edm.DateTimeOffset" Nullable="false" />
         <Property Name="lockId" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="MainLinkDetails">
+        <Property Name="Audience" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Role" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="MultiGeoCopyParameters">
         <Property Name="binaryPayload" Type="Edm.Binary" />
@@ -647,13 +680,13 @@
         <Property Name="FollowedSites" Type="SP.FollowedSitesParams" />
         <Property Name="OwnedByMe" Type="SP.OwnedByMeParams" />
         <Property Name="RecentFiles" Type="SP.RecentFilesParams" />
+        <Property Name="RecentSites" Type="SP.RecentSitesParams" />
+        <Property Name="SuggestedSites" Type="SP.SuggestedSitesParams" />
       </ComplexType>
-      <ComplexType Name="OwnedByMeParams">
-        <Property Name="Top" Type="Edm.Int32" />
-      </ComplexType>
-      <ComplexType Name="RecentFilesParams">
-        <Property Name="Top" Type="Edm.Int32" />
-      </ComplexType>
+      <ComplexType Name="OwnedByMeParams" BaseType="SP.BaseRequestParams" />
+      <ComplexType Name="RecentFilesParams" BaseType="SP.BaseRequestParams" />
+      <ComplexType Name="RecentSitesParams" BaseType="SP.BaseRequestParams" />
+      <ComplexType Name="SuggestedSitesParams" BaseType="SP.BaseRequestParams" />
       <ComplexType Name="Placeholder">
         <Property Name="DataType" Type="Edm.String" />
         <Property Name="EndPosition" Type="Edm.Int32" Nullable="false" />
@@ -799,7 +832,9 @@
         <Property Name="LastModified" Type="Edm.String" />
         <Property Name="LastModifiedBy" Type="SP.Sharing.Principal" />
         <Property Name="LimitUseToApplication" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LinkAclState" Type="Edm.Int32" Nullable="false" />
         <Property Name="LinkKind" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MainLinkDetails" Type="SP.MainLinkDetails" />
         <Property Name="MeetingId" Type="Edm.String" />
         <Property Name="MustAlwaysUseLink" Type="Edm.Boolean" Nullable="false" />
         <Property Name="PasswordLastModified" Type="Edm.String" />
@@ -3699,6 +3734,9 @@
       <EntityType Name="UserFirstRun" Abstract="true">
         <Property Name="Experiences" Type="Collection(Edm.Int32)" Nullable="false" />
       </EntityType>
+      <EntityType Name="UserPhotos" Abstract="true">
+        <Property Name="Settings" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="VisualizationAppSynchronizationResult">
         <Property Name="SynchronizationData" Type="Edm.String" />
         <Property Name="SynchronizationStatus" Type="Edm.Int32" Nullable="false" />
@@ -3739,6 +3777,7 @@
         <Property Name="CorporateCatalogUrl" Type="Edm.String" />
         <NavigationProperty Name="Current" Type="SP.TenantSettings" ContainsTarget="true" />
       </EntityType>
+      <EntityType Name="TenantDataLossPreventionQuarantineSettings" />
       <EntityType Name="AppPrincipal">
         <Property Name="DisplayName" Type="Edm.String" />
         <Property Name="EndpointAuthorities" Type="Collection(Edm.String)" />
@@ -4401,6 +4440,16 @@
         <Parameter Name="id" Type="Edm.Int32" Nullable="false" />
         <ReturnType Type="SP.ThemeData" />
       </Function>
+      <Function Name="GetTenantThemeByName" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="name" Type="Edm.String" />
+        <ReturnType Type="SP.ThemeData" />
+      </Function>
+      <Action Name="GetTenantThemeByNameXgeoUtil" IsBound="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="name" Type="Edm.String" />
+        <ReturnType Type="SP.ThemeData" />
+      </Action>
       <Function Name="GetTenantThemes" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
         <ReturnType Type="SP.TenantThemes" />
@@ -10204,6 +10253,9 @@
       <Annotations Target="SP.AdaptiveCardAction">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.ActionHttp">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.ActionOpenUrl">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -10220,6 +10272,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.ActionSubmit">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.ActionToggleVisibility">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Container">
@@ -10261,7 +10316,25 @@
       <Annotations Target="SP.GridInitInfoType">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.InputChoiceSet">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.InputChoice">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.InputText">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.ItemOrderUpdateValue">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.MainLinkDetails">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.MainLinkDetails/Audience">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.MainLinkDetails/Role">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecipientLimitsInfo">
@@ -10376,6 +10449,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharingLinkInfo/LimitUseToApplication">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SharingLinkInfo/LinkAclState">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.SharingLinkInfo/MainLinkDetails">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.SharingLinkInfo/MeetingId">
@@ -11081,6 +11160,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingInformationRequest/maxLinkMembersToReturn">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.Sharing.SharingInformationRequest/populateMainLinkTree">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.Sharing.SharingLinkAccessRequest">
@@ -13805,6 +13887,12 @@
       <Annotations Target="SP.UserFirstRun/Experiences">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.UserPhotos">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.UserPhotos/Settings">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.VisualizationAppSynchronizationResult">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14088,6 +14176,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/AnyoneLinkTrackUsers">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/ContentMapping">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/ContentSecurityPolicyConfigSynced">
@@ -16472,6 +16563,12 @@
       <Annotations Target="SP.GetTenantThemeById(SP.BrandCenter, Edm.Int32)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.GetTenantThemeByName(SP.BrandCenter, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.GetTenantThemeByNameXgeoUtil(SP.BrandCenter, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.GetTenantThemes(SP.BrandCenter)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -17529,6 +17626,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.UserFirstRun.SetExperiences(Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.UserPhotos.SetSettings(Edm.String)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.GetResourceEntries(SP.UserResource)">
@@ -30454,8 +30554,10 @@
       <ComplexType Name="SiteOwnerData">
         <Property Name="department" Type="Edm.String" />
         <Property Name="jobTitle" Type="Edm.String" />
+        <Property Name="preferredDataLocation" Type="Edm.String" />
         <Property Name="preferredLanguage" Type="Edm.String" />
         <Property Name="userPrincipalName" Type="Edm.String" />
+        <Property Name="userType" Type="Edm.Int32" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SPContentEventsCustomEmailProperty">
         <Property Name="Category" Type="Edm.Int32" Nullable="false" />
@@ -30608,6 +30710,23 @@
         <Property Name="UserId" Type="Edm.String" />
       </ComplexType>
     </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin.SPOAdminReportInsights.Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="DatasetMetadataInfo">
+        <Property Name="createdDate" Type="Edm.String" />
+        <Property Name="downloadUrl" Type="Edm.String" />
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="lastSyncedDate" Type="Edm.String" />
+        <Property Name="subType" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="DatasetMetadataRequestInfo">
+        <Property Name="feature" Type="Edm.String" />
+        <Property Name="subTypes" Type="Collection(Edm.String)" />
+      </ComplexType>
+      <ComplexType Name="DatasetMetadataResponse">
+        <Property Name="featureId" Type="Edm.String" />
+        <Property Name="sitePermissions" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.SPOAdminReportInsights.Models.DatasetMetadataInfo)" />
+      </ComplexType>
+    </Schema>
     <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin.Copilot" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <ComplexType Name="AdaptiveCardConfig">
         <Property Name="data" Type="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.BaseRawDataSources" />
@@ -30645,6 +30764,35 @@
       </ComplexType>
       <ComplexType Name="ReportMetadata" BaseType="Microsoft.SharePoint.Administration.TenantAdmin.Copilot.BaseMetadata">
         <Property Name="ReportMetadataDetails" Type="Collection(SP.KeyValue)" />
+      </ComplexType>
+    </Schema>
+    <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="ContentMappingSettings">
+        <Property Name="extendedAttributes" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.ExtendedAttributeSettings)" />
+        <Property Name="isDepartmentVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isInformationSegmentVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isPreferredDataLocationVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isRegionVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="isUserTypeVisible" Type="Edm.Boolean" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="ExtendedAttributeSettings">
+        <Property Name="attributeNumber" Type="Edm.Int32" Nullable="false" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="displayName" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ExtendedPropertyMap">
+        <Property Name="createdDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="lastModifiedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="properties" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+      </ComplexType>
+      <ComplexType Name="Property">
+        <Property Name="propertyType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="values" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.PropertyValue)" />
+      </ComplexType>
+      <ComplexType Name="PropertyValue">
+        <Property Name="id" Type="Edm.Guid" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="sites" Type="Collection(Edm.Guid)" Nullable="false" />
       </ComplexType>
     </Schema>
     <Schema Namespace="SP.SiteHealth" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -31038,6 +31186,7 @@
         <Property Name="maxLinkMembersToReturn" Type="Edm.Int32" Nullable="false" />
         <Property Name="maxPrincipalsToReturn" Type="Edm.Int32" Nullable="false" />
         <Property Name="populateInheritedLinks" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="populateMainLinkTree" Type="Edm.Boolean" Nullable="false" />
       </ComplexType>
       <ComplexType Name="SharingLinkAccessRequest">
         <Property Name="ensureAccess" Type="Edm.Boolean" Nullable="false" />
@@ -32778,6 +32927,9 @@
         <Property Name="Name" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
       </ComplexType>
+      <EntityType Name="ContentMappingCollection">
+        <Property Name="Items" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+      </EntityType>
       <EntityType Name="HubSiteProperties">
         <Property Name="Description" Type="Edm.String" />
         <Property Name="EnablePermissionsSync" Type="Edm.Boolean" Nullable="false" />
@@ -33368,7 +33520,9 @@
         <Property Name="WhoCanShareAllowListInTenantByPrincipalIdentity" Type="Collection(Edm.String)" />
         <Property Name="Workflow2010Disabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Workflows2013State" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="ContentMapping" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" ContainsTarget="true" />
         <NavigationProperty Name="Sites" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteProperties)" ContainsTarget="true" />
+        <NavigationProperty Name="TenantDataLossPreventionQuarantineSettings" Type="SP.TenantDataLossPreventionQuarantineSettings" ContainsTarget="true" />
         <NavigationProperty Name="TotalTenantArchiveFileSizeAggregation" Type="Microsoft.SharePoint.Administration.Archiving.ArchiveFileSizeMetric" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="TopFilesSharingInsights">
@@ -33412,6 +33566,20 @@
         <Property Name="ParentLabelId" Type="Edm.String" />
         <Property Name="ProtectionEnabled" Type="Edm.Boolean" Nullable="false" />
       </EntityType>
+      <Function Name="Get" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+      </Function>
+      <Function Name="GetProperty" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
+        <Parameter Name="propertyType" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property" />
+      </Function>
+      <Function Name="GetValue" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
+        <Parameter Name="propertyId" Type="Edm.Guid" Nullable="false" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.PropertyValue" />
+      </Function>
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.HubSiteProperties" />
       </Action>
@@ -34037,6 +34205,18 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.View)" />
       </Function>
+      <Action Name="GetAdminReportData" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="featureId" Type="Edm.String" />
+        <Parameter Name="datasetMetadata" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.SPOAdminReportInsights.Models.DatasetMetadataRequestInfo)" />
+        <Parameter Name="query" Type="Edm.String" />
+        <ReturnType Type="Edm.Stream" />
+      </Action>
+      <Action Name="GetAdminReportMetadata" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <Parameter Name="dataset" Type="Collection(Edm.String)" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.SPOAdminReportInsights.Models.DatasetMetadataResponse" />
+      </Action>
       <Action Name="GetAllDeletedPersonalSitesPropertiesAllVersions" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <Parameter Name="startIndex" Type="Edm.Int32" Nullable="false" />
@@ -34080,6 +34260,10 @@
       <Function Name="GetContentManagementAssessmentResults" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentManagementAssessmentResults" />
+      </Function>
+      <Function Name="GetContentMappingSettings" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.ContentMappingSettings" />
       </Function>
       <Action Name="GetContentSecurityPolicy" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
@@ -37811,6 +37995,10 @@
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Edm.String" />
       </Action>
+      <Action Name="GetSiteRelocationCompatibleSchemaVersion" IsBound="true">
+        <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
+        <ReturnType Type="Edm.String" />
+      </Action>
       <Action Name="GetTenantWorkflows" IsBound="true">
         <Parameter Name="this" Type="Microsoft.SharePoint.Administration.SiteMove.Service.SiteMoveService" />
         <ReturnType Type="Collection(Edm.String)" />
@@ -38797,6 +38985,7 @@
         <Key>
           <PropertyRef Name="Name" />
         </Key>
+        <Property Name="ColorPairsJson" Type="Edm.String" />
         <Property Name="IsInverted" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Name" Type="Edm.String" Nullable="false" />
         <Property Name="Palette" Type="Collection(SP.KeyValue)" />
@@ -41910,6 +42099,15 @@
       <Action Name="SetExperiences">
         <Parameter Name="experiences" Type="Edm.String" />
         <ReturnType Type="Collection(Edm.Int32)" Nullable="false" />
+      </Action>
+    </Schema>
+    <Schema Namespace="SP.UserPhotos" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="Settings">
+        <ReturnType Type="Edm.String" />
+      </Function>
+      <Action Name="SetSettings">
+        <Parameter Name="settings" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
       </Action>
     </Schema>
     <Schema Namespace="SP.WebProxy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
