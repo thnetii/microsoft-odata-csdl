@@ -1,0 +1,231 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Tiliter Vision Agents",
+    "description": "Run Tiliter Vision Agents to analyse images and extract insights. Agents can check cleanliness, detect damage, validate labels, count or confirm objects, process receipts, extract text, detect people, identify tyres, analyse fitting rooms, and more.",
+    "version": "2.3.0",
+    "contact": {
+      "name": "Tiliter Support",
+      "url": "https://www.tiliter.com",
+      "email": "support@tiliter.com"
+    },
+    "x-ms-api-annotation": {
+      "status": "Preview"
+    }
+  },
+  "host": "europe-002.azure-apim.net",
+  "basePath": "/apim/tilitervisionagents",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://www.tiliter.com"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://www.tiliter.com/privacy"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "AI;Productivity"
+    }
+  ],
+  "paths": {
+    "/{connectionId}/api/v2/agents/{agent_name}/v1/inference": {
+      "post": {
+        "summary": "Run Vision Agent",
+        "description": "Run any Tiliter Vision Agent on an image (JPEG or PNG). PDF is also supported for text extractor and receipt processor. Some agents require additional input parameters such as expected_text, object_type, or expected_objects.",
+        "operationId": "runVisionAgent",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-visibility": "internal"
+          },
+          {
+            "name": "agent_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Select the Vision Agent you want to run on your image.",
+            "enum": [
+              "cleanliness-score",
+              "damage-detector",
+              "label-reader-validator",
+              "object-counter",
+              "object-validator",
+              "object-detection",
+              "receipt-processor",
+              "text-extractor",
+              "people-counter",
+              "fitting-room-assessment",
+              "reverse-vending-machine",
+              "tyre-recognition"
+            ],
+            "x-ms-summary": "Vision Agent to run"
+          },
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RequestPayloadGeneric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/AgentResponse"
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        },
+        "x-ms-examples": {
+          "labelValidatorExample": {
+            "parameters": {
+              "agent_name": "label-reader-validator",
+              "payload": {
+                "input_file_b64": "AAA...base64string...",
+                "expected_text": "EXP: 12/2025"
+              }
+            }
+          },
+          "objectCounterExample": {
+            "parameters": {
+              "agent_name": "object-counter",
+              "payload": {
+                "input_file_b64": "AAA...base64string...",
+                "object_type": "apple"
+              }
+            }
+          },
+          "objectValidatorExample": {
+            "parameters": {
+              "agent_name": "object-validator",
+              "payload": {
+                "input_file_b64": "AAA...base64string...",
+                "expected_objects": [
+                  "receipt",
+                  "bag"
+                ]
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/connectors/tilitervisionagents/#run-vision-agent"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-API-Key"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "definitions": {
+    "RequestPayloadGeneric": {
+      "type": "object",
+      "required": [
+        "input_file_b64"
+      ],
+      "properties": {
+        "input_file_b64": {
+          "type": "string",
+          "title": "Image (Base64 or URL)",
+          "description": "Base64 encoded string with data URL prefix (e.g. data:image/jpeg;base64,...) or a public image URL.",
+          "example": "data:image/jpeg;base64,AAA..."
+        },
+        "expected_text": {
+          "type": "string",
+          "title": "Expected text (for label-reader-validator)",
+          "description": "Use only with label-reader-validator.",
+          "example": "EXP: 12/2025"
+        },
+        "object_type": {
+          "type": "string",
+          "title": "Object type (for object-counter)",
+          "description": "Use only with object-counter.",
+          "example": "apple"
+        },
+        "expected_objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Expected objects (for object-validator)",
+          "description": "Use only with object-validator.",
+          "example": [
+            "receipt",
+            "bag"
+          ]
+        }
+      }
+    },
+    "AgentResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "agent_type": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "description": "Agent-specific result fields"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "agent_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://docs.microsoft.com/connectors/tilitervisionagents"
+  }
+}
