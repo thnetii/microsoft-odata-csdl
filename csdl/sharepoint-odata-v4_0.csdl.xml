@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26622 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26629 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="SP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -3631,6 +3631,11 @@
         <Property Name="SelectionMode" Type="Edm.Int32" Nullable="false" />
         <Property Name="UserDisplayOptions" Type="Edm.String" />
       </EntityType>
+      <EntityType Name="FileUrlVirusStatusUpdate">
+        <Property Name="fileUrl" Type="Edm.String" />
+        <Property Name="virusMessage" Type="Edm.String" />
+        <Property Name="virusStatus" Type="Edm.Byte" Nullable="false" />
+      </EntityType>
       <EntityType Name="FlowSynchronizationResult">
         <Property Name="SynchronizationData" Type="Edm.String" />
         <Property Name="SynchronizationStatus" Type="Edm.Int32" Nullable="false" />
@@ -4466,6 +4471,12 @@
         <Parameter Name="this" Type="SP.BrandCenter" />
         <Parameter Name="shouldUseCache" Type="Edm.Boolean" Nullable="false" />
         <ReturnType Type="Microsoft.SharePoint.Administration.OrgAssets" />
+      </Function>
+      <Function Name="SetWebTheme" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="SP.BrandCenter" />
+        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="webUrl" Type="Edm.String" />
+        <ReturnType Type="Edm.String" />
       </Function>
       <Action Name="UpdateSiteTheme" IsBound="true">
         <Parameter Name="this" Type="SP.BrandCenter" />
@@ -7424,6 +7435,12 @@
         <Parameter Name="stream" Type="Edm.Stream" />
         <ReturnType Type="SP.File" />
       </Action>
+      <Function Name="FileUrlVirusStatusUpdate">
+        <ReturnType Type="SP.FileUrlVirusStatusUpdate" />
+      </Function>
+      <Action Name="UpdateVirusStatus" IsBound="true">
+        <Parameter Name="this" Type="SP.FileUrlVirusStatusUpdate" />
+      </Action>
       <Action Name="DeleteAll" IsBound="true">
         <Parameter Name="this" Type="Collection(SP.FileVersion)" />
       </Action>
@@ -8661,6 +8678,7 @@
         <Singleton Name="SiteManager" Type="Microsoft.SharePoint.SiteManager.SiteManagerService" />
         <Singleton Name="sphomeservice" Type="Microsoft.SharePoint.Portal.SharePointHomeServiceContextBuilder" />
         <Singleton Name="SPHSite" Type="SP.SPHSite" />
+        <Singleton Name="SPOInternalUseOnly.FileVirusStatusUpdate" Type="SP.FileUrlVirusStatusUpdate" />
         <Singleton Name="SPOInternalUseOnly.TenantSharingRestrictions" Type="Microsoft.SharePoint.Sharing.Internal.SharingRestrictions" />
         <Singleton Name="spsitemanager" Type="Microsoft.SharePoint.Portal.SPSiteManager" />
         <Singleton Name="StructuralNavigationCache" Type="SP.Publishing.Navigation.StructuralNavigationCacheWrapper" />
@@ -13782,6 +13800,18 @@
       <Annotations Target="SP.FieldLookup/DependentLookupInternalNames">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.FileUrlVirusStatusUpdate">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FileUrlVirusStatusUpdate/fileUrl">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FileUrlVirusStatusUpdate/virusMessage">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FileUrlVirusStatusUpdate/virusStatus">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.FlowSynchronizationResult">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -14178,7 +14208,7 @@
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/AnyoneLinkTrackUsers">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
-      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/ContentMapping">
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CatalogManagement">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/ContentSecurityPolicyConfigSynced">
@@ -14215,6 +14245,9 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/CoreSharingCapability">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/DelayContentSecurityPolicyEnforcement">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="Microsoft.Online.SharePoint.TenantAdministration.Tenant/GuestSharingGroupAllowListInTenantByGroupId">
@@ -16581,6 +16614,9 @@
       <Annotations Target="SP.OrgAssetsWithCacheFlag(SP.BrandCenter, Edm.Boolean)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
+      <Annotations Target="SP.SetWebTheme(SP.BrandCenter, Edm.String, Edm.String)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
       <Annotations Target="SP.UpdateSiteTheme(SP.BrandCenter, SP.ThemeData)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
@@ -17335,6 +17371,12 @@
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.UploadWithChecksum(SP.File, Edm.Guid, Edm.Binary, Edm.Stream)">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.FileUrlVirusStatusUpdate()">
+        <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
+      </Annotations>
+      <Annotations Target="SP.UpdateVirusStatus(SP.FileUrlVirusStatusUpdate)">
         <Annotation Term="Com.Microsoft.VisualStudio.CodeGen.IsBeta" Bool="true" />
       </Annotations>
       <Annotations Target="SP.RecycleByID(Collection(SP.FileVersion), Edm.Int32)">
@@ -30766,14 +30808,14 @@
         <Property Name="ReportMetadataDetails" Type="Collection(SP.KeyValue)" />
       </ComplexType>
     </Schema>
-    <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <ComplexType Name="ContentMappingSettings">
-        <Property Name="extendedAttributes" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.ExtendedAttributeSettings)" />
-        <Property Name="isDepartmentVisible" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="isInformationSegmentVisible" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="isPreferredDataLocationVisible" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="isRegionVisible" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="isUserTypeVisible" Type="Edm.Boolean" Nullable="false" />
+    <Schema Namespace="Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="CatalogManagementSettings">
+        <Property Name="departmentDisplayName" Type="Edm.String" />
+        <Property Name="extendedAttributes" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.ExtendedAttributeSettings)" />
+        <Property Name="informationBarriersSegmentDisplayName" Type="Edm.String" />
+        <Property Name="localeDisplayName" Type="Edm.String" />
+        <Property Name="preferredDataLocationDisplayName" Type="Edm.String" />
+        <Property Name="userTypeDisplayName" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="ExtendedAttributeSettings">
         <Property Name="attributeNumber" Type="Edm.Int32" Nullable="false" />
@@ -30782,12 +30824,11 @@
       </ComplexType>
       <ComplexType Name="ExtendedPropertyMap">
         <Property Name="createdDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="lastModifiedDate" Type="Edm.DateTimeOffset" Nullable="false" />
-        <Property Name="properties" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+        <Property Name="properties" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.Property)" />
       </ComplexType>
       <ComplexType Name="Property">
         <Property Name="propertyType" Type="Edm.Int32" Nullable="false" />
-        <Property Name="values" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.PropertyValue)" />
+        <Property Name="values" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.PropertyValue)" />
       </ComplexType>
       <ComplexType Name="PropertyValue">
         <Property Name="id" Type="Edm.Guid" Nullable="false" />
@@ -32927,8 +32968,8 @@
         <Property Name="Name" Type="Edm.String" />
         <Property Name="Title" Type="Edm.String" />
       </ComplexType>
-      <EntityType Name="ContentMappingCollection">
-        <Property Name="Items" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+      <EntityType Name="CatalogManagementCollection">
+        <Property Name="Items" Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.Property)" />
       </EntityType>
       <EntityType Name="HubSiteProperties">
         <Property Name="Description" Type="Edm.String" />
@@ -33269,6 +33310,7 @@
         <Property Name="DefaultLinkPermission" Type="Edm.Int32" Nullable="false" />
         <Property Name="DefaultODBMode" Type="Edm.String" />
         <Property Name="DefaultSharingLinkType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DelayContentSecurityPolicyEnforcement" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DelayDenyAddAndCustomizePagesEnforcement" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DelayDenyAddAndCustomizePagesEnforcementOnClassicPublishingSites" Type="Edm.Boolean" Nullable="false" />
         <Property Name="DelegateRestrictedAccessControlConfiguration" Type="Edm.Boolean" Nullable="false" />
@@ -33520,7 +33562,7 @@
         <Property Name="WhoCanShareAllowListInTenantByPrincipalIdentity" Type="Collection(Edm.String)" />
         <Property Name="Workflow2010Disabled" Type="Edm.Boolean" Nullable="false" />
         <Property Name="Workflows2013State" Type="Edm.Int32" Nullable="false" />
-        <NavigationProperty Name="ContentMapping" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" ContainsTarget="true" />
+        <NavigationProperty Name="CatalogManagement" Type="Microsoft.Online.SharePoint.TenantAdministration.CatalogManagementCollection" ContainsTarget="true" />
         <NavigationProperty Name="Sites" Type="Collection(Microsoft.Online.SharePoint.TenantAdministration.SiteProperties)" ContainsTarget="true" />
         <NavigationProperty Name="TenantDataLossPreventionQuarantineSettings" Type="SP.TenantDataLossPreventionQuarantineSettings" ContainsTarget="true" />
         <NavigationProperty Name="TotalTenantArchiveFileSizeAggregation" Type="Microsoft.SharePoint.Administration.Archiving.ArchiveFileSizeMetric" ContainsTarget="true" />
@@ -33567,18 +33609,18 @@
         <Property Name="ProtectionEnabled" Type="Edm.Boolean" Nullable="false" />
       </EntityType>
       <Function Name="Get" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
-        <ReturnType Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property)" />
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.CatalogManagementCollection" />
+        <ReturnType Type="Collection(Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.Property)" />
       </Function>
       <Function Name="GetProperty" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.CatalogManagementCollection" />
         <Parameter Name="propertyType" Type="Edm.Int32" Nullable="false" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.Property" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.Property" />
       </Function>
       <Function Name="GetValue" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.ContentMappingCollection" />
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.CatalogManagementCollection" />
         <Parameter Name="propertyId" Type="Edm.Guid" Nullable="false" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.PropertyValue" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.PropertyValue" />
       </Function>
       <Action Name="Update" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.HubSiteProperties" />
@@ -34244,6 +34286,10 @@
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Collection(SP.FontPackage)" />
       </Function>
+      <Function Name="GetCatalogManagementSettings" IsBound="true" IsComposable="true">
+        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
+        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CatalogManagement.CatalogManagementSettings" />
+      </Function>
       <Function Name="GetCollaborationInsightsData" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.CollaborationInsightsData" />
@@ -34260,10 +34306,6 @@
       <Function Name="GetContentManagementAssessmentResults" IsBound="true" IsComposable="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
         <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentManagementAssessmentResults" />
-      </Function>
-      <Function Name="GetContentMappingSettings" IsBound="true" IsComposable="true">
-        <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
-        <ReturnType Type="Microsoft.SharePoint.Administration.TenantAdmin.ContentMapping.ContentMappingSettings" />
       </Function>
       <Action Name="GetContentSecurityPolicy" IsBound="true">
         <Parameter Name="this" Type="Microsoft.Online.SharePoint.TenantAdministration.Tenant" />
