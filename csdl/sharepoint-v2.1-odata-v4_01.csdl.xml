@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Microsoft SharePoint Team Services v16.0.0.26629 -->
+<!-- Microsoft SharePoint Team Services v16.0.0.26705 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="oneDrive" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -1946,6 +1946,8 @@
         <Property Name="migrationCompletedAt" Type="Edm.DateTimeOffset" />
         <Property Name="isMigrationComplete" Type="Edm.Boolean" />
         <Property Name="isCapacityPackEnabled" Type="Edm.Boolean" />
+        <Property Name="hasAttested" Type="Edm.Boolean" />
+        <Property Name="attestationMethod" Type="Edm.String" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </EntityType>
       <EntityType Name="policyAutomation" OpenType="true">
@@ -3173,7 +3175,9 @@
         <Property Name="state" Type="Edm.String" />
         <Property Name="total" Type="Edm.Int64" />
         <Property Name="used" Type="Edm.Int64" />
+        <Property Name="pooledStorageEnabled" Type="Edm.Boolean" />
         <NavigationProperty Name="services" Type="Collection(oneDrive.serviceStorageQuotaBreakdown)" ContainsTarget="true" />
+        <NavigationProperty Name="otherFamilyMembers" Type="Collection(oneDrive.familyMemberStorageQuota)" ContainsTarget="true" />
       </EntityType>
       <EntityType Name="vaultKey" OpenType="true">
         <Key>
@@ -3911,6 +3915,14 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="used" Type="Edm.Int64" />
       </EntityType>
+      <EntityType Name="familyMemberStorageQuota" OpenType="true">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="used" Type="Edm.Int64" />
+        <NavigationProperty Name="additionalAllocations" Type="oneDrive.additionalStorageAllocations" ContainsTarget="true" />
+      </EntityType>
       <EntityType Name="unifiedStorageQuotaRoot" BaseType="oneDrive.unifiedStorageQuota" OpenType="true">
         <NavigationProperty Name="me" Type="oneDrive.unifiedStorageQuota" ContainsTarget="true" />
         <NavigationProperty Name="tenant" Type="oneDrive.unifiedStorageQuota" ContainsTarget="true">
@@ -4504,6 +4516,10 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="requestStatus" Type="oneDrive.accessRequestStatus" />
         <Property Name="requestorIdentity" Type="oneDrive.sharePointIdentity" />
+      </EntityType>
+      <EntityType Name="additionalStorageAllocations" OpenType="true">
+        <Property Name="bonus" Type="Edm.Int64" />
+        <Property Name="subscriptions" Type="Edm.Int64" />
       </EntityType>
       <ComplexType Name="badgerAnonymousUserInfo" OpenType="true">
         <Property Name="givenName" Type="Edm.String" />
@@ -6254,7 +6270,7 @@
         <Property Name="sensitivity" Type="Edm.String" />
         <Property Name="requestVolume" Type="Edm.String" />
         <Property Name="error" Type="oneDrive.error" />
-        <Property Name="agents" Type="oneDrive.siteReviewM365AgentsDetails" />
+        <Property Name="agentDetails" Type="oneDrive.siteReviewM365AgentsDetails" />
         <Annotation Term="oneDrive.sharepointOnly" Bool="true" />
       </ComplexType>
       <ComplexType Name="siteReviewPermissionRecord" OpenType="true">
@@ -6683,7 +6699,6 @@
         <Property Name="agentName" Type="Edm.String" />
         <Property Name="agentType" Type="Edm.String" />
         <Property Name="requestVolume" Type="Edm.String" />
-        <Property Name="createdBy" Type="Edm.String" />
       </ComplexType>
       <ComplexType Name="dagParameters" OpenType="true">
         <Property Name="cumulativeSourceReportId" Type="Edm.String" />
@@ -10685,6 +10700,52 @@
         </Parameter>
         <ReturnType Type="oneDrive.analyticsReport" />
       </Action>
+      <Function Name="placesAutosuggest" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.bingApis" />
+        <Parameter Name="q" Type="Edm.String" />
+        <Parameter Name="mkt" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="localmapview" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="localcircularview" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="Collection(oneDrive.bingLocation)" />
+      </Function>
+      <Function Name="imagesSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="oneDrive.bingApis" />
+        <Parameter Name="q" Type="Edm.String" />
+        <Parameter Name="aspect" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="maxFileSize" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="license" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="mkt" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="offset" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="size" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="imageType" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="color" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <Parameter Name="count" Type="Edm.String">
+          <Annotation Term="Org.OData.Core.V1.OptionalParameter" />
+        </Parameter>
+        <ReturnType Type="oneDrive.bingImageSearchResponse" />
+      </Function>
       <Action Name="add" IsBound="true" EntitySetPath="bindingParameter">
         <Parameter Name="bindingParameter" Type="Collection(oneDrive.columnDefinition)" />
         <Parameter Name="value" Type="Collection(oneDrive.columnDefinition)" />
@@ -11621,15 +11682,15 @@
         <ReturnType Type="oneDrive.CortexResult" />
       </Action>
       <Action Name="getTableOfContents" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexTocResult" />
       </Action>
       <Action Name="getPages" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexPagesResult" />
       </Action>
       <Action Name="getImages" IsBound="true">
-        <Parameter Name="bindingParameter" Type="oneDrive.item" />
+        <Parameter Name="bindingParameter" Type="oneDrive.cortex" />
         <ReturnType Type="oneDrive.CortexImagesResult" />
       </Action>
       <Action Name="getEmbeddedImages" IsBound="true">
